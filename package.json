@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "playwright": "^1.57.0",
+    "playwright-extra": "^4.3.6",
+    "user-agents": "^1.1.669"
+  }
+}

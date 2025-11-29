@@ -1,0 +1,482 @@
+[
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "blue",
+    "data_t": "217"
+  },
+  {
+    "data_card": "cannon",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/cannon.png",
+    "data_s": "blue",
+    "data_t": "344"
+  },
+  {
+    "data_card": "earthquake",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/earthquake.png",
+    "data_s": "blue",
+    "data_t": "512"
+  },
+  {
+    "data_card": "firecracker",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/firecracker.png",
+    "data_s": "blue",
+    "data_t": "694"
+  },
+  {
+    "data_card": "mighty-miner",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/mighty-miner.png",
+    "data_s": "blue",
+    "data_t": "747"
+  },
+  {
+    "data_card": "skeletons",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/skeletons.png",
+    "data_s": "blue",
+    "data_t": "752"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "blue",
+    "data_t": "776"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "blue",
+    "data_t": "1206"
+  },
+  {
+    "data_card": "firecracker",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/firecracker.png",
+    "data_s": "blue",
+    "data_t": "1284"
+  },
+  {
+    "data_card": "mighty-miner",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/mighty-miner.png",
+    "data_s": "blue",
+    "data_t": "1374"
+  },
+  {
+    "data_card": "hog-rider",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/hog-rider.png",
+    "data_s": "blue",
+    "data_t": "1398"
+  },
+  {
+    "data_card": "cannon",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/cannon.png",
+    "data_s": "blue",
+    "data_t": "1833"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "blue",
+    "data_t": "1838"
+  },
+  {
+    "data_card": "skeletons",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/skeletons.png",
+    "data_s": "blue",
+    "data_t": "1863"
+  },
+  {
+    "data_card": "mighty-miner",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/mighty-miner.png",
+    "data_s": "blue",
+    "data_t": "1903"
+  },
+  {
+    "data_card": "_invalid",
+    "src": "https://cdn.royaleapi.com/static/img/ability/ability-75/ability-mighty-miner.png?t=69af133bc",
+    "data_s": "blue",
+    "data_t": "2288"
+  },
+  {
+    "data_card": "hog-rider",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/hog-rider.png",
+    "data_s": "blue",
+    "data_t": "2301"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "blue",
+    "data_t": "2361"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "blue",
+    "data_t": "2581"
+  },
+  {
+    "data_card": "skeletons",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/skeletons.png",
+    "data_s": "blue",
+    "data_t": "2611"
+  },
+  {
+    "data_card": "mighty-miner",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/mighty-miner.png",
+    "data_s": "blue",
+    "data_t": "2641"
+  },
+  {
+    "data_card": "hog-rider",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/hog-rider.png",
+    "data_s": "blue",
+    "data_t": "2741"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "blue",
+    "data_t": "2768"
+  },
+  {
+    "data_card": "firecracker",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/firecracker.png",
+    "data_s": "blue",
+    "data_t": "2834"
+  },
+  {
+    "data_card": "skeletons",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/skeletons.png",
+    "data_s": "blue",
+    "data_t": "2895"
+  },
+  {
+    "data_card": "cannon",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/cannon.png",
+    "data_s": "blue",
+    "data_t": "2963"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "blue",
+    "data_t": "2999"
+  },
+  {
+    "data_card": "mighty-miner",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/mighty-miner.png",
+    "data_s": "blue",
+    "data_t": "3084"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "blue",
+    "data_t": "3099"
+  },
+  {
+    "data_card": "skeletons",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/skeletons.png",
+    "data_s": "blue",
+    "data_t": "3185"
+  },
+  {
+    "data_card": "cannon",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/cannon.png",
+    "data_s": "blue",
+    "data_t": "3253"
+  },
+  {
+    "data_card": "firecracker",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/firecracker.png",
+    "data_s": "blue",
+    "data_t": "3372"
+  },
+  {
+    "data_card": "earthquake",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/earthquake.png",
+    "data_s": "blue",
+    "data_t": "3424"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "blue",
+    "data_t": "3471"
+  },
+  {
+    "data_card": "skeletons",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/skeletons.png",
+    "data_s": "blue",
+    "data_t": "3635"
+  },
+  {
+    "data_card": "hog-rider",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/hog-rider.png",
+    "data_s": "blue",
+    "data_t": "3655"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "blue",
+    "data_t": "3675"
+  },
+  {
+    "data_card": "earthquake",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/earthquake.png",
+    "data_s": "blue",
+    "data_t": "3741"
+  },
+  {
+    "data_card": "firecracker",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/firecracker.png",
+    "data_s": "blue",
+    "data_t": "3825"
+  },
+  {
+    "data_card": "skeletons",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/skeletons.png",
+    "data_s": "blue",
+    "data_t": "3887"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "blue",
+    "data_t": "3912"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "blue",
+    "data_t": "3944"
+  },
+  {
+    "data_card": "mighty-miner",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/mighty-miner.png",
+    "data_s": "blue",
+    "data_t": "4034"
+  },
+  {
+    "data_card": "cannon",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/cannon.png",
+    "data_s": "blue",
+    "data_t": "4056"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "red",
+    "data_t": "278"
+  },
+  {
+    "data_card": "royal-giant",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-giant.png",
+    "data_s": "red",
+    "data_t": "395"
+  },
+  {
+    "data_card": "monk",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/monk.png",
+    "data_s": "red",
+    "data_t": "721"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "red",
+    "data_t": "793"
+  },
+  {
+    "data_card": "_invalid",
+    "src": "https://cdn.royaleapi.com/static/img/ability/ability-75/ability-monk.png?t=1a4e15b1c",
+    "data_s": "red",
+    "data_t": "868"
+  },
+  {
+    "data_card": "royal-ghost",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-ghost.png",
+    "data_s": "red",
+    "data_t": "1117"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "red",
+    "data_t": "1237"
+  },
+  {
+    "data_card": "hunter",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/hunter.png",
+    "data_s": "red",
+    "data_t": "1436"
+  },
+  {
+    "data_card": "fisherman",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/fisherman.png",
+    "data_s": "red",
+    "data_t": "1471"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "red",
+    "data_t": "1587"
+  },
+  {
+    "data_card": "royal-giant",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-giant.png",
+    "data_s": "red",
+    "data_t": "1783"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "red",
+    "data_t": "1815"
+  },
+  {
+    "data_card": "royal-ghost",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-ghost.png",
+    "data_s": "red",
+    "data_t": "2259"
+  },
+  {
+    "data_card": "hunter",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/hunter.png",
+    "data_s": "red",
+    "data_t": "2335"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "red",
+    "data_t": "2457"
+  },
+  {
+    "data_card": "royal-giant",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-giant.png",
+    "data_s": "red",
+    "data_t": "2558"
+  },
+  {
+    "data_card": "monk",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/monk.png",
+    "data_s": "red",
+    "data_t": "2732"
+  },
+  {
+    "data_card": "fisherman",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/fisherman.png",
+    "data_s": "red",
+    "data_t": "2788"
+  },
+  {
+    "data_card": "royal-ghost",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-ghost.png",
+    "data_s": "red",
+    "data_t": "2833"
+  },
+  {
+    "data_card": "_invalid",
+    "src": "https://cdn.royaleapi.com/static/img/ability/ability-75/ability-monk.png?t=1a4e15b1c",
+    "data_s": "red",
+    "data_t": "2879"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "red",
+    "data_t": "2959"
+  },
+  {
+    "data_card": "royal-giant",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-giant.png",
+    "data_s": "red",
+    "data_t": "3045"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "red",
+    "data_t": "3143"
+  },
+  {
+    "data_card": "hunter",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/hunter.png",
+    "data_s": "red",
+    "data_t": "3335"
+  },
+  {
+    "data_card": "monk",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/monk.png",
+    "data_s": "red",
+    "data_t": "3394"
+  },
+  {
+    "data_card": "_invalid",
+    "src": "https://cdn.royaleapi.com/static/img/ability/ability-75/ability-monk.png?t=1a4e15b1c",
+    "data_s": "red",
+    "data_t": "3466"
+  },
+  {
+    "data_card": "royal-ghost",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-ghost.png",
+    "data_s": "red",
+    "data_t": "3609"
+  },
+  {
+    "data_card": "fisherman",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/fisherman.png",
+    "data_s": "red",
+    "data_t": "3701"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "red",
+    "data_t": "3728"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "red",
+    "data_t": "3747"
+  },
+  {
+    "data_card": "monk",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/monk.png",
+    "data_s": "red",
+    "data_t": "3865"
+  },
+  {
+    "data_card": "royal-giant",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/royal-giant.png",
+    "data_s": "red",
+    "data_t": "3921"
+  },
+  {
+    "data_card": "_invalid",
+    "src": "https://cdn.royaleapi.com/static/img/ability/ability-75/ability-monk.png?t=1a4e15b1c",
+    "data_s": "red",
+    "data_t": "3981"
+  },
+  {
+    "data_card": "fisherman",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/fisherman.png",
+    "data_s": "red",
+    "data_t": "4033"
+  },
+  {
+    "data_card": "electro-spirit",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/electro-spirit.png",
+    "data_s": "red",
+    "data_t": "4095"
+  },
+  {
+    "data_card": "barbarian-barrel",
+    "src": "https://cdns3.royaleapi.com/cdn-cgi/image/q=80,w=75,h=90,format=auto/static/img/cards/v8-7d088998/barbarian-barrel.png",
+    "data_s": "red",
+    "data_t": "4133"
+  }
+]

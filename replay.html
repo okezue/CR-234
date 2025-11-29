@@ -1,0 +1,747 @@
+
+<!DOCTYPE html>
+    <html lang="en">
+
+<head>    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Battle Replay - RoyaleAPI</title>
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://royaleapi.com/static/img/favicon2/apple-icon-57x57.png?t=ad39e8ebc">
+<link rel="apple-touch-icon" sizes="60x60" href="https://royaleapi.com/static/img/favicon2/apple-icon-60x60.png?t=d6c57df4c">
+<link rel="apple-touch-icon" sizes="72x72" href="https://royaleapi.com/static/img/favicon2/apple-icon-72x72.png?t=38d77b57c">
+<link rel="apple-touch-icon" sizes="76x76" href="https://royaleapi.com/static/img/favicon2/apple-icon-76x76.png?t=9f254eaac">
+<link rel="apple-touch-icon" sizes="114x114" href="https://royaleapi.com/static/img/favicon2/apple-icon-114x114.png?t=6a4b7f8ec">
+<link rel="apple-touch-icon" sizes="120x120" href="https://royaleapi.com/static/img/favicon2/apple-icon-120x120.png?t=52854523c">
+<link rel="apple-touch-icon" sizes="144x144" href="https://royaleapi.com/static/img/favicon2/apple-icon-144x144.png?t=1a1a1059c">
+<link rel="apple-touch-icon" sizes="152x152" href="https://royaleapi.com/static/img/favicon2/apple-icon-152x152.png?t=06ddc337c">
+<link rel="apple-touch-icon" sizes="180x180" href="https://royaleapi.com/static/img/favicon2/apple-icon-180x180.png?t=f29fa7edc">
+<link rel="icon" type="image/png" sizes="192x192"  href="https://royaleapi.com/static/img/favicon2/android-icon-192x192.png?t=22f051bec">
+<link rel="icon" type="image/png" sizes="32x32" href="https://royaleapi.com/static/img/favicon2/favicon-32x32.png?t=928771c9c">
+<link rel="icon" type="image/png" sizes="96x96" href="https://royaleapi.com/static/img/favicon2/favicon-96x96.png?t=c1c529c8c">
+<link rel="icon" type="image/png" sizes="16x16" href="https://royaleapi.com/static/img/favicon2/favicon-16x16.png?t=bdf872bec">
+
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://royaleapi.com/static/img/favicon2/ms-icon-144x144.png?t=1a1a1059c">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="manifest" href="/manifest.json?url=http%3A//royaleapi.com/replay%3Ftag%3D028PU89CL99C%26team_tags%3DR998YLQ0L%26opponent_tags%3D2LUY2Q98">
+<link rel="mask-icon" href="https://royaleapi.com/static/img/favicon/safari-pinned-tab.svg?t=c175d491c" color="#5bbad5">
+<link rel="shortcut icon" href="https://royaleapi.com/favicon.ico">
+<meta name="msapplication-config" content="https://royaleapi.com/static/img/favicon/browserconfig.xml?t=b1e51498c">
+<meta name="theme-color" content="#ffffff">
+<link rel="preload" href="https://cdn.royaleapi.com/static/fonts/source-sans-pro-v14-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://cdn.royaleapi.com" crossorigin>
+<link rel="preconnect" href="https://www.google-analytics.com">
+<link rel="preconnect" href="https://a.pub.network/" crossorigin />
+<link rel="preconnect" href="https://b.pub.network/" crossorigin />
+<link rel="preconnect" href="https://c.pub.network/" crossorigin />
+<link rel="preconnect" href="https://d.pub.network/" crossorigin />
+<link rel="preconnect" href="https://c.amazon-adsystem.com" crossorigin />
+<link rel="preconnect" href="https://s.amazon-adsystem.com" crossorigin />
+<link rel="preconnect" href="https://secure.quantserve.com/" crossorigin />
+<link rel="preconnect" href="https://rules.quantcount.com/" crossorigin />
+<link rel="preconnect" href="https://pixel.quantserve.com/" crossorigin />
+<link rel="preconnect" href="https://cmp.quantcast.com/" crossorigin />
+<link rel="preconnect" href="https://btloader.com/" crossorigin />
+<link rel="preconnect" href="https://api.btloader.com/" crossorigin />
+<link rel="preconnect" href="https://confiant-integrations.global.ssl.fastly.net" crossorigin />
+    <link rel="alternate" href="https://royaleapi.com/replay?lang=de&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="de" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=en&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="en" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=es&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="es" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=fr&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="fr" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=it&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="it" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=ja&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="ja" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=ko&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="ko" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=nl&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="nl" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=pl&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="pl" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=pt&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="pt" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=ru&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="ru" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=vi&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="vi" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=zh&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="zh-Hans" />
+<link rel="alternate" href="https://royaleapi.com/replay?lang=zh_Hant&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98" hreflang="zh-Hant" />
+<link rel="canonical" href="https://royaleapi.com/replay?lang=en&tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98"/>
+
+        <meta name="google" content="notranslate"/>
+    <!-- Rich Link Preview -->
+    <meta name="title" content="Battle Replay - RoyaleAPI">
+    <meta name="description" content="The definitive source about decks, players and teams in Clash Royale. Explore advanced statistics about decks and cards based on millions of games per week.">
+        <meta name="keywords"
+              content="Clash Royale, stats, analytics, decks, esports, API, chests, RoyaleAPI, statistics, meta, best, cards, pro">
+    <meta property="og:title" content="Battle Replay - RoyaleAPI">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="RoyaleAPI">
+    <meta property="og:url" content="https://royaleapi.com/replay?tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98">
+    <!-- End: Rich Link Preview -->
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@RoyaleAPI">
+    <meta name="twitter:site:id" content="901152315301806080">
+    <meta name="twitter:creator" content="@RoyaleAPI">
+    <meta name="twitter:creator:id" content="901152315301806080">
+    <meta name="twitter:title" content="Battle Replay - RoyaleAPI">
+    <meta name="twitter:description" content="The definitive source about decks, players and teams in Clash Royale. Explore advanced statistics about decks and cards based on millions of games per week.">
+    <link rel="search" type="application/opensearchdescription+xml" title="RoyaleAPI" href="/opensearch.xml"/>
+
+            <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image" content="https://cdns3.royaleapi.com/cdn-cgi/image/w=1200,h=630/static/img/og/s68-og.jpg">
+    <meta name="twitter:image" content="https://cdns3.royaleapi.com/cdn-cgi/image/w=1200,h=630/static/img/og/s68-og.jpg">
+
+
+        <meta property="og:description" content="The definitive source about decks, players and teams in Clash Royale. Explore advanced statistics about decks and cards based on millions of games per week.">
+
+
+<script>
+    window.dataLayer = window.dataLayer || [];
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TCGM34G');</script>
+<!-- End Google Tag Manager -->
+    <script>
+        window.__royaleapi_t = 1764048307;
+        window.__royaleapi_a = 1;
+    </script>
+
+        
+
+
+            <link rel="stylesheet" href="https://a.pub.network/royaleapi-com/cls.css">
+            <script data-cfasync="false" type="text/javascript">
+                var freestar = freestar || {};
+                freestar.queue = freestar.queue || [];
+                freestar.config = freestar.config || {};
+                freestar.config.enabled_slots = [];
+                freestar.initCallback = function () {
+                    (freestar.config.enabled_slots.length === 0) ? freestar.initCallbackCalled = false : freestar.newAdSlots(freestar.config.enabled_slots)
+                }
+            </script>
+            <script src="https://a.pub.network/royaleapi-com/pubfig.min.js" data-cfasync="false" async></script>
+
+
+
+
+
+    <!-- App scripts -->
+            <link rel="stylesheet" href="https://cdn.royaleapi.com/static/fomantic-2.8/dist/semantic.min.css?t=b3492b24c">
+
+            <link rel="stylesheet" href="https://cdn.royaleapi.com/static/scss/app.css?t=c535c4d8c">
+
+            <link
+            rel="stylesheet"
+            href="https://cdn.royaleapi.com/static/scss/app_defer.css?t=74a8395ac"
+            media="print"
+            onload="this.media='all'; this.onload = null"
+    >
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.royaleapi.com/static/scss/app_defer.css?t=74a8395ac">
+    </noscript>
+
+                <script data-cfasync="false"  type="text/javascript" src="https://cdn.royaleapi.com/static/jslib/jquery/jquery-3.5.1.min.js?t=c76448a1c" crossorigin="anonymous"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.4/mobile-detect.min.js"></script>
+                <script data-cfasync="false"  type="text/javascript" src="https://cdn.royaleapi.com/static/fomantic-2.8/dist/semantic.min.js?t=4607d0a7c" crossorigin="anonymous"></script>
+
+
+
+</head>
+<body class="">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TCGM34G"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><div id="__royaleapi_meta" data-country="US"></div>
+<!-- Sidebar -->
+
+<!-- End Sidebar -->
+
+<!-- always on topnav -->
+    <div id="top_menu" class="ui borderless fluid menu fixed top">
+        <a class="brand item header" href="/">
+            <img src="https://cdn.royaleapi.com/static/img/branding/royaleapi-logo-128.png?t=feb800c3c" style="height:2rem; width: 2rem;" alt="RoyaleAPI"/>
+            <span class="mobile-hide" style="padding-left:0.7rem;">RoyaleAPI</span>
+        </a>
+        <div class="right compact menu">
+            <a class="mobile-hide nav item" href="/decks">
+Decks            </a>
+            <a class="mobile-hide nav item" href="/cards/popular?time=7d&mode=grid&cat=Ranked&sort=rating">
+Cards            </a>
+            <a class="mobile-hide nav item" href="/players">
+Players            </a>
+            <a class="mobile-hide nav item" href="/clans">
+Clans            </a>
+            <a class="mobile-hide nav item" href="/blog">
+News            </a>
+            <!-- Unified search -->
+            <div id="search_all_button" class="link item">
+                <i class="search icon"></i>
+            </div>
+
+            <!-- login -->
+    <a id="user_button" class="link item" href="/login">
+        <i class="user icon"></i>
+    </a>
+
+            <!-- Saved -->
+            <div id="top-fave" class="ui dropdown item">
+                <i class="heart icon"></i>
+                <div id="player_saved_menu" class="menu">
+                </div>
+            </div>
+            <div id="sidebar-toggle" class="link item">
+                <i class="content icon"></i>
+            </div>
+        </div>
+    </div>
+<div class="pusher">
+
+
+<div id="global_search_segment" class="ui attached segment global_search hidden">
+    <div class="content">
+            <form class="ui form global_search" action="/player/search/results" method="get">
+        <div class="player_search_container ui fluid search">
+            <div class="field" data-name="player">
+                <label>Player</label>
+                <div class="ui icon large input">
+                    <input class="prompt" data-section="player" type="text" name="q" placeholder="Name or tag, e.g. C0G20PR2"/>
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+            <div class="results"></div>
+        </div>
+    </form>
+
+            <form class="ui form global_search" action="/clan" method="get">
+        <div class="clan_search_container ui fluid search">
+            <div class="field" data-name="clan">
+                <label>Clan</label>
+                <div class="ui icon large input">
+                    <input class="prompt" data-section="clan" type="text" name="q" placeholder="Name or tag, e.g. 9PJ82CRC"/>
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+            <div class="results"></div>
+        </div>
+    </form>
+
+            <form class="ui form global_search" action="/tournament" method="get">
+        <div class="tournament_search_container ui fluid search">
+            <div class="field" data-name="tournament">
+                <label>Tournament</label>
+                <div class="ui icon large input">
+                    <input class="prompt" data-section="tournament" type="text" name="q" placeholder="Name or tag"/>
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+            <div class="results"></div>
+        </div>
+    </form>
+
+            <form class="ui form global_search" action="/blog/search" method="get">
+        <div class="blog_search_container ui fluid search">
+            <div class="field" data-name="blog">
+                <label>Blog</label>
+                <div class="ui icon large input">
+                    <input class="prompt" data-section="blog" type="text" name="q" placeholder="Search"/>
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+            <div class="results"></div>
+        </div>
+    </form>
+
+        <button class="ui icon button" id="global_search_close_button">
+            <i class="close icon"></i>
+        </button>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div id="topbar">
+    <div class="ui attached segment">
+        <div class="nav_aux_container">
+            <div class="creator_code_segment item">
+                <img class="ui mini image floated left margin0" src="https://cdn.royaleapi.com/static/img/ui/creator-code_128-fs8.png?t=a3b3881bc" alt="Creator Code" style="height:1.5rem;width:auto;"/>
+                <!--googleoff: all-->Creator Code<!--googleon: all-->
+                <strong>RoyaleAPI</strong>
+            </div>
+            <div class="language_selector_segment item">
+<div id="language_sidebar_button" class="link item language_button" style="text-align: right;">
+            <i class="us flag"></i>
+            English
+</div>            </div>
+
+        </div>
+        <div class="nav_container main">
+            <a class="item" href="/decks/popular">
+Decks            </a>
+            <a class="item" href="/deck-builder">
+Deck Builder            </a>
+            <a class="item" href="/cards/popular?time=7d&mode=grid&cat=Ranked&sort=rating">
+Cards            </a>
+            <a class="item" href="/players">
+Players            </a>
+            <a class="item" href="/clans">
+Clans            </a>
+            <a class="item" href="/esports">
+Esports            </a>
+
+            <a class="item" href="/blog">
+News + Blog            </a>
+
+            <a class="item" href="/strategy">
+Strategy            </a>
+            <a class="item" href="/tournaments">
+Tournaments            </a>
+
+
+                            <a class="item" href="/blog/season-78-balance-wip-december-2025">
+        <div class="icon_container " style=""><i class="pink balance icon"></i></div>
+        WIP Balance
+    </a>
+
+                            <a class="item" href="/blog/hero-mini-pekka-december-2025">
+        <div class="icon_container icon-card-ev1-legendary" style="background-image:url(https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64/static/img/cards/v8-7d088998/mini-pekka-hero.png);"></div>
+        Hero Mini Pekka
+    </a>
+
+                            <a class="item" href="/blog/hero-musketeer-december-2025">
+        <div class="icon_container icon-card-ev1-legendary" style="background-image:url(https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64/static/img/cards/v8-7d088998/giant-hero.png);"></div>
+        Hero Giant
+    </a>
+
+                            <a class="item" href="/blog/hero-musketeer-december-2025">
+        <div class="icon_container icon-card-ev1-legendary" style="background-image:url(https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64/static/img/cards/v8-7d088998/musketeer-hero.png);"></div>
+        Hero Musketeer
+    </a>
+
+                            <a class="item" href="/blog/hero-knight-and-heroes-december-2025">
+        <div class="icon_container icon-card-ev1-legendary" style="background-image:url(https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64/static/img/cards/v8-7d088998/knight-hero.png);"></div>
+        Hero Knight
+    </a>
+
+                            <a class="item" href="/blog/2025-q4-update-november-2025">
+        <div class="icon_container " style="background-image:url(https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64/static/img/ui/hero-box-trim.png);"></div>
+        Hero Update
+    </a>
+
+
+
+
+
+        </div>
+
+
+        <h5 class="ui header secondary">
+            RoyaleAPI
+        </h5>
+        <div class="nav_container secondary">
+            <a class="item" href="/about">
+About Us            </a>
+            <a class="item" href="/donate">
+Donate            </a>
+            <a class="item" href="https://brand.royaleapi.com" target="_blank">
+Brand            </a>
+            <a class="item" href="https://help.royaleapi.com" target="_blank">
+Help            </a>
+            <a class="item" href="https://support.royaleapi.com" target="_blank">
+Support            </a>
+            <a class="item" href="/contact">
+Contact Us            </a>
+            <a class="item" href="/privacy">Privacy Policy</a>
+            <a class="item" href="/tos">Terms of Service</a>
+        </div>
+
+        <h5 class="ui header secondary topmargin0">
+            Social
+        </h5>
+
+        <div class="nav_container secondary">
+            <a class="item" href="https://twitter.com/RoyaleAPI">
+                <i class="icon icon-royaleapi icon-twitter">        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m3 21l7.548-7.548M21 3l-7.548 7.548m0 0L8 3H3l7.548 10.452m2.904-2.904L21 21h-5l-5.452-7.548" color="currentColor"/></svg>
+</i>
+                X (Twitter)
+            </a>
+            <a class="item" href="https://facebook.com/RoyaleAPI">
+                <i class="facebook icon"></i>
+                Facebook
+            </a>
+            <a class="item" href="https://instagram.com/RoyaleAPI">
+                <i class="instagram icon"></i>
+                Instagram
+            </a>
+            <a class="item" href="https://www.reddit.com/r/RoyaleAPI/">
+                <i class="reddit icon"></i>
+                Reddit
+            </a>
+            <a class="item" href="https://youtube.com/c/RoyaleAPI">
+                <i class="youtube icon"></i>
+                YouTube
+            </a>
+            <a class="item" href="https://discord.royaleapi.com">
+                <i class="discord icon"></i>
+                Discord
+            </a>
+            <a class="item" href="https://github.com/RoyaleAPI">
+                <i class="github icon"></i>
+                Github
+            </a>
+            <a class="item" href="https://www.tiktok.com/@royaleapi1">
+                <i class="icon icon-royaleapi">        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6c0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64c0 3.33 2.76 5.7 5.69 5.7c3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48"/></svg>
+</i>
+                Tiktok
+            </a>
+        </div>
+    </div>
+
+</div>    <!--googleoff: all-->
+    <!--googleon: all-->
+        <!--googleoff: all-->
+        <div class="ui attached error message margin0 adblock_message hidden">
+        </div>
+        <!--googleon: all-->
+
+
+    <!-- Page Contents -->
+    <div id="page_content_container">
+        <div id="fullpage_screenshot_branding" class="ui attached borderless stackable menu" style="display:none;">
+            <div class="ui header item">
+                <img class="ui small image" src="https://cdn.royaleapi.com/static/img/branding/royaleapi-logo-128.png?t=feb800c3c"/>
+                RoyaleAPI
+            </div>
+            <div class="item">https://royaleapi.com/replay?tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98</div>
+            <div id="fullpage_screenshot_datetime" class="right item"></div>
+        </div>
+        <div id="page_content">
+    <div class="ui attached segment">
+        
+<h5 class="ui header">
+Battle Replay</h5>
+<div class="ui info message">
+    <div class="header">This feature requires login</div>
+    <div style="margin: 1rem 0;">
+Battle Replay shows a detailed post-game analysis about each battle.This is an advanced feature and requires login.        <a href="/blog/replay">Learn more about Replay</a>
+    </div>
+    <div>
+
+
+<div style="display:flex; flex-wrap:wrap;">
+    <div class="item" style="margin:0.5rem;">
+        <a class="ui primary button" href="/login/discord?r=/replay?tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98&is_overlay=0">
+            <i class="discord icon"></i> Discord
+        </a>
+    </div>
+    <div class="item" style="margin:0.5rem;">
+        <a class="ui twitter button" href="/login/twitter?r=/replay?tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98&is_overlay=0">
+            <i class="twitter icon"></i> Twitter
+        </a>
+    </div>
+    <div class="item" style="margin:0.5rem;">
+        <a class="ui red button" href="/login/google?r=/replay?tag=028PU89CL99C&team_tags=R998YLQ0L&opponent_tags=2LUY2Q98&is_overlay=0">
+            <i class="google icon"></i> Google
+        </a>
+    </div>
+</div>
+    </div>
+</div>
+    </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+
+
+
+
+<div class="ui green inverted attached borderless segment creator_code_segment" style="border:0">
+        <div class="ui container">
+    <img class="ui mini image floated left" src="https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64,format=auto/static/img/ui/creator-code_128.png" alt="Creator Code" style="height:auto;width:1.5rem;"/>
+Support us with creator code <strong>RoyaleAPI</strong>
+        </div>
+</div>
+
+<a href="https://store.supercell.com/clashroyale/product/diamond-pass/91422bd8?boost=royaleapi">
+    <div class="ui purple inverted attached borderless segment sc_store_segment" style="border:0">
+            <div class="ui container">
+        <img class="ui mini image floated left" src="https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64,format=auto/static/img/ui/pass/pass-diamond-icon.png" alt="Diamond Pass" style="height:auto;width:1.5rem;"/>
+        Buy Diamond Pass at Supercell Store with perks
+            </div>
+    </div>
+</a>
+
+
+<div class="ui blue inverted attached borderless segment" style="border:0">
+
+    <a class="ui container" href="/donate" style="color:white;">
+        <img class="ui mini image floated left" src="https://cdns3.royaleapi.com/cdn-cgi/image/w=64,h=64,format=auto/static/img/ui/king-blue.png" alt="Donate" style="height:auto;width:1.5rem;"/>
+        <strong>Donate</strong> to support us
+    </a>
+
+</div>
+<div class="ui inverted vertical footer attached segment">
+    <!-- Bottom ad -->
+
+    <div class="ui hidden divider"></div>
+    <div class="ui container">
+        <div class="ui stackable inverted grid">
+            <div class="row">
+                <div class="four wide column">
+                    <div class="ui stackable doubling inverted two column grid">
+                        <div class="column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted tiny header">RoyaleAPI</h4>
+                                    <a class="item" href="/">
+                                        Home
+                                    </a>
+                                    <a class="item" href="/decks">
+                                        Decks
+                                    </a>
+                                    <a class="item" href="/cards">
+                                        Cards
+                                    </a>
+                                    <a class="item" href="/players">
+                                        Players
+                                    </a>
+                                    <a class="item" href="/clans">
+                                        Clans
+                                    </a>
+                                    <a class="item" href="/esports">
+                                        Esports
+                                    </a>
+                                    <a class="item" href="/strategy">
+                                        Strategy
+                                    </a>
+                                    <a class="item" href="/blog">
+                                        Blog
+                                    </a>
+                                    <a class="item" href="/news">
+                                        News
+                                    </a>
+                                    <a class="item" href="/tournaments">
+                                        Tournaments
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="four wide column">
+                    <div class="ui stackable inverted equal width column grid">
+                        <div class="column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted tiny header">Help</h4>
+                                <a class="item" href="/about">About Us</a>
+                                <a class="item" href="/faq">FAQ</a>
+                                <a class="item" href="/business-inquiries">
+Business Inquiries</a>
+                                <a class="item" href="https://discuss.royaleapi.com/c/feature-request/7">
+Feature Requests                                </a>
+                                <a class="item" href="/privacy">
+Privacy Policy</a>
+                                <a class="item" href="/tos">
+Terms of Service</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="social_column" class="eight wide column">
+                    <h4 class="ui inverted tiny header">Social</h4>
+                        <a class="social_icon_link" href="https://twitter.com/RoyaleAPI">
+                            <img class="social_icon popup" src="https://cdn.royaleapi.com/static/img/brands/circle/twitter.svg?t=46fc03a4c" data-content="Twitter"/>
+                        </a>
+                        <a class="social_icon_link" href="https://www.facebook.com/RoyaleAPI">
+                            <img class="social_icon popup" src="https://cdn.royaleapi.com/static/img/brands/circle/facebook.svg?t=1ba31c3ec" data-content="Facebook"/>
+                        </a>
+                        <a class="social_icon_link" href="https://instagram.com/RoyaleAPI">
+                            <img class="social_icon popup" src="https://cdn.royaleapi.com/static/img/brands/circle/instagram.svg?t=10749341c" data-content="Instagram"/>
+                        </a>
+                        <a class="social_icon_link" href="https://discord.royaleapi.com">
+                            <img class="social_icon popup" src="https://cdn.royaleapi.com/static/img/brands/circle/discord.svg?t=0e4faa34c" data-content="Discord"/>
+                        </a>
+                        <a class="social_icon_link" href="https://github.com/RoyaleAPI">
+                            <img class="social_icon popup" src="https://cdn.royaleapi.com/static/img/brands/circle/github.svg?t=252853c9c" data-content="Github"/>
+                        </a>
+                        <a class="social_icon_link" href="https://www.reddit.com/r/RoyaleAPI/">
+                            <img class="social_icon popup" src="https://cdn.royaleapi.com/static/img/brands/circle/reddit.svg?t=37665964c" data-content="Reddit"/>
+                        </a>
+                        <a class="social_icon_link" href="https://youtube.com/c/RoyaleAPI">
+                            <img class="social_icon popup" src="https://cdn.royaleapi.com/static/img/brands/circle/youtube.svg?t=b87ee8c8c" data-content="Youtube"/>
+                        </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <a href="/donate" class="ui blue button">Donate</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="ui divider"></div>
+        <div class="ad_legal">
+            <!-- HTML for geo depending button -->
+            <button id="pmLink" class="ui inverted secondary button">Privacy Manager</button>
+        </div>
+
+        <div class="ui vertical segment">
+            <div class="ui inverted meta disclaimer supercell_fan_content_policy_disclaimer">
+                <p>
+                    This content is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy.
+                    &nbsp;
+                    <a href="https://www.supercell.com/fan-content-policy" target="_blank">
+                        <i class="link external icon"></i>
+                    </a>
+                </p>
+            </div>
+            <div class="copyright">
+                &copy;2025 RoyaleAPI. All rights reserved. RoyaleAPI&reg; is a registered trademark of
+                <a href="https://smluniverse.com">SML Universe Limited</a>.
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="language_modal" class="ui modal">
+    <i class="close icon"></i>
+    <div class="header"><i class="language large icon"></i></div>
+    <div class="content">
+        <div class="description">
+            <div class="language_modal_container">
+                    <a class="item active" href="/language/en">
+                        <i class="us flag"></i>
+                        English
+                    </a>
+                    <a class="item " href="/language/es">
+                        <i class="es flag"></i>
+                        Español
+                    </a>
+                    <a class="item " href="/language/fr">
+                        <i class="fr flag"></i>
+                        Français
+                    </a>
+                    <a class="item " href="/language/de">
+                        <i class="de flag"></i>
+                        Deutsch
+                    </a>
+                    <a class="item " href="/language/it">
+                        <i class="it flag"></i>
+                        Italiano
+                    </a>
+                    <a class="item " href="/language/pl">
+                        <i class="pl flag"></i>
+                        Polski
+                    </a>
+                    <a class="item " href="/language/pt">
+                        <i class="br flag"></i>
+                        Português
+                    </a>
+                    <a class="item " href="/language/ru">
+                        <i class="ru flag"></i>
+                        Русский
+                    </a>
+                    <a class="item " href="/language/nl">
+                        <i class="nl flag"></i>
+                        Nederlands
+                    </a>
+                    <a class="item " href="/language/vi">
+                        <i class="vn flag"></i>
+                        Tiếng Việt
+                    </a>
+                    <a class="item " href="/language/ja">
+                        <i class="jp flag"></i>
+                        日本語
+                    </a>
+                    <a class="item " href="/language/ko">
+                        <i class="kr flag"></i>
+                        한국어
+                    </a>
+                    <a class="item " href="/language/zh">
+                        <i class="cn flag"></i>
+                        简体中文
+                    </a>
+                    <a class="item " href="/language/zh_Hant">
+                        <i class="hk flag"></i>
+                        繁體中文
+                    </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="qrcode_modal" class="ui tiny modal">
+    <i class="close icon"></i>
+    <div class="header">
+        <div class="title"></div>
+    </div>
+    <div id="qrcode_content" class="content"></div>
+</div>
+
+
+
+<div class="vm-placement" data-id="610ba8100830e344515f1000" style="display:none"></div>
+            <script data-cfasync="false"  type="text/javascript" src="https://cdn.royaleapi.com/static/dist/vendor.js?t=61666617c" crossorigin="anonymous"></script>
+
+        <script data-cfasync="false"  type="text/javascript" src="https://cdn.royaleapi.com/static/js/ads.js?t=f439b42ac" crossorigin="anonymous"></script>
+
+
+            <script data-cfasync="false"  type="text/javascript" src="https://cdn.royaleapi.com/static/dist/app.main.js?t=74f720cfc" crossorigin="anonymous"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (populate_fave_menu) {
+            populate_fave_menu();
+        }
+
+    });
+</script>
+
+
+    
+
+
+
+
+
+                        <div class="__royaleapi_fs_bottom_rail">
+        </div>
+
+                        <div class="__royaleapi_fs_bottom_rail">
+        </div>
+
+            <script>
+!function(){const e=window.innerWidth<768,_=window.innerWidth>=1801,a=window.innerWidth>=1521,l=[{className:"__royaleapi_fs_leaderboard__970x250__300x250",add_type_only:!1,is_desktop_only:!1,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_incontent_leaderboard_btf"},{className:"__royaleapi_fs_leaderboard__970x90__320x100__atf",add_type_only:!1,is_desktop_only:!1,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_incontent_leaderboard_atf"},{className:"__royaleapi_fs_leaderboard__970x90__320x100",add_type_only:!1,is_desktop_only:!1,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_incontent_leaderboard_1"},{className:"__royaleapi_fs_leaderboard__320x100_mobi",add_type_only:!1,is_desktop_only:!1,is_mobi_only:!0,is_side_rail:!1,placementName:"royaleapi_incontent_leaderboard_1"},{className:"__royaleapi_fs_sky_atf_left",add_type_only:!1,is_desktop_only:!0,is_mobi_only:!1,is_side_rail:!0,placementName:"royaleapi_sidewall_left",slim_placementName:"royaleapi_160x600"},{className:"__royaleapi_fs_sky_atf_right",add_type_only:!1,is_desktop_only:!0,is_mobi_only:!1,is_side_rail:!0,placementName:"royaleapi_sidewall_right",slim_placementName:"royaleapi_160x600"},{className:"__royaleapi_fs_sky_160x600",add_type_only:!1,is_desktop_only:!0,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_160x600"},{className:"__royaleapi_fs__728x90",add_type_only:!1,is_desktop_only:!0,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_728x90"},{className:"__royaleapi_fs_leaderboard__970x90__320x250",add_type_only:!1,is_desktop_only:!1,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_leaderboard_1"},{className:"__royaleapi_fs__320x250",add_type_only:!1,is_desktop_only:!1,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_300x250"},{className:"__royaleapi_fs_bottom_rail",type:"bottom_rail",add_type_only:!0,is_desktop_only:!1,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_bottom_rail"},{className:"__royaleapi_small_leaderboard_320x100",add_type_only:!1,is_desktop_only:!1,is_mobi_only:!1,is_side_rail:!1,placementName:"royaleapi_small_leaderboard"}];function o(){const o=function(){let o=[];return l.forEach((function(l,i){const s=l.className,t=document.querySelectorAll(`.${s}`);if(t.length>0){let i=!0;l.is_desktop_only&&e&&(i=!1),l.is_mobi_only&&(e||(i=!1)),i&&(l.add_type_only?o.push({type:l.type,placementName:l.placementName}):t.forEach((function(e,i){const t=`${s}__${i}`;l.is_side_rail?_?(e.id=t,o.push({selectorId:t,placementName:l.placementName})):a&&(e.id=t,o.push({selectorId:t,placementName:l.slim_placementName})):(e.id=t,o.push({selectorId:t,placementName:l.placementName}))})))}})),o}();if("undefined"==typeof freestar)return;let i=[];o.forEach((function(e){"bottom_rail"===e.type?freestar.queue.push((function(){freestar.newStickyFooter(e.placementName)})):i.push({placementName:e.placementName,slotId:e.selectorId})})),freestar.queue.push((function(){freestar.newAdSlots(i)})),console.log("ad_slots"),i.forEach((e=>{console.log(e)}))}window.addEventListener("DOMContentLoaded",(function(){o(),function(){const e=document.querySelectorAll(".ad_side_rail_close_button");for(let _=0;_<e.length;_++){const a=e[_];a.addEventListener("click",(function(){a.parentElement.classList.add("hidden")}))}}()}))}();            </script>
+
+
+
+
+    <!--googleoff: all-->
+    <div class="ad_block_message_mobile" style="display:none;">
+        😭 <strong>Blocking ads rigs matchmaking.</strong>
+        We depend on advertising revenue to maintain our servers. Please disable your adblocker to help keep us running.
+    </div>
+    <div class="ad_block_message_desktop" style="display:none;">
+        😭 <strong>Blocking ads rigs matchmaking.</strong>
+        We depend on advertising revenue to maintain our servers. Please disable your adblocker to help keep us running.<br/>
+        🥰 <strong>You can also disable ads by donating to us.</strong>
+        Patrons who donate US$30/month via Patreon or who have supported us with a lifetime $100 in donations via PayPal can enjoy ad-free browsing forever.
+        <a href="/donate">Details</a>
+    </div>
+    <!--googleon: all-->
+
+<!-- NewRelics -->
+            <script data-cfasync="false" async type="text/javascript" src="https://cdn.royaleapi.com/static/js/newrelic/newrelic-royaleapiweb.js?t=7731a985c" crossorigin="anonymous"></script>
+
+<!-- END: NewRelics -->
+
+<!-- NewRelics -->
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a460466bf474b96',t:'MTc2NDEyNDc4NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

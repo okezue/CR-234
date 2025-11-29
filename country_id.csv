@@ -1,0 +1,262 @@
+isCountry,id,name,countryCode
+False,57000000,Europe,
+False,57000001,North America,
+False,57000002,South America,
+False,57000003,Asia,
+False,57000004,Oceania,
+False,57000005,Africa,
+False,57000006,International,
+True,57000007,Afghanistan,AF
+True,57000008,Åland Islands,AX
+True,57000009,Albania,AL
+True,57000010,Algeria,DZ
+True,57000011,American Samoa,AS
+True,57000012,Andorra,AD
+True,57000013,Angola,AO
+True,57000014,Anguilla,AI
+True,57000015,Antarctica,AQ
+True,57000016,Antigua and Barbuda,AG
+True,57000017,Argentina,AR
+True,57000018,Armenia,AM
+True,57000019,Aruba,AW
+True,57000020,Ascension Island,AC
+True,57000021,Australia,AU
+True,57000022,Austria,AT
+True,57000023,Azerbaijan,AZ
+True,57000024,Bahamas,BS
+True,57000025,Bahrain,BH
+True,57000026,Bangladesh,BD
+True,57000027,Barbados,BB
+True,57000028,Belarus,BY
+True,57000029,Belgium,BE
+True,57000030,Belize,BZ
+True,57000031,Benin,BJ
+True,57000032,Bermuda,BM
+True,57000033,Bhutan,BT
+True,57000034,Bolivia,BO
+True,57000035,Bosnia and Herzegovina,BA
+True,57000036,Botswana,BW
+True,57000037,Bouvet Island,BV
+True,57000038,Brazil,BR
+True,57000039,British Indian Ocean Territory,IO
+True,57000040,British Virgin Islands,VG
+True,57000041,Brunei,BN
+True,57000042,Bulgaria,BG
+True,57000043,Burkina Faso,BF
+True,57000044,Burundi,BI
+True,57000045,Cambodia,KH
+True,57000046,Cameroon,CM
+True,57000047,Canada,CA
+True,57000048,Canary Islands,IC
+True,57000049,Cape Verde,CV
+True,57000050,Caribbean Netherlands,BQ
+True,57000051,Cayman Islands,KY
+True,57000052,Central African Republic,CF
+True,57000053,Ceuta and Melilla,EA
+True,57000054,Chad,TD
+True,57000055,Chile,CL
+True,57000056,China,CN
+True,57000057,Christmas Island,CX
+True,57000058,Cocos (Keeling) Islands,CC
+True,57000059,Colombia,CO
+True,57000060,Comoros,KM
+True,57000061,Congo (DRC),CG
+True,57000062,Congo (Republic),CD
+True,57000063,Cook Islands,CK
+True,57000064,Costa Rica,CR
+True,57000065,Côte d’Ivoire,CI
+True,57000066,Croatia,HR
+True,57000067,Cuba,CU
+True,57000068,Curaçao,CW
+True,57000069,Cyprus,CY
+True,57000070,Czech Republic,CZ
+True,57000071,Denmark,DK
+True,57000072,Diego Garcia,DG
+True,57000073,Djibouti,DJ
+True,57000074,Dominica,DM
+True,57000075,Dominican Republic,DO
+True,57000076,Ecuador,EC
+True,57000077,Egypt,EG
+True,57000078,El Salvador,SV
+True,57000079,Equatorial Guinea,GQ
+True,57000080,Eritrea,ER
+True,57000081,Estonia,EE
+True,57000082,Ethiopia,ET
+True,57000083,Falkland Islands,FK
+True,57000084,Faroe Islands,FO
+True,57000085,Fiji,FJ
+True,57000086,Finland,FI
+True,57000087,France,FR
+True,57000088,French Guiana,GF
+True,57000089,French Polynesia,PF
+True,57000090,French Southern Territories,TF
+True,57000091,Gabon,GA
+True,57000092,Gambia,GM
+True,57000093,Georgia,GE
+True,57000094,Germany,DE
+True,57000095,Ghana,GH
+True,57000096,Gibraltar,GI
+True,57000097,Greece,GR
+True,57000098,Greenland,GL
+True,57000099,Grenada,GD
+True,57000100,Guadeloupe,GP
+True,57000101,Guam,GU
+True,57000102,Guatemala,GT
+True,57000103,Guernsey,GG
+True,57000104,Guinea,GN
+True,57000105,Guinea-Bissau,GW
+True,57000106,Guyana,GY
+True,57000107,Haiti,HT
+True,57000108,Heard & McDonald Islands,HM
+True,57000109,Honduras,HN
+True,57000110,Hong Kong,HK
+True,57000111,Hungary,HU
+True,57000112,Iceland,IS
+True,57000113,India,IN
+True,57000114,Indonesia,ID
+True,57000115,Iran,IR
+True,57000116,Iraq,IQ
+True,57000117,Ireland,IE
+True,57000118,Isle of Man,IM
+True,57000119,Israel,IL
+True,57000120,Italy,IT
+True,57000121,Jamaica,JM
+True,57000122,Japan,JP
+True,57000123,Jersey,JE
+True,57000124,Jordan,JO
+True,57000125,Kazakhstan,KZ
+True,57000126,Kenya,KE
+True,57000127,Kiribati,KI
+True,57000128,Kosovo,XK
+True,57000129,Kuwait,KW
+True,57000130,Kyrgyzstan,KG
+True,57000131,Laos,LA
+True,57000132,Latvia,LV
+True,57000133,Lebanon,LB
+True,57000134,Lesotho,LS
+True,57000135,Liberia,LR
+True,57000136,Libya,LY
+True,57000137,Liechtenstein,LI
+True,57000138,Lithuania,LT
+True,57000139,Luxembourg,LU
+True,57000140,Macau,MO
+True,57000141,Macedonia (FYROM),MK
+True,57000142,Madagascar,MG
+True,57000143,Malawi,MW
+True,57000144,Malaysia,MY
+True,57000145,Maldives,MV
+True,57000146,Mali,ML
+True,57000147,Malta,MT
+True,57000148,Marshall Islands,MH
+True,57000149,Martinique,MQ
+True,57000150,Mauritania,MR
+True,57000151,Mauritius,MU
+True,57000152,Mayotte,YT
+True,57000153,Mexico,MX
+True,57000154,Micronesia,FM
+True,57000155,Moldova,MD
+True,57000156,Monaco,MC
+True,57000157,Mongolia,MN
+True,57000158,Montenegro,ME
+True,57000159,Montserrat,MS
+True,57000160,Morocco,MA
+True,57000161,Mozambique,MZ
+True,57000162,Myanmar (Burma),MM
+True,57000163,Namibia,NA
+True,57000164,Nauru,NR
+True,57000165,Nepal,NP
+True,57000166,Netherlands,NL
+True,57000167,New Caledonia,NC
+True,57000168,New Zealand,NZ
+True,57000169,Nicaragua,NI
+True,57000170,Niger,NE
+True,57000171,Nigeria,NG
+True,57000172,Niue,NU
+True,57000173,Norfolk Island,NF
+True,57000174,North Korea,KP
+True,57000175,Northern Mariana Islands,MP
+True,57000176,Norway,NO
+True,57000177,Oman,OM
+True,57000178,Pakistan,PK
+True,57000179,Palau,PW
+True,57000180,Palestine,PS
+True,57000181,Panama,PA
+True,57000182,Papua New Guinea,PG
+True,57000183,Paraguay,PY
+True,57000184,Peru,PE
+True,57000185,Philippines,PH
+True,57000186,Pitcairn Islands,PN
+True,57000187,Poland,PL
+True,57000188,Portugal,PT
+True,57000189,Puerto Rico,PR
+True,57000190,Qatar,QA
+True,57000191,Réunion,RE
+True,57000192,Romania,RO
+True,57000193,Russia,RU
+True,57000194,Rwanda,RW
+True,57000195,Saint Barthélemy,BL
+True,57000196,Saint Helena,SH
+True,57000197,Saint Kitts and Nevis,KN
+True,57000198,Saint Lucia,LC
+True,57000199,Saint Martin,MF
+True,57000200,Saint Pierre and Miquelon,PM
+True,57000201,Samoa,WS
+True,57000202,San Marino,SM
+True,57000203,São Tomé and Príncipe,ST
+True,57000204,Saudi Arabia,SA
+True,57000205,Senegal,SN
+True,57000206,Serbia,RS
+True,57000207,Seychelles,SC
+True,57000208,Sierra Leone,SL
+True,57000209,Singapore,SG
+True,57000210,Sint Maarten,SX
+True,57000211,Slovakia,SK
+True,57000212,Slovenia,SI
+True,57000213,Solomon Islands,SB
+True,57000214,Somalia,SO
+True,57000215,South Africa,ZA
+True,57000216,South Korea,KR
+True,57000217,South Sudan,SS
+True,57000218,Spain,ES
+True,57000219,Sri Lanka,LK
+True,57000220,St. Vincent & Grenadines,VC
+True,57000221,Sudan,SD
+True,57000222,Suriname,SR
+True,57000223,Svalbard and Jan Mayen,SJ
+True,57000224,Swaziland,SZ
+True,57000225,Sweden,SE
+True,57000226,Switzerland,CH
+True,57000227,Syria,SY
+True,57000228,Taiwan,TW
+True,57000229,Tajikistan,TJ
+True,57000230,Tanzania,TZ
+True,57000231,Thailand,TH
+True,57000232,Timor-Leste,TL
+True,57000233,Togo,TG
+True,57000234,Tokelau,TK
+True,57000235,Tonga,TO
+True,57000236,Trinidad and Tobago,TT
+True,57000237,Tristan da Cunha,TA
+True,57000238,Tunisia,TN
+True,57000239,Turkey,TR
+True,57000240,Turkmenistan,TM
+True,57000241,Turks and Caicos Islands,TC
+True,57000242,Tuvalu,TV
+True,57000243,U.S. Outlying Islands,UM
+True,57000244,U.S. Virgin Islands,VI
+True,57000245,Uganda,UG
+True,57000246,Ukraine,UA
+True,57000247,United Arab Emirates,AE
+True,57000248,United Kingdom,GB
+True,57000249,United States,US
+True,57000250,Uruguay,UY
+True,57000251,Uzbekistan,UZ
+True,57000252,Vanuatu,VU
+True,57000253,Vatican City,VA
+True,57000254,Venezuela,VE
+True,57000255,Vietnam,VN
+True,57000256,Wallis and Futuna,WF
+True,57000257,Western Sahara,EH
+True,57000258,Yemen,YE
+True,57000259,Zambia,ZM
+True,57000260,Zimbabwe,ZW
