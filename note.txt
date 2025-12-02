@@ -1,6 +1,0 @@
-arena.id
-arena.name
-battleTime
-boatBattleSide
-boatBattleWon
-clan_tag

@@ -1,5 +1,5 @@
 import pandas as pd
 
-df = pd.read_csv("all_players_from_clans.csv")
-df = df.head(10000)
-df.to_csv("small_players.csv", index=False)
+df = pd.read_csv("replay_full_events_all.csv")
+df = df.drop_duplicates(subset=["replay_tag"])
+print(len(df))

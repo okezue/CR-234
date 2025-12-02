@@ -8,7 +8,7 @@ from playwright.async_api import async_playwright, Page
 # Change this to wherever you want your root directory
 ROOT_DIR = os.path.abspath(".")  # for example: "/home/ubuntu/clash_bot"
 
-PLAYERS_CSV = os.path.join(ROOT_DIR, "all_players_from_clans.csv")
+PLAYERS_CSV = os.path.join(ROOT_DIR, "big_data/all_players_from_clans.csv")
 BATTLE_CHUNKS_DIR = os.path.join(ROOT_DIR, "battle_chunks")
 ERROR_LOG_PATH = os.path.join(ROOT_DIR, "error_log.txt")
 STORAGE_STATE_PATH = os.path.join(ROOT_DIR, "myGoogleAuth.json")
@@ -22,7 +22,7 @@ SCROLL_UP_AMOUNT = -1000
 CHUNK_SIZE = 100          # save every 100 players
 MAX_CONCURRENT_PAGES = 2  # how many workers / pages at once
 GIGGLE_TIME = 100
-PLAYERS_PER_PAGE = 10     # after this many players, close tab and open a new one
+PLAYERS_PER_PAGE = 3     # after this many players, close tab and open a new one
 
 
 async def clear_vignette(page: Page) -> None:
