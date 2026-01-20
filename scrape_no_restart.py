@@ -15,7 +15,7 @@ WORKER_ID = 0
 TOTAL_WORKERS = 10
 
 STORAGE_STATE_PATH = "myGoogleAuth.json"
-REPLAY_PATH = "battle_chunks/all_battles_combined_dedup.csv"
+REPLAY_PATH = "all_battles_combined_dedup.csv"
 MAX_WORKERS = 5
 BATCH_SIZE = 100
 
@@ -297,7 +297,7 @@ def reach_current(replay_tags):
                 idx = replay_tags.index(final_id)
                 replay_tags = replay_tags[idx+1:]
             except ValueError:
-                pass  # final_id not found
+                return replay_tags  # final_id not found
     return replay_tags
 
 # =========================================================
@@ -308,30 +308,28 @@ async def main():
     replay_tags = split_tags()
     print("Worker total workload: ", len(replay_tags))
     old_len = len(replay_tags)
+
     # there is already events scraped, so resuming
     replay_tags = reach_current(replay_tags)
     total_tags = len(replay_tags)
-    print("Already finished:", 1-(total_tags/old_len), "%,", total_tags,"out of", old_len)
+    print("Already finished:", 1 - (total_tags / old_len), "%,", total_tags, "out of", old_len)
 
     async with async_playwright() as pw:
-        # # First browser: visible, for manual login
-        # login_browser = await pw.chromium.launch(
-        #     headless=False,
-        #     args=STEALTH_ARGS,
-        # )
-        # await manual_login_and_save_state(login_browser)
-        # await login_browser.close()
-
-        # Second browser: headless, for scraping with saved state
         scrape_browser = await pw.chromium.launch(
             headless=True,
             args=STEALTH_ARGS,
         )
 
-        first_write = True
+        # *** KEY CHANGE HERE ***
+        file_exists = os.path.exists(OUTPUT_CSV)
+        first_write = not file_exists
         total_rows_written = 0
 
-        # Global progress counter across all batches
+        if file_exists:
+            print(f"Resuming and APPENDING to existing {OUTPUT_CSV}")
+        else:
+            print(f"No existing {OUTPUT_CSV}, starting fresh")
+
         overall_completed_ref = {"count": 0}
 
         for start in range(0, total_tags, BATCH_SIZE):
@@ -342,20 +340,16 @@ async def main():
                 f"({batch_size} replays) ==="
             )
 
-            # Queue and shared structures for this batch
             queue: asyncio.Queue = asyncio.Queue()
             results: Dict[str, pd.DataFrame] = {}
             batch_completed_ref = {"count": 0}
 
-            # Enqueue tags
             for tag in batch_tags:
                 await queue.put(tag)
 
-            # Add sentinel items to stop workers
             for _ in range(MAX_WORKERS):
                 await queue.put(None)
 
-            # Start workers
             workers = [
                 asyncio.create_task(
                     worker_task(
@@ -372,10 +366,7 @@ async def main():
                 for i in range(MAX_WORKERS)
             ]
 
-            # Wait for queue to be fully processed
             await queue.join()
-
-            # Ensure workers exit
             for w in workers:
                 await w
 
@@ -383,24 +374,19 @@ async def main():
                 print("No successful data in this batch, skipping write.")
                 continue
 
-            # Combine batch results in the original order of batch_tags
-            batch_frames = [
-                results[tag]
-                for tag in batch_tags
-                if tag in results
-            ]
-
+            batch_frames = [results[tag] for tag in batch_tags if tag in results]
             if not batch_frames:
                 print("No frames after filtering by tag order, skipping write.")
                 continue
 
             combined_batch = pd.concat(batch_frames, ignore_index=True)
+
             mode = "w" if first_write else "a"
             header = first_write
-
             combined_batch.to_csv(OUTPUT_CSV, index=False, mode=mode, header=header)
+
             total_rows_written += len(combined_batch)
-            first_write = False
+            first_write = False  # after the very first write of THIS file
 
             print(
                 f"[Batch] Written {len(combined_batch)} rows from this batch "
