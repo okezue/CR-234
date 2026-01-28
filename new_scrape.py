@@ -309,7 +309,7 @@ async def main():
     print(f"Loaded {len(player_ids)} player IDs to scrape")
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)  # Set to True for production
+        browser = await p.chromium.launch(headless=False)  # Set to True for production
         context = await browser.new_context(storage_state=STORAGE_STATE_PATH, accept_downloads=True)
 
         # Split players among workers
