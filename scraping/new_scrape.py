@@ -219,6 +219,8 @@ async def worker(context, player_ids: list[str], worker_index: int, run_id: str,
             url = f"https://royaleapi.com/player/{pid}/battles/"
             try:
                 await page.goto(url, wait_until="commit", timeout=PAGE_TIMEOUT_MS)
+                await page.wait_for_selector("css=div.some-element", timeout=PAGE_TIMEOUT_MS)
+
 
                 element_locator = page.locator("div.ui.container.sidemargin0.battle_list_container")
                 element_task = asyncio.create_task(element_locator.wait_for(timeout=PAGE_TIMEOUT_MS))
