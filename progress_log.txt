@@ -1,4 +1,4 @@
-Battles scraped: 26427
-Players scraped: 89
-Time spent: 0:29:14.249276
-Last updated: 2026-02-21 13:20:16.165669
+Battles scraped: 0
+Players scraped: 0
+Time spent: 0:00:02.309746
+Last updated: 2026-02-21 16:50:43.214203
