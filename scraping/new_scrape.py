@@ -12,14 +12,23 @@ from playwright.async_api import async_playwright
 # Change this to wherever you want your root directory
 ROOT_DIR = os.path.abspath(".")  # for example: "/home/ubuntu/clash_bot"
 
-PLAYERS_CSV = os.path.join(ROOT_DIR, "big_data/all_players_from_clans.csv")
-BATTLE_CHUNKS_DIR_BASE = "scraped_data/battle_chunks"
-STORAGE_STATE_PATH = os.path.join(ROOT_DIR, "myGoogleAuth.json")
+PLAYERS_CSV = os.path.join(ROOT_DIR, "data/big_data/all_players_from_clans.csv")
+BATTLE_CHUNKS_DIR_BASE = "data/scraped_data/battle_chunks"
+STORAGE_STATE_PATH = os.path.join(ROOT_DIR, "scraping/myGoogleAuth.json")
 ERROR_LOG_PATH_BASE = "error_log.txt"
-SCRAPED_PLAYERS_FILE_BASE = "scraped_players.txt"
-BATTLE_META_CSV_BASE = "scraped_data/battle_meta_data.csv"
+SCRAPED_PLAYERS_FILE_BASE = "scraping/scraped_players.txt"
+BATTLE_META_CSV_BASE = "data/scraped_data/battle_meta_data.csv"
+PROGRESS_LOG_PATH_BASE = "progress_log.txt"
+# Progress log update function
+def update_progress_log(progress_log_path, battles_scraped, players_scraped, start_time):
+    elapsed = datetime.now() - start_time
+    with open(progress_log_path, "w", encoding="utf8") as f:
+        f.write(f"Battles scraped: {battles_scraped}\n")
+        f.write(f"Players scraped: {players_scraped}\n")
+        f.write(f"Time spent: {elapsed}\n")
+        f.write(f"Last updated: {datetime.now()}\n")
 
-MAX_CONCURRENT_WORKERS = 5  # Number of concurrent workers
+MAX_CONCURRENT_WORKERS = 2  # Number of concurrent workers
 PLAYERS_PER_PAGE = 7        # Reuse page for this many players before recreating
 DEBUG_MODE = False
 CONTINUE_FROM_PREV_SCRAPE = True  # True continues where you left off via SCRAPED_PLAYERS_FILE
@@ -29,7 +38,7 @@ SCRAPE_TIMEOUT_SECONDS = 360000   # Hard cap for whole program (seconds)
 PAGE_TIMEOUT_MS = 10000           # Timeout for individual webpage loads (ms)
 
 # Restart the WHOLE BROWSER WINDOW every ~1 hour
-BROWSER_RESTART_SECONDS = 30
+BROWSER_RESTART_SECONDS = 1800
 BROWSER_RESTART_GRACE_SECONDS = 30
 
 
@@ -58,20 +67,35 @@ def split_for_workers(ids: list[str], max_workers: int) -> list[list[str]]:
     return buckets
 
 
+import os
+
 def remaining_player_ids(all_player_ids: list[str], scraped_file: str) -> list[str]:
-    """Return players not yet scraped, based on SCRAPED_PLAYERS_FILE."""
+    """Resume scraping from the last successfully scraped player."""
+    
     if not os.path.exists(scraped_file):
         return all_player_ids
 
-    scraped = set()
+    last_scraped = None
+
     with open(scraped_file, "r", encoding="utf8") as f:
         for line in f:
             pid = line.strip()
             if pid:
-                scraped.add(pid)
+                last_scraped = pid  # keep updating → ends up with last non-empty line
 
-    return [pid for pid in all_player_ids if pid not in scraped]
+    # If file exists but empty
+    if last_scraped is None:
+        return all_player_ids
 
+    # Find index of last scraped player
+    try:
+        last_index = all_player_ids.index(last_scraped)
+    except ValueError:
+        # If somehow the ID isn't in all_player_ids, just scrape everything
+        return all_player_ids
+
+    # Resume strictly AFTER the last scraped one
+    return all_player_ids[last_index + 1:]
 
 async def scrape_battles(page, pid) -> list[dict]:
     # Check if the page has the expected battle container
@@ -186,18 +210,43 @@ async def scrape_battles(page, pid) -> list[dict]:
     # Download battle meta data CSV and filter for scraped battles
     if battles:
         csv_url = f"https://royaleapi.com/player/{pid}/battles/csv"
-        resp = await page.request.get(csv_url)
-        if not resp.ok:
-            body = await resp.text()
-            raise RuntimeError(f"CSV request failed: {resp.status} {resp.status_text}\n{body[:300]}")
+        try:
+            # Add delay to avoid rate limiting
+            await asyncio.sleep(1)
+            
+            # Make CSV request with proper headers
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+                "Referer": f"https://royaleapi.com/player/{pid}/battles/",
+                "Accept": "text/csv,text/plain,*/*",
+            }
+            resp = await page.request.get(csv_url, headers=headers)
+            if not resp.ok:
+                body = await resp.text()
+                error_msg = f"CSV request failed for player {pid}: {resp.status} {resp.status_text}\n{body[:300]}\n"
+                with open(ERROR_LOG_PATH, "a", encoding="utf8") as f:
+                    f.write(error_msg)
+                print(error_msg.strip())
+                return results
 
-        csv_text = await resp.text()
-        meta_df = pd.read_csv(io.StringIO(csv_text))
-        meta_df = meta_df[meta_df["replayTag"].astype(str).isin(["#" + key for key in battles.keys()])]
+            csv_text = await resp.text()
+            meta_df = pd.read_csv(io.StringIO(csv_text), on_bad_lines='skip')
+            meta_df = meta_df[meta_df["replayTag"].astype(str).isin(["#" + key for key in battles.keys()])]
 
-        if not meta_df.empty:
-            meta_exists = os.path.exists(BATTLE_META_CSV)
-            meta_df.to_csv(BATTLE_META_CSV, mode="a", header=not meta_exists, index=False)
+            if not meta_df.empty:
+                meta_exists = os.path.exists(BATTLE_META_CSV)
+                if not meta_exists:
+                    meta_df.to_csv(BATTLE_META_CSV, index=False)
+                else:
+                    existing_df = pd.read_csv(BATTLE_META_CSV, low_memory=False)
+                    combined_df = pd.concat([existing_df, meta_df], ignore_index=True)
+                    combined_df.to_csv(BATTLE_META_CSV, index=False)
+        except Exception as e:
+            error_msg = f"CSV request exception for player {pid}: {e}\n"
+            with open(ERROR_LOG_PATH, "a", encoding="utf8") as f:
+                f.write(error_msg)
+            print(error_msg.strip())
+            return results
 
     return results
 
@@ -211,6 +260,11 @@ async def worker(context, player_ids: list[str], worker_index: int, run_id: str,
     )
     file_exists = os.path.exists(filename)
 
+    progress_log_path = os.path.join(ROOT_DIR, f"{run_id}_{PROGRESS_LOG_PATH_BASE}" if run_id else PROGRESS_LOG_PATH_BASE)
+    battles_scraped = 0
+    players_scraped = 0
+    start_worker_time = datetime.now()
+
     page = await context.new_page()
     await page.route("**/*", lambda route: route.abort() if is_ad(route.request.url) else route.continue_())
 
@@ -219,7 +273,7 @@ async def worker(context, player_ids: list[str], worker_index: int, run_id: str,
             url = f"https://royaleapi.com/player/{pid}/battles/"
             try:
                 await page.goto(url, wait_until="commit", timeout=PAGE_TIMEOUT_MS)
-                await page.wait_for_selector("css=div.some-element", timeout=PAGE_TIMEOUT_MS)
+                # await page.wait_for_selector("css=div.some-element", timeout=PAGE_TIMEOUT_MS)
 
 
                 element_locator = page.locator("div.ui.container.sidemargin0.battle_list_container")
@@ -272,6 +326,10 @@ async def worker(context, player_ids: list[str], worker_index: int, run_id: str,
                     with open(SCRAPED_PLAYERS_FILE, "a", encoding="utf8") as f:
                         f.write(f"{pid}\n")
 
+                    battles_scraped += len(data)
+                    players_scraped += 1
+                    update_progress_log(progress_log_path, battles_scraped, players_scraped, start_worker_time)
+
             except asyncio.CancelledError:
                 raise
             except Exception as e:
@@ -285,9 +343,10 @@ async def worker(context, player_ids: list[str], worker_index: int, run_id: str,
                 print(f"{elapsed_str(start_time)} [Worker {worker_index}] Reached {PLAYERS_PER_PAGE} players, recreating page")
                 await page.close()
                 page = await context.new_page()
-                await page.route("**/*", lambda route: route.abort() if is_ad(route.request.url) else route.continue_())
                 processed_on_this_page = 0
+                update_progress_log(progress_log_path, battles_scraped, players_scraped, start_worker_time)
     finally:
+        update_progress_log(progress_log_path, battles_scraped, players_scraped, start_worker_time)
         try:
             await page.close()
         except Exception:
@@ -317,6 +376,10 @@ async def main():
         if os.path.exists(SCRAPED_PLAYERS_FILE):
             os.remove(SCRAPED_PLAYERS_FILE)
         print("Past data cleaned.")
+
+    # Ensure directories exist
+    os.makedirs(BATTLE_CHUNKS_DIR, exist_ok=True)
+    os.makedirs(os.path.dirname(BATTLE_META_CSV), exist_ok=True)
 
     df_players = pd.read_csv(PLAYERS_CSV)
     if "player_tag" not in df_players.columns:
