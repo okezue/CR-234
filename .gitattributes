@@ -1,0 +1,2 @@
+data/collected/*.csv filter=lfs diff=lfs merge=lfs -text
+data/collected/all_card_placements_part*.csv filter=lfs diff=lfs merge=lfs -text
