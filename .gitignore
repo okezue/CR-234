@@ -1,3 +1,12 @@
 /node_modeules
 /data
 /reference_code
+test*_*/
+*_error_log.txt
+*_progress_log.txt
+scraping/.scraper_profile/
+deploy/instances.txt
+deploy/*.pem
+*.csv
+debug_screenshot.png
+.DS_Store
