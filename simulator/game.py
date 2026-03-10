@@ -134,9 +134,11 @@ class Dummy:
 
 class Player:
     def __init__(self,team,king_lvl=11,tt_name='tower_princess',tt_lvl=11,
-                 deck=None,drag_del=0.5,drag_std=None,ability_del=0.15,ability_std=None):
+                 deck=None,drag_del=0.5,drag_std=None,ability_del=0.15,ability_std=None,
+                 card_levels=None):
         self.team=team;self.king_lvl=king_lvl
         self.tt_name=tt_name;self.tt_lvl=tt_lvl
+        self.card_levels=card_levels or {}
         self.elixir=5.0;self.max_ex=10.0
         self.crowns=0;self.troops=[]
         self.drag_del=drag_del
@@ -402,11 +404,12 @@ class Game:
         return True,"ok"
     def _spawn(self,team,card,x,y):
         p=self.players[team]
-        mlvl=p.king_lvl
         actual=card
         if card.startswith('mirror:'):
             actual=card[7:]
-            mlvl=min(p.king_lvl+1,15)
+            mlvl=min(p.card_levels.get(actual,p.king_lvl)+1,15)
+        else:
+            mlvl=p.card_levels.get(actual,p.king_lvl)
         if mk_card:
             try:return mk_card(actual,mlvl,team,x,y)
             except:pass
@@ -536,12 +539,17 @@ class Game:
             return self._default_target(tr)
         ag=getattr(tr,'aggro_tgt',None)
         if ag and getattr(ag,'alive',False):
-            if hasattr(ag,'ttype'):
-                d=math.sqrt((tr.x-ag.cx)**2+(tr.y-ag.cy)**2)
+            is_tower=hasattr(ag,'ttype')
+            is_bldg_troop=getattr(tr,'targets',['Ground'])==['Buildings']
+            if is_tower and not is_bldg_troop:
+                pass
             else:
-                d=math.sqrt((tr.x-ag.x)**2+(tr.y-ag.y)**2)
-            sr_a=max(getattr(tr,'sight_r',5.5),tr.rng+0.5)
-            if d<=sr_a:return ag,d
+                if is_tower:
+                    d=math.sqrt((tr.x-ag.cx)**2+(tr.y-ag.cy)**2)
+                else:
+                    d=math.sqrt((tr.x-ag.x)**2+(tr.y-ag.y)**2)
+                sr_a=max(getattr(tr,'sight_r',5.5),tr.rng+0.5)
+                if d<=sr_a:return ag,d
         opp=self._opp(tr.team)
         tgts=getattr(tr,'targets',['Ground'])
         sr=max(getattr(tr,'sight_r',5.5),tr.rng+0.5)
