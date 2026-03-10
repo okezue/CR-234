@@ -2,6 +2,8 @@
 /data/*
 !/data/collected/
 !/data/collected/*.csv
+!/data/processed/
+!/data/processed/*.csv
 /reference_code
 test*_*/
 *_error_log.txt
@@ -11,6 +13,7 @@ deploy/instances.txt
 deploy/*.pem
 *.csv
 !data/collected/*.csv
+!data/processed/*.csv
 debug_screenshot.png
 .DS_Store
 data/collected/all_card_placements.csv
