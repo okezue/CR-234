@@ -1,0 +1,37 @@
+{
+  "name":"Monk",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":5,
+  "movement":{"transport":"Ground","speed_class":"Medium","speed_value":60},
+  "deploy_time_sec":1.0,
+  "attack":{
+    "targets":["Ground"],
+    "range":{"category":"Melee","subtype":"Medium","tiles":1.2},
+    "hit_speed_sec":0.8,
+    "first_hit_speed_sec":0.2,
+    "mechanics":{"combo":{"hits_per_cycle":3,"combo_hit_index":3,"combo_knockback":{"enabled":true,"knockback_distance_tiles":1.8}}}
+  },
+  "ability":{
+    "name":"Pensive Protection",
+    "elixir_cost":1,
+    "activation_delay_sec":1.0,
+    "cast_time_sec":0.933,
+    "cooldown_sec":17.0,
+    "duration_sec":4.0,
+    "effects":{
+      "damage_reduction":{"all_damage_types_percent":65,"notes":"Flat 65% reduction for ALL damage types (projectile, melee, and spells). Changed from 80% to 65% in July 2025 balance update."},
+      "reflect_projectiles":{"enabled":true,"spell_reflect_target":"nearest_opposing_crown_tower","reflected_projectile_damage_scaling":"uses_source_damage (does not scale to Monk level)"},
+      "crowd_control_immunity":{"knockback_immune_during_ability":true,"tornado_pull_immune_during_ability":true}
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},
+  "stats_by_level":{
+    "11":{"hitpoints":2060,"damage":140,"damage_per_second":175,"combo_damage":420},
+    "12":{"hitpoints":2266,"damage":154,"damage_per_second":192,"combo_damage":462},
+    "13":{"hitpoints":2492,"damage":169,"damage_per_second":211,"combo_damage":508},
+    "14":{"hitpoints":2741,"damage":186,"damage_per_second":232,"combo_damage":559},
+    "15":{"hitpoints":3016,"damage":204,"damage_per_second":255,"combo_damage":613}
+  },
+  "balance_notes":"HP corrected to ~2060 at L11 (post-July 2025 +3% buff from 2000). Ability corrected from dual 80%/65% to flat 65% all damage (July 2025). Combo damage corrected from 422 to 420."
+}

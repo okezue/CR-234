@@ -1,0 +1,86 @@
+{
+  "name":"Elixir Golem",
+  "rarity":"Rare",
+  "type":"Troop",
+  "elixir_cost":3,
+  "arena_unlock":{"name":"Serenity Peak","arena_number":14},
+  "movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Buildings"],
+    "range":{"type":"melee","classification":"Melee: Short","tiles":0.8},
+    "hit_speed_sec":1.1,
+    "first_hit_speed_sec":0.8
+  },
+  "mechanics":{
+    "death_spawn":{"unit":"Elixir Golemite","count":2},
+    "elixir_on_death":{"golem":1,"golemite":0.5,"blob":0.5,"total_if_fully_destroyed":4}
+  },
+  "stats_by_level":{
+    "3":{"hitpoints":680,"damage":120,"damage_per_second":109},
+    "4":{"hitpoints":748,"damage":132,"damage_per_second":120},
+    "5":{"hitpoints":822,"damage":145,"damage_per_second":131},
+    "6":{"hitpoints":904,"damage":159,"damage_per_second":144},
+    "7":{"hitpoints":994,"damage":175,"damage_per_second":159},
+    "8":{"hitpoints":1093,"damage":192,"damage_per_second":174},
+    "9":{"hitpoints":1201,"damage":211,"damage_per_second":191},
+    "10":{"hitpoints":1319,"damage":232,"damage_per_second":210},
+    "11":{"hitpoints":1449,"damage":255,"damage_per_second":231},
+    "12":{"hitpoints":1592,"damage":280,"damage_per_second":254},
+    "13":{"hitpoints":1750,"damage":308,"damage_per_second":280},
+    "14":{"hitpoints":1922,"damage":338,"damage_per_second":307},
+    "15":{"hitpoints":2112,"damage":372,"damage_per_second":338},
+    "16":{"hitpoints":2321,"damage":409,"damage_per_second":371}
+  },
+  "sub_units":{
+    "Elixir Golemite":{
+      "count":2,
+      "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+      "attack":{"damage_type":"single_target","targets":["Buildings"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.8},"hit_speed_sec":1.1,"first_hit_speed_sec":0.8},
+      "mechanics":{"death_spawn":{"unit":"Elixir Blob","count":2},"elixir_on_death":0.5},
+      "stats_by_level":{
+        "3":{"hitpoints":340,"damage":60,"damage_per_second":54},
+        "4":{"hitpoints":374,"damage":66,"damage_per_second":60},
+        "5":{"hitpoints":411,"damage":72,"damage_per_second":65},
+        "6":{"hitpoints":452,"damage":79,"damage_per_second":71},
+        "7":{"hitpoints":497,"damage":87,"damage_per_second":79},
+        "8":{"hitpoints":546,"damage":96,"damage_per_second":87},
+        "9":{"hitpoints":600,"damage":105,"damage_per_second":95},
+        "10":{"hitpoints":659,"damage":116,"damage_per_second":105},
+        "11":{"hitpoints":724,"damage":127,"damage_per_second":115},
+        "12":{"hitpoints":796,"damage":140,"damage_per_second":127},
+        "13":{"hitpoints":875,"damage":154,"damage_per_second":140},
+        "14":{"hitpoints":961,"damage":169,"damage_per_second":153},
+        "15":{"hitpoints":1056,"damage":186,"damage_per_second":169},
+        "16":{"hitpoints":1160,"damage":204,"damage_per_second":185}
+      }
+    },
+    "Elixir Blob":{
+      "count":4,
+      "movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},
+      "attack":{"damage_type":"single_target","targets":["Buildings"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.8},"hit_speed_sec":1.1,"first_hit_speed_sec":0.8},
+      "mechanics":{"elixir_on_death":0.5},
+      "stats_by_level":{
+        "3":{"hitpoints":170,"damage":30,"damage_per_second":27},
+        "4":{"hitpoints":187,"damage":33,"damage_per_second":30},
+        "5":{"hitpoints":205,"damage":36,"damage_per_second":32},
+        "6":{"hitpoints":226,"damage":39,"damage_per_second":35},
+        "7":{"hitpoints":248,"damage":43,"damage_per_second":39},
+        "8":{"hitpoints":273,"damage":48,"damage_per_second":43},
+        "9":{"hitpoints":300,"damage":52,"damage_per_second":47},
+        "10":{"hitpoints":329,"damage":58,"damage_per_second":52},
+        "11":{"hitpoints":362,"damage":63,"damage_per_second":57},
+        "12":{"hitpoints":398,"damage":70,"damage_per_second":63},
+        "13":{"hitpoints":437,"damage":77,"damage_per_second":70},
+        "14":{"hitpoints":480,"damage":84,"damage_per_second":76},
+        "15":{"hitpoints":528,"damage":93,"damage_per_second":84},
+        "16":{"hitpoints":580,"damage":102,"damage_per_second":92}
+      }
+    }
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

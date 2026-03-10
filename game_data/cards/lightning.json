@@ -1,0 +1,29 @@
+{
+  "name":"Lightning",
+  "rarity":"Epic",
+  "type":"Spell",
+  "elixir_cost":6,
+  "arena_unlock":{"name":"P.E.K.K.A's Playhouse","arena_number":4},
+  "spell_attributes":{
+    "radius_tiles":3.5,
+    "targets":"Air_and_Ground",
+    "target_selection":"3_highest_hitpoint_targets_in_radius",
+    "max_targets":3,
+    "stun_duration_sec":0.5
+  },
+  "stats_by_level":{
+    "6":{"damage":650,"crown_tower_damage":195},
+    "7":{"damage":715,"crown_tower_damage":214},
+    "8":{"damage":786,"crown_tower_damage":235},
+    "9":{"damage":864,"crown_tower_damage":259},
+    "10":{"damage":950,"crown_tower_damage":285},
+    "11":{"damage":1044,"crown_tower_damage":313},
+    "12":{"damage":1147,"crown_tower_damage":344},
+    "13":{"damage":1261,"crown_tower_damage":378},
+    "14":{"damage":1384,"crown_tower_damage":415},
+    "15":{"damage":1521,"crown_tower_damage":456}
+  },
+  "evolution":{"available":false},
+  "verification_status":"verified_mar2026",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

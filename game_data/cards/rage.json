@@ -1,0 +1,32 @@
+{
+  "name":"Rage",
+  "rarity":"Epic",
+  "type":"Spell",
+  "elixir_cost":2,
+  "arena_unlock":{"name":"Serenity Peak","arena_number":14},
+  "spell_attributes":{
+    "radius_tiles":3.0,
+    "targets":"Air_and_Ground",
+    "duration_sec":4.5,
+    "deploy_time_sec":0.5,
+    "speed_boost_percent":30,
+    "attack_speed_boost_percent":30,
+    "linger_after_leaving_sec":1.0
+  },
+  "stats_by_level":{
+    "6":{"area_damage":132,"crown_tower_damage":40},
+    "7":{"area_damage":145,"crown_tower_damage":44},
+    "8":{"area_damage":159,"crown_tower_damage":48},
+    "9":{"area_damage":175,"crown_tower_damage":53},
+    "10":{"area_damage":192,"crown_tower_damage":58},
+    "11":{"area_damage":211,"crown_tower_damage":63},
+    "12":{"area_damage":232,"crown_tower_damage":70},
+    "13":{"area_damage":255,"crown_tower_damage":77},
+    "14":{"area_damage":280,"crown_tower_damage":84},
+    "15":{"area_damage":308,"crown_tower_damage":92},
+    "16":{"area_damage":338,"crown_tower_damage":101}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

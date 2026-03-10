@@ -1,0 +1,41 @@
+{
+  "name":"Cannon Cart",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":5,
+  "arena_unlock":{"name":"Miner's Mine","arena_number":15},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Ground"],
+    "range":{"type":"ranged","tiles":5.5},
+    "hit_speed_sec":0.9,
+    "first_hit_speed_sec":0.5,
+    "projectile_speed":800
+  },
+  "mechanics":{
+    "building_transform":{
+      "trigger":"at_50pct_hp",
+      "transforms_to":"building",
+      "building_lifetime_sec":15
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":1100,"damage":96,"damage_per_second":106},
+    "7":{"hitpoints":1210,"damage":105,"damage_per_second":116},
+    "8":{"hitpoints":1331,"damage":116,"damage_per_second":128},
+    "9":{"hitpoints":1464,"damage":127,"damage_per_second":141},
+    "10":{"hitpoints":1610,"damage":140,"damage_per_second":155},
+    "11":{"hitpoints":1770,"damage":154,"damage_per_second":171},
+    "12":{"hitpoints":1947,"damage":169,"damage_per_second":187},
+    "13":{"hitpoints":2141,"damage":186,"damage_per_second":206},
+    "14":{"hitpoints":2352,"damage":204,"damage_per_second":226},
+    "15":{"hitpoints":2587,"damage":224,"damage_per_second":248}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

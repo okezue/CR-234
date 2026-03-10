@@ -1,0 +1,57 @@
+{
+  "name":"Golem",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":8,
+  "arena_unlock":{"name":"Builder's Workshop","arena_number":6},
+  "movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Buildings"],
+    "range":{"type":"melee","classification":"Melee: Short","tiles":0.8},
+    "hit_speed_sec":2.5,
+    "first_hit_speed_sec":1.0
+  },
+  "mechanics":{
+    "death_damage":{"enabled":true,"splash_radius_tiles":2.0,"damage_key":"death_damage"},
+    "death_spawn":{"unit":"Golemite","count":2}
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":3200,"damage":195,"damage_per_second":78,"death_damage":195},
+    "7":{"hitpoints":3520,"damage":214,"damage_per_second":85,"death_damage":214},
+    "8":{"hitpoints":3872,"damage":235,"damage_per_second":94,"death_damage":235},
+    "9":{"hitpoints":4256,"damage":259,"damage_per_second":103,"death_damage":259},
+    "10":{"hitpoints":4672,"damage":284,"damage_per_second":113,"death_damage":284},
+    "11":{"hitpoints":5134,"damage":312,"damage_per_second":124,"death_damage":312},
+    "12":{"hitpoints":5644,"damage":343,"damage_per_second":137,"death_damage":343},
+    "13":{"hitpoints":6205,"damage":377,"damage_per_second":150,"death_damage":377},
+    "14":{"hitpoints":6813,"damage":414,"damage_per_second":165,"death_damage":414},
+    "15":{"hitpoints":7488,"damage":455,"damage_per_second":182,"death_damage":455}
+  },
+  "sub_units":{
+    "Golemite":{
+      "count":2,
+      "movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},
+      "attack":{"damage_type":"single_target","targets":["Buildings"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.8},"hit_speed_sec":2.5,"first_hit_speed_sec":1.0},
+      "mechanics":{"death_damage":{"enabled":true,"splash_radius_tiles":1.5}},
+      "stats_by_level":{
+        "6":{"hitpoints":960,"damage":58,"damage_per_second":23,"death_damage":58},
+        "7":{"hitpoints":1056,"damage":64,"damage_per_second":25,"death_damage":64},
+        "8":{"hitpoints":1161,"damage":70,"damage_per_second":28,"death_damage":70},
+        "9":{"hitpoints":1276,"damage":77,"damage_per_second":30,"death_damage":77},
+        "10":{"hitpoints":1401,"damage":85,"damage_per_second":34,"death_damage":85},
+        "11":{"hitpoints":1540,"damage":93,"damage_per_second":37,"death_damage":93},
+        "12":{"hitpoints":1693,"damage":103,"damage_per_second":41,"death_damage":103},
+        "13":{"hitpoints":1861,"damage":113,"damage_per_second":45,"death_damage":113},
+        "14":{"hitpoints":2043,"damage":124,"damage_per_second":49,"death_damage":124},
+        "15":{"hitpoints":2246,"damage":136,"damage_per_second":54,"death_damage":136}
+      }
+    }
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

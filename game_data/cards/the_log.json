@@ -1,0 +1,21 @@
+{
+  "name":"The Log",
+  "rarity":"Legendary",
+  "type":"Spell",
+  "elixir_cost":2,
+  "targets":["Ground"],
+  "shape":{"kind":"Rectangle (rolling)","range_tiles":10.1,"width_tiles":3.9},
+  "mechanics":{"deploy_zone":"Friendly territory only","pushback_distance_tiles":0.7},
+  "stats_by_level":{
+    "9":{"area_damage":220,"crown_tower_damage":33},
+    "10":{"area_damage":242,"crown_tower_damage":37},
+    "11":{"area_damage":269,"crown_tower_damage":40},
+    "12":{"area_damage":295,"crown_tower_damage":44},
+    "13":{"area_damage":325,"crown_tower_damage":49},
+    "14":{"area_damage":357,"crown_tower_damage":53},
+    "15":{"area_damage":392,"crown_tower_damage":59}
+  },
+  "evolution":{"exists":false},
+  "balance_notes":"Pushback corrected from 1.0 to 0.7 tiles (Feb 2023 nerf). L11 damage updated to ~269 (post-July 2025 -8% nerf then Sept 2025 +1% buff). Crown tower damage at 15% of full damage (March 2025 change from 20%).",
+  "verification_status":"verified_mar2026"
+}

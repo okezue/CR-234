@@ -1,0 +1,48 @@
+{
+  "name":"Ice Wizard",
+  "rarity":"Legendary",
+  "type":"Troop",
+  "elixir_cost":3,
+  "arena_unlock":{"name":"Frozen Peak","arena_number":8},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"splash",
+    "targets":["Air","Ground"],
+    "range":{"type":"ranged","tiles":5.5},
+    "splash_radius_tiles":1.5,
+    "hit_speed_sec":1.5,
+    "first_hit_speed_sec":0.5,
+    "projectile_speed":600
+  },
+  "mechanics":{
+    "slow_effect":{
+      "speed_reduction_percent":35,
+      "duration_sec":2.0,
+      "applies_to":"movement_and_attack_speed"
+    },
+    "spawn_damage":{
+      "enabled":true,
+      "radius_tiles":3.0,
+      "damage_key":"spawn_damage",
+      "applies_slow":true
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "9":{"hitpoints":590,"damage":75,"damage_per_second":50,"spawn_damage":75},
+    "10":{"hitpoints":649,"damage":82,"damage_per_second":54,"spawn_damage":82},
+    "11":{"hitpoints":713,"damage":90,"damage_per_second":60,"spawn_damage":90},
+    "12":{"hitpoints":784,"damage":99,"damage_per_second":66,"spawn_damage":99},
+    "13":{"hitpoints":862,"damage":109,"damage_per_second":72,"spawn_damage":109},
+    "14":{"hitpoints":946,"damage":120,"damage_per_second":80,"spawn_damage":120},
+    "15":{"hitpoints":1039,"damage":131,"damage_per_second":87,"spawn_damage":131}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{"enhanced_slow":"increased_slow_effect_and_frost_nova_on_death"}
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

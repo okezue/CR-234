@@ -1,0 +1,45 @@
+{
+  "name":"Electro Dragon",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":5,
+  "arena_unlock":{"name":"Spooky Town","arena_number":12},
+  "movement":{"transport":"Air","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"chain_lightning",
+    "targets":["Air","Ground"],
+    "range":{"type":"ranged","tiles":3.5},
+    "hit_speed_sec":2.1,
+    "first_hit_speed_sec":1.2,
+    "chain_targets":3,
+    "chain_range_tiles":4.0,
+    "stun_duration_sec":0.5
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":594,"damage":120,"damage_per_second":57},
+    "7":{"hitpoints":653,"damage":132,"damage_per_second":62},
+    "8":{"hitpoints":718,"damage":145,"damage_per_second":69},
+    "9":{"hitpoints":790,"damage":159,"damage_per_second":75},
+    "10":{"hitpoints":867,"damage":175,"damage_per_second":83},
+    "11":{"hitpoints":950,"damage":192,"damage_per_second":91},
+    "12":{"hitpoints":1045,"damage":211,"damage_per_second":100},
+    "13":{"hitpoints":1146,"damage":231,"damage_per_second":110},
+    "14":{"hitpoints":1259,"damage":254,"damage_per_second":120},
+    "15":{"hitpoints":1383,"damage":279,"damage_per_second":132}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{
+      "infinite_bounce":{
+        "description":"After 3 chain hits, lightning continues bouncing infinitely at reduced damage",
+        "post_chain_damage_multiplier":0.67,
+        "triggers_after_chains":3
+      }
+    }
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

@@ -1,0 +1,43 @@
+{
+  "name":"Goblin Gang",
+  "rarity":"Common",
+  "type":"Troop",
+  "elixir_cost":3,
+  "arena_unlock":{"name":"Jungle Arena","arena_number":9},
+  "deploy_time_sec":1.0,
+  "count":6,
+  "composition":{
+    "goblins":{"count":3,"type":"Goblin"},
+    "spear_goblins":{"count":3,"type":"Spear Goblin"}
+  },
+  "sub_units":{
+    "Goblin":{
+      "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
+      "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"hit_speed_sec":1.1,"first_hit_speed_sec":0.4}
+    },
+    "Spear Goblin":{
+      "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
+      "attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":5.0},"hit_speed_sec":1.1,"first_hit_speed_sec":0.5,"projectile_speed":600}
+    }
+  },
+  "stats_by_level":{
+    "1":{"goblin_hitpoints":80,"goblin_damage":80,"goblin_dps":72,"spear_goblin_hitpoints":52,"spear_goblin_damage":32,"spear_goblin_dps":29},
+    "2":{"goblin_hitpoints":88,"goblin_damage":88,"goblin_dps":80,"spear_goblin_hitpoints":57,"spear_goblin_damage":35,"spear_goblin_dps":31},
+    "3":{"goblin_hitpoints":96,"goblin_damage":96,"goblin_dps":87,"spear_goblin_hitpoints":62,"spear_goblin_damage":38,"spear_goblin_dps":34},
+    "4":{"goblin_hitpoints":106,"goblin_damage":106,"goblin_dps":96,"spear_goblin_hitpoints":68,"spear_goblin_damage":42,"spear_goblin_dps":38},
+    "5":{"goblin_hitpoints":116,"goblin_damage":116,"goblin_dps":105,"spear_goblin_hitpoints":75,"spear_goblin_damage":46,"spear_goblin_dps":41},
+    "6":{"goblin_hitpoints":128,"goblin_damage":128,"goblin_dps":116,"spear_goblin_hitpoints":82,"spear_goblin_damage":51,"spear_goblin_dps":46},
+    "7":{"goblin_hitpoints":140,"goblin_damage":140,"goblin_dps":127,"spear_goblin_hitpoints":90,"spear_goblin_damage":56,"spear_goblin_dps":50},
+    "8":{"goblin_hitpoints":154,"goblin_damage":154,"goblin_dps":140,"spear_goblin_hitpoints":99,"spear_goblin_damage":61,"spear_goblin_dps":55},
+    "9":{"goblin_hitpoints":169,"goblin_damage":169,"goblin_dps":153,"spear_goblin_hitpoints":109,"spear_goblin_damage":67,"spear_goblin_dps":60},
+    "10":{"goblin_hitpoints":186,"goblin_damage":186,"goblin_dps":169,"spear_goblin_hitpoints":119,"spear_goblin_damage":74,"spear_goblin_dps":67},
+    "11":{"goblin_hitpoints":204,"goblin_damage":204,"goblin_dps":185,"spear_goblin_hitpoints":131,"spear_goblin_damage":81,"spear_goblin_dps":73},
+    "12":{"goblin_hitpoints":224,"goblin_damage":224,"goblin_dps":203,"spear_goblin_hitpoints":144,"spear_goblin_damage":89,"spear_goblin_dps":80},
+    "13":{"goblin_hitpoints":247,"goblin_damage":247,"goblin_dps":224,"spear_goblin_hitpoints":158,"spear_goblin_damage":98,"spear_goblin_dps":89},
+    "14":{"goblin_hitpoints":271,"goblin_damage":271,"goblin_dps":246,"spear_goblin_hitpoints":173,"spear_goblin_damage":108,"spear_goblin_dps":98},
+    "15":{"goblin_hitpoints":298,"goblin_damage":298,"goblin_dps":270,"spear_goblin_hitpoints":190,"spear_goblin_damage":118,"spear_goblin_dps":107}
+  },
+  "evolution":{"available":false},
+  "verification_status":"verified_mar2026",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

@@ -1,0 +1,48 @@
+{
+  "name":"Prince",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":5,
+  "arena_unlock":{"name":"Royal Arena","arena_number":7},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Ground"],
+    "range":{"type":"melee","classification":"Melee: Long","tiles":1.85},
+    "hit_speed_sec":1.4,
+    "first_hit_speed_sec":0.4
+  },
+  "mechanics":{
+    "charge":{
+      "charge_distance_tiles":2.5,
+      "charge_damage_multiplier":2.0,
+      "resets_on_stun_or_freeze":true
+    },
+    "river_jump":{"enabled":true}
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":1200,"damage":245,"damage_per_second":175,"charge_damage":490},
+    "7":{"hitpoints":1320,"damage":269,"damage_per_second":192,"charge_damage":539},
+    "8":{"hitpoints":1452,"damage":296,"damage_per_second":211,"charge_damage":593},
+    "9":{"hitpoints":1596,"damage":326,"damage_per_second":232,"charge_damage":652},
+    "10":{"hitpoints":1752,"damage":358,"damage_per_second":255,"charge_damage":716},
+    "11":{"hitpoints":1920,"damage":393,"damage_per_second":280,"charge_damage":786},
+    "12":{"hitpoints":2112,"damage":432,"damage_per_second":308,"charge_damage":864},
+    "13":{"hitpoints":2323,"damage":475,"damage_per_second":339,"charge_damage":950},
+    "14":{"hitpoints":2553,"damage":522,"damage_per_second":372,"charge_damage":1044},
+    "15":{"hitpoints":2806,"damage":574,"damage_per_second":410,"charge_damage":1148}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{
+      "shield_on_charge":{
+        "description":"Gains a shield while charging"
+      }
+    }
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

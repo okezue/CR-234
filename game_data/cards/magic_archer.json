@@ -1,0 +1,56 @@
+{
+  "name":"Magic Archer",
+  "rarity":"Legendary",
+  "type":"Troop",
+  "elixir_cost":4,
+  "arena_unlock":{"name":"Rascal's Hideout","arena_number":13},
+  "transport":"Ground",
+  "count":1,
+  "deploy_time_sec":1.0,
+  "movement_speed":{"category":"Medium","value":60},
+  "targets":["Air","Ground"],
+  "range":{"classification":"Ranged","tiles":7.0},
+  "hit_speed_sec":1.1,
+  "first_hit_speed_sec":0.7,
+  "attack":{"style":"piercing_line","pierces_targets":true,"max_pierce_targets":null},
+  "projectile":{"projectile_range_tiles":11.0,"projectile_width_tiles":0.5,"projectile_speed_units":1000},
+  "levels":{
+    "9":{"hitpoints":473,"area_damage":119,"damage_per_second":108},
+    "10":{"hitpoints":520,"area_damage":131,"damage_per_second":119},
+    "11":{"hitpoints":571,"area_damage":143,"damage_per_second":130},
+    "12":{"hitpoints":628,"area_damage":157,"damage_per_second":143},
+    "13":{"hitpoints":690,"area_damage":173,"damage_per_second":157},
+    "14":{"hitpoints":757,"area_damage":190,"damage_per_second":173},
+    "15":{"hitpoints":832,"area_damage":209,"damage_per_second":190}
+  },
+  "hidden_stats":{"mass":null,"sight_range_tiles":null,"collision_radius_tiles":null},
+  "evolution":null,
+  "hero_form":{
+    "is_available":true,
+    "base_stats_same_as_normal_card":true,
+    "deck_rules":{"hero_slot_required":true,"max_heroes_in_deck":2,"ability_available_only_while_alive":true},
+    "unlock":{"hero_fragments_required":200},
+    "ability":{
+      "name":"Triple Threat",
+      "elixir_cost":1,
+      "cooldown_sec":20,
+      "description":"Summons a decoy while darting back and fires a triple shot on his next attack",
+      "cast_effects":{
+        "dash_back_distance_tiles":5.0,
+        "spawns_decoy":{"is_building":false,"duration_sec":7.0,"hitpoints_by_level":{"11":691}},
+        "loads_next_attack":"Triple Shot"
+      },
+      "triple_shot":{
+        "shots_fired_at_once":3,
+        "total_damage_equals_normal_attack":true,
+        "damage_per_arrow_multiplier_of_normal_attack":0.333,
+        "projectile_radius_tiles":1.0,
+        "projectile_trajectories":"parallel",
+        "damage_range_tiles":15.5,
+        "attack_range_tiles":7.0,
+        "expires_if_not_used_within_sec":7.0
+      }
+    }
+  },
+  "balance_notes":"Updated for Dec 2025 +8% HP and +8% damage buff"
+}

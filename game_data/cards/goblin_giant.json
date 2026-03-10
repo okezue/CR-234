@@ -1,0 +1,54 @@
+{
+  "name":"Goblin Giant",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":6,
+  "arena_unlock":{"name":"Jungle Arena","arena_number":9},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Buildings"],
+    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
+    "hit_speed_sec":1.5,
+    "first_hit_speed_sec":0.8
+  },
+  "mechanics":{
+    "backpack_spear_goblins":{
+      "count":2,
+      "attack_independent":true,
+      "targets":["Air","Ground"],
+      "range_tiles":5.0,
+      "hit_speed_sec":1.7,
+      "first_hit_speed_sec":0.5,
+      "projectile_speed":500
+    },
+    "death_spawn":{"unit":"Spear Goblin","count":2}
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":2147,"damage":114,"damage_per_second":76,"spear_goblin_hitpoints":83,"spear_goblin_damage":38,"spear_goblin_dps":22},
+    "7":{"hitpoints":2362,"damage":125,"damage_per_second":83,"spear_goblin_hitpoints":91,"spear_goblin_damage":42,"spear_goblin_dps":24},
+    "8":{"hitpoints":2596,"damage":138,"damage_per_second":92,"spear_goblin_hitpoints":100,"spear_goblin_damage":46,"spear_goblin_dps":27},
+    "9":{"hitpoints":2855,"damage":151,"damage_per_second":100,"spear_goblin_hitpoints":109,"spear_goblin_damage":50,"spear_goblin_dps":29},
+    "10":{"hitpoints":3139,"damage":166,"damage_per_second":110,"spear_goblin_hitpoints":120,"spear_goblin_damage":55,"spear_goblin_dps":32},
+    "11":{"hitpoints":3453,"damage":183,"damage_per_second":122,"spear_goblin_hitpoints":132,"spear_goblin_damage":61,"spear_goblin_dps":35},
+    "12":{"hitpoints":3795,"damage":201,"damage_per_second":134,"spear_goblin_hitpoints":145,"spear_goblin_damage":67,"spear_goblin_dps":39},
+    "13":{"hitpoints":4170,"damage":221,"damage_per_second":147,"spear_goblin_hitpoints":159,"spear_goblin_damage":73,"spear_goblin_dps":42},
+    "14":{"hitpoints":4587,"damage":243,"damage_per_second":162,"spear_goblin_hitpoints":175,"spear_goblin_damage":80,"spear_goblin_dps":47},
+    "15":{"hitpoints":5043,"damage":267,"damage_per_second":178,"spear_goblin_hitpoints":192,"spear_goblin_damage":88,"spear_goblin_dps":51}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{
+      "goblin_spawner":{
+        "description":"At 50% HP spawns additional Goblins rapidly",
+        "spawn_interval_sec":2.2,
+        "triggers_at_hp_percent":50
+      }
+    }
+  },
+  "verification_status":"unverified_web_search",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

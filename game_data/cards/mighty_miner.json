@@ -1,0 +1,46 @@
+{
+  "name":"Mighty Miner",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":4,
+  "movement":{"transport":"Ground","speed_class":"Medium","speed_value":60},
+  "deploy_time_sec":1.0,
+  "attack":{
+    "targets":["Ground"],
+    "range":{"category":"Melee","subtype":"Long","tiles":1.6},
+    "hit_speed_sec":0.4,
+    "first_hit_speed_sec":null,
+    "mechanics":{"ramp_up":{"stages":[1,2,3],"stage_change_time_sec":2.0}}
+  },
+  "ability":{
+    "name":"Explosive Escape",
+    "elixir_cost":1,
+    "activation_delay_sec":1.0,
+    "cast_time_sec":0.933,
+    "cooldown_sec":13.0,
+    "effects":{
+      "lane_swap":{"mode":"horizontal_mirror","intangible_while_swapping":true},
+      "bomb":{
+        "explosion_delay_sec":1.0,
+        "targets":["Air","Ground"],
+        "knockback_distance_tiles":1.8,
+        "area_damage_by_level":{
+          "11":328,
+          "12":360,
+          "13":396,
+          "14":435,
+          "15":478
+        }
+      }
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null,"pushback_immunity":{"value":true}},
+  "stats_by_level":{
+    "11":{"hitpoints":2250,"damage_per_hit":{"stage_1":40,"stage_2":200,"stage_3":400},"damage_per_second":{"stage_1":100,"stage_2":500,"stage_3":1000}},
+    "12":{"hitpoints":2469,"damage_per_hit":{"stage_1":44,"stage_2":220,"stage_3":440},"damage_per_second":{"stage_1":110,"stage_2":550,"stage_3":1100}},
+    "13":{"hitpoints":2716,"damage_per_hit":{"stage_1":49,"stage_2":242,"stage_3":484},"damage_per_second":{"stage_1":122,"stage_2":605,"stage_3":1210}},
+    "14":{"hitpoints":2992,"damage_per_hit":{"stage_1":54,"stage_2":266,"stage_3":532},"damage_per_second":{"stage_1":135,"stage_2":665,"stage_3":1330}},
+    "15":{"hitpoints":3291,"damage_per_hit":{"stage_1":58,"stage_2":292,"stage_3":585},"damage_per_second":{"stage_1":145,"stage_2":730,"stage_3":1462}}
+  },
+  "balance_notes":"Stage 3 dmg corrected to 400 (was 409), bomb dmg corrected to 328 (post-June 2024 -1.67% nerf), L15 HP corrected to 3291"
+}

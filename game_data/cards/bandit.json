@@ -1,0 +1,43 @@
+{
+  "name":"Bandit",
+  "rarity":"Legendary",
+  "type":"Troop",
+  "elixir_cost":3,
+  "arena_unlock":{"name":"Jungle Arena","arena_number":9},
+  "movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Ground"],
+    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
+    "hit_speed_sec":1.0,
+    "first_hit_speed_sec":0.4
+  },
+  "mechanics":{
+    "dash":{
+      "trigger_target_band_tiles":{"min":3.5,"max":6.0},
+      "dash_charge_time_sec":0.7,
+      "dash_speed_value":500,
+      "dash_invulnerable":true,
+      "dash_targets":["Ground"],
+      "dash_damage_multiplier":2.0
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "9":{"hitpoints":780,"damage":172,"dash_damage":344,"damage_per_second":172},
+    "10":{"hitpoints":858,"damage":189,"dash_damage":378,"damage_per_second":189},
+    "11":{"hitpoints":944,"damage":208,"dash_damage":416,"damage_per_second":208},
+    "12":{"hitpoints":1038,"damage":228,"dash_damage":457,"damage_per_second":228},
+    "13":{"hitpoints":1141,"damage":251,"dash_damage":503,"damage_per_second":251},
+    "14":{"hitpoints":1252,"damage":276,"dash_damage":552,"damage_per_second":276},
+    "15":{"hitpoints":1375,"damage":303,"dash_damage":606,"damage_per_second":303}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{"dash_cycle_reduction":"dash_recharges_faster_after_elimination"}
+  },
+  "verification_status":"verified_mar2026",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

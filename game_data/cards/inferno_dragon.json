@@ -1,0 +1,46 @@
+{
+  "name":"Inferno Dragon",
+  "rarity":"Legendary",
+  "type":"Troop",
+  "elixir_cost":4,
+  "arena_unlock":{"name":"Builder's Workshop","arena_number":6},
+  "movement":{"transport":"Air","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Air","Ground"],
+    "range":{"type":"ranged","tiles":3.5},
+    "hit_speed_sec":0.4,
+    "first_hit_speed_sec":0.4,
+    "mechanics":{
+      "ramp_up":{
+        "stages":3,
+        "stage_1_duration_sec":2.0,
+        "stage_2_duration_sec":2.0,
+        "resets_on_retarget":true
+      }
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "9":{"hitpoints":1070,"damage_per_hit":{"stage_1":30,"stage_2":100,"stage_3":350},"damage_per_second":{"stage_1":75,"stage_2":250,"stage_3":875}},
+    "10":{"hitpoints":1177,"damage_per_hit":{"stage_1":33,"stage_2":110,"stage_3":385},"damage_per_second":{"stage_1":82,"stage_2":275,"stage_3":962}},
+    "11":{"hitpoints":1294,"damage_per_hit":{"stage_1":36,"stage_2":121,"stage_3":423},"damage_per_second":{"stage_1":90,"stage_2":302,"stage_3":1057}},
+    "12":{"hitpoints":1422,"damage_per_hit":{"stage_1":40,"stage_2":133,"stage_3":465},"damage_per_second":{"stage_1":100,"stage_2":332,"stage_3":1162}},
+    "13":{"hitpoints":1564,"damage_per_hit":{"stage_1":44,"stage_2":146,"stage_3":511},"damage_per_second":{"stage_1":110,"stage_2":365,"stage_3":1277}},
+    "14":{"hitpoints":1717,"damage_per_hit":{"stage_1":48,"stage_2":160,"stage_3":561},"damage_per_second":{"stage_1":120,"stage_2":400,"stage_3":1402}},
+    "15":{"hitpoints":1887,"damage_per_hit":{"stage_1":53,"stage_2":176,"stage_3":617},"damage_per_second":{"stage_1":132,"stage_2":440,"stage_3":1542}}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{
+      "stage_4":{
+        "description":"Adds a 4th damage stage beyond stage 3",
+        "stage_4_multiplier":"further_increased_damage_beyond_stage_3"
+      }
+    }
+  },
+  "verification_status":"verified_mar2026",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

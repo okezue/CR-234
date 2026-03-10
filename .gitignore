@@ -13,3 +13,4 @@ deploy/*.pem
 !data/collected/*.csv
 debug_screenshot.png
 .DS_Store
+data/collected/all_card_placements.csv

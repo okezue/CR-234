@@ -1,0 +1,65 @@
+{
+  "name":"Mini P.E.K.K.A.",
+  "rarity":"Rare",
+  "type":"Troop",
+  "elixir_cost":4,
+  "arena_unlock":{"name":"Training Camp","arena_number":0},
+  "movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Ground"],
+    "range":{"type":"melee","classification":"Melee: Short","tiles":0.8},
+    "hit_speed_sec":1.6,
+    "first_hit_speed_sec":0.5
+  },
+  "stats_by_level":{
+    "3":{"hitpoints":677,"damage":355,"damage_per_second":221},
+    "4":{"hitpoints":744,"damage":390,"damage_per_second":243},
+    "5":{"hitpoints":818,"damage":429,"damage_per_second":268},
+    "6":{"hitpoints":899,"damage":471,"damage_per_second":294},
+    "7":{"hitpoints":988,"damage":518,"damage_per_second":323},
+    "8":{"hitpoints":1086,"damage":569,"damage_per_second":355},
+    "9":{"hitpoints":1193,"damage":625,"damage_per_second":390},
+    "10":{"hitpoints":1311,"damage":687,"damage_per_second":429},
+    "11":{"hitpoints":1441,"damage":755,"damage_per_second":471},
+    "12":{"hitpoints":1583,"damage":829,"damage_per_second":518},
+    "13":{"hitpoints":1739,"damage":911,"damage_per_second":569},
+    "14":{"hitpoints":1911,"damage":1001,"damage_per_second":625},
+    "15":{"hitpoints":2100,"damage":1100,"damage_per_second":687},
+    "16":{"hitpoints":2309,"damage":1209,"damage_per_second":755}
+  },
+  "evolution":{"available":false},
+  "hero":{
+    "available":true,
+    "unlock_fragments":200,
+    "ability":{
+      "name":"Breakfast Boost",
+      "elixir_cost":1,
+      "initial_delay_sec":1.0,
+      "single_use":true,
+      "effects":{
+        "heal_percent_of_max_hp":40,
+        "level_up":{
+          "pancake_bars_0":{"levels_gained":1},
+          "pancake_bars_1":{"levels_gained":2},
+          "pancake_bars_2":{"levels_gained":3},
+          "pancake_bars_3":{"levels_gained":4},
+          "pancake_bars_4":{"levels_gained":5}
+        },
+        "meter_build":"increases_over_time_and_on_attack"
+      }
+    },
+    "hero_boosted_stats_by_level":{
+      "17":{"hitpoints":2538,"damage":1329,"damage_per_second":830},
+      "18":{"hitpoints":2790,"damage":1461,"damage_per_second":913},
+      "19":{"hitpoints":3067,"damage":1606,"damage_per_second":1003},
+      "20":{"hitpoints":3372,"damage":1766,"damage_per_second":1103},
+      "21":{"hitpoints":3707,"damage":1942,"damage_per_second":1213},
+      "22":{"hitpoints":4076,"damage":2135,"damage_per_second":1334}
+    }
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

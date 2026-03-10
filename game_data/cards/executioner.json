@@ -1,0 +1,50 @@
+{
+  "name":"Executioner",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":5,
+  "arena_unlock":{"name":"Serenity Peak","arena_number":14},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"area",
+    "targets":["Air","Ground"],
+    "range":{"type":"ranged","tiles":4.5},
+    "effective_range_tiles":8.5,
+    "splash_radius_tiles":1.0,
+    "hit_speed_sec":2.4,
+    "first_hit_speed_sec":0.6,
+    "mechanics":{
+      "boomerang":{
+        "hits_per_throw":2,
+        "description":"Axe travels out and returns, hitting targets both ways"
+      }
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":760,"damage":135,"damage_per_second":112},
+    "7":{"hitpoints":836,"damage":148,"damage_per_second":123},
+    "8":{"hitpoints":919,"damage":163,"damage_per_second":135},
+    "9":{"hitpoints":1011,"damage":179,"damage_per_second":149},
+    "10":{"hitpoints":1110,"damage":197,"damage_per_second":164},
+    "11":{"hitpoints":1220,"damage":216,"damage_per_second":180},
+    "12":{"hitpoints":1342,"damage":237,"damage_per_second":197},
+    "13":{"hitpoints":1476,"damage":261,"damage_per_second":217},
+    "14":{"hitpoints":1621,"damage":287,"damage_per_second":239},
+    "15":{"hitpoints":1783,"damage":315,"damage_per_second":262}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{
+      "axe_smash":{
+        "description":"Close-range enemies receive extra damage and knockback from an overhead axe smash",
+        "close_quarters_range_tiles":3.5,
+        "close_quarters_extra_damage":true
+      }
+    }
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

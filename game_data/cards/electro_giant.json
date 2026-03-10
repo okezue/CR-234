@@ -1,0 +1,45 @@
+{
+  "name":"Electro Giant",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":7,
+  "arena_unlock":{"name":"Electro Valley","arena_number":11},
+  "movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Buildings"],
+    "range":{"type":"melee","classification":"Melee: Short","tiles":0.8},
+    "hit_speed_sec":1.8,
+    "first_hit_speed_sec":0.8
+  },
+  "mechanics":{
+    "zap_pack":{
+      "description":"Reflects damage to attackers within range",
+      "reflect_range_tiles":2.5,
+      "stun_duration_sec":0.5,
+      "targets":["Air","Ground"],
+      "triggers_per_hit_received":true
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":2400,"damage":120,"damage_per_second":66,"zap_damage":120},
+    "7":{"hitpoints":2640,"damage":132,"damage_per_second":73,"zap_damage":132},
+    "8":{"hitpoints":2904,"damage":145,"damage_per_second":80,"zap_damage":145},
+    "9":{"hitpoints":3192,"damage":159,"damage_per_second":88,"zap_damage":159},
+    "10":{"hitpoints":3504,"damage":175,"damage_per_second":97,"zap_damage":175},
+    "11":{"hitpoints":3854,"damage":192,"damage_per_second":106,"zap_damage":192},
+    "12":{"hitpoints":4234,"damage":211,"damage_per_second":117,"zap_damage":211},
+    "13":{"hitpoints":4656,"damage":232,"damage_per_second":128,"zap_damage":232},
+    "14":{"hitpoints":5112,"damage":255,"damage_per_second":141,"zap_damage":255},
+    "15":{"hitpoints":5616,"damage":280,"damage_per_second":155,"zap_damage":280}
+  },
+  "evolution":{
+    "available":true,
+    "changes":{"enhanced_zap":"increased_reflect_damage_and_range"}
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

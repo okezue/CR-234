@@ -1,0 +1,65 @@
+{
+  "name":"Little Prince",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":3,
+  "arena_unlock":{"name":"Silent Sanctuary","arena_number":18},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Air","Ground"],
+    "range":{"type":"ranged","tiles":5.5},
+    "projectile_speed":{"value":800},
+    "hit_speed_sec_by_stage":{"stage_1":1.2,"stage_2":0.6,"stage_3":0.4},
+    "first_hit_speed_sec":0.4,
+    "ramp_up":{"requires_standing_still":true,"attacks_per_stage_increase":3,"resets_on_movement":true,"resets_on_knockback_or_stun":true}
+  },
+  "ability":{
+    "name":"Royal Rescue",
+    "elixir_cost":3,
+    "initial_delay_sec":1.0,
+    "cast_time_sec":0.944,
+    "cooldown_sec":30.0,
+    "dash_range_tiles":4.0,
+    "targets":["Ground"],
+    "effects":[
+      {"type":"summon_and_charge","unit":"Guardienne"},
+      {"type":"damage","damage_key":"royal_rescue_charge_damage"},
+      {"type":"knockback","distance_tiles":{"min":0.0,"max":2.5}}
+    ]
+  },
+  "stats_by_level":{
+    "11":{"hitpoints":698,"damage":104,"damage_per_second_by_stage":{"stage_1":86,"stage_2":173,"stage_3":260}},
+    "12":{"hitpoints":767,"damage":114,"damage_per_second_by_stage":{"stage_1":95,"stage_2":190,"stage_3":285}},
+    "13":{"hitpoints":843,"damage":126,"damage_per_second_by_stage":{"stage_1":105,"stage_2":210,"stage_3":315}},
+    "14":{"hitpoints":925,"damage":138,"damage_per_second_by_stage":{"stage_1":115,"stage_2":230,"stage_3":345}},
+    "15":{"hitpoints":1015,"damage":152,"damage_per_second_by_stage":{"stage_1":126,"stage_2":253,"stage_3":380}}
+  },
+  "ability_stats_by_level":{
+    "royal_rescue_charge_damage":{
+      "11":{"charge_damage":256},
+      "12":{"charge_damage":281},
+      "13":{"charge_damage":309},
+      "14":{"charge_damage":339},
+      "15":{"charge_damage":372}
+    }
+  },
+  "sub_units":{
+    "Guardienne":{
+      "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+      "deploy_time_sec":0.3,
+      "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},"hit_speed_sec":1.2,"first_hit_speed_sec":0.5},
+      "hidden_stats":{"collision_radius_tiles":0.8},
+      "stats_by_level":{
+        "11":{"hitpoints":1600,"damage":202,"damage_per_second":168},
+        "12":{"hitpoints":1756,"damage":221,"damage_per_second":184},
+        "13":{"hitpoints":1931,"damage":244,"damage_per_second":203},
+        "14":{"hitpoints":2118,"damage":267,"damage_per_second":222},
+        "15":{"hitpoints":2325,"damage":293,"damage_per_second":244}
+      }
+    }
+  },
+  "balance_notes":"Damage corrected from 99 to 104 at L11 (Jan 2026 +5% buff). All DPS values recalculated."
+}

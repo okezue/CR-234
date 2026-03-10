@@ -1,0 +1,37 @@
+{
+  "name":"Archer Queen",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":5,
+  "movement":{"transport":"Ground","speed_class":"Medium","speed_value":60},
+  "deploy_time_sec":1.0,
+  "attack":{
+    "targets":["Air","Ground"],
+    "range":{"category":"Ranged","tiles":5.0},
+    "hit_speed_sec":1.2,
+    "first_hit_speed_sec":0.3,
+    "projectile_speed":800
+  },
+  "ability":{
+    "name":"Cloaking Cape",
+    "elixir_cost":1,
+    "activation_delay_sec":1.0,
+    "cast_time_sec":0.933,
+    "cooldown_sec":17.0,
+    "duration_sec":3.5,
+    "effects":{
+      "invisibility":{"untargetable_by_enemy_troops":true},
+      "movement_speed_override":{"speed_class":"Slow","speed_value":45},
+      "attack_speed_boost":{"boost_percent":180,"interpretation":"additive: base 100% + 180% = 280% = 2.8x speed"}
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},
+  "stats_by_level":{
+    "11":{"hitpoints":1000,"damage":225,"damage_per_second":187,"damage_per_second_with_cloaking_cape":525},
+    "12":{"hitpoints":1100,"damage":247,"damage_per_second":205,"damage_per_second_with_cloaking_cape":576},
+    "13":{"hitpoints":1210,"damage":271,"damage_per_second":225,"damage_per_second_with_cloaking_cape":632},
+    "14":{"hitpoints":1331,"damage":298,"damage_per_second":248,"damage_per_second_with_cloaking_cape":695},
+    "15":{"hitpoints":1464,"damage":327,"damage_per_second":272,"damage_per_second_with_cloaking_cape":763}
+  },
+  "balance_notes":"L15 HP corrected from 1454 to 1464 (standard 10% scaling). L12-14 HP also corrected."
+}

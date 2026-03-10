@@ -1,0 +1,29 @@
+{
+  "name":"Void",
+  "rarity":"Epic",
+  "type":"Spell",
+  "elixir_cost":3,
+  "arena_unlock":{"name":"Miner's Mine","arena_number":15},
+  "spell_attributes":{
+    "radius_tiles":2.5,
+    "targets":"Air_and_Ground",
+    "strikes":3,
+    "strike_interval_sec":1.0,
+    "damage_scaling":"damage_decreases_with_more_targets_in_radius"
+  },
+  "stats_by_level":{
+    "6":{"damage_single_target":220,"crown_tower_damage":66},
+    "7":{"damage_single_target":242,"crown_tower_damage":72},
+    "8":{"damage_single_target":266,"crown_tower_damage":79},
+    "9":{"damage_single_target":292,"crown_tower_damage":87},
+    "10":{"damage_single_target":321,"crown_tower_damage":96},
+    "11":{"damage_single_target":353,"crown_tower_damage":105},
+    "12":{"damage_single_target":388,"crown_tower_damage":116},
+    "13":{"damage_single_target":426,"crown_tower_damage":127},
+    "14":{"damage_single_target":468,"crown_tower_damage":140},
+    "15":{"damage_single_target":514,"crown_tower_damage":154}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

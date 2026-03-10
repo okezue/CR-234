@@ -1,0 +1,40 @@
+{
+  "name":"Sparky",
+  "rarity":"Legendary",
+  "type":"Troop",
+  "elixir_cost":6,
+  "arena_unlock":{"name":"Electro Valley","arena_number":11},
+  "movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"splash",
+    "targets":["Ground"],
+    "range":{"type":"ranged","tiles":4.5},
+    "splash_radius_tiles":2.0,
+    "hit_speed_sec":4.0,
+    "first_hit_speed_sec":1.0,
+    "projectile_speed":700,
+    "mechanics":{
+      "charge":{
+        "charge_time_sec":4.0,
+        "resets_on_stun_or_freeze":true,
+        "resets_on_zap":true
+      },
+      "recoil":{"pushback_on_fire":true,"self_knockback_tiles":0.5}
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "9":{"hitpoints":1200,"damage":1100,"damage_per_second":275},
+    "10":{"hitpoints":1320,"damage":1210,"damage_per_second":302},
+    "11":{"hitpoints":1452,"damage":1331,"damage_per_second":332},
+    "12":{"hitpoints":1596,"damage":1463,"damage_per_second":365},
+    "13":{"hitpoints":1754,"damage":1608,"damage_per_second":402},
+    "14":{"hitpoints":1926,"damage":1765,"damage_per_second":441},
+    "15":{"hitpoints":2116,"damage":1939,"damage_per_second":484}
+  },
+  "evolution":{"available":false},
+  "verification_status":"verified_mar2026",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

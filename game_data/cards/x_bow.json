@@ -1,0 +1,34 @@
+{
+  "name":"X-Bow",
+  "rarity":"Epic",
+  "type":"Building",
+  "elixir_cost":6,
+  "arena_unlock":{"name":"Builder's Workshop","arena_number":6},
+  "building_attributes":{
+    "lifetime_sec":30,
+    "deploy_time_sec":3.5
+  },
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Ground"],
+    "range":{"type":"ranged","tiles":11.5},
+    "hit_speed_sec":0.3,
+    "first_hit_speed_sec":1.0
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":1000,"damage":22,"damage_per_second":73},
+    "7":{"hitpoints":1100,"damage":24,"damage_per_second":80},
+    "8":{"hitpoints":1210,"damage":26,"damage_per_second":86},
+    "9":{"hitpoints":1331,"damage":29,"damage_per_second":96},
+    "10":{"hitpoints":1461,"damage":32,"damage_per_second":106},
+    "11":{"hitpoints":1606,"damage":35,"damage_per_second":116},
+    "12":{"hitpoints":1764,"damage":38,"damage_per_second":126},
+    "13":{"hitpoints":1939,"damage":42,"damage_per_second":140},
+    "14":{"hitpoints":2130,"damage":46,"damage_per_second":153},
+    "15":{"hitpoints":2340,"damage":51,"damage_per_second":170}
+  },
+  "evolution":{"available":false},
+  "verification_status":"verified_mar2026",
+  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+}

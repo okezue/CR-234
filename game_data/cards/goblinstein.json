@@ -1,0 +1,40 @@
+{
+  "name":"Goblinstein",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":5,
+  "deploy_time_sec":1.0,
+  "movement":{"transport":"Ground","speed_class":"Medium","speed_value":60},
+  "spawns":{"count":2,"entities":["doctor","monster"],"spawn_behavior":{"doctor_relative_offset":{"tiles":1.0,"direction":"opposite_of_monster_side"}}},
+  "entities":{
+    "doctor":{"transport":"Ground","attack":{"targets":["Air","Ground"],"range":{"category":"Ranged","tiles":5.5},"hit_speed_sec":1.8,"first_hit_speed_sec":0.5,"stun_duration_sec":0.5}},
+    "monster":{"transport":"Ground","attack":{"targets":["Buildings"],"range":{"category":"Melee","subtype":"Medium","tiles":1.2},"hit_speed_sec":1.5,"first_hit_speed_sec":0.8}}
+  },
+  "ability":{
+    "name":"Lightning Link",
+    "elixir_cost":2,
+    "activation_delay_sec":1.0,
+    "cast_time_sec":0.933,
+    "cooldown_sec":17.0,
+    "duration_sec":4.0,
+    "effects":{
+      "link":{"tick_interval_sec":0.5,"radius_tiles":2.0,"targets":["Air","Ground"],"infinite_targets_within_radius":true,"crown_tower_damage_reduced":true,"fallback_target_if_monster_dead":"antenna_dropped_on_ground"},
+      "tick_damage_by_level":{
+        "11":{"damage":107,"crown_tower_damage":46},
+        "12":{"damage":118,"crown_tower_damage":50},
+        "13":{"damage":129,"crown_tower_damage":55},
+        "14":{"damage":142,"crown_tower_damage":61},
+        "15":{"damage":156,"crown_tower_damage":67}
+      }
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},
+  "stats_by_level":{
+    "11":{"doctor":{"hitpoints":721,"damage":92,"damage_per_second":51},"monster":{"hitpoints":2385,"damage":128,"damage_per_second":85}},
+    "12":{"doctor":{"hitpoints":792,"damage":101,"damage_per_second":56},"monster":{"hitpoints":2617,"damage":140,"damage_per_second":93}},
+    "13":{"doctor":{"hitpoints":871,"damage":111,"damage_per_second":61},"monster":{"hitpoints":2878,"damage":154,"damage_per_second":102}},
+    "14":{"doctor":{"hitpoints":955,"damage":122,"damage_per_second":67},"monster":{"hitpoints":3157,"damage":169,"damage_per_second":112}},
+    "15":{"doctor":{"hitpoints":1049,"damage":133,"damage_per_second":73},"monster":{"hitpoints":3466,"damage":186,"damage_per_second":124}}
+  },
+  "balance_notes":"Crown tower damage corrected from 23 to 46 (Oct 2024 emergency nerf set it to 46, not 23). Monster HP corrected to 2385 at L11 (net result of April 2025 -4% and Sept 2025 +4%)."
+}

@@ -1,0 +1,30 @@
+{
+  "name":"Poison",
+  "rarity":"Epic",
+  "type":"Spell",
+  "elixir_cost":4,
+  "arena_unlock":{"name":"Jungle Arena","arena_number":9},
+  "spell_attributes":{
+    "radius_tiles":3.5,
+    "targets":"Air_and_Ground",
+    "duration_sec":8,
+    "tick_interval_sec":1.0,
+    "ticks":8,
+    "slow_percent":15
+  },
+  "stats_by_level":{
+    "6":{"damage_per_tick":67,"total_damage":536,"crown_tower_damage_per_tick":20,"crown_tower_total":160},
+    "7":{"damage_per_tick":74,"total_damage":592,"crown_tower_damage_per_tick":22,"crown_tower_total":176},
+    "8":{"damage_per_tick":81,"total_damage":648,"crown_tower_damage_per_tick":24,"crown_tower_total":192},
+    "9":{"damage_per_tick":89,"total_damage":712,"crown_tower_damage_per_tick":26,"crown_tower_total":208},
+    "10":{"damage_per_tick":98,"total_damage":784,"crown_tower_damage_per_tick":29,"crown_tower_total":232},
+    "11":{"damage_per_tick":108,"total_damage":864,"crown_tower_damage_per_tick":32,"crown_tower_total":256},
+    "12":{"damage_per_tick":119,"total_damage":952,"crown_tower_damage_per_tick":35,"crown_tower_total":280},
+    "13":{"damage_per_tick":130,"total_damage":1040,"crown_tower_damage_per_tick":39,"crown_tower_total":312},
+    "14":{"damage_per_tick":143,"total_damage":1144,"crown_tower_damage_per_tick":42,"crown_tower_total":336},
+    "15":{"damage_per_tick":157,"total_damage":1256,"crown_tower_damage_per_tick":47,"crown_tower_total":376}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

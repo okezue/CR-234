@@ -1,0 +1,56 @@
+{
+  "name":"Skeleton King",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":4,
+  "arena_unlock":{"name":"Executioner's Kitchen","arena_number":16},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"splash",
+    "targets":["Ground"],
+    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
+    "splash_radius_tiles":1.3,
+    "hit_speed_sec":1.6,
+    "first_hit_speed_sec":0.3
+  },
+  "ability":{
+    "name":"Soul Summoning",
+    "elixir_cost":2,
+    "initial_delay_sec":1.0,
+    "cast_time_sec":0.933,
+    "cooldown_sec":20.0,
+    "summon_radius_tiles":3.5,
+    "spawn_interval_sec":0.25,
+    "spawn_pattern":"random_positions_within_circle",
+    "soul_capacity":10,
+    "skeletons_summoned":{"min":6,"max":16,"formula":"skeletons=6+souls (souls clamped to [0,10])"},
+    "summoned_unit":"Soul Skeleton (cloned)",
+    "summoned_unit_hitpoints":1
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "11":{"hitpoints":2298,"damage":204,"damage_per_second":127},
+    "12":{"hitpoints":2523,"damage":224,"damage_per_second":140},
+    "13":{"hitpoints":2774,"damage":247,"damage_per_second":154},
+    "14":{"hitpoints":3044,"damage":271,"damage_per_second":169},
+    "15":{"hitpoints":3340,"damage":297,"damage_per_second":185},
+    "16":{"hitpoints":3672,"damage":327,"damage_per_second":204}
+  },
+  "sub_units":{
+    "Soul Skeleton (cloned)":{
+      "movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},
+      "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"hit_speed_sec":1.1,"first_hit_speed_sec":0.5},
+      "stats_by_level":{
+        "11":{"hitpoints":1,"damage":81,"damage_per_second":73},
+        "12":{"hitpoints":1,"damage":89,"damage_per_second":80},
+        "13":{"hitpoints":1,"damage":98,"damage_per_second":89},
+        "14":{"hitpoints":1,"damage":108,"damage_per_second":98},
+        "15":{"hitpoints":1,"damage":119,"damage_per_second":108},
+        "16":{"hitpoints":1,"damage":130,"damage_per_second":118}
+      }
+    }
+  },
+  "balance_notes":"Summon radius corrected from 4.0 to 3.5 tiles (Oct 2025 nerf). L11 stats are post-June 2024 values."
+}

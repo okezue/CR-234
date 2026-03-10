@@ -1,0 +1,30 @@
+{
+  "name":"Dagger Duchess",
+  "rarity":"Legendary",
+  "type":"Tower Troop",
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Air","Ground"],
+    "mechanics":{
+      "dagger_burst":{
+        "max_daggers":8,
+        "burst_hit_speed_sec":0.35,
+        "cooldown_hit_speed_sec":1.2,
+        "charge_time_sec":0.9
+      }
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "9":{"tower_hitpoints":3000,"damage":143,"dps_burst":408,"dps_cooldown":119},
+    "10":{"tower_hitpoints":3300,"damage":157,"dps_burst":448,"dps_cooldown":130},
+    "11":{"tower_hitpoints":3204,"damage":153,"dps_burst":437,"dps_cooldown":127},
+    "12":{"tower_hitpoints":3524,"damage":168,"dps_burst":480,"dps_cooldown":140},
+    "13":{"tower_hitpoints":3876,"damage":185,"dps_burst":528,"dps_cooldown":154},
+    "14":{"tower_hitpoints":4264,"damage":203,"dps_burst":580,"dps_cooldown":169},
+    "15":{"tower_hitpoints":4690,"damage":223,"dps_burst":637,"dps_cooldown":185}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

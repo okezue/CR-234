@@ -1,0 +1,53 @@
+{
+  "name":"Golden Knight",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":4,
+  "arena_unlock":{"name":"Executioner's Kitchen","arena_number":16},
+  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
+  "deploy_time_sec":1.0,
+  "count":1,
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Ground"],
+    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
+    "hit_speed_sec":0.9,
+    "first_hit_speed_sec":0.2
+  },
+  "ability":{
+    "name":"Dashing Dash",
+    "elixir_cost":1,
+    "initial_delay_sec":1.0,
+    "cast_time_sec":0.766,
+    "cooldown_sec":8.0,
+    "dash":{
+      "speed_during_ability":{"classification":"Very Fast","value":120},
+      "max_dash_distance_tiles":5.5,
+      "chain_search_radius_tiles":5.5,
+      "max_dashes":10,
+      "cannot_dash_same_target_twice_per_cast":true,
+      "stops_if_last_target_is_crown_tower":true,
+      "invulnerable_during_dash":true
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "11":{"hitpoints":1799,"damage":161,"damage_per_second":178},
+    "12":{"hitpoints":1975,"damage":177,"damage_per_second":196},
+    "13":{"hitpoints":2172,"damage":194,"damage_per_second":215},
+    "14":{"hitpoints":2383,"damage":213,"damage_per_second":236},
+    "15":{"hitpoints":2615,"damage":234,"damage_per_second":260},
+    "16":{"hitpoints":2875,"damage":257,"damage_per_second":285}
+  },
+  "ability_stats_by_level":{
+    "dashing_dash":{
+      "11":{"dash_damage":335},
+      "12":{"dash_damage":368},
+      "13":{"dash_damage":404},
+      "14":{"dash_damage":444},
+      "15":{"dash_damage":487},
+      "16":{"dash_damage":535}
+    }
+  },
+  "balance_notes":"All stats verified correct as of March 2026. No changes needed."
+}

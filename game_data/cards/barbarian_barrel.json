@@ -1,0 +1,63 @@
+{
+  "name":"Barbarian Barrel",
+  "type":"Spell",
+  "rarity":"Epic",
+  "arena":"Jungle Arena",
+  "release_date":"2018-04-06",
+  "elixir_cost":2,
+  "spell_attributes":{
+    "range_tiles":4.5,
+    "width_tiles":2.6,
+    "targets":"Ground",
+    "placement_restrictions":{"can_be_deployed_on_opponent_side":false},
+    "projectile_travel_speed":{"value":200,"units":"tiles_per_minute","initial_in_air_value":360}
+  },
+  "spawned_unit":{
+    "name":"Barbarian",
+    "count":1,
+    "hit_speed_sec":1.3,
+    "first_hit_speed_sec":0.4,
+    "movement_speed":{"class":"Medium","value":60,"units":"tiles_per_minute"},
+    "deploy_time_sec":1.0,
+    "range_tiles":0.5,
+    "targets":"Ground",
+    "hidden_stats":{"mass":4,"collision_radius_tiles":0.5,"sight_range_tiles":5.5}
+  },
+  "stats_by_level":{
+    "6":{"barrel_area_damage":144,"barbarian_hitpoints":419,"barbarian_damage":120,"barbarian_damage_per_second":92},
+    "7":{"barrel_area_damage":158,"barbarian_hitpoints":461,"barbarian_damage":132,"barbarian_damage_per_second":101},
+    "8":{"barrel_area_damage":173,"barbarian_hitpoints":505,"barbarian_damage":144,"barbarian_damage_per_second":110},
+    "9":{"barrel_area_damage":190,"barbarian_hitpoints":555,"barbarian_damage":159,"barbarian_damage_per_second":122},
+    "10":{"barrel_area_damage":209,"barbarian_hitpoints":610,"barbarian_damage":174,"barbarian_damage_per_second":133},
+    "11":{"barrel_area_damage":230,"barbarian_hitpoints":670,"barbarian_damage":192,"barbarian_damage_per_second":147},
+    "12":{"barrel_area_damage":252,"barbarian_hitpoints":736,"barbarian_damage":210,"barbarian_damage_per_second":161},
+    "13":{"barrel_area_damage":278,"barbarian_hitpoints":809,"barbarian_damage":231,"barbarian_damage_per_second":177},
+    "14":{"barrel_area_damage":305,"barbarian_hitpoints":888,"barbarian_damage":254,"barbarian_damage_per_second":195},
+    "15":{"barrel_area_damage":334,"barbarian_hitpoints":974,"barbarian_damage":279,"barbarian_damage_per_second":214}
+  },
+  "evolution":{"available":false},
+  "hero_form":{
+    "available":true,
+    "hero_name":"Hero Barbarian Barrel",
+    "release_date":"2026-03-02",
+    "ability":{
+      "name":"Rowdy Reroll",
+      "ability_elixir_cost":1,
+      "ability_description":"Barrels down the lane a second time for maximum impact",
+      "linked_to_entity":"spawned_barbarian",
+      "button_disappears_if_linked_entity_dies":true,
+      "uses_per_deploy":1,
+      "activation_delay_sec":1.0,
+      "mechanics":{
+        "transforms_linked_barbarian_into_barrel_then_rolls":true,
+        "second_roll_range_tiles":4.0,
+        "base_roll_range_tiles":4.5,
+        "second_roll_damage_equals_base_barrel_damage":true,
+        "second_roll_can_deal_crown_tower_damage":true,
+        "second_roll_crown_tower_damage_by_level":{"11":116},
+        "post_second_roll_heal":{"heals_fraction_of_damage_received":0.5,"formula":"healed_hp=damage_received/2","timing":"After the second roll, when the Barbarian reappears.","cap":"Cannot exceed max HP."}
+      }
+    }
+  },
+  "balance_notes":"Verified current as of March 2026. Barrel damage reflects Dec 2025 -4% nerf."
+}

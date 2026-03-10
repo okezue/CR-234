@@ -1,0 +1,26 @@
+{
+  "name":"Cannoneer",
+  "rarity":"Epic",
+  "type":"Tower Troop",
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Air","Ground"],
+    "hit_speed_sec":2.2
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"tower_hitpoints":1900,"damage":306,"damage_per_second":139},
+    "7":{"tower_hitpoints":2090,"damage":336,"damage_per_second":152},
+    "8":{"tower_hitpoints":2299,"damage":370,"damage_per_second":168},
+    "9":{"tower_hitpoints":2529,"damage":407,"damage_per_second":185},
+    "10":{"tower_hitpoints":2782,"damage":447,"damage_per_second":203},
+    "11":{"tower_hitpoints":2616,"damage":422,"damage_per_second":175},
+    "12":{"tower_hitpoints":2878,"damage":464,"damage_per_second":210},
+    "13":{"tower_hitpoints":3166,"damage":510,"damage_per_second":231},
+    "14":{"tower_hitpoints":3482,"damage":561,"damage_per_second":255},
+    "15":{"tower_hitpoints":3830,"damage":617,"damage_per_second":280}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

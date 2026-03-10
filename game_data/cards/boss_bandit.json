@@ -1,0 +1,44 @@
+{
+  "name":"Boss Bandit",
+  "rarity":"Champion",
+  "type":"Troop",
+  "elixir_cost":6,
+  "movement":{"transport":"Ground","speed_class":"Fast","speed_value":90},
+  "deploy_time_sec":1.0,
+  "attack":{
+    "targets":["Ground"],
+    "range":{"category":"Melee","subtype":"Short","tiles":0.8},
+    "hit_speed_sec":1.1,
+    "first_hit_speed_sec":0.4
+  },
+  "mechanics":{
+    "dash":{
+      "trigger_target_band_tiles":{"min":3.5,"max":6.0},
+      "dash_charge_time_sec":0.8,
+      "dash_speed_value":500,
+      "dash_invulnerable":true,
+      "dash_targets":["Ground"]
+    }
+  },
+  "ability":{
+    "name":"Getaway Grenade",
+    "elixir_cost":1,
+    "activation_delay_sec":1.0,
+    "cast_time_sec":0.933,
+    "cooldown_sec":3.0,
+    "uses_per_deploy":2,
+    "effects":{
+      "invisibility":{"duration_sec":1.0},
+      "teleport":{"distance_tiles":6.0,"direction":"backwards_relative_to_facing"}
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},
+  "stats_by_level":{
+    "11":{"hitpoints":2721,"damage":245,"dash_damage":491,"damage_per_second":223},
+    "12":{"hitpoints":2987,"damage":269,"dash_damage":539,"damage_per_second":245},
+    "13":{"hitpoints":3285,"damage":296,"dash_damage":592,"damage_per_second":269},
+    "14":{"hitpoints":3604,"damage":325,"dash_damage":651,"damage_per_second":295},
+    "15":{"hitpoints":3957,"damage":357,"dash_damage":715,"damage_per_second":325}
+  },
+  "balance_notes":"Updated for Jan 2026 rework: hit speed 1.2s->1.1s, damage -9%, HP adjusted. Ability stats unchanged."
+}

@@ -1,0 +1,67 @@
+{
+  "name":"Goblin Drill",
+  "rarity":"Epic",
+  "type":"Building",
+  "elixir_cost":4,
+  "arena_unlock":{"name":"Serenity Peak","arena_number":14},
+  "building_stats":{
+    "lifetime_sec":10,
+    "placement":"anywhere_in_arena"
+  },
+  "spawns":{
+    "unit":"Goblin",
+    "spawn_interval_sec":3.0,
+    "spawn_first_delay_sec":1.0,
+    "death_spawn_count":2
+  },
+  "mechanics":{
+    "spawn_damage":{
+      "enabled":true,
+      "splash_radius_tiles":2.0,
+      "knockback":true,
+      "damage_key":"spawn_damage"
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "6":{"hitpoints":893,"spawn_damage":41},
+    "7":{"hitpoints":982,"spawn_damage":45},
+    "8":{"hitpoints":1080,"spawn_damage":50},
+    "9":{"hitpoints":1188,"spawn_damage":55},
+    "10":{"hitpoints":1306,"spawn_damage":60},
+    "11":{"hitpoints":1440,"spawn_damage":67},
+    "12":{"hitpoints":1584,"spawn_damage":74},
+    "13":{"hitpoints":1742,"spawn_damage":81},
+    "14":{"hitpoints":1916,"spawn_damage":89},
+    "15":{"hitpoints":2108,"spawn_damage":98}
+  },
+  "sub_units":{
+    "Goblin":{
+      "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
+      "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"hit_speed_sec":1.1,"first_hit_speed_sec":0.5},
+      "stats_by_level":{
+        "6":{"hitpoints":78,"damage":46,"damage_per_second":41},
+        "7":{"hitpoints":86,"damage":50,"damage_per_second":45},
+        "8":{"hitpoints":94,"damage":55,"damage_per_second":50},
+        "9":{"hitpoints":104,"damage":61,"damage_per_second":55},
+        "10":{"hitpoints":114,"damage":67,"damage_per_second":60},
+        "11":{"hitpoints":126,"damage":75,"damage_per_second":68},
+        "12":{"hitpoints":138,"damage":82,"damage_per_second":74},
+        "13":{"hitpoints":152,"damage":90,"damage_per_second":81},
+        "14":{"hitpoints":167,"damage":99,"damage_per_second":90},
+        "15":{"hitpoints":184,"damage":109,"damage_per_second":99}
+      }
+    }
+  },
+  "evolution":{
+    "available":true,
+    "changes":{
+      "resurface":{
+        "description":"Goblin Drill resurfaces nearby at 66% and 33% HP thresholds, leaving a Goblin behind each time",
+        "resurface_thresholds_pct":[66,33]
+      }
+    }
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

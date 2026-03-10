@@ -1,0 +1,70 @@
+{
+  "name":"Wall Breakers",
+  "rarity":"Epic",
+  "type":"Troop",
+  "elixir_cost":2,
+  "arena_unlock":{"name":"Spooky Town","arena_number":12},
+  "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
+  "deploy_time_sec":1.0,
+  "count":2,
+  "attack":{
+    "damage_type":"area_damage",
+    "targets":["Buildings"],
+    "range":{"type":"melee","classification":"Melee: Short","tiles":0.5},
+    "splash_radius_tiles":1.5,
+    "self_destruct_on_hit":true
+  },
+  "hidden_stats":{"mass":4,"collision_radius_tiles":0.4},
+  "stats_by_level":{
+    "6":{"hitpoints":207,"damage":245},
+    "7":{"hitpoints":227,"damage":269},
+    "8":{"hitpoints":250,"damage":296},
+    "9":{"hitpoints":275,"damage":325},
+    "10":{"hitpoints":302,"damage":357},
+    "11":{"hitpoints":331,"damage":392},
+    "12":{"hitpoints":364,"damage":431},
+    "13":{"hitpoints":400,"damage":474},
+    "14":{"hitpoints":439,"damage":520},
+    "15":{"hitpoints":483,"damage":572}
+  },
+  "evolution":{
+    "available":true,
+    "cycles_to_activate":2,
+    "changes":{
+      "death_damage":{"enabled":true,"reduced_crown_tower_damage":true,"crown_tower_damage_percent":66},
+      "death_spawn":{"unit":"Runner","count":1,"per_wall_breaker":true}
+    },
+    "evo_stats_by_level":{
+      "6":{"death_damage":367,"crown_tower_death_damage":242},
+      "7":{"death_damage":403,"crown_tower_death_damage":266},
+      "8":{"death_damage":443,"crown_tower_death_damage":292},
+      "9":{"death_damage":487,"crown_tower_death_damage":321},
+      "10":{"death_damage":535,"crown_tower_death_damage":353},
+      "11":{"death_damage":588,"crown_tower_death_damage":388},
+      "12":{"death_damage":646,"crown_tower_death_damage":426},
+      "13":{"death_damage":710,"crown_tower_death_damage":468},
+      "14":{"death_damage":780,"crown_tower_death_damage":514},
+      "15":{"death_damage":857,"crown_tower_death_damage":565}
+    },
+    "sub_units":{
+      "Runner":{
+        "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
+        "attack":{"damage_type":"area_damage","targets":["Buildings"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"self_destruct_on_hit":true},
+        "stats_by_level":{
+          "6":{"hitpoints":103,"damage":122},
+          "7":{"hitpoints":113,"damage":134},
+          "8":{"hitpoints":125,"damage":148},
+          "9":{"hitpoints":137,"damage":162},
+          "10":{"hitpoints":151,"damage":178},
+          "11":{"hitpoints":165,"damage":196},
+          "12":{"hitpoints":182,"damage":215},
+          "13":{"hitpoints":200,"damage":237},
+          "14":{"hitpoints":219,"damage":260},
+          "15":{"hitpoints":241,"damage":286}
+        }
+      }
+    }
+  },
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

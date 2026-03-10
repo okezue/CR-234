@@ -1,0 +1,27 @@
+{
+  "name":"Royal Chef",
+  "rarity":"Legendary",
+  "type":"Tower Troop",
+  "mechanics":{
+    "pancake_boost":{
+      "description":"Throws pancakes at friendly troops to boost their level by 1",
+      "level_boost":1,
+      "targets":"friendly_troops_above_33pct_hp",
+      "excludes":"buildings",
+      "single_use_per_troop":true
+    }
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "9":{"tower_hitpoints":2900,"damage":100,"damage_per_second":58},
+    "10":{"tower_hitpoints":3190,"damage":110,"damage_per_second":64},
+    "11":{"tower_hitpoints":3509,"damage":121,"damage_per_second":70},
+    "12":{"tower_hitpoints":3860,"damage":133,"damage_per_second":77},
+    "13":{"tower_hitpoints":4246,"damage":146,"damage_per_second":85},
+    "14":{"tower_hitpoints":4670,"damage":160,"damage_per_second":93},
+    "15":{"tower_hitpoints":5137,"damage":176,"damage_per_second":102}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

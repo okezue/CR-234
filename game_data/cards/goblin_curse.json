@@ -1,0 +1,48 @@
+{
+  "name":"Goblin Curse",
+  "rarity":"Epic",
+  "type":"Spell",
+  "elixir_cost":2,
+  "arena_unlock":{"name":"Serenity Peak","arena_number":14},
+  "spell_attributes":{
+    "radius_tiles":3.0,
+    "targets":"Air_and_Ground",
+    "duration_sec":6,
+    "tick_interval_sec":1,
+    "total_ticks":6,
+    "conversion":"defeated_enemies_become_goblins"
+  },
+  "stats_by_level":{
+    "6":{"damage_per_tick":22,"total_damage":132,"crown_tower_damage_per_tick":6,"total_crown_tower_damage":36},
+    "7":{"damage_per_tick":24,"total_damage":144,"crown_tower_damage_per_tick":6,"total_crown_tower_damage":36},
+    "8":{"damage_per_tick":26,"total_damage":156,"crown_tower_damage_per_tick":7,"total_crown_tower_damage":42},
+    "9":{"damage_per_tick":29,"total_damage":174,"crown_tower_damage_per_tick":8,"total_crown_tower_damage":48},
+    "10":{"damage_per_tick":32,"total_damage":192,"crown_tower_damage_per_tick":9,"total_crown_tower_damage":54},
+    "11":{"damage_per_tick":35,"total_damage":210,"crown_tower_damage_per_tick":9,"total_crown_tower_damage":54},
+    "12":{"damage_per_tick":38,"total_damage":228,"crown_tower_damage_per_tick":10,"total_crown_tower_damage":60},
+    "13":{"damage_per_tick":42,"total_damage":252,"crown_tower_damage_per_tick":11,"total_crown_tower_damage":66},
+    "14":{"damage_per_tick":46,"total_damage":276,"crown_tower_damage_per_tick":12,"total_crown_tower_damage":72},
+    "15":{"damage_per_tick":51,"total_damage":306,"crown_tower_damage_per_tick":14,"total_crown_tower_damage":84}
+  },
+  "sub_units":{
+    "Converted Goblin":{
+      "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
+      "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"hit_speed_sec":1.1,"first_hit_speed_sec":0.4},
+      "stats_by_level":{
+        "6":{"hitpoints":120,"damage":75,"damage_per_second":68},
+        "7":{"hitpoints":132,"damage":82,"damage_per_second":74},
+        "8":{"hitpoints":145,"damage":90,"damage_per_second":82},
+        "9":{"hitpoints":159,"damage":99,"damage_per_second":90},
+        "10":{"hitpoints":175,"damage":109,"damage_per_second":99},
+        "11":{"hitpoints":192,"damage":120,"damage_per_second":109},
+        "12":{"hitpoints":211,"damage":132,"damage_per_second":120},
+        "13":{"hitpoints":232,"damage":145,"damage_per_second":131},
+        "14":{"hitpoints":255,"damage":159,"damage_per_second":144},
+        "15":{"hitpoints":280,"damage":175,"damage_per_second":159}
+      }
+    }
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}

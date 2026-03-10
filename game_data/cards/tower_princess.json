@@ -1,0 +1,31 @@
+{
+  "name":"Tower Princess",
+  "rarity":"Common",
+  "type":"Tower Troop",
+  "attack":{
+    "damage_type":"single_target",
+    "targets":["Air","Ground"],
+    "hit_speed_sec":0.8
+  },
+  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "stats_by_level":{
+    "1":{"tower_hitpoints":1400,"damage":50,"damage_per_second":62},
+    "2":{"tower_hitpoints":1540,"damage":55,"damage_per_second":68},
+    "3":{"tower_hitpoints":1694,"damage":60,"damage_per_second":75},
+    "4":{"tower_hitpoints":1863,"damage":66,"damage_per_second":82},
+    "5":{"tower_hitpoints":2049,"damage":73,"damage_per_second":91},
+    "6":{"tower_hitpoints":2254,"damage":80,"damage_per_second":100},
+    "7":{"tower_hitpoints":2479,"damage":88,"damage_per_second":110},
+    "8":{"tower_hitpoints":2727,"damage":97,"damage_per_second":121},
+    "9":{"tower_hitpoints":2772,"damage":99,"damage_per_second":123},
+    "10":{"tower_hitpoints":3049,"damage":109,"damage_per_second":136},
+    "11":{"tower_hitpoints":3052,"damage":109,"damage_per_second":136},
+    "12":{"tower_hitpoints":3357,"damage":120,"damage_per_second":150},
+    "13":{"tower_hitpoints":3693,"damage":132,"damage_per_second":165},
+    "14":{"tower_hitpoints":4062,"damage":145,"damage_per_second":181},
+    "15":{"tower_hitpoints":4468,"damage":159,"damage_per_second":198}
+  },
+  "evolution":{"available":false},
+  "verification_status":"unverified_jan2026_snapshot",
+  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+}
