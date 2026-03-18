@@ -1,1 +1,123 @@
-{"name":"Heal Spirit","rarity":"Rare","type":"Troop","elixir_cost":1,"movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},"attack":{"damage_type":"area_splash","targets":["Air","Ground"],"range":{"type":"melee","classification":"Melee: Long","tiles":1.6},"hit_speed_sec":null,"dies_on_attack":true,"splash_radius_tiles":1.5},"mechanics":{"healing":{"pulses_per_sec":4,"duration_sec":1,"radius_tiles":2.5,"total_pulses":4}},"stats_by_level":{"3":{"hitpoints":144,"damage":31,"healing_per_second":240},"4":{"hitpoints":158,"damage":34,"healing_per_second":264},"5":{"hitpoints":174,"damage":38,"healing_per_second":290},"6":{"hitpoints":190,"damage":41,"healing_per_second":318},"7":{"hitpoints":209,"damage":45,"healing_per_second":350},"8":{"hitpoints":230,"damage":50,"healing_per_second":384},"9":{"hitpoints":252,"damage":55,"healing_per_second":422},"10":{"hitpoints":277,"damage":60,"healing_per_second":463},"11":{"hitpoints":305,"damage":66,"healing_per_second":509},"12":{"hitpoints":335,"damage":73,"healing_per_second":559},"13":{"hitpoints":368,"damage":80,"healing_per_second":615},"14":{"hitpoints":404,"damage":88,"healing_per_second":675},"15":{"hitpoints":444,"damage":96,"healing_per_second":742},"16":{"hitpoints":488,"damage":106,"healing_per_second":816}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Heal Spirit",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir_cost": 1,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Very Fast",
+      "value": 120
+    }
+  },
+  "attack": {
+    "damage_type": "area_splash",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Long",
+      "tiles": 1.6
+    },
+    "hit_speed_sec": null,
+    "dies_on_attack": true,
+    "splash_radius_tiles": 1.5
+  },
+  "mechanics": {
+    "healing": {
+      "pulses_per_sec": 4,
+      "duration_sec": 1,
+      "radius_tiles": 2.5,
+      "total_pulses": 4
+    }
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 144,
+      "damage": 31,
+      "healing_per_second": 240
+    },
+    "4": {
+      "hitpoints": 158,
+      "damage": 34,
+      "healing_per_second": 264
+    },
+    "5": {
+      "hitpoints": 174,
+      "damage": 38,
+      "healing_per_second": 290
+    },
+    "6": {
+      "hitpoints": 190,
+      "damage": 41,
+      "healing_per_second": 318
+    },
+    "7": {
+      "hitpoints": 209,
+      "damage": 45,
+      "healing_per_second": 350
+    },
+    "8": {
+      "hitpoints": 230,
+      "damage": 50,
+      "healing_per_second": 384
+    },
+    "9": {
+      "hitpoints": 252,
+      "damage": 55,
+      "healing_per_second": 422
+    },
+    "10": {
+      "hitpoints": 277,
+      "damage": 60,
+      "healing_per_second": 463
+    },
+    "11": {
+      "hitpoints": 305,
+      "damage": 66,
+      "healing_per_second": 509
+    },
+    "12": {
+      "hitpoints": 335,
+      "damage": 73,
+      "healing_per_second": 559
+    },
+    "13": {
+      "hitpoints": 368,
+      "damage": 80,
+      "healing_per_second": 615
+    },
+    "14": {
+      "hitpoints": 404,
+      "damage": 88,
+      "healing_per_second": 675
+    },
+    "15": {
+      "hitpoints": 444,
+      "damage": 96,
+      "healing_per_second": 742
+    },
+    "16": {
+      "hitpoints": 488,
+      "damage": 106,
+      "healing_per_second": 816
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 1,
+    "collision_radius_tiles": 0.2
+  }
+}

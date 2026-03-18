@@ -3,7 +3,7 @@ from playwright.async_api import async_playwright, Browser, BrowserContext, Page
 import os
 from typing import Dict
 
-STORAGE_STATE_PATH = os.path.join(os.path.abspath("."), "myGoogleAuth.json")
+STORAGE_STATE_PATH = os.path.join(os.path.abspath("."), "scraping/myGoogleAuth.json")
 
 STEALTH_ARGS = [
     "--disable-blink-features=AutomationControlled",
@@ -46,16 +46,19 @@ async def create_stealth_context(browser: Browser) -> BrowserContext:
 
 async def login_and_save():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False, args=STEALTH_ARGS)
+        browser = await p.chromium.launch(headless=False, channel="chrome", args=STEALTH_ARGS)
         context = await create_stealth_context(browser)
         page = await context.new_page()
         
-        await page.goto("https://royaleapi.com/", wait_until="networkidle")
+        await page.goto("https://royaleapi.com/", wait_until="load", timeout=60000)
         
         print("Please log in manually in the browser window.")
-        print("Once logged in, press Enter in the terminal to save the session.")
-        
-        input("Press Enter after logging in...")
+        print("Once logged in, create the file: touch /tmp/login_done")
+        print("Waiting for /tmp/login_done ...")
+        import time
+        while not os.path.exists("/tmp/login_done"):
+            time.sleep(1)
+        os.remove("/tmp/login_done")
         
         # Save the storage state
         await context.storage_state(path=STORAGE_STATE_PATH)

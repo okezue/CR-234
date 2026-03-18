@@ -1,1 +1,177 @@
-{"name":"Goblin Cage","rarity":"Rare","type":"Building","elixir_cost":4,"building_attributes":{"lifetime_sec":20,"deploy_time_sec":1.0},"mechanics":{"death_spawn":{"unit":"Goblin Brawler","count":1}},"stats_by_level":{"3":{"hitpoints":600},"4":{"hitpoints":660},"5":{"hitpoints":726},"6":{"hitpoints":798},"7":{"hitpoints":876},"8":{"hitpoints":960},"9":{"hitpoints":1056},"10":{"hitpoints":1159},"11":{"hitpoints":1272},"12":{"hitpoints":1398},"13":{"hitpoints":1536},"14":{"hitpoints":1687},"15":{"hitpoints":1854},"16":{"hitpoints":2038}},"sub_units":{"Goblin Brawler":{"movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.8},"hit_speed_sec":1.1},"stats_by_level":{"3":{"hitpoints":540,"damage":120,"damage_per_second":109},"4":{"hitpoints":594,"damage":132,"damage_per_second":120},"5":{"hitpoints":653,"damage":145,"damage_per_second":131},"6":{"hitpoints":718,"damage":159,"damage_per_second":144},"7":{"hitpoints":788,"damage":175,"damage_per_second":159},"8":{"hitpoints":864,"damage":192,"damage_per_second":174},"9":{"hitpoints":950,"damage":211,"damage_per_second":191},"10":{"hitpoints":1043,"damage":231,"damage_per_second":210},"11":{"hitpoints":1144,"damage":254,"damage_per_second":230},"12":{"hitpoints":1258,"damage":279,"damage_per_second":253},"13":{"hitpoints":1382,"damage":307,"damage_per_second":279},"14":{"hitpoints":1518,"damage":337,"damage_per_second":306},"15":{"hitpoints":1668,"damage":370,"damage_per_second":336},"16":{"hitpoints":1834,"damage":407,"damage_per_second":370}}}},"evolution":{"available":true,"changes":{"cage_pull":{"description":"Pulls troops into the cage"}}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Goblin Cage",
+  "rarity": "Rare",
+  "type": "Building",
+  "elixir_cost": 4,
+  "building_attributes": {
+    "lifetime_sec": 20,
+    "deploy_time_sec": 1.0
+  },
+  "mechanics": {
+    "death_spawn": {
+      "unit": "Goblin Brawler",
+      "count": 1
+    }
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 600
+    },
+    "4": {
+      "hitpoints": 660
+    },
+    "5": {
+      "hitpoints": 726
+    },
+    "6": {
+      "hitpoints": 798
+    },
+    "7": {
+      "hitpoints": 876
+    },
+    "8": {
+      "hitpoints": 960
+    },
+    "9": {
+      "hitpoints": 1056
+    },
+    "10": {
+      "hitpoints": 1159
+    },
+    "11": {
+      "hitpoints": 1272
+    },
+    "12": {
+      "hitpoints": 1398
+    },
+    "13": {
+      "hitpoints": 1536
+    },
+    "14": {
+      "hitpoints": 1687
+    },
+    "15": {
+      "hitpoints": 1854
+    },
+    "16": {
+      "hitpoints": 2038
+    }
+  },
+  "sub_units": {
+    "Goblin Brawler": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Fast",
+          "value": 90
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Ground"
+        ],
+        "range": {
+          "type": "melee",
+          "classification": "Melee: Short",
+          "tiles": 0.8
+        },
+        "hit_speed_sec": 1.1
+      },
+      "stats_by_level": {
+        "3": {
+          "hitpoints": 540,
+          "damage": 120,
+          "damage_per_second": 109
+        },
+        "4": {
+          "hitpoints": 594,
+          "damage": 132,
+          "damage_per_second": 120
+        },
+        "5": {
+          "hitpoints": 653,
+          "damage": 145,
+          "damage_per_second": 131
+        },
+        "6": {
+          "hitpoints": 718,
+          "damage": 159,
+          "damage_per_second": 144
+        },
+        "7": {
+          "hitpoints": 788,
+          "damage": 175,
+          "damage_per_second": 159
+        },
+        "8": {
+          "hitpoints": 864,
+          "damage": 192,
+          "damage_per_second": 174
+        },
+        "9": {
+          "hitpoints": 950,
+          "damage": 211,
+          "damage_per_second": 191
+        },
+        "10": {
+          "hitpoints": 1043,
+          "damage": 231,
+          "damage_per_second": 210
+        },
+        "11": {
+          "hitpoints": 1144,
+          "damage": 254,
+          "damage_per_second": 230
+        },
+        "12": {
+          "hitpoints": 1258,
+          "damage": 279,
+          "damage_per_second": 253
+        },
+        "13": {
+          "hitpoints": 1382,
+          "damage": 307,
+          "damage_per_second": 279
+        },
+        "14": {
+          "hitpoints": 1518,
+          "damage": 337,
+          "damage_per_second": 306
+        },
+        "15": {
+          "hitpoints": 1668,
+          "damage": 370,
+          "damage_per_second": 336
+        },
+        "16": {
+          "hitpoints": 1834,
+          "damage": 407,
+          "damage_per_second": 370
+        }
+      }
+    }
+  },
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 2,
+    "changes": {
+      "cage_pull": true,
+      "pull_radius_tiles": 3.0,
+      "traps_ground_unit": true,
+      "trapped_unit_cannot_attack": true
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 6.0,
+    "mass": null,
+    "collision_radius_tiles": 0.5
+  }
+}

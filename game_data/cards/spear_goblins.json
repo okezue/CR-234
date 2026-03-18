@@ -1,1 +1,128 @@
-{"name":"Spear Goblins","key":"spear_goblins","rarity":"Common","type":"Troop","elixir":2,"count":3,"speed":"Very Fast (120)","range":"Ranged: 5.0","hit_speed":"1.7s","projectile_speed":500,"sight_range":5.5,"targets":"Air & Ground","levels":{"min":1,"max":16,"stats":[{"level":1,"hp":52,"damage":24,"dps":14},{"level":2,"hp":57,"damage":26,"dps":15},{"level":3,"hp":62,"damage":29,"dps":17},{"level":4,"hp":69,"damage":32,"dps":18},{"level":5,"hp":75,"damage":35,"dps":20},{"level":6,"hp":83,"damage":38,"dps":22},{"level":7,"hp":91,"damage":42,"dps":24},{"level":8,"hp":100,"damage":46,"dps":27},{"level":9,"hp":109,"damage":50,"dps":29},{"level":10,"hp":120,"damage":55,"dps":32},{"level":11,"hp":132,"damage":61,"dps":35},{"level":12,"hp":145,"damage":67,"dps":39},{"level":13,"hp":159,"damage":73,"dps":42},{"level":14,"hp":175,"damage":80,"dps":47},{"level":15,"hp":192,"damage":88,"dps":51},{"level":16,"hp":211,"damage":97,"dps":57}]},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Spear Goblins",
+  "key": "spear_goblins",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir": 2,
+  "count": 3,
+  "speed": "Very Fast (120)",
+  "range": "Ranged: 5.0",
+  "hit_speed": "1.7s",
+  "projectile_speed": 500,
+  "sight_range": 5.5,
+  "targets": "Air & Ground",
+  "levels": {
+    "min": 1,
+    "max": 16,
+    "stats": [
+      {
+        "level": 1,
+        "hp": 52,
+        "damage": 24,
+        "dps": 14
+      },
+      {
+        "level": 2,
+        "hp": 57,
+        "damage": 26,
+        "dps": 15
+      },
+      {
+        "level": 3,
+        "hp": 62,
+        "damage": 29,
+        "dps": 17
+      },
+      {
+        "level": 4,
+        "hp": 69,
+        "damage": 32,
+        "dps": 18
+      },
+      {
+        "level": 5,
+        "hp": 75,
+        "damage": 35,
+        "dps": 20
+      },
+      {
+        "level": 6,
+        "hp": 83,
+        "damage": 38,
+        "dps": 22
+      },
+      {
+        "level": 7,
+        "hp": 91,
+        "damage": 42,
+        "dps": 24
+      },
+      {
+        "level": 8,
+        "hp": 100,
+        "damage": 46,
+        "dps": 27
+      },
+      {
+        "level": 9,
+        "hp": 109,
+        "damage": 50,
+        "dps": 29
+      },
+      {
+        "level": 10,
+        "hp": 120,
+        "damage": 55,
+        "dps": 32
+      },
+      {
+        "level": 11,
+        "hp": 132,
+        "damage": 61,
+        "dps": 35
+      },
+      {
+        "level": 12,
+        "hp": 145,
+        "damage": 67,
+        "dps": 39
+      },
+      {
+        "level": 13,
+        "hp": 159,
+        "damage": 73,
+        "dps": 42
+      },
+      {
+        "level": 14,
+        "hp": 175,
+        "damage": 80,
+        "dps": 47
+      },
+      {
+        "level": 15,
+        "hp": 192,
+        "damage": 88,
+        "dps": 51
+      },
+      {
+        "level": 16,
+        "hp": 211,
+        "damage": 97,
+        "dps": 57
+      }
+    ]
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 2,
+    "collision_radius_tiles": 0.4
+  }
+}

@@ -1,1 +1,92 @@
-{"name":"Electro Wizard","rarity":"Legendary","type":"Troop","elixir_cost":4,"movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},"count":1,"attack":{"damage_type":"dual_zap_split","targets":["Air","Ground"],"range":{"type":"ranged","tiles":5.0},"hit_speed_sec":1.8,"first_hit_speed_sec":0.6,"stun_duration_sec":0.5,"bolts":2,"bolt_damage":"half_total","hitscan":true,"projectile_travel_time":0},"spawn_zap":{"radius_tiles":3.0,"stun_duration_sec":0.5},"stats_by_level":{"9":{"hitpoints":591,"damage_per_bolt":95,"total_damage_per_attack":190,"spawn_zap_damage":159},"10":{"hitpoints":649,"damage_per_bolt":104,"total_damage_per_attack":208,"spawn_zap_damage":174},"11":{"hitpoints":714,"damage_per_bolt":115,"total_damage_per_attack":230,"spawn_zap_damage":192},"12":{"hitpoints":784,"damage_per_bolt":126,"total_damage_per_attack":252,"spawn_zap_damage":211},"13":{"hitpoints":861,"damage_per_bolt":138,"total_damage_per_attack":276,"spawn_zap_damage":231},"14":{"hitpoints":946,"damage_per_bolt":152,"total_damage_per_attack":304,"spawn_zap_damage":254},"15":{"hitpoints":1037,"damage_per_bolt":167,"total_damage_per_attack":334,"spawn_zap_damage":279}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Electro Wizard",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
+  },
+  "count": 1,
+  "attack": {
+    "damage_type": "dual_zap_split",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 5.0
+    },
+    "hit_speed_sec": 1.8,
+    "first_hit_speed_sec": 0.6,
+    "stun_duration_sec": 0.5,
+    "bolts": 2,
+    "bolt_damage": "half_total",
+    "hitscan": true,
+    "projectile_travel_time": 0
+  },
+  "spawn_zap": {
+    "radius_tiles": 3.0,
+    "stun_duration_sec": 0.5
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 591,
+      "damage_per_bolt": 95,
+      "total_damage_per_attack": 190,
+      "spawn_zap_damage": 159
+    },
+    "10": {
+      "hitpoints": 649,
+      "damage_per_bolt": 104,
+      "total_damage_per_attack": 208,
+      "spawn_zap_damage": 174
+    },
+    "11": {
+      "hitpoints": 714,
+      "damage_per_bolt": 115,
+      "total_damage_per_attack": 230,
+      "spawn_zap_damage": 192
+    },
+    "12": {
+      "hitpoints": 784,
+      "damage_per_bolt": 126,
+      "total_damage_per_attack": 252,
+      "spawn_zap_damage": 211
+    },
+    "13": {
+      "hitpoints": 861,
+      "damage_per_bolt": 138,
+      "total_damage_per_attack": 276,
+      "spawn_zap_damage": 231
+    },
+    "14": {
+      "hitpoints": 946,
+      "damage_per_bolt": 152,
+      "total_damage_per_attack": 304,
+      "spawn_zap_damage": 254
+    },
+    "15": {
+      "hitpoints": 1037,
+      "damage_per_bolt": 167,
+      "total_damage_per_attack": 334,
+      "spawn_zap_damage": 279
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.5
+  }
+}

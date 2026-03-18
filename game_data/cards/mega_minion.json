@@ -1,1 +1,127 @@
-{"name":"Mega Minion","key":"mega_minion","rarity":"Rare","type":"Troop","elixir":3,"transport":"Air","speed":"Medium (60)","range":"Melee: Long (1.6)","hit_speed":"1.5s","first_hit":"0.4s","projectile_speed":1000,"targets":"Air & Ground","mass":4,"levels":{"min":3,"max":16,"stats":[{"level":3,"hp":395,"damage":156,"dps":104},{"level":4,"hp":434,"damage":171,"dps":114},{"level":5,"hp":477,"damage":188,"dps":125},{"level":6,"hp":524,"damage":207,"dps":138},{"level":7,"hp":575,"damage":227,"dps":151},{"level":8,"hp":631,"damage":249,"dps":166},{"level":9,"hp":693,"damage":274,"dps":182},{"level":10,"hp":761,"damage":300,"dps":200},{"level":11,"hp":835,"damage":330,"dps":220},{"level":12,"hp":917,"damage":362,"dps":241},{"level":13,"hp":1007,"damage":398,"dps":265},{"level":14,"hp":1105,"damage":437,"dps":291},{"level":15,"hp":1214,"damage":480,"dps":320},{"level":16,"hp":1333,"damage":527,"dps":351}]},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Mega Minion",
+  "key": "mega_minion",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir": 3,
+  "transport": "Air",
+  "speed": "Medium (60)",
+  "range": "Melee: Long (1.6)",
+  "hit_speed": "1.5s",
+  "first_hit": "0.4s",
+  "projectile_speed": 1000,
+  "targets": "Air & Ground",
+  "mass": 4,
+  "levels": {
+    "min": 3,
+    "max": 16,
+    "stats": [
+      {
+        "level": 3,
+        "hp": 395,
+        "damage": 156,
+        "dps": 104
+      },
+      {
+        "level": 4,
+        "hp": 434,
+        "damage": 171,
+        "dps": 114
+      },
+      {
+        "level": 5,
+        "hp": 477,
+        "damage": 188,
+        "dps": 125
+      },
+      {
+        "level": 6,
+        "hp": 524,
+        "damage": 207,
+        "dps": 138
+      },
+      {
+        "level": 7,
+        "hp": 575,
+        "damage": 227,
+        "dps": 151
+      },
+      {
+        "level": 8,
+        "hp": 631,
+        "damage": 249,
+        "dps": 166
+      },
+      {
+        "level": 9,
+        "hp": 693,
+        "damage": 274,
+        "dps": 182
+      },
+      {
+        "level": 10,
+        "hp": 761,
+        "damage": 300,
+        "dps": 200
+      },
+      {
+        "level": 11,
+        "hp": 835,
+        "damage": 330,
+        "dps": 220
+      },
+      {
+        "level": 12,
+        "hp": 917,
+        "damage": 362,
+        "dps": 241
+      },
+      {
+        "level": 13,
+        "hp": 1007,
+        "damage": 398,
+        "dps": 265
+      },
+      {
+        "level": 14,
+        "hp": 1105,
+        "damage": 437,
+        "dps": 291
+      },
+      {
+        "level": 15,
+        "hp": 1214,
+        "damage": 480,
+        "dps": 320
+      },
+      {
+        "level": 16,
+        "hp": 1333,
+        "damage": 527,
+        "dps": 351
+      }
+    ]
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.4
+  },
+  "hero": {
+    "name": "Hero Mega Minion",
+    "ability": {
+      "name": "Wounding Warp",
+      "elixir_cost": 2,
+      "uses_per_deploy": 1,
+      "bonus_damage_percent": 50,
+      "targets_lowest_max_hp": true
+    }
+  }
+}

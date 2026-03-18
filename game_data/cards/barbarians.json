@@ -1,1 +1,132 @@
-{"name":"Barbarians","rarity":"Common","type":"Troop","elixir_cost":5,"count":5,"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.7},"hit_speed_sec":1.3,"first_hit_speed_sec":0.4},"stats_by_level":{"1":{"hitpoints":227,"damage":46,"damage_per_second":35},"2":{"hitpoints":249,"damage":50,"damage_per_second":38},"3":{"hitpoints":274,"damage":55,"damage_per_second":42},"4":{"hitpoints":301,"damage":61,"damage_per_second":46},"5":{"hitpoints":331,"damage":67,"damage_per_second":51},"6":{"hitpoints":364,"damage":73,"damage_per_second":56},"7":{"hitpoints":400,"damage":81,"damage_per_second":62},"8":{"hitpoints":440,"damage":89,"damage_per_second":68},"9":{"hitpoints":484,"damage":97,"damage_per_second":74},"10":{"hitpoints":531,"damage":107,"damage_per_second":82},"11":{"hitpoints":594,"damage":120,"damage_per_second":92},"12":{"hitpoints":653,"damage":132,"damage_per_second":101},"13":{"hitpoints":718,"damage":145,"damage_per_second":111},"14":{"hitpoints":789,"damage":159,"damage_per_second":122},"15":{"hitpoints":867,"damage":175,"damage_per_second":134},"16":{"hitpoints":953,"damage":192,"damage_per_second":147}},"evolution":{"available":true,"cycles_to_activate":1,"changes":{"hitpoints_multiplier":1.1,"attack_speed_boost_percent":30,"move_speed_boost_percent":30,"boost_duration_sec":3,"boost_trigger":"on_each_attack"}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Barbarians",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "count": 5,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Short",
+      "tiles": 0.7
+    },
+    "hit_speed_sec": 1.3,
+    "first_hit_speed_sec": 0.4
+  },
+  "stats_by_level": {
+    "1": {
+      "hitpoints": 227,
+      "damage": 46,
+      "damage_per_second": 35
+    },
+    "2": {
+      "hitpoints": 249,
+      "damage": 50,
+      "damage_per_second": 38
+    },
+    "3": {
+      "hitpoints": 274,
+      "damage": 55,
+      "damage_per_second": 42
+    },
+    "4": {
+      "hitpoints": 301,
+      "damage": 61,
+      "damage_per_second": 46
+    },
+    "5": {
+      "hitpoints": 331,
+      "damage": 67,
+      "damage_per_second": 51
+    },
+    "6": {
+      "hitpoints": 364,
+      "damage": 73,
+      "damage_per_second": 56
+    },
+    "7": {
+      "hitpoints": 400,
+      "damage": 81,
+      "damage_per_second": 62
+    },
+    "8": {
+      "hitpoints": 440,
+      "damage": 89,
+      "damage_per_second": 68
+    },
+    "9": {
+      "hitpoints": 484,
+      "damage": 97,
+      "damage_per_second": 74
+    },
+    "10": {
+      "hitpoints": 531,
+      "damage": 107,
+      "damage_per_second": 82
+    },
+    "11": {
+      "hitpoints": 594,
+      "damage": 120,
+      "damage_per_second": 92
+    },
+    "12": {
+      "hitpoints": 653,
+      "damage": 132,
+      "damage_per_second": 101
+    },
+    "13": {
+      "hitpoints": 718,
+      "damage": 145,
+      "damage_per_second": 111
+    },
+    "14": {
+      "hitpoints": 789,
+      "damage": 159,
+      "damage_per_second": 122
+    },
+    "15": {
+      "hitpoints": 867,
+      "damage": 175,
+      "damage_per_second": 134
+    },
+    "16": {
+      "hitpoints": 953,
+      "damage": 192,
+      "damage_per_second": 147
+    }
+  },
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 1,
+    "changes": {
+      "hitpoints_multiplier": 1.1,
+      "attack_speed_boost_percent": 30,
+      "move_speed_boost_percent": 30,
+      "boost_duration_sec": 3,
+      "boost_trigger": "on_each_attack"
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 5,
+    "collision_radius_tiles": 0.5
+  }
+}

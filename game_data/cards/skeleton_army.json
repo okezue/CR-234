@@ -1,77 +1,288 @@
 {
-  "name":"Skeleton Army",
-  "rarity":"Epic",
-  "type":"Troop",
-  "elixir_cost":3,
-  "arena_unlock":{"name":"P.E.K.K.A's Playhouse","arena_number":4},
-  "deploy_time_sec":1.0,
-  "count":15,
-  "sub_units":{
-    "Skeleton":{
-      "movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},
-      "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"hit_speed_sec":1.1,"first_hit_speed_sec":0.5},
-      "stats_by_level":{
-        "6":{"hitpoints":51,"damage":51,"damage_per_second":46},
-        "7":{"hitpoints":56,"damage":56,"damage_per_second":50},
-        "8":{"hitpoints":62,"damage":62,"damage_per_second":56},
-        "9":{"hitpoints":68,"damage":68,"damage_per_second":61},
-        "10":{"hitpoints":75,"damage":75,"damage_per_second":68},
-        "11":{"hitpoints":82,"damage":82,"damage_per_second":74},
-        "12":{"hitpoints":90,"damage":90,"damage_per_second":81},
-        "13":{"hitpoints":99,"damage":99,"damage_per_second":90},
-        "14":{"hitpoints":109,"damage":109,"damage_per_second":99},
-        "15":{"hitpoints":119,"damage":119,"damage_per_second":108},
-        "16":{"hitpoints":131,"damage":131,"damage_per_second":119}
-      }
-    }
+  "name": "Skeleton Army",
+  "rarity": "Epic",
+  "type": "Troop",
+  "elixir_cost": 3,
+  "arena_unlock": {
+    "name": "P.E.K.K.A's Playhouse",
+    "arena_number": 4
   },
-  "evolution":{
-    "available":true,
-    "cycles_to_activate":2,
-    "changes":{
-      "general_gerry":{"spawns_with_army":true,"position":"back"},
-      "ghost_form":{
-        "on_skeleton_death":"spawns_shadow",
-        "shadow_hitpoints":"unlimited",
-        "shadow_targetable_by":"spells_only",
-        "shadow_speed":{"classification":"Medium","value":60},
-        "shadows_die_when_gerry_dies":true
-      }
-    },
-    "evo_skeleton_stats_by_level":{
-      "6":{"hitpoints":51,"damage":51,"damage_per_second":46,"shadow_damage":51},
-      "7":{"hitpoints":56,"damage":56,"damage_per_second":50,"shadow_damage":56},
-      "8":{"hitpoints":62,"damage":62,"damage_per_second":56,"shadow_damage":62},
-      "9":{"hitpoints":68,"damage":68,"damage_per_second":61,"shadow_damage":68},
-      "10":{"hitpoints":75,"damage":75,"damage_per_second":68,"shadow_damage":75},
-      "11":{"hitpoints":82,"damage":82,"damage_per_second":74,"shadow_damage":82},
-      "12":{"hitpoints":90,"damage":90,"damage_per_second":81,"shadow_damage":90},
-      "13":{"hitpoints":99,"damage":99,"damage_per_second":90,"shadow_damage":99},
-      "14":{"hitpoints":109,"damage":109,"damage_per_second":99,"shadow_damage":109},
-      "15":{"hitpoints":119,"damage":119,"damage_per_second":108,"shadow_damage":119},
-      "16":{"hitpoints":131,"damage":131,"damage_per_second":119,"shadow_damage":131}
-    },
-    "sub_units":{
-      "General Gerry":{
-        "movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},
-        "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Long","tiles":1.6},"hit_speed_sec":1.0,"first_hit_speed_sec":0.5},
-        "shield":{"hitpoints_match_skeleton_hitpoints":true},
-        "stats_by_level":{
-          "6":{"hitpoints":51,"shield_hitpoints":51,"damage":51,"damage_per_second":51},
-          "7":{"hitpoints":56,"shield_hitpoints":56,"damage":56,"damage_per_second":56},
-          "8":{"hitpoints":62,"shield_hitpoints":62,"damage":62,"damage_per_second":62},
-          "9":{"hitpoints":68,"shield_hitpoints":68,"damage":68,"damage_per_second":68},
-          "10":{"hitpoints":75,"shield_hitpoints":75,"damage":75,"damage_per_second":75},
-          "11":{"hitpoints":82,"shield_hitpoints":82,"damage":82,"damage_per_second":82},
-          "12":{"hitpoints":90,"shield_hitpoints":90,"damage":90,"damage_per_second":90},
-          "13":{"hitpoints":99,"shield_hitpoints":99,"damage":99,"damage_per_second":99},
-          "14":{"hitpoints":109,"shield_hitpoints":109,"damage":109,"damage_per_second":109},
-          "15":{"hitpoints":119,"shield_hitpoints":119,"damage":119,"damage_per_second":119},
-          "16":{"hitpoints":131,"shield_hitpoints":131,"damage":131,"damage_per_second":131}
+  "deploy_time_sec": 1.0,
+  "count": 15,
+  "sub_units": {
+    "Skeleton": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Fast",
+          "value": 90
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Ground"
+        ],
+        "range": {
+          "type": "melee",
+          "classification": "Melee: Short",
+          "tiles": 0.5
+        },
+        "hit_speed_sec": 1.1,
+        "first_hit_speed_sec": 0.5
+      },
+      "stats_by_level": {
+        "6": {
+          "hitpoints": 51,
+          "damage": 51,
+          "damage_per_second": 46
+        },
+        "7": {
+          "hitpoints": 56,
+          "damage": 56,
+          "damage_per_second": 50
+        },
+        "8": {
+          "hitpoints": 62,
+          "damage": 62,
+          "damage_per_second": 56
+        },
+        "9": {
+          "hitpoints": 68,
+          "damage": 68,
+          "damage_per_second": 61
+        },
+        "10": {
+          "hitpoints": 75,
+          "damage": 75,
+          "damage_per_second": 68
+        },
+        "11": {
+          "hitpoints": 82,
+          "damage": 82,
+          "damage_per_second": 74
+        },
+        "12": {
+          "hitpoints": 90,
+          "damage": 90,
+          "damage_per_second": 81
+        },
+        "13": {
+          "hitpoints": 99,
+          "damage": 99,
+          "damage_per_second": 90
+        },
+        "14": {
+          "hitpoints": 109,
+          "damage": 109,
+          "damage_per_second": 99
+        },
+        "15": {
+          "hitpoints": 119,
+          "damage": 119,
+          "damage_per_second": 108
+        },
+        "16": {
+          "hitpoints": 131,
+          "damage": 131,
+          "damage_per_second": 119
         }
       }
     }
   },
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 2,
+    "changes": {
+      "general_gerry": {
+        "spawns_with_army": true,
+        "position": "back"
+      },
+      "ghost_form": {
+        "on_skeleton_death": "spawns_shadow",
+        "shadow_hitpoints": "unlimited",
+        "shadow_targetable_by": "spells_only",
+        "shadow_speed": {
+          "classification": "Medium",
+          "value": 60
+        },
+        "shadows_die_when_gerry_dies": true
+      }
+    },
+    "evo_skeleton_stats_by_level": {
+      "6": {
+        "hitpoints": 51,
+        "damage": 51,
+        "damage_per_second": 46,
+        "shadow_damage": 51
+      },
+      "7": {
+        "hitpoints": 56,
+        "damage": 56,
+        "damage_per_second": 50,
+        "shadow_damage": 56
+      },
+      "8": {
+        "hitpoints": 62,
+        "damage": 62,
+        "damage_per_second": 56,
+        "shadow_damage": 62
+      },
+      "9": {
+        "hitpoints": 68,
+        "damage": 68,
+        "damage_per_second": 61,
+        "shadow_damage": 68
+      },
+      "10": {
+        "hitpoints": 75,
+        "damage": 75,
+        "damage_per_second": 68,
+        "shadow_damage": 75
+      },
+      "11": {
+        "hitpoints": 82,
+        "damage": 82,
+        "damage_per_second": 74,
+        "shadow_damage": 82
+      },
+      "12": {
+        "hitpoints": 90,
+        "damage": 90,
+        "damage_per_second": 81,
+        "shadow_damage": 90
+      },
+      "13": {
+        "hitpoints": 99,
+        "damage": 99,
+        "damage_per_second": 90,
+        "shadow_damage": 99
+      },
+      "14": {
+        "hitpoints": 109,
+        "damage": 109,
+        "damage_per_second": 99,
+        "shadow_damage": 109
+      },
+      "15": {
+        "hitpoints": 119,
+        "damage": 119,
+        "damage_per_second": 108,
+        "shadow_damage": 119
+      },
+      "16": {
+        "hitpoints": 131,
+        "damage": 131,
+        "damage_per_second": 119,
+        "shadow_damage": 131
+      }
+    },
+    "sub_units": {
+      "General Gerry": {
+        "movement": {
+          "transport": "Ground",
+          "speed": {
+            "classification": "Fast",
+            "value": 90
+          }
+        },
+        "attack": {
+          "damage_type": "single_target",
+          "targets": [
+            "Ground"
+          ],
+          "range": {
+            "type": "melee",
+            "classification": "Melee: Long",
+            "tiles": 1.6
+          },
+          "hit_speed_sec": 1.0,
+          "first_hit_speed_sec": 0.5
+        },
+        "shield": {
+          "hitpoints_match_skeleton_hitpoints": true
+        },
+        "stats_by_level": {
+          "6": {
+            "hitpoints": 51,
+            "shield_hitpoints": 51,
+            "damage": 51,
+            "damage_per_second": 51
+          },
+          "7": {
+            "hitpoints": 56,
+            "shield_hitpoints": 56,
+            "damage": 56,
+            "damage_per_second": 56
+          },
+          "8": {
+            "hitpoints": 62,
+            "shield_hitpoints": 62,
+            "damage": 62,
+            "damage_per_second": 62
+          },
+          "9": {
+            "hitpoints": 68,
+            "shield_hitpoints": 68,
+            "damage": 68,
+            "damage_per_second": 68
+          },
+          "10": {
+            "hitpoints": 75,
+            "shield_hitpoints": 75,
+            "damage": 75,
+            "damage_per_second": 75
+          },
+          "11": {
+            "hitpoints": 82,
+            "shield_hitpoints": 82,
+            "damage": 82,
+            "damage_per_second": 82
+          },
+          "12": {
+            "hitpoints": 90,
+            "shield_hitpoints": 90,
+            "damage": 90,
+            "damage_per_second": 90
+          },
+          "13": {
+            "hitpoints": 99,
+            "shield_hitpoints": 99,
+            "damage": 99,
+            "damage_per_second": 99
+          },
+          "14": {
+            "hitpoints": 109,
+            "shield_hitpoints": 109,
+            "damage": 109,
+            "damage_per_second": 109
+          },
+          "15": {
+            "hitpoints": 119,
+            "shield_hitpoints": 119,
+            "damage": 119,
+            "damage_per_second": 119
+          },
+          "16": {
+            "hitpoints": 131,
+            "shield_hitpoints": 131,
+            "damage": 131,
+            "damage_per_second": 131
+          }
+        }
+      }
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 1,
+    "collision_radius_tiles": 0.2
+  }
 }

@@ -1,1 +1,251 @@
-{"name":"P.E.K.K.A.","rarity":"Epic","type":"Troop","elixir_cost":7,"arena_unlock":"P.E.K.K.A.'s Playhouse","release_date":"2016-01-04","movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},"deploy_time_sec":1.0,"count":1,"attack":{"targets":"Ground","hit_speed_sec":1.8,"first_hit_speed_sec":0.5,"range":{"class":"Melee: Medium","tiles":1.2},"damage_type":"single_target"},"hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},"stats_by_level":{"6":{"hitpoints":2350,"damage":510,"damage_per_second":283},"7":{"hitpoints":2585,"damage":561,"damage_per_second":311},"8":{"hitpoints":2835,"damage":615,"damage_per_second":341},"9":{"hitpoints":3114,"damage":676,"damage_per_second":375},"10":{"hitpoints":3422,"damage":743,"damage_per_second":412},"11":{"hitpoints":3760,"damage":816,"damage_per_second":453},"12":{"hitpoints":4127,"damage":896,"damage_per_second":497},"13":{"hitpoints":4539,"damage":985,"damage_per_second":547},"14":{"hitpoints":4979,"damage":1081,"damage_per_second":600},"15":{"hitpoints":5464,"damage":1186,"damage_per_second":658},"16":{"hitpoints":6008,"damage":1304,"damage_per_second":724}},"evolution":{"exists":true,"shards_required":6,"cycles_required":1,"spawns_identical_base_unit":true,"ability":{"trigger":"on_kill","effect":"heals after taking out a troop or building; healing can overheal up to a max hitpoint cap","heal_application":{"heal_is_pulsed":true,"time_between_pulses_sec":0.5},"overheal":{"max_hitpoints_multiplier":1.5,"max_overheal_percent_of_base":50},"heal_tiers":{"tier_count":3,"tiering_basis":"defeated unit hitpoints compared to thresholds","tier_1":{"name":"Stage 1","threshold_field":"hitpoint_threshold_stage_1","heal_field":"heal_per_kill_stage_1"},"tier_2":{"name":"Stage 2","threshold_field":"hitpoint_threshold_stage_2","heal_field":"heal_per_kill_stage_2"},"tier_3":{"name":"Stage 3","threshold_field":null,"heal_field":"heal_per_kill_stage_3"}}},"stats_by_level":[{"level":6,"hitpoints":2350,"max_hitpoints":3525,"heal_per_kill_stage_1":105,"hitpoint_threshold_stage_1":619,"heal_per_kill_stage_2":200,"hitpoint_threshold_stage_2":1244,"heal_per_kill_stage_3":379,"damage":510,"damage_per_second":283},{"level":7,"hitpoints":2585,"max_hitpoints":3877,"heal_per_kill_stage_1":116,"hitpoint_threshold_stage_1":681,"heal_per_kill_stage_2":219,"hitpoint_threshold_stage_2":1369,"heal_per_kill_stage_3":416,"damage":561,"damage_per_second":311},{"level":8,"hitpoints":2835,"max_hitpoints":4252,"heal_per_kill_stage_1":127,"hitpoint_threshold_stage_1":746,"heal_per_kill_stage_2":241,"hitpoint_threshold_stage_2":1501,"heal_per_kill_stage_3":457,"damage":615,"damage_per_second":341},{"level":9,"hitpoints":3114,"max_hitpoints":4671,"heal_per_kill_stage_1":139,"hitpoint_threshold_stage_1":820,"heal_per_kill_stage_2":265,"hitpoint_threshold_stage_2":1649,"heal_per_kill_stage_3":502,"damage":676,"damage_per_second":375},{"level":10,"hitpoints":3422,"max_hitpoints":5133,"heal_per_kill_stage_1":153,"hitpoint_threshold_stage_1":901,"heal_per_kill_stage_2":291,"hitpoint_threshold_stage_2":1812,"heal_per_kill_stage_3":551,"damage":743,"damage_per_second":412},{"level":11,"hitpoints":3760,"max_hitpoints":5640,"heal_per_kill_stage_1":168,"hitpoint_threshold_stage_1":990,"heal_per_kill_stage_2":320,"hitpoint_threshold_stage_2":1991,"heal_per_kill_stage_3":606,"damage":816,"damage_per_second":453},{"level":12,"hitpoints":4127,"max_hitpoints":6190,"heal_per_kill_stage_1":184,"hitpoint_threshold_stage_1":1087,"heal_per_kill_stage_2":351,"hitpoint_threshold_stage_2":2186,"heal_per_kill_stage_3":665,"damage":896,"damage_per_second":497},{"level":13,"hitpoints":4539,"max_hitpoints":6808,"heal_per_kill_stage_1":203,"hitpoint_threshold_stage_1":1195,"heal_per_kill_stage_2":386,"hitpoint_threshold_stage_2":2404,"heal_per_kill_stage_3":731,"damage":985,"damage_per_second":547},{"level":14,"hitpoints":4979,"max_hitpoints":7468,"heal_per_kill_stage_1":222,"hitpoint_threshold_stage_1":1311,"heal_per_kill_stage_2":423,"hitpoint_threshold_stage_2":2637,"heal_per_kill_stage_3":802,"damage":1081,"damage_per_second":600},{"level":15,"hitpoints":5464,"max_hitpoints":8196,"heal_per_kill_stage_1":244,"hitpoint_threshold_stage_1":1439,"heal_per_kill_stage_2":465,"hitpoint_threshold_stage_2":2894,"heal_per_kill_stage_3":880,"damage":1186,"damage_per_second":658}]},"balance_notes":"Evo heal values updated for Feb 2026 +5% buff. L11: stage 1 168 (was 160), stage 2 320 (was 304.5), stage 3 606 (was 577).","verification_status":"verified_mar2026"}
+{
+  "name": "P.E.K.K.A.",
+  "rarity": "Epic",
+  "type": "Troop",
+  "elixir_cost": 7,
+  "arena_unlock": "P.E.K.K.A.'s Playhouse",
+  "release_date": "2016-01-04",
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Slow",
+      "value": 45
+    }
+  },
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "targets": "Ground",
+    "hit_speed_sec": 1.8,
+    "first_hit_speed_sec": 0.5,
+    "range": {
+      "class": "Melee: Medium",
+      "tiles": 1.2
+    },
+    "damage_type": "single_target"
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 10,
+    "collision_radius": null,
+    "collision_radius_tiles": 0.7
+  },
+  "stats_by_level": {
+    "6": {
+      "hitpoints": 2350,
+      "damage": 510,
+      "damage_per_second": 283
+    },
+    "7": {
+      "hitpoints": 2585,
+      "damage": 561,
+      "damage_per_second": 311
+    },
+    "8": {
+      "hitpoints": 2835,
+      "damage": 615,
+      "damage_per_second": 341
+    },
+    "9": {
+      "hitpoints": 3114,
+      "damage": 676,
+      "damage_per_second": 375
+    },
+    "10": {
+      "hitpoints": 3422,
+      "damage": 743,
+      "damage_per_second": 412
+    },
+    "11": {
+      "hitpoints": 3760,
+      "damage": 816,
+      "damage_per_second": 453
+    },
+    "12": {
+      "hitpoints": 4127,
+      "damage": 896,
+      "damage_per_second": 497
+    },
+    "13": {
+      "hitpoints": 4539,
+      "damage": 985,
+      "damage_per_second": 547
+    },
+    "14": {
+      "hitpoints": 4979,
+      "damage": 1081,
+      "damage_per_second": 600
+    },
+    "15": {
+      "hitpoints": 5464,
+      "damage": 1186,
+      "damage_per_second": 658
+    },
+    "16": {
+      "hitpoints": 6008,
+      "damage": 1304,
+      "damage_per_second": 724
+    }
+  },
+  "evolution": {
+    "exists": true,
+    "shards_required": 6,
+    "cycles_required": 1,
+    "spawns_identical_base_unit": true,
+    "ability": {
+      "trigger": "on_kill",
+      "effect": "heals after taking out a troop or building; healing can overheal up to a max hitpoint cap",
+      "heal_application": {
+        "heal_is_pulsed": true,
+        "time_between_pulses_sec": 0.5
+      },
+      "overheal": {
+        "max_hitpoints_multiplier": 1.5,
+        "max_overheal_percent_of_base": 50
+      },
+      "heal_tiers": {
+        "tier_count": 3,
+        "tiering_basis": "defeated unit hitpoints compared to thresholds",
+        "tier_1": {
+          "name": "Stage 1",
+          "threshold_field": "hitpoint_threshold_stage_1",
+          "heal_field": "heal_per_kill_stage_1"
+        },
+        "tier_2": {
+          "name": "Stage 2",
+          "threshold_field": "hitpoint_threshold_stage_2",
+          "heal_field": "heal_per_kill_stage_2"
+        },
+        "tier_3": {
+          "name": "Stage 3",
+          "threshold_field": null,
+          "heal_field": "heal_per_kill_stage_3"
+        }
+      }
+    },
+    "stats_by_level": [
+      {
+        "level": 6,
+        "hitpoints": 2350,
+        "max_hitpoints": 3525,
+        "heal_per_kill_stage_1": 105,
+        "hitpoint_threshold_stage_1": 619,
+        "heal_per_kill_stage_2": 200,
+        "hitpoint_threshold_stage_2": 1244,
+        "heal_per_kill_stage_3": 379,
+        "damage": 510,
+        "damage_per_second": 283
+      },
+      {
+        "level": 7,
+        "hitpoints": 2585,
+        "max_hitpoints": 3877,
+        "heal_per_kill_stage_1": 116,
+        "hitpoint_threshold_stage_1": 681,
+        "heal_per_kill_stage_2": 219,
+        "hitpoint_threshold_stage_2": 1369,
+        "heal_per_kill_stage_3": 416,
+        "damage": 561,
+        "damage_per_second": 311
+      },
+      {
+        "level": 8,
+        "hitpoints": 2835,
+        "max_hitpoints": 4252,
+        "heal_per_kill_stage_1": 127,
+        "hitpoint_threshold_stage_1": 746,
+        "heal_per_kill_stage_2": 241,
+        "hitpoint_threshold_stage_2": 1501,
+        "heal_per_kill_stage_3": 457,
+        "damage": 615,
+        "damage_per_second": 341
+      },
+      {
+        "level": 9,
+        "hitpoints": 3114,
+        "max_hitpoints": 4671,
+        "heal_per_kill_stage_1": 139,
+        "hitpoint_threshold_stage_1": 820,
+        "heal_per_kill_stage_2": 265,
+        "hitpoint_threshold_stage_2": 1649,
+        "heal_per_kill_stage_3": 502,
+        "damage": 676,
+        "damage_per_second": 375
+      },
+      {
+        "level": 10,
+        "hitpoints": 3422,
+        "max_hitpoints": 5133,
+        "heal_per_kill_stage_1": 153,
+        "hitpoint_threshold_stage_1": 901,
+        "heal_per_kill_stage_2": 291,
+        "hitpoint_threshold_stage_2": 1812,
+        "heal_per_kill_stage_3": 551,
+        "damage": 743,
+        "damage_per_second": 412
+      },
+      {
+        "level": 11,
+        "hitpoints": 3760,
+        "max_hitpoints": 5640,
+        "heal_per_kill_stage_1": 168,
+        "hitpoint_threshold_stage_1": 990,
+        "heal_per_kill_stage_2": 320,
+        "hitpoint_threshold_stage_2": 1991,
+        "heal_per_kill_stage_3": 606,
+        "damage": 816,
+        "damage_per_second": 453
+      },
+      {
+        "level": 12,
+        "hitpoints": 4127,
+        "max_hitpoints": 6190,
+        "heal_per_kill_stage_1": 184,
+        "hitpoint_threshold_stage_1": 1087,
+        "heal_per_kill_stage_2": 351,
+        "hitpoint_threshold_stage_2": 2186,
+        "heal_per_kill_stage_3": 665,
+        "damage": 896,
+        "damage_per_second": 497
+      },
+      {
+        "level": 13,
+        "hitpoints": 4539,
+        "max_hitpoints": 6808,
+        "heal_per_kill_stage_1": 203,
+        "hitpoint_threshold_stage_1": 1195,
+        "heal_per_kill_stage_2": 386,
+        "hitpoint_threshold_stage_2": 2404,
+        "heal_per_kill_stage_3": 731,
+        "damage": 985,
+        "damage_per_second": 547
+      },
+      {
+        "level": 14,
+        "hitpoints": 4979,
+        "max_hitpoints": 7468,
+        "heal_per_kill_stage_1": 222,
+        "hitpoint_threshold_stage_1": 1311,
+        "heal_per_kill_stage_2": 423,
+        "hitpoint_threshold_stage_2": 2637,
+        "heal_per_kill_stage_3": 802,
+        "damage": 1081,
+        "damage_per_second": 600
+      },
+      {
+        "level": 15,
+        "hitpoints": 5464,
+        "max_hitpoints": 8196,
+        "heal_per_kill_stage_1": 244,
+        "hitpoint_threshold_stage_1": 1439,
+        "heal_per_kill_stage_2": 465,
+        "hitpoint_threshold_stage_2": 2894,
+        "heal_per_kill_stage_3": 880,
+        "damage": 1186,
+        "damage_per_second": 658
+      }
+    ]
+  },
+  "balance_notes": "Evo heal values updated for Feb 2026 +5% buff. L11: stage 1 168 (was 160), stage 2 320 (was 304.5), stage 3 606 (was 577).",
+  "verification_status": "verified_mar2026"
+}

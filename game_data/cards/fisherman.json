@@ -1,44 +1,100 @@
 {
-  "name":"Fisherman",
-  "rarity":"Legendary",
-  "type":"Troop",
-  "elixir_cost":3,
-  "arena_unlock":{"name":"Legendary Arena","arena_number":15},
-  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"single_target",
-    "targets":["Ground"],
-    "range":{"type":"melee","classification":"Melee: Long","tiles":1.6},
-    "hit_speed_sec":1.3,
-    "first_hit_speed_sec":0.5
+  "name": "Fisherman",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 3,
+  "arena_unlock": {
+    "name": "Legendary Arena",
+    "arena_number": 15
   },
-  "mechanics":{
-    "hook":{
-      "range_tiles":7.0,
-      "targets":["Air","Ground"],
-      "hook_speed":1200,
-      "pull_to_self":true,
-      "hook_cooldown_sec":1.5,
-      "hook_stun_sec":0.5,
-      "retargets_after_hook":true
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "9":{"hitpoints":720,"damage":160,"damage_per_second":123},
-    "10":{"hitpoints":792,"damage":176,"damage_per_second":135},
-    "11":{"hitpoints":871,"damage":193,"damage_per_second":148},
-    "12":{"hitpoints":957,"damage":212,"damage_per_second":163},
-    "13":{"hitpoints":1052,"damage":233,"damage_per_second":179},
-    "14":{"hitpoints":1155,"damage":256,"damage_per_second":196},
-    "15":{"hitpoints":1269,"damage":281,"damage_per_second":216}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Long",
+      "tiles": 1.6
+    },
+    "hit_speed_sec": 1.3,
+    "first_hit_speed_sec": 0.5
   },
-  "evolution":{
-    "available":true,
-    "changes":{"double_hook":"hooks_two_targets_simultaneously"}
+  "mechanics": {
+    "hook": {
+      "range_tiles": 7.0,
+      "targets": [
+        "Air",
+        "Ground"
+      ],
+      "hook_speed": 1200,
+      "pull_to_self": true,
+      "hook_cooldown_sec": 1.5,
+      "hook_stun_sec": 0.5,
+      "retargets_after_hook": true
+    }
   },
-  "verification_status":"verified_mar2026",
-  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+  "hidden_stats": {
+    "sight_range_tiles": 6.0,
+    "mass": 5,
+    "collision_radius_tiles": 0.5
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 720,
+      "damage": 160,
+      "damage_per_second": 123
+    },
+    "10": {
+      "hitpoints": 792,
+      "damage": 176,
+      "damage_per_second": 135
+    },
+    "11": {
+      "hitpoints": 871,
+      "damage": 193,
+      "damage_per_second": 148
+    },
+    "12": {
+      "hitpoints": 957,
+      "damage": 212,
+      "damage_per_second": 163
+    },
+    "13": {
+      "hitpoints": 1052,
+      "damage": 233,
+      "damage_per_second": 179
+    },
+    "14": {
+      "hitpoints": 1155,
+      "damage": 256,
+      "damage_per_second": 196
+    },
+    "15": {
+      "hitpoints": 1269,
+      "damage": 281,
+      "damage_per_second": 216
+    }
+  },
+  "evolution": {
+    "available": true,
+    "changes": {
+      "double_hook": "hooks_two_targets_simultaneously"
+    }
+  },
+  "verification_status": "verified_mar2026",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "mar_2026"
+  ]
 }

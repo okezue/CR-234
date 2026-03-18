@@ -5,7 +5,8 @@
   "attack":{
     "damage_type":"single_target",
     "targets":["Air","Ground"],
-    "hit_speed_sec":2.2
+    "hit_speed_sec":2.2,
+    "first_hit_speed_sec":0.8
   },
   "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
   "stats_by_level":{

@@ -1,42 +1,119 @@
 {
-  "name":"Hog Rider",
-  "rarity":"Rare",
-  "type":"Troop",
-  "elixir_cost":4,
-  "arena_unlock":{"name":"Bone Pit","arena_number":3},
-  "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"single_target",
-    "targets":["Buildings"],
-    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
-    "hit_speed_sec":1.6,
-    "first_hit_speed_sec":0.4
+  "name": "Hog Rider",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "arena_unlock": {
+    "name": "Bone Pit",
+    "arena_number": 3
   },
-  "mechanics":{
-    "river_jump":{"enabled":true,"jumps_river_on_deployment":true}
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Very Fast",
+      "value": 120
+    }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "3":{"hitpoints":800,"damage":176,"damage_per_second":110},
-    "4":{"hitpoints":880,"damage":193,"damage_per_second":120},
-    "5":{"hitpoints":968,"damage":213,"damage_per_second":133},
-    "6":{"hitpoints":1064,"damage":234,"damage_per_second":146},
-    "7":{"hitpoints":1168,"damage":256,"damage_per_second":160},
-    "8":{"hitpoints":1280,"damage":281,"damage_per_second":175},
-    "9":{"hitpoints":1408,"damage":309,"damage_per_second":193},
-    "10":{"hitpoints":1546,"damage":339,"damage_per_second":211},
-    "11":{"hitpoints":1696,"damage":372,"damage_per_second":232},
-    "12":{"hitpoints":1864,"damage":409,"damage_per_second":255},
-    "13":{"hitpoints":2048,"damage":449,"damage_per_second":280},
-    "14":{"hitpoints":2249,"damage":493,"damage_per_second":308},
-    "15":{"hitpoints":2470,"damage":542,"damage_per_second":338}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Buildings"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Medium",
+      "tiles": 1.2
+    },
+    "hit_speed_sec": 1.6,
+    "first_hit_speed_sec": 0.4
   },
-  "evolution":{
-    "available":true,
-    "changes":{"speed_boost_after_hit":"gains_brief_speed_boost_after_landing_a_hit"}
+  "mechanics": {
+    "river_jump": {
+      "enabled": true,
+      "jumps_river_on_deployment": true
+    }
   },
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+  "hidden_stats": {
+    "sight_range_tiles": 9.5,
+    "mass": 8,
+    "collision_radius_tiles": 0.6
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 800,
+      "damage": 176,
+      "damage_per_second": 110
+    },
+    "4": {
+      "hitpoints": 880,
+      "damage": 193,
+      "damage_per_second": 120
+    },
+    "5": {
+      "hitpoints": 968,
+      "damage": 213,
+      "damage_per_second": 133
+    },
+    "6": {
+      "hitpoints": 1064,
+      "damage": 234,
+      "damage_per_second": 146
+    },
+    "7": {
+      "hitpoints": 1168,
+      "damage": 256,
+      "damage_per_second": 160
+    },
+    "8": {
+      "hitpoints": 1280,
+      "damage": 281,
+      "damage_per_second": 175
+    },
+    "9": {
+      "hitpoints": 1408,
+      "damage": 309,
+      "damage_per_second": 193
+    },
+    "10": {
+      "hitpoints": 1546,
+      "damage": 339,
+      "damage_per_second": 211
+    },
+    "11": {
+      "hitpoints": 1696,
+      "damage": 372,
+      "damage_per_second": 232
+    },
+    "12": {
+      "hitpoints": 1864,
+      "damage": 409,
+      "damage_per_second": 255
+    },
+    "13": {
+      "hitpoints": 2048,
+      "damage": 449,
+      "damage_per_second": 280
+    },
+    "14": {
+      "hitpoints": 2249,
+      "damage": 493,
+      "damage_per_second": 308
+    },
+    "15": {
+      "hitpoints": 2470,
+      "damage": 542,
+      "damage_per_second": 338
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "mar_2026"
+  ]
 }

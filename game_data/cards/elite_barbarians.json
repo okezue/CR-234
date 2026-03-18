@@ -1,1 +1,124 @@
-{"name":"Elite Barbarians","rarity":"Common","type":"Troop","elixir_cost":6,"count":2,"movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},"hit_speed_sec":1.4,"sight_range":6.0},"stats_by_level":{"1":{"hitpoints":524,"damage":150,"damage_per_second":107},"2":{"hitpoints":576,"damage":165,"damage_per_second":117},"3":{"hitpoints":633,"damage":181,"damage_per_second":129},"4":{"hitpoints":696,"damage":199,"damage_per_second":142},"5":{"hitpoints":765,"damage":219,"damage_per_second":156},"6":{"hitpoints":838,"damage":240,"damage_per_second":171},"7":{"hitpoints":921,"damage":264,"damage_per_second":188},"8":{"hitpoints":1010,"damage":289,"damage_per_second":206},"9":{"hitpoints":1109,"damage":318,"damage_per_second":227},"10":{"hitpoints":1218,"damage":349,"damage_per_second":249},"11":{"hitpoints":1339,"damage":384,"damage_per_second":274},"12":{"hitpoints":1471,"damage":422,"damage_per_second":301},"13":{"hitpoints":1617,"damage":464,"damage_per_second":331},"14":{"hitpoints":1774,"damage":509,"damage_per_second":363},"15":{"hitpoints":1951,"damage":560,"damage_per_second":400},"16":{"hitpoints":2146,"damage":616,"damage_per_second":440}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Elite Barbarians",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 6,
+  "count": 2,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Medium",
+      "tiles": 1.2
+    },
+    "hit_speed_sec": 1.4,
+    "sight_range": 6.0
+  },
+  "stats_by_level": {
+    "1": {
+      "hitpoints": 524,
+      "damage": 150,
+      "damage_per_second": 107
+    },
+    "2": {
+      "hitpoints": 576,
+      "damage": 165,
+      "damage_per_second": 117
+    },
+    "3": {
+      "hitpoints": 633,
+      "damage": 181,
+      "damage_per_second": 129
+    },
+    "4": {
+      "hitpoints": 696,
+      "damage": 199,
+      "damage_per_second": 142
+    },
+    "5": {
+      "hitpoints": 765,
+      "damage": 219,
+      "damage_per_second": 156
+    },
+    "6": {
+      "hitpoints": 838,
+      "damage": 240,
+      "damage_per_second": 171
+    },
+    "7": {
+      "hitpoints": 921,
+      "damage": 264,
+      "damage_per_second": 188
+    },
+    "8": {
+      "hitpoints": 1010,
+      "damage": 289,
+      "damage_per_second": 206
+    },
+    "9": {
+      "hitpoints": 1109,
+      "damage": 318,
+      "damage_per_second": 227
+    },
+    "10": {
+      "hitpoints": 1218,
+      "damage": 349,
+      "damage_per_second": 249
+    },
+    "11": {
+      "hitpoints": 1339,
+      "damage": 384,
+      "damage_per_second": 274
+    },
+    "12": {
+      "hitpoints": 1471,
+      "damage": 422,
+      "damage_per_second": 301
+    },
+    "13": {
+      "hitpoints": 1617,
+      "damage": 464,
+      "damage_per_second": 331
+    },
+    "14": {
+      "hitpoints": 1774,
+      "damage": 509,
+      "damage_per_second": 363
+    },
+    "15": {
+      "hitpoints": 1951,
+      "damage": 560,
+      "damage_per_second": 400
+    },
+    "16": {
+      "hitpoints": 2146,
+      "damage": 616,
+      "damage_per_second": 440
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 5,
+    "collision_radius_tiles": 0.5
+  }
+}

@@ -35,6 +35,13 @@ class Tower:
         if self.hp<=0:
             self.hp=0
             self.alive=False
+        if hasattr(self,'_dmg_log'):
+            import traceback
+            stk=traceback.extract_stack()
+            fr=stk[-2] if len(stk)>=2 else stk[-1]
+            an=getattr(self,'_atk_name','')
+            self._dmg_log.append((amt,f"{fr.filename.split('/')[-1]}:{fr.lineno}",getattr(self,'_gt',0),an))
+            self._atk_name=''
 
 class Arena:
     W,H=18,32

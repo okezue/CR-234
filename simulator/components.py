@@ -34,13 +34,42 @@ class SplashAttack(Component):
                     e.statuses.append(Status('freeze',fd))
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive or tw is tgt:continue
-            d=math.sqrt((tw.cx-tx)**2+(tw.cy-ty)**2)
+            sx,sy=(tr.x,tr.y) if getattr(tr,'splash_360',False) else (tx,ty)
+            d=math.sqrt((tw.cx-sx)**2+(tw.cy-sy)**2)
             if d<=tr.splash_r:
                 tw.take_damage(tr.dmg)
                 if not tw.alive:g._tower_down(tw)
 class BuildingTarget(Component):
     def modify_target(self,tr,c,g):
         return [(d,t) for d,t in c if hasattr(t,'ttype') or getattr(t,'is_building',False)]
+class RiderAttack(Component):
+    def __init__(self,dmg,hspd,rng,slow_pct=0.7,slow_dur=2.0):
+        self.dmg=dmg;self.hspd=hspd;self.rng=rng
+        self.slow_pct=slow_pct;self.slow_dur=slow_dur;self.cd=hspd
+    def on_tick(self,tr,g):
+        self.cd=max(0,self.cd-g.DT)
+        if self.cd>0:return
+        opp=g._opp(tr.team)
+        best=None;bd=999
+        for e in g.players[opp].troops:
+            if not e.alive:continue
+            d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
+            if d<=self.rng and d<bd:bd=d;best=e
+        if best:
+            best.take_damage(self.dmg)
+            if self.slow_pct>0 and hasattr(best,'statuses'):
+                best.statuses.append(Status('slow',self.slow_dur,1.0-self.slow_pct))
+            self.cd=self.hspd
+class Recoil(Component):
+    def __init__(self,dist=1.0):self.dist=dist
+    def on_attack(self,tr,tgt,g):
+        tx=tgt.cx if hasattr(tgt,'cx') else tgt.x
+        ty=tgt.cy if hasattr(tgt,'cy') else tgt.y
+        dx=tr.x-tx;dy=tr.y-ty
+        d=math.sqrt(dx*dx+dy*dy)
+        if d<0.01:return
+        tr.x+=dx/d*self.dist;tr.y+=dy/d*self.dist
+        tr.x=max(0.3,min(17.7,tr.x));tr.y=max(0.3,min(31.7,tr.y))
 class RiverJump(Component):
     def on_tick(self,tr,g):
         if 14.0<tr.y<17.0:
@@ -57,9 +86,11 @@ class Charge(Component):
         if any(s.kind in ('stun','freeze') for s in getattr(tr,'statuses',[])):
             if self.charged and self.orig_spd is not None:
                 tr.spd=self.orig_spd
+            if self.charged and hasattr(self,'_ofh'):tr.fhspd=self._ofh
             self.charged=False;self.moved=0;return
         if not self.charged and self.moved>=self.dist:
             self.charged=True;self.orig_spd=tr.spd;tr.spd*=2
+            self._ofh=getattr(tr,'fhspd',tr.hspd);tr.fhspd=0.4
     def on_attack(self,tr,tgt,g):
         if not self.charged:return
         extra=getattr(tr,'charge_dmg',tr.dmg*2)-tr.dmg
@@ -67,18 +98,29 @@ class Charge(Component):
             tgt.take_damage(extra)
             if hasattr(tgt,'ttype') and not tgt.alive:g._tower_down(tgt)
         if self.orig_spd is not None:tr.spd=self.orig_spd
+        if hasattr(self,'_ofh'):tr.fhspd=self._ofh
         self.charged=False;self.moved=0
 class SpawnTimer(Component):
-    def __init__(self,cfg,interval,count,first_delay):
+    def __init__(self,cfg,interval,count,first_delay,pattern=''):
         self.cfg=cfg;self.interval=interval;self.count=count
-        self.timer=first_delay
+        self.timer=first_delay;self.pattern=pattern
     def on_tick(self,tr,g):
         self.timer-=g.DT
         if self.timer<=0:
             from troop import Troop
+            tgt=getattr(tr,'tgt',None)
+            dx,dy=0,0
+            if tgt:
+                tx=tgt.cx if hasattr(tgt,'cx') else tgt.x
+                ty=tgt.cy if hasattr(tgt,'cy') else tgt.y
+                dx=tx-tr.x;dy=ty-tr.y
+                ds=math.sqrt(dx*dx+dy*dy)
+                if ds>0:dx/=ds;dy/=ds
             for i in range(self.count):
-                ox=random.uniform(-1.5,1.5);oy=random.uniform(-1.5,1.5)
+                ox=random.uniform(-1.0,1.0);oy=random.uniform(-1.0,1.0)
+                ox+=dx*2.0;oy+=dy*2.0
                 t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.cfg,components=list(self.cfg.get('components',[]))))
+                t._spawner_id=id(tr)
                 g.players[tr.team].troops.append(t)
             self.timer=self.interval
 class DeathDamage(Component):
@@ -982,7 +1024,8 @@ class EvoWitch(Component):
     def __init__(self,heal=109,overheal=1.24):self.heal=heal;self.overheal=overheal
     def on_tick(self,tr,g):
         cap=int(tr.max_hp*self.overheal)
-        dead=[t for t in g.players[tr.team].troops if not t.alive and 'keleton' in getattr(t,'name','')]
+        wid=id(tr)
+        dead=[t for t in g.players[tr.team].troops if not t.alive and 'keleton' in getattr(t,'name','') and getattr(t,'_spawner_id',None)==wid]
         for d in dead:
             if tr.hp<cap:tr.hp=min(cap,tr.hp+self.heal)
 class EvoPekka(Component):
@@ -1111,10 +1154,10 @@ class RowdyReroll(Ability):
         tr.hp=min(tr.max_hp,tr.hp+int(lost*self.heal_pct))
         self.uses-=1
 class MKJump(Component):
-    def __init__(self,mn=3.5,mx=5.0,splash_r=3.5):
-        self.mn=mn;self.mx=mx;self.sr=splash_r
+    def __init__(self,mn=3.5,mx=5.0,splash_r=3.5,jspd=12.5):
+        self.mn=mn;self.mx=mx;self.sr=splash_r;self.jspd=jspd
         self.charging=False;self.airborne=False;self.timer=0
-        self.osp=None;self.jtgt=None
+        self.osp=None;self.jtgt=None;self.jdist=0
     def on_tick(self,tr,g):
         if self.airborne:
             frz=any(s.kind=='freeze' for s in getattr(tr,'statuses',[]))
@@ -1129,6 +1172,13 @@ class MKJump(Component):
                 if self.osp is not None:tr.spd=self.osp;self.osp=None
                 if self.jtgt and getattr(self.jtgt,'alive',True):
                     jd=getattr(tr,'jump_dmg',getattr(tr,'spawn_zap_dmg',tr.dmg*2))
+                    opp=g._opp(tr.team)
+                    best=self.jtgt;bd=999
+                    for e in g.players[opp].troops:
+                        if not e.alive:continue
+                        dd=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
+                        if dd<bd:bd=dd;best=e
+                    self.jtgt=best
                     if hasattr(self.jtgt,'cx'):tr.x=self.jtgt.cx;tr.y=self.jtgt.cy
                     else:tr.x=self.jtgt.x;tr.y=self.jtgt.y
                     opp=g._opp(tr.team)
@@ -1155,11 +1205,13 @@ class MKJump(Component):
         ty=tgt.cy if hasattr(tgt,'cy') else tgt.y
         d=math.sqrt((tr.x-tx)**2+(tr.y-ty)**2)
         if self.mn<=d<=self.mx and not self.charging:
-            self.charging=True;self.timer=0.1;self.osp=tr.spd;tr.spd=0;self.jtgt=tgt
+            self.charging=True;self.timer=0.3;self.osp=tr.spd;tr.spd=0;self.jtgt=tgt;self.jdist=d
         if self.charging:
+            if tgt and tgt is not self.jtgt and d<self.mn:
+                self.jtgt=tgt;self.jdist=d
             self.timer-=g.DT
             if self.timer<=0:
-                self.charging=False;self.airborne=True;self.timer=0.1
+                self.charging=False;self.airborne=True;self.timer=max(0.2,self.jdist/self.jspd)
 class EvoMegaKnight(Component):
     def __init__(self,kb=4.0):self.kb=kb
     def on_attack(self,tr,tgt,g):

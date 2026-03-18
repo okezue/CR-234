@@ -1,1 +1,206 @@
-{"name":"Rascals","rarity":"Common","type":"Troop","elixir_cost":5,"composition":{"rascal_boy":{"count":1,"type":"Rascal Boy"},"rascal_girls":{"count":2,"type":"Rascal Girl"}},"sub_units":{"Rascal Boy":{"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.8},"hit_speed_sec":1.5}},"Rascal Girl":{"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":5.0},"hit_speed_sec":1.0,"projectile_speed":800}}},"stats_by_level":{"1":{"boy_hitpoints":715,"boy_damage":85,"boy_dps":56,"girl_hitpoints":102,"girl_damage":52,"girl_dps":52},"2":{"boy_hitpoints":786,"boy_damage":93,"boy_dps":62,"girl_hitpoints":112,"girl_damage":57,"girl_dps":57},"3":{"boy_hitpoints":865,"boy_damage":103,"boy_dps":68,"girl_hitpoints":123,"girl_damage":63,"girl_dps":63},"4":{"boy_hitpoints":950,"boy_damage":113,"boy_dps":75,"girl_hitpoints":135,"girl_damage":69,"girl_dps":69},"5":{"boy_hitpoints":1044,"boy_damage":124,"boy_dps":82,"girl_hitpoints":149,"girl_damage":76,"girl_dps":76},"6":{"boy_hitpoints":1144,"boy_damage":136,"boy_dps":90,"girl_hitpoints":163,"girl_damage":83,"girl_dps":83},"7":{"boy_hitpoints":1258,"boy_damage":150,"boy_dps":100,"girl_hitpoints":179,"girl_damage":91,"girl_dps":91},"8":{"boy_hitpoints":1381,"boy_damage":164,"boy_dps":109,"girl_hitpoints":197,"girl_damage":100,"girl_dps":100},"9":{"boy_hitpoints":1516,"boy_damage":180,"boy_dps":120,"girl_hitpoints":216,"girl_damage":110,"girl_dps":110},"10":{"boy_hitpoints":1665,"boy_damage":198,"boy_dps":132,"girl_hitpoints":237,"girl_damage":121,"girl_dps":121},"11":{"boy_hitpoints":1830,"boy_damage":218,"boy_dps":145,"girl_hitpoints":261,"girl_damage":133,"girl_dps":133},"12":{"boy_hitpoints":2010,"boy_damage":239,"boy_dps":159,"girl_hitpoints":287,"girl_damage":146,"girl_dps":146},"13":{"boy_hitpoints":2210,"boy_damage":263,"boy_dps":175,"girl_hitpoints":315,"girl_damage":160,"girl_dps":160},"14":{"boy_hitpoints":2427,"boy_damage":289,"boy_dps":192,"girl_hitpoints":346,"girl_damage":176,"girl_dps":176},"15":{"boy_hitpoints":2665,"boy_damage":317,"boy_dps":211,"girl_hitpoints":380,"girl_damage":193,"girl_dps":193},"16":{"boy_hitpoints":2931,"boy_damage":349,"boy_dps":232,"girl_hitpoints":418,"girl_damage":212,"girl_dps":212}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Rascals",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "composition": {
+    "rascal_boy": {
+      "count": 1,
+      "type": "Rascal Boy"
+    },
+    "rascal_girls": {
+      "count": 2,
+      "type": "Rascal Girl"
+    }
+  },
+  "sub_units": {
+    "Rascal Boy": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Medium",
+          "value": 60
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Ground"
+        ],
+        "range": {
+          "type": "melee",
+          "classification": "Melee: Short",
+          "tiles": 0.8
+        },
+        "hit_speed_sec": 1.5
+      }
+    },
+    "Rascal Girl": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Medium",
+          "value": 60
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Air",
+          "Ground"
+        ],
+        "range": {
+          "type": "ranged",
+          "tiles": 5.0
+        },
+        "hit_speed_sec": 1.0,
+        "projectile_speed": 800
+      }
+    }
+  },
+  "stats_by_level": {
+    "1": {
+      "boy_hitpoints": 715,
+      "boy_damage": 85,
+      "boy_dps": 56,
+      "girl_hitpoints": 102,
+      "girl_damage": 52,
+      "girl_dps": 52
+    },
+    "2": {
+      "boy_hitpoints": 786,
+      "boy_damage": 93,
+      "boy_dps": 62,
+      "girl_hitpoints": 112,
+      "girl_damage": 57,
+      "girl_dps": 57
+    },
+    "3": {
+      "boy_hitpoints": 865,
+      "boy_damage": 103,
+      "boy_dps": 68,
+      "girl_hitpoints": 123,
+      "girl_damage": 63,
+      "girl_dps": 63
+    },
+    "4": {
+      "boy_hitpoints": 950,
+      "boy_damage": 113,
+      "boy_dps": 75,
+      "girl_hitpoints": 135,
+      "girl_damage": 69,
+      "girl_dps": 69
+    },
+    "5": {
+      "boy_hitpoints": 1044,
+      "boy_damage": 124,
+      "boy_dps": 82,
+      "girl_hitpoints": 149,
+      "girl_damage": 76,
+      "girl_dps": 76
+    },
+    "6": {
+      "boy_hitpoints": 1144,
+      "boy_damage": 136,
+      "boy_dps": 90,
+      "girl_hitpoints": 163,
+      "girl_damage": 83,
+      "girl_dps": 83
+    },
+    "7": {
+      "boy_hitpoints": 1258,
+      "boy_damage": 150,
+      "boy_dps": 100,
+      "girl_hitpoints": 179,
+      "girl_damage": 91,
+      "girl_dps": 91
+    },
+    "8": {
+      "boy_hitpoints": 1381,
+      "boy_damage": 164,
+      "boy_dps": 109,
+      "girl_hitpoints": 197,
+      "girl_damage": 100,
+      "girl_dps": 100
+    },
+    "9": {
+      "boy_hitpoints": 1516,
+      "boy_damage": 180,
+      "boy_dps": 120,
+      "girl_hitpoints": 216,
+      "girl_damage": 110,
+      "girl_dps": 110
+    },
+    "10": {
+      "boy_hitpoints": 1665,
+      "boy_damage": 198,
+      "boy_dps": 132,
+      "girl_hitpoints": 237,
+      "girl_damage": 121,
+      "girl_dps": 121
+    },
+    "11": {
+      "boy_hitpoints": 1830,
+      "boy_damage": 218,
+      "boy_dps": 145,
+      "girl_hitpoints": 261,
+      "girl_damage": 133,
+      "girl_dps": 133
+    },
+    "12": {
+      "boy_hitpoints": 2010,
+      "boy_damage": 239,
+      "boy_dps": 159,
+      "girl_hitpoints": 287,
+      "girl_damage": 146,
+      "girl_dps": 146
+    },
+    "13": {
+      "boy_hitpoints": 2210,
+      "boy_damage": 263,
+      "boy_dps": 175,
+      "girl_hitpoints": 315,
+      "girl_damage": 160,
+      "girl_dps": 160
+    },
+    "14": {
+      "boy_hitpoints": 2427,
+      "boy_damage": 289,
+      "boy_dps": 192,
+      "girl_hitpoints": 346,
+      "girl_damage": 176,
+      "girl_dps": 176
+    },
+    "15": {
+      "boy_hitpoints": 2665,
+      "boy_damage": 317,
+      "boy_dps": 211,
+      "girl_hitpoints": 380,
+      "girl_damage": 193,
+      "girl_dps": 193
+    },
+    "16": {
+      "boy_hitpoints": 2931,
+      "boy_damage": 349,
+      "boy_dps": 232,
+      "girl_hitpoints": 418,
+      "girl_damage": 212,
+      "girl_dps": 212
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 6,
+    "collision_radius_tiles": 0.5
+  }
+}

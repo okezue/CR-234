@@ -8,8 +8,8 @@
     "mechanics":{
       "dagger_burst":{
         "max_daggers":8,
-        "burst_hit_speed_sec":0.35,
-        "cooldown_hit_speed_sec":1.2,
+        "burst_hit_speed_sec":0.5,
+        "cooldown_hit_speed_sec":0.9,
         "charge_time_sec":0.9
       }
     }

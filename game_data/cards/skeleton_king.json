@@ -29,7 +29,7 @@
     "summoned_unit":"Soul Skeleton (cloned)",
     "summoned_unit_hitpoints":1
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "hidden_stats":{"sight_range_tiles":5.5,"mass":18,"collision_radius_tiles":1.0},
   "stats_by_level":{
     "11":{"hitpoints":2298,"damage":204,"damage_per_second":127},
     "12":{"hitpoints":2523,"damage":224,"damage_per_second":140},

@@ -28,7 +28,7 @@
       }
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},
+  "hidden_stats":{"doctor":{"sight_range_tiles":5.5,"mass":6,"collision_radius_tiles":0.5},"monster":{"sight_range_tiles":7.5,"mass":12,"collision_radius_tiles":0.75}},
   "stats_by_level":{
     "11":{"doctor":{"hitpoints":721,"damage":92,"damage_per_second":51},"monster":{"hitpoints":2385,"damage":128,"damage_per_second":85}},
     "12":{"doctor":{"hitpoints":792,"damage":101,"damage_per_second":56},"monster":{"hitpoints":2617,"damage":140,"damage_per_second":93}},

@@ -1,1 +1,102 @@
-{"name":"Phoenix","rarity":"Legendary","type":"Troop","elixir_cost":4,"movement":{"transport":"Air","speed":{"classification":"Medium","value":60}},"count":1,"attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"melee","classification":"Melee: Long","tiles":1.6},"hit_speed_sec":1.0,"first_hit_speed_sec":0.5},"death_mechanic":{"explosion":{"knockback":true,"radius_tiles":1.5},"spawns_egg":true},"sub_units":{"Phoenix Egg":{"targetable":true,"lifetime_sec":4.3,"hatches":"Phoenix","hatched_stats":"100%_of_base","hatched_phoenix_has_death_damage":false,"hatched_phoenix_has_egg":false}},"stats_by_level":{"9":{"hitpoints":871,"damage":180,"death_damage":135,"egg_hitpoints":361},"10":{"hitpoints":958,"damage":198,"death_damage":148,"egg_hitpoints":396},"11":{"hitpoints":1053,"damage":217,"death_damage":163,"egg_hitpoints":435},"12":{"hitpoints":1157,"damage":239,"death_damage":179,"egg_hitpoints":478},"13":{"hitpoints":1271,"damage":262,"death_damage":196,"egg_hitpoints":526},"14":{"hitpoints":1395,"damage":288,"death_damage":216,"egg_hitpoints":577},"15":{"hitpoints":1528,"damage":316,"death_damage":238,"egg_hitpoints":633}},"balance_notes":"Egg HP updated for Mar 2026 buff (L11: 240->435). Egg duration unchanged at 4.3s. Reborn Phoenix at 100% stats (Nov 2025).","verification_status":"verified_mar2026","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Phoenix",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "movement": {
+    "transport": "Air",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "count": 1,
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Long",
+      "tiles": 1.6
+    },
+    "hit_speed_sec": 1.0,
+    "first_hit_speed_sec": 0.5
+  },
+  "death_mechanic": {
+    "explosion": {
+      "knockback": true,
+      "radius_tiles": 1.5
+    },
+    "spawns_egg": true
+  },
+  "sub_units": {
+    "Phoenix Egg": {
+      "targetable": true,
+      "lifetime_sec": 4.3,
+      "hatches": "Phoenix",
+      "hatched_stats": "100%_of_base",
+      "hatched_phoenix_has_death_damage": false,
+      "hatched_phoenix_has_egg": false
+    }
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 871,
+      "damage": 180,
+      "death_damage": 135,
+      "egg_hitpoints": 361
+    },
+    "10": {
+      "hitpoints": 958,
+      "damage": 198,
+      "death_damage": 148,
+      "egg_hitpoints": 396
+    },
+    "11": {
+      "hitpoints": 1053,
+      "damage": 217,
+      "death_damage": 163,
+      "egg_hitpoints": 435
+    },
+    "12": {
+      "hitpoints": 1157,
+      "damage": 239,
+      "death_damage": 179,
+      "egg_hitpoints": 478
+    },
+    "13": {
+      "hitpoints": 1271,
+      "damage": 262,
+      "death_damage": 196,
+      "egg_hitpoints": 526
+    },
+    "14": {
+      "hitpoints": 1395,
+      "damage": 288,
+      "death_damage": 216,
+      "egg_hitpoints": 577
+    },
+    "15": {
+      "hitpoints": 1528,
+      "damage": 316,
+      "death_damage": 238,
+      "egg_hitpoints": 633
+    }
+  },
+  "balance_notes": "Egg HP updated for Mar 2026 buff (L11: 240->435). Egg duration unchanged at 4.3s. Reborn Phoenix at 100% stats (Nov 2025).",
+  "verification_status": "verified_mar2026",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.5
+  }
+}

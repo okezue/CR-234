@@ -1,43 +1,110 @@
 {
-  "name":"Baby Dragon",
-  "rarity":"Epic",
-  "type":"Troop",
-  "elixir_cost":4,
-  "arena_unlock":{"name":"P.E.K.K.A's Playhouse","arena_number":4},
-  "movement":{"transport":"Air","speed":{"classification":"Fast","value":90}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"area",
-    "targets":["Air","Ground"],
-    "range":{"type":"ranged","tiles":3.5},
-    "splash_radius_tiles":1.5,
-    "hit_speed_sec":1.5,
-    "first_hit_speed_sec":0.6,
-    "projectile_speed":600
+  "name": "Baby Dragon",
+  "rarity": "Epic",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "arena_unlock": {
+    "name": "P.E.K.K.A's Playhouse",
+    "arena_number": 4
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "6":{"hitpoints":580,"area_damage":82,"damage_per_second":54},
-    "7":{"hitpoints":638,"area_damage":90,"damage_per_second":60},
-    "8":{"hitpoints":702,"area_damage":99,"damage_per_second":66},
-    "9":{"hitpoints":772,"area_damage":109,"damage_per_second":72},
-    "10":{"hitpoints":848,"area_damage":120,"damage_per_second":80},
-    "11":{"hitpoints":932,"area_damage":133,"damage_per_second":88},
-    "12":{"hitpoints":1025,"area_damage":146,"damage_per_second":97},
-    "13":{"hitpoints":1126,"area_damage":160,"damage_per_second":106},
-    "14":{"hitpoints":1237,"area_damage":176,"damage_per_second":117},
-    "15":{"hitpoints":1360,"area_damage":194,"damage_per_second":129}
+  "movement": {
+    "transport": "Air",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
   },
-  "evolution":{
-    "available":true,
-    "changes":{
-      "wind_aura":{
-        "description":"Emits a wind aura that speeds up friendly troops and slows enemy troops",
-        "aura_dimensions_tiles":{"width":8,"height":9}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "area",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 3.5
+    },
+    "splash_radius_tiles": 1.5,
+    "hit_speed_sec": 1.5,
+    "first_hit_speed_sec": 0.6,
+    "projectile_speed": 600
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 6,
+    "collision_radius_tiles": 0.5
+  },
+  "stats_by_level": {
+    "6": {
+      "hitpoints": 580,
+      "area_damage": 82,
+      "damage_per_second": 54
+    },
+    "7": {
+      "hitpoints": 638,
+      "area_damage": 90,
+      "damage_per_second": 60
+    },
+    "8": {
+      "hitpoints": 702,
+      "area_damage": 99,
+      "damage_per_second": 66
+    },
+    "9": {
+      "hitpoints": 772,
+      "area_damage": 109,
+      "damage_per_second": 72
+    },
+    "10": {
+      "hitpoints": 848,
+      "area_damage": 120,
+      "damage_per_second": 80
+    },
+    "11": {
+      "hitpoints": 932,
+      "area_damage": 133,
+      "damage_per_second": 88
+    },
+    "12": {
+      "hitpoints": 1025,
+      "area_damage": 146,
+      "damage_per_second": 97
+    },
+    "13": {
+      "hitpoints": 1126,
+      "area_damage": 160,
+      "damage_per_second": 106
+    },
+    "14": {
+      "hitpoints": 1237,
+      "area_damage": 176,
+      "damage_per_second": 117
+    },
+    "15": {
+      "hitpoints": 1360,
+      "area_damage": 194,
+      "damage_per_second": 129
+    }
+  },
+  "evolution": {
+    "available": true,
+    "changes": {
+      "wind_aura": {
+        "description": "Emits a wind aura that speeds up friendly troops and slows enemy troops",
+        "aura_dimensions_tiles": {
+          "width": 8,
+          "height": 9
+        }
       }
     }
   },
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
 }

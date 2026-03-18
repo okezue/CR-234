@@ -1,47 +1,135 @@
 {
-  "name":"Dark Prince",
-  "rarity":"Epic",
-  "type":"Troop",
-  "elixir_cost":4,
-  "arena_unlock":{"name":"Royal Arena","arena_number":7},
-  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"area",
-    "targets":["Ground"],
-    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
-    "hit_speed_sec":1.3,
-    "first_hit_speed_sec":0.4
+  "name": "Dark Prince",
+  "rarity": "Epic",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "arena_unlock": {
+    "name": "Royal Arena",
+    "arena_number": 7
   },
-  "mechanics":{
-    "charge":{
-      "charge_distance_tiles":3.0,
-      "charge_damage_multiplier":2.0,
-      "charge_splash_360":true,
-      "resets_on_stun_or_freeze":true
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "area",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Medium",
+      "tiles": 1.2
     },
-    "shield":{
-      "enabled":true,
-      "shield_hp_key":"shield_hitpoints",
-      "excess_damage_blocked":true
+    "hit_speed_sec": 1.3,
+    "first_hit_speed_sec": 0.4
+  },
+  "mechanics": {
+    "charge": {
+      "charge_distance_tiles": 3.0,
+      "charge_damage_multiplier": 2.0,
+      "charge_splash_360": true,
+      "resets_on_stun_or_freeze": true
     },
-    "river_jump":{"enabled":true}
+    "shield": {
+      "enabled": true,
+      "shield_hp_key": "shield_hitpoints",
+      "excess_damage_blocked": true
+    },
+    "river_jump": {
+      "enabled": true
+    }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "6":{"hitpoints":748,"shield_hitpoints":150,"area_damage":155,"damage_per_second":119,"charge_damage":310},
-    "7":{"hitpoints":822,"shield_hitpoints":165,"area_damage":170,"damage_per_second":130,"charge_damage":340},
-    "8":{"hitpoints":904,"shield_hitpoints":181,"area_damage":187,"damage_per_second":143,"charge_damage":374},
-    "9":{"hitpoints":994,"shield_hitpoints":199,"area_damage":206,"damage_per_second":158,"charge_damage":412},
-    "10":{"hitpoints":1091,"shield_hitpoints":218,"area_damage":226,"damage_per_second":173,"charge_damage":452},
-    "11":{"hitpoints":1200,"shield_hitpoints":240,"area_damage":248,"damage_per_second":190,"charge_damage":496},
-    "12":{"hitpoints":1320,"shield_hitpoints":264,"area_damage":272,"damage_per_second":209,"charge_damage":544},
-    "13":{"hitpoints":1452,"shield_hitpoints":290,"area_damage":300,"damage_per_second":230,"charge_damage":600},
-    "14":{"hitpoints":1596,"shield_hitpoints":319,"area_damage":330,"damage_per_second":253,"charge_damage":660},
-    "15":{"hitpoints":1756,"shield_hitpoints":351,"area_damage":363,"damage_per_second":279,"charge_damage":726}
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 6,
+    "collision_radius_tiles": 0.6
   },
-  "evolution":{"available":false},
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+  "stats_by_level": {
+    "6": {
+      "hitpoints": 748,
+      "shield_hitpoints": 150,
+      "area_damage": 155,
+      "damage_per_second": 119,
+      "charge_damage": 310
+    },
+    "7": {
+      "hitpoints": 822,
+      "shield_hitpoints": 165,
+      "area_damage": 170,
+      "damage_per_second": 130,
+      "charge_damage": 340
+    },
+    "8": {
+      "hitpoints": 904,
+      "shield_hitpoints": 181,
+      "area_damage": 187,
+      "damage_per_second": 143,
+      "charge_damage": 374
+    },
+    "9": {
+      "hitpoints": 994,
+      "shield_hitpoints": 199,
+      "area_damage": 206,
+      "damage_per_second": 158,
+      "charge_damage": 412
+    },
+    "10": {
+      "hitpoints": 1091,
+      "shield_hitpoints": 218,
+      "area_damage": 226,
+      "damage_per_second": 173,
+      "charge_damage": 452
+    },
+    "11": {
+      "hitpoints": 1200,
+      "shield_hitpoints": 240,
+      "area_damage": 248,
+      "damage_per_second": 190,
+      "charge_damage": 496
+    },
+    "12": {
+      "hitpoints": 1320,
+      "shield_hitpoints": 264,
+      "area_damage": 272,
+      "damage_per_second": 209,
+      "charge_damage": 544
+    },
+    "13": {
+      "hitpoints": 1452,
+      "shield_hitpoints": 290,
+      "area_damage": 300,
+      "damage_per_second": 230,
+      "charge_damage": 600
+    },
+    "14": {
+      "hitpoints": 1596,
+      "shield_hitpoints": 319,
+      "area_damage": 330,
+      "damage_per_second": 253,
+      "charge_damage": 660
+    },
+    "15": {
+      "hitpoints": 1756,
+      "shield_hitpoints": 351,
+      "area_damage": 363,
+      "damage_per_second": 279,
+      "charge_damage": 726
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
 }

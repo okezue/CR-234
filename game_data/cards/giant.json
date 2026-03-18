@@ -1,1 +1,126 @@
-{"name":"Giant","rarity":"Rare","type":"Troop","elixir_cost":5,"deploy_time_sec":1.0,"count":1,"movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},"attack":{"damage_type":"single_target","targets":["Buildings"],"range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},"hit_speed_sec":1.5,"first_hit_speed_sec":0.5},"hidden_stats":{"sight_range_tiles":7.5,"mass":null,"collision_radius_tiles":null},"stats_by_level":{"3":{"hitpoints":1933,"damage":119,"damage_per_second":79},"4":{"hitpoints":2126,"damage":130,"damage_per_second":86},"5":{"hitpoints":2339,"damage":143,"damage_per_second":95},"6":{"hitpoints":2569,"damage":157,"damage_per_second":104},"7":{"hitpoints":2822,"damage":173,"damage_per_second":115},"8":{"hitpoints":3093,"damage":189,"damage_per_second":126},"9":{"hitpoints":3400,"damage":208,"damage_per_second":138},"10":{"hitpoints":3733,"damage":228,"damage_per_second":152},"11":{"hitpoints":4100,"damage":251,"damage_per_second":167},"12":{"hitpoints":4506,"damage":275,"damage_per_second":183},"13":{"hitpoints":4952,"damage":302,"damage_per_second":201},"14":{"hitpoints":5440,"damage":332,"damage_per_second":221},"15":{"hitpoints":5980,"damage":365,"damage_per_second":243},"16":{"hitpoints":6535,"damage":404,"damage_per_second":269}},"evolution":{"available":false},"hero":{"name":"Heroic Hurl","elixir_cost":2,"throw_range_tiles":9,"cast_time_sec":0.933,"stun_duration_sec":2.0,"cooldown_sec":14,"impact_damage_by_level":{"3":64,"4":70,"5":77,"6":84,"7":93,"8":102,"9":112,"10":123,"11":135,"12":148,"13":163,"14":179,"15":196,"16":216},"landing_damage_by_level":{"3":64,"4":70,"5":77,"6":84,"7":93,"8":102,"9":112,"10":123,"11":135,"12":148,"13":163,"14":179,"15":196,"16":216}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Giant",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Slow",
+      "value": 45
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Buildings"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Medium",
+      "tiles": 1.2
+    },
+    "hit_speed_sec": 1.5,
+    "first_hit_speed_sec": 0.5
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 7.5,
+    "mass": 12,
+    "collision_radius_tiles": 0.7
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 1933,
+      "damage": 119,
+      "damage_per_second": 79
+    },
+    "4": {
+      "hitpoints": 2126,
+      "damage": 130,
+      "damage_per_second": 86
+    },
+    "5": {
+      "hitpoints": 2339,
+      "damage": 143,
+      "damage_per_second": 95
+    },
+    "6": {
+      "hitpoints": 2569,
+      "damage": 157,
+      "damage_per_second": 104
+    },
+    "7": {
+      "hitpoints": 2822,
+      "damage": 173,
+      "damage_per_second": 115
+    },
+    "8": {
+      "hitpoints": 3093,
+      "damage": 189,
+      "damage_per_second": 126
+    },
+    "9": {
+      "hitpoints": 3400,
+      "damage": 208,
+      "damage_per_second": 138
+    },
+    "10": {
+      "hitpoints": 3733,
+      "damage": 228,
+      "damage_per_second": 152
+    },
+    "11": {
+      "hitpoints": 4100,
+      "damage": 251,
+      "damage_per_second": 167
+    },
+    "12": {
+      "hitpoints": 4506,
+      "damage": 275,
+      "damage_per_second": 183
+    },
+    "13": {
+      "hitpoints": 4952,
+      "damage": 302,
+      "damage_per_second": 201
+    },
+    "14": {
+      "hitpoints": 5440,
+      "damage": 332,
+      "damage_per_second": 221
+    },
+    "15": {
+      "hitpoints": 5980,
+      "damage": 365,
+      "damage_per_second": 243
+    },
+    "16": {
+      "hitpoints": 6535,
+      "damage": 404,
+      "damage_per_second": 269
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "hero": {
+    "name": "Hero Giant",
+    "ability": {
+      "name": "Heroic Hurl",
+      "elixir_cost": 2,
+      "cooldown_sec": 14.0,
+      "throw_range_tiles": 9.0,
+      "stun_duration_sec": 2.0,
+      "impact_damage": 64
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
+}

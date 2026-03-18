@@ -1,1 +1,115 @@
-{"name":"Flying Machine","rarity":"Rare","type":"Troop","elixir_cost":4,"deploy_time_sec":1.0,"count":1,"movement":{"transport":"Air","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":6.0},"hit_speed_sec":1.1,"sight_range_tiles":6},"stats_by_level":{"3":{"hitpoints":390,"damage":109,"damage_per_second":99},"4":{"hitpoints":429,"damage":119,"damage_per_second":108},"5":{"hitpoints":471,"damage":131,"damage_per_second":119},"6":{"hitpoints":518,"damage":144,"damage_per_second":130},"7":{"hitpoints":569,"damage":158,"damage_per_second":143},"8":{"hitpoints":624,"damage":173,"damage_per_second":157},"9":{"hitpoints":686,"damage":190,"damage_per_second":172},"10":{"hitpoints":753,"damage":209,"damage_per_second":190},"11":{"hitpoints":828,"damage":230,"damage_per_second":209},"12":{"hitpoints":910,"damage":253,"damage_per_second":230},"13":{"hitpoints":1000,"damage":278,"damage_per_second":252},"14":{"hitpoints":1098,"damage":305,"damage_per_second":277},"15":{"hitpoints":1206,"damage":335,"damage_per_second":304},"16":{"hitpoints":1326,"damage":368,"damage_per_second":334}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Flying Machine",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "movement": {
+    "transport": "Air",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 6.0
+    },
+    "hit_speed_sec": 1.1,
+    "sight_range_tiles": 6
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 390,
+      "damage": 109,
+      "damage_per_second": 99
+    },
+    "4": {
+      "hitpoints": 429,
+      "damage": 119,
+      "damage_per_second": 108
+    },
+    "5": {
+      "hitpoints": 471,
+      "damage": 131,
+      "damage_per_second": 119
+    },
+    "6": {
+      "hitpoints": 518,
+      "damage": 144,
+      "damage_per_second": 130
+    },
+    "7": {
+      "hitpoints": 569,
+      "damage": 158,
+      "damage_per_second": 143
+    },
+    "8": {
+      "hitpoints": 624,
+      "damage": 173,
+      "damage_per_second": 157
+    },
+    "9": {
+      "hitpoints": 686,
+      "damage": 190,
+      "damage_per_second": 172
+    },
+    "10": {
+      "hitpoints": 753,
+      "damage": 209,
+      "damage_per_second": 190
+    },
+    "11": {
+      "hitpoints": 828,
+      "damage": 230,
+      "damage_per_second": 209
+    },
+    "12": {
+      "hitpoints": 910,
+      "damage": 253,
+      "damage_per_second": 230
+    },
+    "13": {
+      "hitpoints": 1000,
+      "damage": 278,
+      "damage_per_second": 252
+    },
+    "14": {
+      "hitpoints": 1098,
+      "damage": 305,
+      "damage_per_second": 277
+    },
+    "15": {
+      "hitpoints": 1206,
+      "damage": 335,
+      "damage_per_second": 304
+    },
+    "16": {
+      "hitpoints": 1326,
+      "damage": 368,
+      "damage_per_second": 334
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 6.0,
+    "mass": 3,
+    "collision_radius_tiles": 0.4
+  }
+}

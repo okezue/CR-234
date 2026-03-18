@@ -1,1 +1,140 @@
-{"name":"Suspicious Bush","rarity":"Rare","type":"Troop","elixir_cost":2,"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"mechanics":{"invisible":true,"untargetable_while_bush":true,"targets_buildings":true,"spawns_on_arrival_or_death":{"unit":"Bush Goblin","count":2}},"sub_units":{"Bush Goblin":{"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.8},"hit_speed_sec":1.4}}},"stats_by_level":{"3":{"bush_hitpoints":59,"bush_goblin_hitpoints":223,"bush_goblin_damage":167,"bush_goblin_dps":119},"4":{"bush_hitpoints":65,"bush_goblin_hitpoints":245,"bush_goblin_damage":183,"bush_goblin_dps":131},"5":{"bush_hitpoints":71,"bush_goblin_hitpoints":270,"bush_goblin_damage":202,"bush_goblin_dps":144},"6":{"bush_hitpoints":78,"bush_goblin_hitpoints":296,"bush_goblin_damage":222,"bush_goblin_dps":159},"7":{"bush_hitpoints":86,"bush_goblin_hitpoints":326,"bush_goblin_damage":244,"bush_goblin_dps":174},"8":{"bush_hitpoints":94,"bush_goblin_hitpoints":358,"bush_goblin_damage":268,"bush_goblin_dps":191},"9":{"bush_hitpoints":104,"bush_goblin_hitpoints":393,"bush_goblin_damage":294,"bush_goblin_dps":210},"10":{"bush_hitpoints":114,"bush_goblin_hitpoints":432,"bush_goblin_damage":323,"bush_goblin_dps":231},"11":{"bush_hitpoints":125,"bush_goblin_hitpoints":475,"bush_goblin_damage":355,"bush_goblin_dps":254},"12":{"bush_hitpoints":138,"bush_goblin_hitpoints":522,"bush_goblin_damage":390,"bush_goblin_dps":279},"13":{"bush_hitpoints":151,"bush_goblin_hitpoints":574,"bush_goblin_damage":429,"bush_goblin_dps":306},"14":{"bush_hitpoints":166,"bush_goblin_hitpoints":630,"bush_goblin_damage":471,"bush_goblin_dps":336},"15":{"bush_hitpoints":183,"bush_goblin_hitpoints":693,"bush_goblin_damage":518,"bush_goblin_dps":370}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Suspicious Bush",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir_cost": 2,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "mechanics": {
+    "invisible": true,
+    "untargetable_while_bush": true,
+    "targets_buildings": true,
+    "spawns_on_arrival_or_death": {
+      "unit": "Bush Goblin",
+      "count": 2
+    }
+  },
+  "sub_units": {
+    "Bush Goblin": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Medium",
+          "value": 60
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Ground"
+        ],
+        "range": {
+          "type": "melee",
+          "classification": "Melee: Short",
+          "tiles": 0.8
+        },
+        "hit_speed_sec": 1.4
+      }
+    }
+  },
+  "stats_by_level": {
+    "3": {
+      "bush_hitpoints": 59,
+      "bush_goblin_hitpoints": 223,
+      "bush_goblin_damage": 167,
+      "bush_goblin_dps": 119
+    },
+    "4": {
+      "bush_hitpoints": 65,
+      "bush_goblin_hitpoints": 245,
+      "bush_goblin_damage": 183,
+      "bush_goblin_dps": 131
+    },
+    "5": {
+      "bush_hitpoints": 71,
+      "bush_goblin_hitpoints": 270,
+      "bush_goblin_damage": 202,
+      "bush_goblin_dps": 144
+    },
+    "6": {
+      "bush_hitpoints": 78,
+      "bush_goblin_hitpoints": 296,
+      "bush_goblin_damage": 222,
+      "bush_goblin_dps": 159
+    },
+    "7": {
+      "bush_hitpoints": 86,
+      "bush_goblin_hitpoints": 326,
+      "bush_goblin_damage": 244,
+      "bush_goblin_dps": 174
+    },
+    "8": {
+      "bush_hitpoints": 94,
+      "bush_goblin_hitpoints": 358,
+      "bush_goblin_damage": 268,
+      "bush_goblin_dps": 191
+    },
+    "9": {
+      "bush_hitpoints": 104,
+      "bush_goblin_hitpoints": 393,
+      "bush_goblin_damage": 294,
+      "bush_goblin_dps": 210
+    },
+    "10": {
+      "bush_hitpoints": 114,
+      "bush_goblin_hitpoints": 432,
+      "bush_goblin_damage": 323,
+      "bush_goblin_dps": 231
+    },
+    "11": {
+      "bush_hitpoints": 125,
+      "bush_goblin_hitpoints": 475,
+      "bush_goblin_damage": 355,
+      "bush_goblin_dps": 254
+    },
+    "12": {
+      "bush_hitpoints": 138,
+      "bush_goblin_hitpoints": 522,
+      "bush_goblin_damage": 390,
+      "bush_goblin_dps": 279
+    },
+    "13": {
+      "bush_hitpoints": 151,
+      "bush_goblin_hitpoints": 574,
+      "bush_goblin_damage": 429,
+      "bush_goblin_dps": 306
+    },
+    "14": {
+      "bush_hitpoints": 166,
+      "bush_goblin_hitpoints": 630,
+      "bush_goblin_damage": 471,
+      "bush_goblin_dps": 336
+    },
+    "15": {
+      "bush_hitpoints": 183,
+      "bush_goblin_hitpoints": 693,
+      "bush_goblin_damage": 518,
+      "bush_goblin_dps": 370
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 7.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.5
+  }
+}

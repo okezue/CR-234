@@ -1,1 +1,134 @@
-{"name":"Archers","rarity":"Common","type":"Troop","elixir_cost":3,"count":2,"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":5.0},"hit_speed_sec":0.9,"projectile_speed":600,"sight_range":5.5},"stats_by_level":{"1":{"hitpoints":119,"damage":41,"damage_per_second":45},"2":{"hitpoints":130,"damage":45,"damage_per_second":50},"3":{"hitpoints":143,"damage":49,"damage_per_second":54},"4":{"hitpoints":157,"damage":54,"damage_per_second":60},"5":{"hitpoints":173,"damage":59,"damage_per_second":65},"6":{"hitpoints":190,"damage":65,"damage_per_second":72},"7":{"hitpoints":209,"damage":72,"damage_per_second":80},"8":{"hitpoints":229,"damage":79,"damage_per_second":87},"9":{"hitpoints":252,"damage":86,"damage_per_second":95},"10":{"hitpoints":277,"damage":95,"damage_per_second":105},"11":{"hitpoints":304,"damage":107,"damage_per_second":118},"12":{"hitpoints":334,"damage":117,"damage_per_second":130},"13":{"hitpoints":367,"damage":129,"damage_per_second":143},"14":{"hitpoints":403,"damage":142,"damage_per_second":157},"15":{"hitpoints":443,"damage":156,"damage_per_second":173},"16":{"hitpoints":487,"damage":171,"damage_per_second":190}},"evolution":{"available":true,"cycles_to_activate":2,"changes":{"power_shot":true,"power_shot_min_range_tiles":4,"power_shot_max_range_tiles":6,"power_shot_damage_multiplier":1.5,"power_shot_range":6.0},"evo_levels":"1-15"},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Archers",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 3,
+  "count": 2,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 5.0
+    },
+    "hit_speed_sec": 0.9,
+    "projectile_speed": 600,
+    "sight_range": 5.5
+  },
+  "stats_by_level": {
+    "1": {
+      "hitpoints": 119,
+      "damage": 41,
+      "damage_per_second": 45
+    },
+    "2": {
+      "hitpoints": 130,
+      "damage": 45,
+      "damage_per_second": 50
+    },
+    "3": {
+      "hitpoints": 143,
+      "damage": 49,
+      "damage_per_second": 54
+    },
+    "4": {
+      "hitpoints": 157,
+      "damage": 54,
+      "damage_per_second": 60
+    },
+    "5": {
+      "hitpoints": 173,
+      "damage": 59,
+      "damage_per_second": 65
+    },
+    "6": {
+      "hitpoints": 190,
+      "damage": 65,
+      "damage_per_second": 72
+    },
+    "7": {
+      "hitpoints": 209,
+      "damage": 72,
+      "damage_per_second": 80
+    },
+    "8": {
+      "hitpoints": 229,
+      "damage": 79,
+      "damage_per_second": 87
+    },
+    "9": {
+      "hitpoints": 252,
+      "damage": 86,
+      "damage_per_second": 95
+    },
+    "10": {
+      "hitpoints": 277,
+      "damage": 95,
+      "damage_per_second": 105
+    },
+    "11": {
+      "hitpoints": 304,
+      "damage": 107,
+      "damage_per_second": 118
+    },
+    "12": {
+      "hitpoints": 334,
+      "damage": 117,
+      "damage_per_second": 130
+    },
+    "13": {
+      "hitpoints": 367,
+      "damage": 129,
+      "damage_per_second": 143
+    },
+    "14": {
+      "hitpoints": 403,
+      "damage": 142,
+      "damage_per_second": 157
+    },
+    "15": {
+      "hitpoints": 443,
+      "damage": 156,
+      "damage_per_second": 173
+    },
+    "16": {
+      "hitpoints": 487,
+      "damage": 171,
+      "damage_per_second": 190
+    }
+  },
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 2,
+    "changes": {
+      "power_shot": true,
+      "power_shot_min_range_tiles": 4,
+      "power_shot_max_range_tiles": 6,
+      "power_shot_damage_multiplier": 1.5,
+      "power_shot_range": 6.0
+    },
+    "evo_levels": "1-15"
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.4
+  }
+}

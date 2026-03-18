@@ -32,7 +32,7 @@
       "teleport":{"distance_tiles":6.0,"direction":"backwards_relative_to_facing"}
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},
+  "hidden_stats":{"sight_range_tiles":6.0,"mass":8,"collision_radius_tiles":0.6},
   "stats_by_level":{
     "11":{"hitpoints":2721,"damage":245,"dash_damage":491,"damage_per_second":223},
     "12":{"hitpoints":2987,"damage":269,"dash_damage":539,"damage_per_second":245},

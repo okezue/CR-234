@@ -1,1 +1,131 @@
-{"name":"Electro Spirit","key":"electro_spirit","rarity":"Common","type":"Troop","elixir":1,"speed":"Very Fast (120)","range":2.5,"attack_type":"Suicide","chain_lightning":{"max_targets":9,"chain_range":"4.0 tiles","chain_time":"0.25s"},"stun_duration":"0.5s","targets":"Air & Ground","levels":{"min":1,"max":16,"stats":[{"level":1,"hp":91,"damage":43,"chain_damage":43},{"level":2,"hp":100,"damage":47,"chain_damage":47},{"level":3,"hp":110,"damage":52,"chain_damage":52},{"level":4,"hp":121,"damage":57,"chain_damage":57},{"level":5,"hp":133,"damage":62,"chain_damage":62},{"level":6,"hp":146,"damage":68,"chain_damage":68},{"level":7,"hp":160,"damage":75,"chain_damage":75},{"level":8,"hp":176,"damage":83,"chain_damage":83},{"level":9,"hp":193,"damage":91,"chain_damage":91},{"level":10,"hp":212,"damage":100,"chain_damage":100},{"level":11,"hp":233,"damage":109,"chain_damage":109},{"level":12,"hp":256,"damage":120,"chain_damage":120},{"level":13,"hp":281,"damage":132,"chain_damage":132},{"level":14,"hp":309,"damage":145,"chain_damage":145},{"level":15,"hp":339,"damage":159,"chain_damage":159},{"level":16,"hp":373,"damage":175,"chain_damage":175}]},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Electro Spirit",
+  "key": "electro_spirit",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir": 1,
+  "speed": "Very Fast (120)",
+  "range": 2.5,
+  "attack_type": "Suicide",
+  "chain_lightning": {
+    "max_targets": 9,
+    "chain_range": "4.0 tiles",
+    "chain_time": "0.25s"
+  },
+  "stun_duration": "0.5s",
+  "targets": "Air & Ground",
+  "levels": {
+    "min": 1,
+    "max": 16,
+    "stats": [
+      {
+        "level": 1,
+        "hp": 91,
+        "damage": 43,
+        "chain_damage": 43
+      },
+      {
+        "level": 2,
+        "hp": 100,
+        "damage": 47,
+        "chain_damage": 47
+      },
+      {
+        "level": 3,
+        "hp": 110,
+        "damage": 52,
+        "chain_damage": 52
+      },
+      {
+        "level": 4,
+        "hp": 121,
+        "damage": 57,
+        "chain_damage": 57
+      },
+      {
+        "level": 5,
+        "hp": 133,
+        "damage": 62,
+        "chain_damage": 62
+      },
+      {
+        "level": 6,
+        "hp": 146,
+        "damage": 68,
+        "chain_damage": 68
+      },
+      {
+        "level": 7,
+        "hp": 160,
+        "damage": 75,
+        "chain_damage": 75
+      },
+      {
+        "level": 8,
+        "hp": 176,
+        "damage": 83,
+        "chain_damage": 83
+      },
+      {
+        "level": 9,
+        "hp": 193,
+        "damage": 91,
+        "chain_damage": 91
+      },
+      {
+        "level": 10,
+        "hp": 212,
+        "damage": 100,
+        "chain_damage": 100
+      },
+      {
+        "level": 11,
+        "hp": 233,
+        "damage": 109,
+        "chain_damage": 109
+      },
+      {
+        "level": 12,
+        "hp": 256,
+        "damage": 120,
+        "chain_damage": 120
+      },
+      {
+        "level": 13,
+        "hp": 281,
+        "damage": 132,
+        "chain_damage": 132
+      },
+      {
+        "level": 14,
+        "hp": 309,
+        "damage": 145,
+        "chain_damage": 145
+      },
+      {
+        "level": 15,
+        "hp": 339,
+        "damage": 159,
+        "chain_damage": 159
+      },
+      {
+        "level": 16,
+        "hp": 373,
+        "damage": 175,
+        "chain_damage": 175
+      }
+    ]
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 1,
+    "collision_radius_tiles": 0.2
+  }
+}

@@ -1,1 +1,181 @@
-{"name":"Skeleton Barrel","rarity":"Common","type":"Troop","elixir_cost":3,"movement":{"transport":"Air","speed":{"classification":"Fast","value":90}},"attack":{"targets":["Buildings"],"death_drop":{"splash_radius_tiles":2.0,"spawns_skeletons":7}},"sub_units":{"Skeleton":{"movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"hit_speed_sec":1.1}}},"stats_by_level":{"1":{"hitpoints":267,"death_damage":52,"skeleton_hitpoints":32,"skeleton_damage":32,"skeleton_dps":29},"2":{"hitpoints":293,"death_damage":57,"skeleton_hitpoints":35,"skeleton_damage":35,"skeleton_dps":31},"3":{"hitpoints":322,"death_damage":62,"skeleton_hitpoints":38,"skeleton_damage":38,"skeleton_dps":35},"4":{"hitpoints":354,"death_damage":69,"skeleton_hitpoints":42,"skeleton_damage":42,"skeleton_dps":38},"5":{"hitpoints":389,"death_damage":75,"skeleton_hitpoints":46,"skeleton_damage":46,"skeleton_dps":42},"6":{"hitpoints":428,"death_damage":83,"skeleton_hitpoints":50,"skeleton_damage":50,"skeleton_dps":45},"7":{"hitpoints":470,"death_damage":91,"skeleton_hitpoints":55,"skeleton_damage":55,"skeleton_dps":50},"8":{"hitpoints":516,"death_damage":100,"skeleton_hitpoints":61,"skeleton_damage":61,"skeleton_dps":55},"9":{"hitpoints":567,"death_damage":110,"skeleton_hitpoints":67,"skeleton_damage":67,"skeleton_dps":61},"10":{"hitpoints":623,"death_damage":121,"skeleton_hitpoints":73,"skeleton_damage":73,"skeleton_dps":66},"11":{"hitpoints":685,"death_damage":133,"skeleton_hitpoints":81,"skeleton_damage":81,"skeleton_dps":74},"12":{"hitpoints":752,"death_damage":146,"skeleton_hitpoints":89,"skeleton_damage":89,"skeleton_dps":81},"13":{"hitpoints":827,"death_damage":160,"skeleton_hitpoints":98,"skeleton_damage":98,"skeleton_dps":89},"14":{"hitpoints":908,"death_damage":176,"skeleton_hitpoints":108,"skeleton_damage":108,"skeleton_dps":98},"15":{"hitpoints":998,"death_damage":193,"skeleton_hitpoints":119,"skeleton_damage":119,"skeleton_dps":108},"16":{"hitpoints":1098,"death_damage":212,"skeleton_hitpoints":131,"skeleton_damage":131,"skeleton_dps":119}},"evolution":{"available":true,"cycles_to_activate":2,"changes":{"hitpoints_multiplier":1.25,"drops_at_75_percent_hp":true,"drops_on_death":true,"death_damage_multiplier":1.64}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Skeleton Barrel",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 3,
+  "movement": {
+    "transport": "Air",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
+  },
+  "attack": {
+    "targets": [
+      "Buildings"
+    ],
+    "death_drop": {
+      "splash_radius_tiles": 2.0,
+      "spawns_skeletons": 7
+    }
+  },
+  "sub_units": {
+    "Skeleton": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Fast",
+          "value": 90
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Ground"
+        ],
+        "range": {
+          "type": "melee",
+          "classification": "Melee: Short",
+          "tiles": 0.5
+        },
+        "hit_speed_sec": 1.1
+      }
+    }
+  },
+  "stats_by_level": {
+    "1": {
+      "hitpoints": 267,
+      "death_damage": 52,
+      "skeleton_hitpoints": 32,
+      "skeleton_damage": 32,
+      "skeleton_dps": 29
+    },
+    "2": {
+      "hitpoints": 293,
+      "death_damage": 57,
+      "skeleton_hitpoints": 35,
+      "skeleton_damage": 35,
+      "skeleton_dps": 31
+    },
+    "3": {
+      "hitpoints": 322,
+      "death_damage": 62,
+      "skeleton_hitpoints": 38,
+      "skeleton_damage": 38,
+      "skeleton_dps": 35
+    },
+    "4": {
+      "hitpoints": 354,
+      "death_damage": 69,
+      "skeleton_hitpoints": 42,
+      "skeleton_damage": 42,
+      "skeleton_dps": 38
+    },
+    "5": {
+      "hitpoints": 389,
+      "death_damage": 75,
+      "skeleton_hitpoints": 46,
+      "skeleton_damage": 46,
+      "skeleton_dps": 42
+    },
+    "6": {
+      "hitpoints": 428,
+      "death_damage": 83,
+      "skeleton_hitpoints": 50,
+      "skeleton_damage": 50,
+      "skeleton_dps": 45
+    },
+    "7": {
+      "hitpoints": 470,
+      "death_damage": 91,
+      "skeleton_hitpoints": 55,
+      "skeleton_damage": 55,
+      "skeleton_dps": 50
+    },
+    "8": {
+      "hitpoints": 516,
+      "death_damage": 100,
+      "skeleton_hitpoints": 61,
+      "skeleton_damage": 61,
+      "skeleton_dps": 55
+    },
+    "9": {
+      "hitpoints": 567,
+      "death_damage": 110,
+      "skeleton_hitpoints": 67,
+      "skeleton_damage": 67,
+      "skeleton_dps": 61
+    },
+    "10": {
+      "hitpoints": 623,
+      "death_damage": 121,
+      "skeleton_hitpoints": 73,
+      "skeleton_damage": 73,
+      "skeleton_dps": 66
+    },
+    "11": {
+      "hitpoints": 685,
+      "death_damage": 133,
+      "skeleton_hitpoints": 81,
+      "skeleton_damage": 81,
+      "skeleton_dps": 74
+    },
+    "12": {
+      "hitpoints": 752,
+      "death_damage": 146,
+      "skeleton_hitpoints": 89,
+      "skeleton_damage": 89,
+      "skeleton_dps": 81
+    },
+    "13": {
+      "hitpoints": 827,
+      "death_damage": 160,
+      "skeleton_hitpoints": 98,
+      "skeleton_damage": 98,
+      "skeleton_dps": 89
+    },
+    "14": {
+      "hitpoints": 908,
+      "death_damage": 176,
+      "skeleton_hitpoints": 108,
+      "skeleton_damage": 108,
+      "skeleton_dps": 98
+    },
+    "15": {
+      "hitpoints": 998,
+      "death_damage": 193,
+      "skeleton_hitpoints": 119,
+      "skeleton_damage": 119,
+      "skeleton_dps": 108
+    },
+    "16": {
+      "hitpoints": 1098,
+      "death_damage": 212,
+      "skeleton_hitpoints": 131,
+      "skeleton_damage": 131,
+      "skeleton_dps": 119
+    }
+  },
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 2,
+    "changes": {
+      "hitpoints_multiplier": 1.25,
+      "drops_at_75_percent_hp": true,
+      "drops_on_death": true,
+      "death_damage_multiplier": 1.64
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.5
+  }
+}

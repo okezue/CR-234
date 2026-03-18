@@ -1,52 +1,115 @@
 {
-  "name":"Royal Ghost",
-  "rarity":"Legendary",
-  "type":"Troop",
-  "elixir_cost":3,
-  "arena_unlock":{"name":"Spooky Town","arena_number":12},
-  "movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"splash",
-    "targets":["Ground"],
-    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
-    "splash_radius_tiles":0.8,
-    "hit_speed_sec":1.8,
-    "first_hit_speed_sec":0.5
+  "name": "Royal Ghost",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 3,
+  "arena_unlock": {
+    "name": "Spooky Town",
+    "arena_number": 12
   },
-  "mechanics":{
-    "stealth":{
-      "becomes_invisible_after_sec":1.2,
-      "invisibility_breaks_on":"attack_or_receive_damage",
-      "untargetable_while_invisible":true,
-      "can_still_be_hit_by_splash":true
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "9":{"hitpoints":1000,"damage":246,"damage_per_second":136},
-    "10":{"hitpoints":1100,"damage":270,"damage_per_second":150},
-    "11":{"hitpoints":1209,"damage":297,"damage_per_second":165},
-    "12":{"hitpoints":1328,"damage":326,"damage_per_second":181},
-    "13":{"hitpoints":1460,"damage":359,"damage_per_second":199},
-    "14":{"hitpoints":1603,"damage":394,"damage_per_second":218},
-    "15":{"hitpoints":1760,"damage":433,"damage_per_second":240}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "splash",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Medium",
+      "tiles": 1.2
+    },
+    "splash_radius_tiles": 0.8,
+    "hit_speed_sec": 1.8,
+    "first_hit_speed_sec": 0.5
   },
-  "evolution":{
-    "available":true,
-    "changes":{
-      "souldiers":{
-        "description":"On death, spawns 2 Souldiers (ghostly melee units)",
-        "count":2,
-        "souldier_stats_by_level":{
-          "11":{"hitpoints":200,"damage":100,"damage_per_second":83},
-          "14":{"hitpoints":266,"damage":133,"damage_per_second":110},
-          "15":{"hitpoints":292,"damage":146,"damage_per_second":121}
+  "mechanics": {
+    "stealth": {
+      "becomes_invisible_after_sec": 1.2,
+      "invisibility_breaks_on": "attack_or_receive_damage",
+      "untargetable_while_invisible": true,
+      "can_still_be_hit_by_splash": true
+    }
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.5
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 1000,
+      "damage": 246,
+      "damage_per_second": 136
+    },
+    "10": {
+      "hitpoints": 1100,
+      "damage": 270,
+      "damage_per_second": 150
+    },
+    "11": {
+      "hitpoints": 1209,
+      "damage": 297,
+      "damage_per_second": 165
+    },
+    "12": {
+      "hitpoints": 1328,
+      "damage": 326,
+      "damage_per_second": 181
+    },
+    "13": {
+      "hitpoints": 1460,
+      "damage": 359,
+      "damage_per_second": 199
+    },
+    "14": {
+      "hitpoints": 1603,
+      "damage": 394,
+      "damage_per_second": 218
+    },
+    "15": {
+      "hitpoints": 1760,
+      "damage": 433,
+      "damage_per_second": 240
+    }
+  },
+  "evolution": {
+    "available": true,
+    "changes": {
+      "souldiers": {
+        "description": "On death, spawns 2 Souldiers (ghostly melee units)",
+        "count": 2,
+        "souldier_stats_by_level": {
+          "11": {
+            "hitpoints": 200,
+            "damage": 100,
+            "damage_per_second": 83
+          },
+          "14": {
+            "hitpoints": 266,
+            "damage": 133,
+            "damage_per_second": 110
+          },
+          "15": {
+            "hitpoints": 292,
+            "damage": 146,
+            "damage_per_second": 121
+          }
         }
       }
     }
   },
-  "verification_status":"verified_mar2026",
-  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+  "verification_status": "verified_mar2026",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "mar_2026"
+  ]
 }

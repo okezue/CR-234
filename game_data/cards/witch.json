@@ -1,1 +1,314 @@
-{"name":"Witch","rarity":"Epic","type":"Troop","elixir_cost":5,"arena_unlock":{"name":"P.E.K.K.A's Playhouse","arena_number":4},"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"deploy_time_sec":1.0,"count":1,"attack":{"damage_type":"area","targets":["Air","Ground"],"range":{"type":"ranged","tiles":5.5},"splash_radius_tiles":1.5,"hit_speed_sec":1.1,"first_hit_speed_sec":0.7,"projectile_speed":600},"spawns":{"unit":"Skeleton","spawn_interval_sec":7.0,"spawn_count_per_interval":4,"spawn_first_delay_sec":1.0,"spawn_pattern":"around_self","death_spawn_count":0},"hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},"stats_by_level":{"6":{"hitpoints":524,"area_damage":84,"damage_per_second":76},"7":{"hitpoints":576,"area_damage":92,"damage_per_second":83},"8":{"hitpoints":634,"area_damage":101,"damage_per_second":91},"9":{"hitpoints":697,"area_damage":111,"damage_per_second":100},"10":{"hitpoints":765,"area_damage":122,"damage_per_second":110},"11":{"hitpoints":838,"area_damage":134,"damage_per_second":121},"12":{"hitpoints":921,"area_damage":147,"damage_per_second":133},"13":{"hitpoints":1012,"area_damage":161,"damage_per_second":146},"14":{"hitpoints":1111,"area_damage":177,"damage_per_second":160},"15":{"hitpoints":1222,"area_damage":194,"damage_per_second":176},"16":{"hitpoints":1341,"area_damage":216,"damage_per_second":196}},"sub_units":{"Skeleton":{"movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.5},"hit_speed_sec":1.1,"first_hit_speed_sec":0.5},"stats_by_level":{"6":{"hitpoints":51,"damage":51,"damage_per_second":46},"7":{"hitpoints":56,"damage":56,"damage_per_second":50},"8":{"hitpoints":61,"damage":61,"damage_per_second":55},"9":{"hitpoints":67,"damage":67,"damage_per_second":60},"10":{"hitpoints":74,"damage":74,"damage_per_second":67},"11":{"hitpoints":81,"damage":81,"damage_per_second":73},"12":{"hitpoints":89,"damage":89,"damage_per_second":80},"13":{"hitpoints":98,"damage":98,"damage_per_second":89},"14":{"hitpoints":107,"damage":107,"damage_per_second":97},"15":{"hitpoints":118,"damage":118,"damage_per_second":107},"16":{"hitpoints":130,"damage":130,"damage_per_second":118}}}},"evolution":{"available":true,"changes":{"heal_on_skeleton_death":{"description":"Healed when a Skeleton she spawned is defeated","overheal_enabled":true,"overheal_cap_multiplier":1.24}},"stats_by_level":{"6":{"hitpoints":524,"max_hitpoints":649,"area_damage":84,"damage_per_second":76,"skeleton_hitpoints":51,"skeleton_death_heal":51,"skeleton_damage":51,"skeleton_damage_per_second":46},"7":{"hitpoints":576,"max_hitpoints":714,"area_damage":92,"damage_per_second":83,"skeleton_hitpoints":56,"skeleton_death_heal":56,"skeleton_damage":56,"skeleton_damage_per_second":50},"8":{"hitpoints":634,"max_hitpoints":786,"area_damage":101,"damage_per_second":91,"skeleton_hitpoints":61,"skeleton_death_heal":61,"skeleton_damage":61,"skeleton_damage_per_second":55},"9":{"hitpoints":697,"max_hitpoints":864,"area_damage":111,"damage_per_second":100,"skeleton_hitpoints":67,"skeleton_death_heal":67,"skeleton_damage":67,"skeleton_damage_per_second":60},"10":{"hitpoints":765,"max_hitpoints":948,"area_damage":122,"damage_per_second":110,"skeleton_hitpoints":74,"skeleton_death_heal":74,"skeleton_damage":74,"skeleton_damage_per_second":67},"11":{"hitpoints":838,"max_hitpoints":1039,"area_damage":134,"damage_per_second":121,"skeleton_hitpoints":81,"skeleton_death_heal":81,"skeleton_damage":81,"skeleton_damage_per_second":73},"12":{"hitpoints":921,"max_hitpoints":1142,"area_damage":147,"damage_per_second":133,"skeleton_hitpoints":89,"skeleton_death_heal":89,"skeleton_damage":89,"skeleton_damage_per_second":80},"13":{"hitpoints":1012,"max_hitpoints":1254,"area_damage":161,"damage_per_second":146,"skeleton_hitpoints":98,"skeleton_death_heal":98,"skeleton_damage":98,"skeleton_damage_per_second":89},"14":{"hitpoints":1111,"max_hitpoints":1377,"area_damage":177,"damage_per_second":160,"skeleton_hitpoints":107,"skeleton_death_heal":107,"skeleton_damage":107,"skeleton_damage_per_second":97},"15":{"hitpoints":1222,"max_hitpoints":1515,"area_damage":194,"damage_per_second":176,"skeleton_hitpoints":118,"skeleton_death_heal":118,"skeleton_damage":118,"skeleton_damage_per_second":107},"16":{"hitpoints":1341,"max_hitpoints":1662,"area_damage":216,"damage_per_second":196,"skeleton_hitpoints":130,"skeleton_death_heal":130,"skeleton_damage":130,"skeleton_damage_per_second":118}}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Witch",
+  "rarity": "Epic",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "arena_unlock": {
+    "name": "P.E.K.K.A's Playhouse",
+    "arena_number": 4
+  },
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "area",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 5.5
+    },
+    "splash_radius_tiles": 1.5,
+    "hit_speed_sec": 1.1,
+    "first_hit_speed_sec": 0.7,
+    "projectile_speed": 600
+  },
+  "spawns": {
+    "unit": "Skeleton",
+    "spawn_interval_sec": 7.0,
+    "spawn_count_per_interval": 4,
+    "spawn_first_delay_sec": 1.0,
+    "spawn_pattern": "around_self",
+    "death_spawn_count": 0
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 5,
+    "collision_radius_tiles": 0.5
+  },
+  "stats_by_level": {
+    "6": {
+      "hitpoints": 524,
+      "area_damage": 84,
+      "damage_per_second": 76
+    },
+    "7": {
+      "hitpoints": 576,
+      "area_damage": 92,
+      "damage_per_second": 83
+    },
+    "8": {
+      "hitpoints": 634,
+      "area_damage": 101,
+      "damage_per_second": 91
+    },
+    "9": {
+      "hitpoints": 697,
+      "area_damage": 111,
+      "damage_per_second": 100
+    },
+    "10": {
+      "hitpoints": 765,
+      "area_damage": 122,
+      "damage_per_second": 110
+    },
+    "11": {
+      "hitpoints": 838,
+      "area_damage": 134,
+      "damage_per_second": 121
+    },
+    "12": {
+      "hitpoints": 921,
+      "area_damage": 147,
+      "damage_per_second": 133
+    },
+    "13": {
+      "hitpoints": 1012,
+      "area_damage": 161,
+      "damage_per_second": 146
+    },
+    "14": {
+      "hitpoints": 1111,
+      "area_damage": 177,
+      "damage_per_second": 160
+    },
+    "15": {
+      "hitpoints": 1222,
+      "area_damage": 194,
+      "damage_per_second": 176
+    },
+    "16": {
+      "hitpoints": 1341,
+      "area_damage": 216,
+      "damage_per_second": 196
+    }
+  },
+  "sub_units": {
+    "Skeleton": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Fast",
+          "value": 90
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Ground"
+        ],
+        "range": {
+          "type": "melee",
+          "classification": "Melee: Short",
+          "tiles": 0.5
+        },
+        "hit_speed_sec": 1.1,
+        "first_hit_speed_sec": 0.5
+      },
+      "stats_by_level": {
+        "6": {
+          "hitpoints": 51,
+          "damage": 51,
+          "damage_per_second": 46
+        },
+        "7": {
+          "hitpoints": 56,
+          "damage": 56,
+          "damage_per_second": 50
+        },
+        "8": {
+          "hitpoints": 61,
+          "damage": 61,
+          "damage_per_second": 55
+        },
+        "9": {
+          "hitpoints": 67,
+          "damage": 67,
+          "damage_per_second": 60
+        },
+        "10": {
+          "hitpoints": 74,
+          "damage": 74,
+          "damage_per_second": 67
+        },
+        "11": {
+          "hitpoints": 81,
+          "damage": 81,
+          "damage_per_second": 73
+        },
+        "12": {
+          "hitpoints": 89,
+          "damage": 89,
+          "damage_per_second": 80
+        },
+        "13": {
+          "hitpoints": 98,
+          "damage": 98,
+          "damage_per_second": 89
+        },
+        "14": {
+          "hitpoints": 107,
+          "damage": 107,
+          "damage_per_second": 97
+        },
+        "15": {
+          "hitpoints": 118,
+          "damage": 118,
+          "damage_per_second": 107
+        },
+        "16": {
+          "hitpoints": 130,
+          "damage": 130,
+          "damage_per_second": 118
+        }
+      }
+    }
+  },
+  "evolution": {
+    "available": true,
+    "changes": {
+      "heal_on_skeleton_death": {
+        "description": "Healed when a Skeleton she spawned is defeated",
+        "overheal_enabled": true,
+        "overheal_cap_multiplier": 1.24
+      }
+    },
+    "stats_by_level": {
+      "6": {
+        "hitpoints": 524,
+        "max_hitpoints": 649,
+        "area_damage": 84,
+        "damage_per_second": 76,
+        "skeleton_hitpoints": 51,
+        "skeleton_death_heal": 51,
+        "skeleton_damage": 51,
+        "skeleton_damage_per_second": 46
+      },
+      "7": {
+        "hitpoints": 576,
+        "max_hitpoints": 714,
+        "area_damage": 92,
+        "damage_per_second": 83,
+        "skeleton_hitpoints": 56,
+        "skeleton_death_heal": 56,
+        "skeleton_damage": 56,
+        "skeleton_damage_per_second": 50
+      },
+      "8": {
+        "hitpoints": 634,
+        "max_hitpoints": 786,
+        "area_damage": 101,
+        "damage_per_second": 91,
+        "skeleton_hitpoints": 61,
+        "skeleton_death_heal": 61,
+        "skeleton_damage": 61,
+        "skeleton_damage_per_second": 55
+      },
+      "9": {
+        "hitpoints": 697,
+        "max_hitpoints": 864,
+        "area_damage": 111,
+        "damage_per_second": 100,
+        "skeleton_hitpoints": 67,
+        "skeleton_death_heal": 67,
+        "skeleton_damage": 67,
+        "skeleton_damage_per_second": 60
+      },
+      "10": {
+        "hitpoints": 765,
+        "max_hitpoints": 948,
+        "area_damage": 122,
+        "damage_per_second": 110,
+        "skeleton_hitpoints": 74,
+        "skeleton_death_heal": 74,
+        "skeleton_damage": 74,
+        "skeleton_damage_per_second": 67
+      },
+      "11": {
+        "hitpoints": 838,
+        "max_hitpoints": 1039,
+        "area_damage": 134,
+        "damage_per_second": 121,
+        "skeleton_hitpoints": 81,
+        "skeleton_death_heal": 81,
+        "skeleton_damage": 81,
+        "skeleton_damage_per_second": 73
+      },
+      "12": {
+        "hitpoints": 921,
+        "max_hitpoints": 1142,
+        "area_damage": 147,
+        "damage_per_second": 133,
+        "skeleton_hitpoints": 89,
+        "skeleton_death_heal": 89,
+        "skeleton_damage": 89,
+        "skeleton_damage_per_second": 80
+      },
+      "13": {
+        "hitpoints": 1012,
+        "max_hitpoints": 1254,
+        "area_damage": 161,
+        "damage_per_second": 146,
+        "skeleton_hitpoints": 98,
+        "skeleton_death_heal": 98,
+        "skeleton_damage": 98,
+        "skeleton_damage_per_second": 89
+      },
+      "14": {
+        "hitpoints": 1111,
+        "max_hitpoints": 1377,
+        "area_damage": 177,
+        "damage_per_second": 160,
+        "skeleton_hitpoints": 107,
+        "skeleton_death_heal": 107,
+        "skeleton_damage": 107,
+        "skeleton_damage_per_second": 97
+      },
+      "15": {
+        "hitpoints": 1222,
+        "max_hitpoints": 1515,
+        "area_damage": 194,
+        "damage_per_second": 176,
+        "skeleton_hitpoints": 118,
+        "skeleton_death_heal": 118,
+        "skeleton_damage": 118,
+        "skeleton_damage_per_second": 107
+      },
+      "16": {
+        "hitpoints": 1341,
+        "max_hitpoints": 1662,
+        "area_damage": 216,
+        "damage_per_second": 196,
+        "skeleton_hitpoints": 130,
+        "skeleton_death_heal": 130,
+        "skeleton_damage": 130,
+        "skeleton_damage_per_second": 118
+      }
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
+}

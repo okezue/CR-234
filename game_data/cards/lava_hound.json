@@ -1,49 +1,151 @@
 {
-  "name":"Lava Hound",
-  "rarity":"Legendary",
-  "type":"Troop",
-  "elixir_cost":7,
-  "arena_unlock":{"name":"Rascal's Hideout","arena_number":13},
-  "movement":{"transport":"Air","speed":{"classification":"Slow","value":45}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"single_target",
-    "targets":["Buildings"],
-    "range":{"type":"ranged","tiles":3.5},
-    "hit_speed_sec":1.3,
-    "first_hit_speed_sec":1.0
+  "name": "Lava Hound",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 7,
+  "arena_unlock": {
+    "name": "Rascal's Hideout",
+    "arena_number": 13
   },
-  "mechanics":{
-    "death_spawn":{"unit":"Lava Pup","count":6}
+  "movement": {
+    "transport": "Air",
+    "speed": {
+      "classification": "Slow",
+      "value": 45
+    }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "9":{"hitpoints":3220,"damage":53,"damage_per_second":40},
-    "10":{"hitpoints":3542,"damage":58,"damage_per_second":44},
-    "11":{"hitpoints":3896,"damage":64,"damage_per_second":49},
-    "12":{"hitpoints":4286,"damage":70,"damage_per_second":53},
-    "13":{"hitpoints":4714,"damage":77,"damage_per_second":59},
-    "14":{"hitpoints":5186,"damage":85,"damage_per_second":65},
-    "15":{"hitpoints":5704,"damage":93,"damage_per_second":71}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Buildings"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 3.5
+    },
+    "hit_speed_sec": 1.3,
+    "first_hit_speed_sec": 1.0
   },
-  "sub_units":{
-    "Lava Pup":{
-      "count":6,
-      "movement":{"transport":"Air","speed":{"classification":"Medium","value":60}},
-      "attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":2.0},"hit_speed_sec":1.0,"first_hit_speed_sec":0.5},
-      "stats_by_level":{
-        "9":{"hitpoints":179,"damage":45,"damage_per_second":45},
-        "10":{"hitpoints":196,"damage":49,"damage_per_second":49},
-        "11":{"hitpoints":216,"damage":54,"damage_per_second":54},
-        "12":{"hitpoints":238,"damage":60,"damage_per_second":60},
-        "13":{"hitpoints":261,"damage":66,"damage_per_second":66},
-        "14":{"hitpoints":287,"damage":72,"damage_per_second":72},
-        "15":{"hitpoints":316,"damage":79,"damage_per_second":79}
+  "mechanics": {
+    "death_spawn": {
+      "unit": "Lava Pup",
+      "count": 6
+    }
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 7.5,
+    "mass": 12,
+    "collision_radius_tiles": 0.7
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 3220,
+      "damage": 53,
+      "damage_per_second": 40
+    },
+    "10": {
+      "hitpoints": 3542,
+      "damage": 58,
+      "damage_per_second": 44
+    },
+    "11": {
+      "hitpoints": 3896,
+      "damage": 64,
+      "damage_per_second": 49
+    },
+    "12": {
+      "hitpoints": 4286,
+      "damage": 70,
+      "damage_per_second": 53
+    },
+    "13": {
+      "hitpoints": 4714,
+      "damage": 77,
+      "damage_per_second": 59
+    },
+    "14": {
+      "hitpoints": 5186,
+      "damage": 85,
+      "damage_per_second": 65
+    },
+    "15": {
+      "hitpoints": 5704,
+      "damage": 93,
+      "damage_per_second": 71
+    }
+  },
+  "sub_units": {
+    "Lava Pup": {
+      "count": 6,
+      "movement": {
+        "transport": "Air",
+        "speed": {
+          "classification": "Medium",
+          "value": 60
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Air",
+          "Ground"
+        ],
+        "range": {
+          "type": "ranged",
+          "tiles": 2.0
+        },
+        "hit_speed_sec": 1.0,
+        "first_hit_speed_sec": 0.5
+      },
+      "stats_by_level": {
+        "9": {
+          "hitpoints": 179,
+          "damage": 45,
+          "damage_per_second": 45
+        },
+        "10": {
+          "hitpoints": 196,
+          "damage": 49,
+          "damage_per_second": 49
+        },
+        "11": {
+          "hitpoints": 216,
+          "damage": 54,
+          "damage_per_second": 54
+        },
+        "12": {
+          "hitpoints": 238,
+          "damage": 60,
+          "damage_per_second": 60
+        },
+        "13": {
+          "hitpoints": 261,
+          "damage": 66,
+          "damage_per_second": 66
+        },
+        "14": {
+          "hitpoints": 287,
+          "damage": 72,
+          "damage_per_second": 72
+        },
+        "15": {
+          "hitpoints": 316,
+          "damage": 79,
+          "damage_per_second": 79
+        }
       }
     }
   },
-  "evolution":{"available":false},
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
 }

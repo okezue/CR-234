@@ -1,1 +1,109 @@
-{"name":"Ram Rider","rarity":"Legendary","type":"Troop","elixir_cost":5,"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60},"can_jump_river":true},"count":1,"composite_attack":{"ram":{"targets":["Buildings"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.8},"hit_speed_sec":1.8,"charge":{"speed":{"classification":"Very Fast","value":120},"damage_multiplier":2,"charge_range_tiles":2.5}},"rider":{"targets":["Air","Ground"],"target_type":"troops_only","range":{"type":"ranged","tiles":5.5},"hit_speed_sec":1.1,"projectile_speed":600,"snare":{"movement_reduction_percent":70,"duration_sec":2.0}}},"stats_by_level":{"9":{"hitpoints":1405,"ram_damage":207,"ram_charge_damage":415,"rider_damage":86},"10":{"hitpoints":1545,"ram_damage":227,"ram_charge_damage":455,"rider_damage":94},"11":{"hitpoints":1699,"ram_damage":250,"ram_charge_damage":500,"rider_damage":104},"12":{"hitpoints":1867,"ram_damage":275,"ram_charge_damage":550,"rider_damage":114},"13":{"hitpoints":2051,"ram_damage":302,"ram_charge_damage":604,"rider_damage":125},"14":{"hitpoints":2252,"ram_damage":331,"ram_charge_damage":663,"rider_damage":138},"15":{"hitpoints":2466,"ram_damage":364,"ram_charge_damage":729,"rider_damage":152}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Ram Rider",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    },
+    "can_jump_river": true
+  },
+  "count": 1,
+  "composite_attack": {
+    "ram": {
+      "targets": [
+        "Buildings"
+      ],
+      "range": {
+        "type": "melee",
+        "classification": "Melee: Short",
+        "tiles": 0.8
+      },
+      "hit_speed_sec": 1.8,
+      "charge": {
+        "speed": {
+          "classification": "Very Fast",
+          "value": 120
+        },
+        "damage_multiplier": 2,
+        "charge_range_tiles": 2.5
+      }
+    },
+    "rider": {
+      "targets": [
+        "Air",
+        "Ground"
+      ],
+      "target_type": "troops_only",
+      "range": {
+        "type": "ranged",
+        "tiles": 5.5
+      },
+      "hit_speed_sec": 1.1,
+      "projectile_speed": 600,
+      "snare": {
+        "movement_reduction_percent": 70,
+        "duration_sec": 2.0
+      }
+    }
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 1405,
+      "ram_damage": 207,
+      "ram_charge_damage": 415,
+      "rider_damage": 86
+    },
+    "10": {
+      "hitpoints": 1545,
+      "ram_damage": 227,
+      "ram_charge_damage": 455,
+      "rider_damage": 94
+    },
+    "11": {
+      "hitpoints": 1699,
+      "ram_damage": 250,
+      "ram_charge_damage": 500,
+      "rider_damage": 104
+    },
+    "12": {
+      "hitpoints": 1867,
+      "ram_damage": 275,
+      "ram_charge_damage": 550,
+      "rider_damage": 114
+    },
+    "13": {
+      "hitpoints": 2051,
+      "ram_damage": 302,
+      "ram_charge_damage": 604,
+      "rider_damage": 125
+    },
+    "14": {
+      "hitpoints": 2252,
+      "ram_damage": 331,
+      "ram_charge_damage": 663,
+      "rider_damage": 138
+    },
+    "15": {
+      "hitpoints": 2466,
+      "ram_damage": 364,
+      "ram_charge_damage": 729,
+      "rider_damage": 152
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 8,
+    "collision_radius_tiles": 0.6
+  }
+}

@@ -1,1 +1,126 @@
-{"name":"Berserker","key":"berserker","rarity":"Common","type":"Troop","elixir":2,"speed":"Fast (90)","range":"Melee: Short (0.8)","hit_speed":"0.6s","first_hit":"0.2s","targets":"Ground","levels":{"min":1,"max":16,"stats":[{"level":1,"hp":300,"damage":55,"dps":91},{"level":2,"hp":330,"damage":60,"dps":100},{"level":3,"hp":363,"damage":66,"dps":110},{"level":4,"hp":399,"damage":73,"dps":121},{"level":5,"hp":438,"damage":80,"dps":133},{"level":6,"hp":481,"damage":88,"dps":146},{"level":7,"hp":529,"damage":96,"dps":160},{"level":8,"hp":580,"damage":106,"dps":176},{"level":9,"hp":638,"damage":116,"dps":193},{"level":10,"hp":700,"damage":128,"dps":213},{"level":11,"hp":769,"damage":140,"dps":233},{"level":12,"hp":844,"damage":154,"dps":256},{"level":13,"hp":928,"damage":169,"dps":281},{"level":14,"hp":1018,"damage":186,"dps":310},{"level":15,"hp":1119,"damage":204,"dps":340},{"level":16,"hp":1228,"damage":224,"dps":373}]},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Berserker",
+  "key": "berserker",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir": 2,
+  "speed": "Fast (90)",
+  "range": "Melee: Short (0.8)",
+  "hit_speed": "0.6s",
+  "first_hit": "0.2s",
+  "targets": "Ground",
+  "levels": {
+    "min": 1,
+    "max": 16,
+    "stats": [
+      {
+        "level": 1,
+        "hp": 300,
+        "damage": 55,
+        "dps": 91
+      },
+      {
+        "level": 2,
+        "hp": 330,
+        "damage": 60,
+        "dps": 100
+      },
+      {
+        "level": 3,
+        "hp": 363,
+        "damage": 66,
+        "dps": 110
+      },
+      {
+        "level": 4,
+        "hp": 399,
+        "damage": 73,
+        "dps": 121
+      },
+      {
+        "level": 5,
+        "hp": 438,
+        "damage": 80,
+        "dps": 133
+      },
+      {
+        "level": 6,
+        "hp": 481,
+        "damage": 88,
+        "dps": 146
+      },
+      {
+        "level": 7,
+        "hp": 529,
+        "damage": 96,
+        "dps": 160
+      },
+      {
+        "level": 8,
+        "hp": 580,
+        "damage": 106,
+        "dps": 176
+      },
+      {
+        "level": 9,
+        "hp": 638,
+        "damage": 116,
+        "dps": 193
+      },
+      {
+        "level": 10,
+        "hp": 700,
+        "damage": 128,
+        "dps": 213
+      },
+      {
+        "level": 11,
+        "hp": 769,
+        "damage": 140,
+        "dps": 233
+      },
+      {
+        "level": 12,
+        "hp": 844,
+        "damage": 154,
+        "dps": 256
+      },
+      {
+        "level": 13,
+        "hp": 928,
+        "damage": 169,
+        "dps": 281
+      },
+      {
+        "level": 14,
+        "hp": 1018,
+        "damage": 186,
+        "dps": 310
+      },
+      {
+        "level": 15,
+        "hp": 1119,
+        "damage": 204,
+        "dps": 340
+      },
+      {
+        "level": 16,
+        "hp": 1228,
+        "damage": 224,
+        "dps": 373
+      }
+    ]
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 3,
+    "collision_radius_tiles": 0.5
+  }
+}

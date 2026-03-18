@@ -1,47 +1,127 @@
 {
-  "name":"Spirit Empress",
-  "rarity":"Legendary",
-  "type":"Troop",
-  "elixir_cost":{"empress_form":6,"spirit_form":3},
-  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "forms":{
-    "empress":{
-      "elixir_cost":6,
-      "attack":{
-        "damage_type":"splash",
-        "targets":["Air","Ground"],
-        "range":{"type":"ranged","tiles":5.0},
-        "splash_radius_tiles":1.5,
-        "hit_speed_sec":1.5,
-        "first_hit_speed_sec":0.5
-      },
-      "on_death":"transforms_to_spirit_form"
-    },
-    "spirit":{
-      "elixir_cost":3,
-      "attack":{
-        "damage_type":"single_target",
-        "targets":["Air","Ground"],
-        "range":{"type":"ranged","tiles":4.0},
-        "hit_speed_sec":1.0,
-        "first_hit_speed_sec":0.5
-      },
-      "on_death":"gone"
+  "name": "Spirit Empress",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": {
+    "empress_form": 6,
+    "spirit_form": 3
+  },
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "9":{"empress_hitpoints":1200,"empress_damage":200,"empress_dps":133,"spirit_hitpoints":600,"spirit_damage":100,"spirit_dps":100},
-    "10":{"empress_hitpoints":1320,"empress_damage":220,"empress_dps":146,"spirit_hitpoints":660,"spirit_damage":110,"spirit_dps":110},
-    "11":{"empress_hitpoints":1452,"empress_damage":242,"empress_dps":161,"spirit_hitpoints":726,"spirit_damage":121,"spirit_dps":121},
-    "12":{"empress_hitpoints":1596,"empress_damage":266,"empress_dps":177,"spirit_hitpoints":798,"spirit_damage":133,"spirit_dps":133},
-    "13":{"empress_hitpoints":1754,"empress_damage":292,"empress_dps":194,"spirit_hitpoints":877,"spirit_damage":146,"spirit_dps":146},
-    "14":{"empress_hitpoints":1926,"empress_damage":321,"empress_dps":214,"spirit_hitpoints":963,"spirit_damage":160,"spirit_dps":160},
-    "15":{"empress_hitpoints":2116,"empress_damage":353,"empress_dps":235,"spirit_hitpoints":1058,"spirit_damage":176,"spirit_dps":176}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "forms": {
+    "empress": {
+      "elixir_cost": 6,
+      "attack": {
+        "damage_type": "splash",
+        "targets": [
+          "Air",
+          "Ground"
+        ],
+        "range": {
+          "type": "ranged",
+          "tiles": 5.0
+        },
+        "splash_radius_tiles": 1.5,
+        "hit_speed_sec": 1.5,
+        "first_hit_speed_sec": 0.5
+      },
+      "on_death": "transforms_to_spirit_form"
+    },
+    "spirit": {
+      "elixir_cost": 3,
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Air",
+          "Ground"
+        ],
+        "range": {
+          "type": "ranged",
+          "tiles": 4.0
+        },
+        "hit_speed_sec": 1.0,
+        "first_hit_speed_sec": 0.5
+      },
+      "on_death": "gone"
+    }
   },
-  "evolution":{"available":false},
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 5,
+    "collision_radius_tiles": 0.5
+  },
+  "stats_by_level": {
+    "9": {
+      "empress_hitpoints": 1200,
+      "empress_damage": 200,
+      "empress_dps": 133,
+      "spirit_hitpoints": 600,
+      "spirit_damage": 100,
+      "spirit_dps": 100
+    },
+    "10": {
+      "empress_hitpoints": 1320,
+      "empress_damage": 220,
+      "empress_dps": 146,
+      "spirit_hitpoints": 660,
+      "spirit_damage": 110,
+      "spirit_dps": 110
+    },
+    "11": {
+      "empress_hitpoints": 1452,
+      "empress_damage": 242,
+      "empress_dps": 161,
+      "spirit_hitpoints": 726,
+      "spirit_damage": 121,
+      "spirit_dps": 121
+    },
+    "12": {
+      "empress_hitpoints": 1596,
+      "empress_damage": 266,
+      "empress_dps": 177,
+      "spirit_hitpoints": 798,
+      "spirit_damage": 133,
+      "spirit_dps": 133
+    },
+    "13": {
+      "empress_hitpoints": 1754,
+      "empress_damage": 292,
+      "empress_dps": 194,
+      "spirit_hitpoints": 877,
+      "spirit_damage": 146,
+      "spirit_dps": 146
+    },
+    "14": {
+      "empress_hitpoints": 1926,
+      "empress_damage": 321,
+      "empress_dps": 214,
+      "spirit_hitpoints": 963,
+      "spirit_damage": 160,
+      "spirit_dps": 160
+    },
+    "15": {
+      "empress_hitpoints": 2116,
+      "empress_damage": 353,
+      "empress_dps": 235,
+      "spirit_hitpoints": 1058,
+      "spirit_damage": 176,
+      "spirit_dps": 176
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "mar_2026"
+  ]
 }

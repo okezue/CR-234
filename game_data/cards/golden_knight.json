@@ -30,7 +30,7 @@
       "invulnerable_during_dash":true
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
+  "hidden_stats":{"sight_range_tiles":5.5,"mass":10,"collision_radius_tiles":0.8},
   "stats_by_level":{
     "11":{"hitpoints":1799,"damage":161,"damage_per_second":178},
     "12":{"hitpoints":1975,"damage":177,"damage_per_second":196},

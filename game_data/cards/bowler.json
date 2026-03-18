@@ -1,38 +1,106 @@
 {
-  "name":"Bowler",
-  "rarity":"Epic",
-  "type":"Troop",
-  "elixir_cost":5,
-  "arena_unlock":{"name":"Rascal's Hideout","arena_number":13},
-  "movement":{"transport":"Ground","speed":{"classification":"Slow","value":45}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"area",
-    "targets":["Ground"],
-    "range":{"type":"ranged","tiles":4.0},
-    "projectile_range_tiles":7.5,
-    "hit_speed_sec":2.5,
-    "first_hit_speed_sec":0.7,
-    "mechanics":{
-      "line_projectile":true,
-      "knockback":{"enabled":true,"applies_to":"small_and_medium_ground_troops"}
+  "name": "Bowler",
+  "rarity": "Epic",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "arena_unlock": {
+    "name": "Rascal's Hideout",
+    "arena_number": 13
+  },
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Slow",
+      "value": 45
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "6":{"hitpoints":793,"area_damage":110,"damage_per_second":44},
-    "7":{"hitpoints":872,"area_damage":121,"damage_per_second":48},
-    "8":{"hitpoints":960,"area_damage":133,"damage_per_second":53},
-    "9":{"hitpoints":1056,"area_damage":146,"damage_per_second":58},
-    "10":{"hitpoints":1162,"area_damage":161,"damage_per_second":64},
-    "11":{"hitpoints":1300,"area_damage":180,"damage_per_second":72},
-    "12":{"hitpoints":1430,"area_damage":198,"damage_per_second":79},
-    "13":{"hitpoints":1573,"area_damage":218,"damage_per_second":87},
-    "14":{"hitpoints":1730,"area_damage":240,"damage_per_second":96},
-    "15":{"hitpoints":1903,"area_damage":264,"damage_per_second":105}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "area",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 4.0
+    },
+    "projectile_range_tiles": 7.5,
+    "hit_speed_sec": 2.5,
+    "first_hit_speed_sec": 0.7,
+    "mechanics": {
+      "line_projectile": true,
+      "knockback": {
+        "enabled": true,
+        "applies_to": "small_and_medium_ground_troops"
+      }
+    }
   },
-  "evolution":{"available":false},
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 8,
+    "collision_radius_tiles": 0.6
+  },
+  "stats_by_level": {
+    "6": {
+      "hitpoints": 793,
+      "area_damage": 110,
+      "damage_per_second": 44
+    },
+    "7": {
+      "hitpoints": 872,
+      "area_damage": 121,
+      "damage_per_second": 48
+    },
+    "8": {
+      "hitpoints": 960,
+      "area_damage": 133,
+      "damage_per_second": 53
+    },
+    "9": {
+      "hitpoints": 1056,
+      "area_damage": 146,
+      "damage_per_second": 58
+    },
+    "10": {
+      "hitpoints": 1162,
+      "area_damage": 161,
+      "damage_per_second": 64
+    },
+    "11": {
+      "hitpoints": 1300,
+      "area_damage": 180,
+      "damage_per_second": 72
+    },
+    "12": {
+      "hitpoints": 1430,
+      "area_damage": 198,
+      "damage_per_second": 79
+    },
+    "13": {
+      "hitpoints": 1573,
+      "area_damage": 218,
+      "damage_per_second": 87
+    },
+    "14": {
+      "hitpoints": 1730,
+      "area_damage": 240,
+      "damage_per_second": 96
+    },
+    "15": {
+      "hitpoints": 1903,
+      "area_damage": 264,
+      "damage_per_second": 105
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
 }

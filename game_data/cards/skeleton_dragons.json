@@ -1,1 +1,126 @@
-{"name":"Skeleton Dragons","rarity":"Common","type":"Troop","elixir_cost":4,"count":2,"movement":{"transport":"Air","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"area_splash","targets":["Air","Ground"],"range":{"type":"ranged","tiles":3.5},"hit_speed_sec":1.9,"first_hit_speed_sec":0.4,"splash_radius_tiles":0.8,"projectile_speed":500},"stats_by_level":{"1":{"hitpoints":208,"area_damage":63,"damage_per_second":33},"2":{"hitpoints":228,"area_damage":69,"damage_per_second":36},"3":{"hitpoints":251,"area_damage":76,"damage_per_second":40},"4":{"hitpoints":276,"area_damage":83,"damage_per_second":43},"5":{"hitpoints":304,"area_damage":92,"damage_per_second":48},"6":{"hitpoints":333,"area_damage":100,"damage_per_second":52},"7":{"hitpoints":366,"area_damage":110,"damage_per_second":57},"8":{"hitpoints":402,"area_damage":121,"damage_per_second":63},"9":{"hitpoints":441,"area_damage":133,"damage_per_second":70},"10":{"hitpoints":485,"area_damage":146,"damage_per_second":76},"11":{"hitpoints":533,"area_damage":160,"damage_per_second":84},"12":{"hitpoints":585,"area_damage":176,"damage_per_second":92},"13":{"hitpoints":643,"area_damage":193,"damage_per_second":101},"14":{"hitpoints":706,"area_damage":212,"damage_per_second":111},"15":{"hitpoints":776,"area_damage":233,"damage_per_second":122},"16":{"hitpoints":853,"area_damage":256,"damage_per_second":134}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Skeleton Dragons",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "count": 2,
+  "movement": {
+    "transport": "Air",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
+  },
+  "attack": {
+    "damage_type": "area_splash",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 3.5
+    },
+    "hit_speed_sec": 1.9,
+    "first_hit_speed_sec": 0.4,
+    "splash_radius_tiles": 0.8,
+    "projectile_speed": 500
+  },
+  "stats_by_level": {
+    "1": {
+      "hitpoints": 208,
+      "area_damage": 63,
+      "damage_per_second": 33
+    },
+    "2": {
+      "hitpoints": 228,
+      "area_damage": 69,
+      "damage_per_second": 36
+    },
+    "3": {
+      "hitpoints": 251,
+      "area_damage": 76,
+      "damage_per_second": 40
+    },
+    "4": {
+      "hitpoints": 276,
+      "area_damage": 83,
+      "damage_per_second": 43
+    },
+    "5": {
+      "hitpoints": 304,
+      "area_damage": 92,
+      "damage_per_second": 48
+    },
+    "6": {
+      "hitpoints": 333,
+      "area_damage": 100,
+      "damage_per_second": 52
+    },
+    "7": {
+      "hitpoints": 366,
+      "area_damage": 110,
+      "damage_per_second": 57
+    },
+    "8": {
+      "hitpoints": 402,
+      "area_damage": 121,
+      "damage_per_second": 63
+    },
+    "9": {
+      "hitpoints": 441,
+      "area_damage": 133,
+      "damage_per_second": 70
+    },
+    "10": {
+      "hitpoints": 485,
+      "area_damage": 146,
+      "damage_per_second": 76
+    },
+    "11": {
+      "hitpoints": 533,
+      "area_damage": 160,
+      "damage_per_second": 84
+    },
+    "12": {
+      "hitpoints": 585,
+      "area_damage": 176,
+      "damage_per_second": 92
+    },
+    "13": {
+      "hitpoints": 643,
+      "area_damage": 193,
+      "damage_per_second": 101
+    },
+    "14": {
+      "hitpoints": 706,
+      "area_damage": 212,
+      "damage_per_second": 111
+    },
+    "15": {
+      "hitpoints": 776,
+      "area_damage": 233,
+      "damage_per_second": 122
+    },
+    "16": {
+      "hitpoints": 853,
+      "area_damage": 256,
+      "damage_per_second": 134
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.4
+  }
+}

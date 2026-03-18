@@ -1,1 +1,147 @@
-{"name":"Night Witch","rarity":"Legendary","type":"Troop","elixir_cost":4,"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"deploy_time_sec":1.0,"count":1,"attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Long","tiles":1.6},"hit_speed_sec":1.3,"first_hit_speed_sec":0.75},"spawns":{"unit":"Bat","spawn_interval_sec":5.0,"spawn_count_per_interval":2,"spawn_first_delay_sec":1.0,"spawn_pattern":"around_self","death_spawn_count":1},"stats_by_level":{"9":{"hitpoints":750,"damage":260,"damage_per_second":200},"10":{"hitpoints":824,"damage":286,"damage_per_second":220},"11":{"hitpoints":906,"damage":314,"damage_per_second":241},"12":{"hitpoints":994,"damage":345,"damage_per_second":265},"13":{"hitpoints":1093,"damage":380,"damage_per_second":292},"14":{"hitpoints":1200,"damage":416,"damage_per_second":320},"15":{"hitpoints":1316,"damage":457,"damage_per_second":351}},"sub_units":{"Bat":{"movement":{"transport":"Air","speed":{"classification":"Very Fast","value":120}},"attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},"hit_speed_sec":1.1,"first_hit_speed_sec":0.6},"stats_by_level":{"9":{"hitpoints":67,"damage":67,"damage_per_second":60},"10":{"hitpoints":74,"damage":74,"damage_per_second":67},"11":{"hitpoints":81,"damage":81,"damage_per_second":73},"12":{"hitpoints":89,"damage":89,"damage_per_second":80},"13":{"hitpoints":98,"damage":98,"damage_per_second":89},"14":{"hitpoints":108,"damage":108,"damage_per_second":98},"15":{"hitpoints":119,"damage":119,"damage_per_second":108}}}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Night Witch",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Long",
+      "tiles": 1.6
+    },
+    "hit_speed_sec": 1.3,
+    "first_hit_speed_sec": 0.75
+  },
+  "spawns": {
+    "unit": "Bat",
+    "spawn_interval_sec": 5.0,
+    "spawn_count_per_interval": 2,
+    "spawn_first_delay_sec": 1.0,
+    "spawn_pattern": "around_self",
+    "death_spawn_count": 1
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 750,
+      "damage": 260,
+      "damage_per_second": 200
+    },
+    "10": {
+      "hitpoints": 824,
+      "damage": 286,
+      "damage_per_second": 220
+    },
+    "11": {
+      "hitpoints": 906,
+      "damage": 314,
+      "damage_per_second": 241
+    },
+    "12": {
+      "hitpoints": 994,
+      "damage": 345,
+      "damage_per_second": 265
+    },
+    "13": {
+      "hitpoints": 1093,
+      "damage": 380,
+      "damage_per_second": 292
+    },
+    "14": {
+      "hitpoints": 1200,
+      "damage": 416,
+      "damage_per_second": 320
+    },
+    "15": {
+      "hitpoints": 1316,
+      "damage": 457,
+      "damage_per_second": 351
+    }
+  },
+  "sub_units": {
+    "Bat": {
+      "movement": {
+        "transport": "Air",
+        "speed": {
+          "classification": "Very Fast",
+          "value": 120
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Air",
+          "Ground"
+        ],
+        "range": {
+          "type": "melee",
+          "classification": "Melee: Medium",
+          "tiles": 1.2
+        },
+        "hit_speed_sec": 1.1,
+        "first_hit_speed_sec": 0.6
+      },
+      "stats_by_level": {
+        "9": {
+          "hitpoints": 67,
+          "damage": 67,
+          "damage_per_second": 60
+        },
+        "10": {
+          "hitpoints": 74,
+          "damage": 74,
+          "damage_per_second": 67
+        },
+        "11": {
+          "hitpoints": 81,
+          "damage": 81,
+          "damage_per_second": 73
+        },
+        "12": {
+          "hitpoints": 89,
+          "damage": 89,
+          "damage_per_second": 80
+        },
+        "13": {
+          "hitpoints": 98,
+          "damage": 98,
+          "damage_per_second": 89
+        },
+        "14": {
+          "hitpoints": 108,
+          "damage": 108,
+          "damage_per_second": 98
+        },
+        "15": {
+          "hitpoints": 119,
+          "damage": 119,
+          "damage_per_second": 108
+        }
+      }
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 5,
+    "collision_radius_tiles": 0.5
+  }
+}

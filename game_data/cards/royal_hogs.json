@@ -1,1 +1,127 @@
-{"name":"Royal Hogs","rarity":"Rare","type":"Troop","elixir_cost":5,"deploy_time_sec":1.0,"count":4,"movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},"attack":{"damage_type":"single_target","targets":["Buildings"],"range":{"type":"melee","classification":"Melee: Short","tiles":0.7},"hit_speed_sec":1.2},"mechanics":{"river_jump":{"enabled":true}},"stats_by_level":{"3":{"hitpoints":395,"damage":46,"damage_per_second":38},"4":{"hitpoints":434,"damage":50,"damage_per_second":41},"5":{"hitpoints":477,"damage":55,"damage_per_second":45},"6":{"hitpoints":525,"damage":61,"damage_per_second":50},"7":{"hitpoints":576,"damage":67,"damage_per_second":55},"8":{"hitpoints":632,"damage":73,"damage_per_second":60},"9":{"hitpoints":695,"damage":80,"damage_per_second":66},"10":{"hitpoints":763,"damage":88,"damage_per_second":73},"11":{"hitpoints":838,"damage":97,"damage_per_second":80},"12":{"hitpoints":921,"damage":106,"damage_per_second":88},"13":{"hitpoints":1012,"damage":117,"damage_per_second":97},"14":{"hitpoints":1112,"damage":128,"damage_per_second":106},"15":{"hitpoints":1222,"damage":141,"damage_per_second":117},"16":{"hitpoints":1342,"damage":155,"damage_per_second":129}},"evolution":{"available":true,"changes":{"flying_start":{"description":"Start flying then land with area damage"}}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Royal Hogs",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "deploy_time_sec": 1.0,
+  "count": 4,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Very Fast",
+      "value": 120
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Buildings"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Short",
+      "tiles": 0.7
+    },
+    "hit_speed_sec": 1.2
+  },
+  "mechanics": {
+    "river_jump": {
+      "enabled": true
+    }
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 395,
+      "damage": 46,
+      "damage_per_second": 38
+    },
+    "4": {
+      "hitpoints": 434,
+      "damage": 50,
+      "damage_per_second": 41
+    },
+    "5": {
+      "hitpoints": 477,
+      "damage": 55,
+      "damage_per_second": 45
+    },
+    "6": {
+      "hitpoints": 525,
+      "damage": 61,
+      "damage_per_second": 50
+    },
+    "7": {
+      "hitpoints": 576,
+      "damage": 67,
+      "damage_per_second": 55
+    },
+    "8": {
+      "hitpoints": 632,
+      "damage": 73,
+      "damage_per_second": 60
+    },
+    "9": {
+      "hitpoints": 695,
+      "damage": 80,
+      "damage_per_second": 66
+    },
+    "10": {
+      "hitpoints": 763,
+      "damage": 88,
+      "damage_per_second": 73
+    },
+    "11": {
+      "hitpoints": 838,
+      "damage": 97,
+      "damage_per_second": 80
+    },
+    "12": {
+      "hitpoints": 921,
+      "damage": 106,
+      "damage_per_second": 88
+    },
+    "13": {
+      "hitpoints": 1012,
+      "damage": 117,
+      "damage_per_second": 97
+    },
+    "14": {
+      "hitpoints": 1112,
+      "damage": 128,
+      "damage_per_second": 106
+    },
+    "15": {
+      "hitpoints": 1222,
+      "damage": 141,
+      "damage_per_second": 117
+    },
+    "16": {
+      "hitpoints": 1342,
+      "damage": 155,
+      "damage_per_second": 129
+    }
+  },
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 2,
+    "changes": {
+      "flying_start": true,
+      "landing_damage": 84,
+      "landing_radius_tiles": 2.0,
+      "transport_until_hit": "Air",
+      "grounds_on_damage": true
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 9.5,
+    "mass": 4,
+    "collision_radius_tiles": 0.4
+  }
+}

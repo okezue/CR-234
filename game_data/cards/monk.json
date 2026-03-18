@@ -25,13 +25,13 @@
       "crowd_control_immunity":{"knockback_immune_during_ability":true,"tornado_pull_immune_during_ability":true}
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null},
+  "hidden_stats":{"sight_range_tiles":5.5,"mass":6,"collision_radius_tiles":0.5},
   "stats_by_level":{
-    "11":{"hitpoints":2060,"damage":140,"damage_per_second":175,"combo_damage":420},
-    "12":{"hitpoints":2266,"damage":154,"damage_per_second":192,"combo_damage":462},
-    "13":{"hitpoints":2492,"damage":169,"damage_per_second":211,"combo_damage":508},
-    "14":{"hitpoints":2741,"damage":186,"damage_per_second":232,"combo_damage":559},
-    "15":{"hitpoints":3016,"damage":204,"damage_per_second":255,"combo_damage":613}
+    "11":{"hitpoints":2214,"damage":140,"damage_per_second":175,"combo_damage":420},
+    "12":{"hitpoints":2435,"damage":154,"damage_per_second":192,"combo_damage":462},
+    "13":{"hitpoints":2679,"damage":169,"damage_per_second":211,"combo_damage":508},
+    "14":{"hitpoints":2946,"damage":186,"damage_per_second":232,"combo_damage":559},
+    "15":{"hitpoints":3241,"damage":205,"damage_per_second":256,"combo_damage":615}
   },
-  "balance_notes":"HP corrected to ~2060 at L11 (post-July 2025 +3% buff from 2000). Ability corrected from dual 80%/65% to flat 65% all damage (July 2025). Combo damage corrected from 422 to 420."
+  "balance_notes":"HP corrected to 2214 at L11 (2000 base * 1.075 Mar 2024 * 1.03 Jul 2025). Ability corrected from dual 80%/65% to flat 65% all damage (July 2025). Combo damage = 3x normal damage."
 }

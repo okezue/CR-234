@@ -17,3 +17,4 @@ deploy/*.pem
 debug_screenshot.png
 .DS_Store
 data/collected/all_card_placements.csv
+paper/

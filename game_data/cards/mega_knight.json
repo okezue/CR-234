@@ -1,53 +1,117 @@
 {
-  "name":"Mega Knight",
-  "rarity":"Legendary",
-  "type":"Troop",
-  "elixir_cost":7,
-  "arena_unlock":{"name":"Electro Valley","arena_number":11},
-  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"splash",
-    "targets":["Ground"],
-    "range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},
-    "splash_radius_tiles":1.8,
-    "hit_speed_sec":1.7,
-    "first_hit_speed_sec":0.4
+  "name": "Mega Knight",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 7,
+  "arena_unlock": {
+    "name": "Electro Valley",
+    "arena_number": 11
   },
-  "mechanics":{
-    "spawn_damage":{
-      "enabled":true,
-      "radius_tiles":3.5,
-      "damage_key":"spawn_jump_damage"
-    },
-    "jump":{
-      "trigger_distance_tiles":{"min":3.5,"max":5.0},
-      "jump_speed":750,
-      "splash_radius_tiles":3.5,
-      "damage_key":"spawn_jump_damage",
-      "invulnerable_during_jump":false
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "9":{"hitpoints":3300,"damage":222,"damage_per_second":130,"spawn_jump_damage":444},
-    "10":{"hitpoints":3630,"damage":244,"damage_per_second":143,"spawn_jump_damage":488},
-    "11":{"hitpoints":3993,"damage":268,"damage_per_second":157,"spawn_jump_damage":537},
-    "12":{"hitpoints":4389,"damage":295,"damage_per_second":173,"spawn_jump_damage":590},
-    "13":{"hitpoints":4825,"damage":324,"damage_per_second":190,"spawn_jump_damage":649},
-    "14":{"hitpoints":5299,"damage":356,"damage_per_second":209,"spawn_jump_damage":713},
-    "15":{"hitpoints":5822,"damage":391,"damage_per_second":230,"spawn_jump_damage":783}
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "splash",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "melee",
+      "classification": "Melee: Medium",
+      "tiles": 1.2
+    },
+    "splash_radius_tiles": 1.8,
+    "hit_speed_sec": 1.7,
+    "first_hit_speed_sec": 0.4
   },
-  "evolution":{
-    "available":true,
-    "changes":{
-      "uppercut":{
-        "description":"Landing attacks launch enemies into the air (stun/knockup effect)",
-        "applies_to":["spawn_damage","jump_damage"]
+  "mechanics": {
+    "spawn_damage": {
+      "enabled": true,
+      "radius_tiles": 3.5,
+      "damage_key": "spawn_jump_damage"
+    },
+    "jump": {
+      "trigger_distance_tiles": {
+        "min": 3.5,
+        "max": 5.0
+      },
+      "jump_speed": 750,
+      "splash_radius_tiles": 3.5,
+      "damage_key": "spawn_jump_damage",
+      "invulnerable_during_jump": false
+    }
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 18,
+    "collision_radius_tiles": 0.8
+  },
+  "stats_by_level": {
+    "9": {
+      "hitpoints": 3300,
+      "damage": 222,
+      "damage_per_second": 130,
+      "spawn_jump_damage": 444
+    },
+    "10": {
+      "hitpoints": 3630,
+      "damage": 244,
+      "damage_per_second": 143,
+      "spawn_jump_damage": 488
+    },
+    "11": {
+      "hitpoints": 3993,
+      "damage": 268,
+      "damage_per_second": 157,
+      "spawn_jump_damage": 537
+    },
+    "12": {
+      "hitpoints": 4389,
+      "damage": 295,
+      "damage_per_second": 173,
+      "spawn_jump_damage": 590
+    },
+    "13": {
+      "hitpoints": 4825,
+      "damage": 324,
+      "damage_per_second": 190,
+      "spawn_jump_damage": 649
+    },
+    "14": {
+      "hitpoints": 5299,
+      "damage": 356,
+      "damage_per_second": 209,
+      "spawn_jump_damage": 713
+    },
+    "15": {
+      "hitpoints": 5822,
+      "damage": 391,
+      "damage_per_second": 230,
+      "spawn_jump_damage": 783
+    }
+  },
+  "evolution": {
+    "available": true,
+    "changes": {
+      "uppercut": {
+        "description": "Landing attacks launch enemies into the air (stun/knockup effect)",
+        "applies_to": [
+          "spawn_damage",
+          "jump_damage"
+        ]
       }
     }
   },
-  "verification_status":"verified_mar2026",
-  "balance_patches_to_check":["dec_2025","jan_2026","mar_2026"]
+  "verification_status": "verified_mar2026",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "mar_2026"
+  ]
 }

@@ -1,1 +1,124 @@
-{"name":"Minion Horde","rarity":"Common","type":"Troop","elixir_cost":5,"count":6,"movement":{"transport":"Air","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":2.5},"hit_speed_sec":1.1,"projectile_speed":1000},"stats_by_level":{"1":{"hitpoints":90,"damage":42,"damage_per_second":38},"2":{"hitpoints":99,"damage":46,"damage_per_second":41},"3":{"hitpoints":108,"damage":50,"damage_per_second":45},"4":{"hitpoints":119,"damage":55,"damage_per_second":50},"5":{"hitpoints":131,"damage":61,"damage_per_second":55},"6":{"hitpoints":144,"damage":67,"damage_per_second":60},"7":{"hitpoints":158,"damage":73,"damage_per_second":66},"8":{"hitpoints":174,"damage":80,"damage_per_second":72},"9":{"hitpoints":190,"damage":88,"damage_per_second":80},"10":{"hitpoints":209,"damage":97,"damage_per_second":88},"11":{"hitpoints":230,"damage":106,"damage_per_second":96},"12":{"hitpoints":252,"damage":117,"damage_per_second":106},"13":{"hitpoints":277,"damage":128,"damage_per_second":116},"14":{"hitpoints":305,"damage":141,"damage_per_second":128},"15":{"hitpoints":335,"damage":155,"damage_per_second":140},"16":{"hitpoints":368,"damage":170,"damage_per_second":154}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Minion Horde",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "count": 6,
+  "movement": {
+    "transport": "Air",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 2.5
+    },
+    "hit_speed_sec": 1.1,
+    "projectile_speed": 1000
+  },
+  "stats_by_level": {
+    "1": {
+      "hitpoints": 90,
+      "damage": 42,
+      "damage_per_second": 38
+    },
+    "2": {
+      "hitpoints": 99,
+      "damage": 46,
+      "damage_per_second": 41
+    },
+    "3": {
+      "hitpoints": 108,
+      "damage": 50,
+      "damage_per_second": 45
+    },
+    "4": {
+      "hitpoints": 119,
+      "damage": 55,
+      "damage_per_second": 50
+    },
+    "5": {
+      "hitpoints": 131,
+      "damage": 61,
+      "damage_per_second": 55
+    },
+    "6": {
+      "hitpoints": 144,
+      "damage": 67,
+      "damage_per_second": 60
+    },
+    "7": {
+      "hitpoints": 158,
+      "damage": 73,
+      "damage_per_second": 66
+    },
+    "8": {
+      "hitpoints": 174,
+      "damage": 80,
+      "damage_per_second": 72
+    },
+    "9": {
+      "hitpoints": 190,
+      "damage": 88,
+      "damage_per_second": 80
+    },
+    "10": {
+      "hitpoints": 209,
+      "damage": 97,
+      "damage_per_second": 88
+    },
+    "11": {
+      "hitpoints": 230,
+      "damage": 106,
+      "damage_per_second": 96
+    },
+    "12": {
+      "hitpoints": 252,
+      "damage": 117,
+      "damage_per_second": 106
+    },
+    "13": {
+      "hitpoints": 277,
+      "damage": 128,
+      "damage_per_second": 116
+    },
+    "14": {
+      "hitpoints": 305,
+      "damage": 141,
+      "damage_per_second": 128
+    },
+    "15": {
+      "hitpoints": 335,
+      "damage": 155,
+      "damage_per_second": 140
+    },
+    "16": {
+      "hitpoints": 368,
+      "damage": 170,
+      "damage_per_second": 154
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 2,
+    "collision_radius_tiles": 0.4
+  }
+}

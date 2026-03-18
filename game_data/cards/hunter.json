@@ -1,44 +1,118 @@
 {
-  "name":"Hunter",
-  "rarity":"Epic",
-  "type":"Troop",
-  "elixir_cost":4,
-  "arena_unlock":{"name":"Hog Mountain","arena_number":10},
-  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "attack":{
-    "damage_type":"shotgun",
-    "targets":["Air","Ground"],
-    "range":{"type":"ranged","tiles":4.0},
-    "pellets":10,
-    "hit_speed_sec":2.2,
-    "first_hit_speed_sec":0.7,
-    "spread_pattern":"wide_cone"
+  "name": "Hunter",
+  "rarity": "Epic",
+  "type": "Troop",
+  "elixir_cost": 4,
+  "arena_unlock": {
+    "name": "Hog Mountain",
+    "arena_number": 10
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius_tiles":null},
-  "stats_by_level":{
-    "6":{"hitpoints":524,"damage_per_pellet":52,"total_damage":520,"damage_per_second":236},
-    "7":{"hitpoints":576,"damage_per_pellet":57,"total_damage":570,"damage_per_second":259},
-    "8":{"hitpoints":634,"damage_per_pellet":63,"total_damage":630,"damage_per_second":286},
-    "9":{"hitpoints":697,"damage_per_pellet":69,"total_damage":690,"damage_per_second":313},
-    "10":{"hitpoints":765,"damage_per_pellet":76,"total_damage":760,"damage_per_second":345},
-    "11":{"hitpoints":840,"damage_per_pellet":84,"total_damage":840,"damage_per_second":381},
-    "12":{"hitpoints":924,"damage_per_pellet":92,"total_damage":920,"damage_per_second":418},
-    "13":{"hitpoints":1016,"damage_per_pellet":101,"total_damage":1010,"damage_per_second":459},
-    "14":{"hitpoints":1116,"damage_per_pellet":111,"total_damage":1110,"damage_per_second":504},
-    "15":{"hitpoints":1228,"damage_per_pellet":122,"total_damage":1220,"damage_per_second":554}
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
   },
-  "evolution":{
-    "available":true,
-    "changes":{
-      "net_ability":{
-        "description":"Periodically fires a net that traps an enemy unit to the ground",
-        "net_duration_sec":3,
-        "net_cooldown_sec":5
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "attack": {
+    "damage_type": "shotgun",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 4.0
+    },
+    "pellets": 10,
+    "hit_speed_sec": 2.2,
+    "first_hit_speed_sec": 0.7,
+    "spread_pattern": "wide_cone"
+  },
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 5,
+    "collision_radius_tiles": 0.5
+  },
+  "stats_by_level": {
+    "6": {
+      "hitpoints": 524,
+      "damage_per_pellet": 52,
+      "total_damage": 520,
+      "damage_per_second": 236
+    },
+    "7": {
+      "hitpoints": 576,
+      "damage_per_pellet": 57,
+      "total_damage": 570,
+      "damage_per_second": 259
+    },
+    "8": {
+      "hitpoints": 634,
+      "damage_per_pellet": 63,
+      "total_damage": 630,
+      "damage_per_second": 286
+    },
+    "9": {
+      "hitpoints": 697,
+      "damage_per_pellet": 69,
+      "total_damage": 690,
+      "damage_per_second": 313
+    },
+    "10": {
+      "hitpoints": 765,
+      "damage_per_pellet": 76,
+      "total_damage": 760,
+      "damage_per_second": 345
+    },
+    "11": {
+      "hitpoints": 840,
+      "damage_per_pellet": 84,
+      "total_damage": 840,
+      "damage_per_second": 381
+    },
+    "12": {
+      "hitpoints": 924,
+      "damage_per_pellet": 92,
+      "total_damage": 920,
+      "damage_per_second": 418
+    },
+    "13": {
+      "hitpoints": 1016,
+      "damage_per_pellet": 101,
+      "total_damage": 1010,
+      "damage_per_second": 459
+    },
+    "14": {
+      "hitpoints": 1116,
+      "damage_per_pellet": 111,
+      "total_damage": 1110,
+      "damage_per_second": 504
+    },
+    "15": {
+      "hitpoints": 1228,
+      "damage_per_pellet": 122,
+      "total_damage": 1220,
+      "damage_per_second": 554
+    }
+  },
+  "evolution": {
+    "available": true,
+    "changes": {
+      "net_ability": {
+        "description": "Periodically fires a net that traps an enemy unit to the ground",
+        "net_duration_sec": 3,
+        "net_cooldown_sec": 5
       }
     }
   },
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
 }

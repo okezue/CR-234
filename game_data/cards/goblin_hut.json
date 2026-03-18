@@ -1,62 +1,183 @@
 {
-  "name":"Goblin Hut",
-  "rarity":"Rare",
-  "type":"Building",
-  "elixir_cost":4,
-  "arena_unlock":{"name":"Bone Pit","arena_number":3},
-  "building_attributes":{
-    "lifetime_sec":30,
-    "deploy_time_sec":1.0
+  "name": "Goblin Hut",
+  "rarity": "Rare",
+  "type": "Building",
+  "elixir_cost": 4,
+  "arena_unlock": {
+    "name": "Bone Pit",
+    "arena_number": 3
   },
-  "mechanics":{
-    "reactive_spawn":{
-      "triggers_when_enemy_in_range":true,
-      "spawn_range_tiles":6,
-      "spawn_speed_sec":1.9,
-      "spawned_unit":"Spear Goblin",
-      "count_per_spawn":1
+  "building_attributes": {
+    "lifetime_sec": 30,
+    "deploy_time_sec": 1.0
+  },
+  "mechanics": {
+    "reactive_spawn": {
+      "triggers_when_enemy_in_range": true,
+      "spawn_range_tiles": 6,
+      "spawn_speed_sec": 1.9,
+      "spawned_unit": "Spear Goblin",
+      "count_per_spawn": 1
     },
-    "death_spawn":{"unit":"Spear Goblin","count":1}
+    "death_spawn": {
+      "unit": "Spear Goblin",
+      "count": 1
+    }
   },
-  "stats_by_level":{
-    "3":{"hitpoints":590},
-    "4":{"hitpoints":649},
-    "5":{"hitpoints":713},
-    "6":{"hitpoints":784},
-    "7":{"hitpoints":861},
-    "8":{"hitpoints":946},
-    "9":{"hitpoints":1040},
-    "10":{"hitpoints":1142},
-    "11":{"hitpoints":1254},
-    "12":{"hitpoints":1379},
-    "13":{"hitpoints":1515},
-    "14":{"hitpoints":1664},
-    "15":{"hitpoints":1829},
-    "16":{"hitpoints":2010}
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 590
+    },
+    "4": {
+      "hitpoints": 649
+    },
+    "5": {
+      "hitpoints": 713
+    },
+    "6": {
+      "hitpoints": 784
+    },
+    "7": {
+      "hitpoints": 861
+    },
+    "8": {
+      "hitpoints": 946
+    },
+    "9": {
+      "hitpoints": 1040
+    },
+    "10": {
+      "hitpoints": 1142
+    },
+    "11": {
+      "hitpoints": 1254
+    },
+    "12": {
+      "hitpoints": 1379
+    },
+    "13": {
+      "hitpoints": 1515
+    },
+    "14": {
+      "hitpoints": 1664
+    },
+    "15": {
+      "hitpoints": 1829
+    },
+    "16": {
+      "hitpoints": 2010
+    }
   },
-  "sub_units":{
-    "Spear Goblin":{
-      "movement":{"transport":"Ground","speed":{"classification":"Very Fast","value":120}},
-      "attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":5.0},"hit_speed_sec":1.1,"first_hit_speed_sec":0.5,"projectile_speed":600},
-      "stats_by_level":{
-        "3":{"hitpoints":62,"damage":38,"damage_per_second":34},
-        "4":{"hitpoints":68,"damage":42,"damage_per_second":38},
-        "5":{"hitpoints":75,"damage":46,"damage_per_second":41},
-        "6":{"hitpoints":82,"damage":51,"damage_per_second":46},
-        "7":{"hitpoints":90,"damage":56,"damage_per_second":50},
-        "8":{"hitpoints":99,"damage":61,"damage_per_second":55},
-        "9":{"hitpoints":109,"damage":67,"damage_per_second":60},
-        "10":{"hitpoints":119,"damage":74,"damage_per_second":67},
-        "11":{"hitpoints":131,"damage":81,"damage_per_second":73},
-        "12":{"hitpoints":144,"damage":89,"damage_per_second":80},
-        "13":{"hitpoints":158,"damage":98,"damage_per_second":89},
-        "14":{"hitpoints":173,"damage":108,"damage_per_second":98},
-        "15":{"hitpoints":190,"damage":118,"damage_per_second":107},
-        "16":{"hitpoints":209,"damage":130,"damage_per_second":118}
+  "sub_units": {
+    "Spear Goblin": {
+      "movement": {
+        "transport": "Ground",
+        "speed": {
+          "classification": "Very Fast",
+          "value": 120
+        }
+      },
+      "attack": {
+        "damage_type": "single_target",
+        "targets": [
+          "Air",
+          "Ground"
+        ],
+        "range": {
+          "type": "ranged",
+          "tiles": 5.0
+        },
+        "hit_speed_sec": 1.1,
+        "first_hit_speed_sec": 0.5,
+        "projectile_speed": 600
+      },
+      "stats_by_level": {
+        "3": {
+          "hitpoints": 62,
+          "damage": 38,
+          "damage_per_second": 34
+        },
+        "4": {
+          "hitpoints": 68,
+          "damage": 42,
+          "damage_per_second": 38
+        },
+        "5": {
+          "hitpoints": 75,
+          "damage": 46,
+          "damage_per_second": 41
+        },
+        "6": {
+          "hitpoints": 82,
+          "damage": 51,
+          "damage_per_second": 46
+        },
+        "7": {
+          "hitpoints": 90,
+          "damage": 56,
+          "damage_per_second": 50
+        },
+        "8": {
+          "hitpoints": 99,
+          "damage": 61,
+          "damage_per_second": 55
+        },
+        "9": {
+          "hitpoints": 109,
+          "damage": 67,
+          "damage_per_second": 60
+        },
+        "10": {
+          "hitpoints": 119,
+          "damage": 74,
+          "damage_per_second": 67
+        },
+        "11": {
+          "hitpoints": 131,
+          "damage": 81,
+          "damage_per_second": 73
+        },
+        "12": {
+          "hitpoints": 144,
+          "damage": 89,
+          "damage_per_second": 80
+        },
+        "13": {
+          "hitpoints": 158,
+          "damage": 98,
+          "damage_per_second": 89
+        },
+        "14": {
+          "hitpoints": 173,
+          "damage": 108,
+          "damage_per_second": 98
+        },
+        "15": {
+          "hitpoints": 190,
+          "damage": 118,
+          "damage_per_second": 107
+        },
+        "16": {
+          "hitpoints": 209,
+          "damage": 130,
+          "damage_per_second": 118
+        }
       }
     }
   },
-  "evolution":{"available":false},
-  "verification_status":"unverified_jan2026_snapshot",
-  "balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 6.0,
+    "mass": null,
+    "collision_radius_tiles": 0.5
+  }
 }

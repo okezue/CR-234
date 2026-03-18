@@ -12,6 +12,7 @@
     "targets":["Air","Ground"],
     "range":{"type":"ranged","tiles":5.5},
     "projectile_speed":{"value":800},
+    "hit_speed_sec":1.2,
     "hit_speed_sec_by_stage":{"stage_1":1.2,"stage_2":0.6,"stage_3":0.4},
     "first_hit_speed_sec":0.4,
     "ramp_up":{"requires_standing_still":true,"attacks_per_stage_increase":3,"resets_on_movement":true,"resets_on_knockback_or_stun":true}
@@ -30,6 +31,7 @@
       {"type":"knockback","distance_tiles":{"min":0.0,"max":2.5}}
     ]
   },
+  "hidden_stats":{"sight_range_tiles":5.5,"mass":6,"collision_radius_tiles":0.5},
   "stats_by_level":{
     "11":{"hitpoints":698,"damage":104,"damage_per_second_by_stage":{"stage_1":86,"stage_2":173,"stage_3":260}},
     "12":{"hitpoints":767,"damage":114,"damage_per_second_by_stage":{"stage_1":95,"stage_2":190,"stage_3":285}},
@@ -51,7 +53,7 @@
       "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
       "deploy_time_sec":0.3,
       "attack":{"damage_type":"single_target","targets":["Ground"],"range":{"type":"melee","classification":"Melee: Medium","tiles":1.2},"hit_speed_sec":1.2,"first_hit_speed_sec":0.5},
-      "hidden_stats":{"collision_radius_tiles":0.8},
+      "hidden_stats":{"sight_range_tiles":5.5,"mass":10,"collision_radius_tiles":0.8},
       "stats_by_level":{
         "11":{"hitpoints":1600,"damage":202,"damage_per_second":168},
         "12":{"hitpoints":1756,"damage":221,"damage_per_second":184},

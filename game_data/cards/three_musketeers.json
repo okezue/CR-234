@@ -1,1 +1,99 @@
-{"name":"Three Musketeers","rarity":"Rare","type":"Troop","elixir_cost":9,"count":3,"movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},"attack":{"damage_type":"single_target","targets":["Air","Ground"],"range":{"type":"ranged","tiles":6.0},"hit_speed_sec":1.0,"first_hit_speed_sec":0.7,"projectile_speed":1000,"has_melee_mode":true},"hidden_stats":{"mass":5,"collision_radius_tiles":0.5,"sight_range_tiles":6.0},"stats_by_level":{"3":{"hitpoints":341,"damage":102},"4":{"hitpoints":375,"damage":112},"5":{"hitpoints":412,"damage":123},"6":{"hitpoints":453,"damage":135},"7":{"hitpoints":497,"damage":149},"8":{"hitpoints":546,"damage":163},"9":{"hitpoints":600,"damage":179},"10":{"hitpoints":660,"damage":197},"11":{"hitpoints":726,"damage":217},"12":{"hitpoints":798,"damage":238},"13":{"hitpoints":876,"damage":261},"14":{"hitpoints":962,"damage":287},"15":{"hitpoints":1057,"damage":315},"16":{"hitpoints":1152,"damage":349}},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Three Musketeers",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir_cost": 9,
+  "count": 3,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "attack": {
+    "damage_type": "single_target",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 6.0
+    },
+    "hit_speed_sec": 1.0,
+    "first_hit_speed_sec": 0.7,
+    "projectile_speed": 1000,
+    "has_melee_mode": true
+  },
+  "hidden_stats": {
+    "mass": 5,
+    "collision_radius_tiles": 0.5,
+    "sight_range_tiles": 6.0
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 341,
+      "damage": 102
+    },
+    "4": {
+      "hitpoints": 375,
+      "damage": 112
+    },
+    "5": {
+      "hitpoints": 412,
+      "damage": 123
+    },
+    "6": {
+      "hitpoints": 453,
+      "damage": 135
+    },
+    "7": {
+      "hitpoints": 497,
+      "damage": 149
+    },
+    "8": {
+      "hitpoints": 546,
+      "damage": 163
+    },
+    "9": {
+      "hitpoints": 600,
+      "damage": 179
+    },
+    "10": {
+      "hitpoints": 660,
+      "damage": 197
+    },
+    "11": {
+      "hitpoints": 726,
+      "damage": 217
+    },
+    "12": {
+      "hitpoints": 798,
+      "damage": 238
+    },
+    "13": {
+      "hitpoints": 876,
+      "damage": 261
+    },
+    "14": {
+      "hitpoints": 962,
+      "damage": 287
+    },
+    "15": {
+      "hitpoints": 1057,
+      "damage": 315
+    },
+    "16": {
+      "hitpoints": 1152,
+      "damage": 349
+    }
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ]
+}

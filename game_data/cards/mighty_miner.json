@@ -34,7 +34,7 @@
       }
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"mass":null,"collision_radius":null,"pushback_immunity":{"value":true}},
+  "hidden_stats":{"sight_range_tiles":5.5,"mass":6,"collision_radius_tiles":0.5,"pushback_immunity":{"value":true}},
   "stats_by_level":{
     "11":{"hitpoints":2250,"damage_per_hit":{"stage_1":40,"stage_2":200,"stage_3":400},"damage_per_second":{"stage_1":100,"stage_2":500,"stage_3":1000}},
     "12":{"hitpoints":2469,"damage_per_hit":{"stage_1":44,"stage_2":220,"stage_3":440},"damage_per_second":{"stage_1":110,"stage_2":550,"stage_3":1100}},

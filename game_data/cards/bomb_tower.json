@@ -1,1 +1,124 @@
-{"name":"Bomb Tower","rarity":"Rare","type":"Building","elixir_cost":4,"building_attributes":{"lifetime_sec":30,"deploy_time_sec":1.0},"attack":{"damage_type":"area","targets":["Ground"],"range":{"type":"ranged","tiles":6.0},"hit_speed_sec":1.6},"mechanics":{"death_bomb":{"enabled":true,"fuse_sec":3.0,"damage_key":"death_damage","splash_radius_tiles":2.5}},"stats_by_level":{"3":{"hitpoints":880,"area_damage":184,"damage_per_second":115,"death_damage":184},"4":{"hitpoints":968,"area_damage":202,"damage_per_second":126,"death_damage":202},"5":{"hitpoints":1064,"area_damage":222,"damage_per_second":138,"death_damage":222},"6":{"hitpoints":1170,"area_damage":244,"damage_per_second":152,"death_damage":244},"7":{"hitpoints":1284,"area_damage":268,"damage_per_second":167,"death_damage":268},"8":{"hitpoints":1408,"area_damage":294,"damage_per_second":183,"death_damage":294},"9":{"hitpoints":1548,"area_damage":323,"damage_per_second":201,"death_damage":323},"10":{"hitpoints":1700,"area_damage":355,"damage_per_second":221,"death_damage":355},"11":{"hitpoints":1868,"area_damage":390,"damage_per_second":243,"death_damage":390},"12":{"hitpoints":2052,"area_damage":428,"damage_per_second":267,"death_damage":428},"13":{"hitpoints":2256,"area_damage":470,"damage_per_second":293,"death_damage":470},"14":{"hitpoints":2479,"area_damage":517,"damage_per_second":323,"death_damage":517},"15":{"hitpoints":2724,"area_damage":568,"damage_per_second":355,"death_damage":568}},"evolution":{"available":false},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Bomb Tower",
+  "rarity": "Rare",
+  "type": "Building",
+  "elixir_cost": 4,
+  "building_attributes": {
+    "lifetime_sec": 30,
+    "deploy_time_sec": 1.0
+  },
+  "attack": {
+    "damage_type": "area",
+    "targets": [
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 6.0
+    },
+    "hit_speed_sec": 1.6
+  },
+  "mechanics": {
+    "death_bomb": {
+      "enabled": true,
+      "fuse_sec": 3.0,
+      "damage_key": "death_damage",
+      "splash_radius_tiles": 2.5
+    }
+  },
+  "stats_by_level": {
+    "3": {
+      "hitpoints": 880,
+      "area_damage": 184,
+      "damage_per_second": 115,
+      "death_damage": 184
+    },
+    "4": {
+      "hitpoints": 968,
+      "area_damage": 202,
+      "damage_per_second": 126,
+      "death_damage": 202
+    },
+    "5": {
+      "hitpoints": 1064,
+      "area_damage": 222,
+      "damage_per_second": 138,
+      "death_damage": 222
+    },
+    "6": {
+      "hitpoints": 1170,
+      "area_damage": 244,
+      "damage_per_second": 152,
+      "death_damage": 244
+    },
+    "7": {
+      "hitpoints": 1284,
+      "area_damage": 268,
+      "damage_per_second": 167,
+      "death_damage": 268
+    },
+    "8": {
+      "hitpoints": 1408,
+      "area_damage": 294,
+      "damage_per_second": 183,
+      "death_damage": 294
+    },
+    "9": {
+      "hitpoints": 1548,
+      "area_damage": 323,
+      "damage_per_second": 201,
+      "death_damage": 323
+    },
+    "10": {
+      "hitpoints": 1700,
+      "area_damage": 355,
+      "damage_per_second": 221,
+      "death_damage": 355
+    },
+    "11": {
+      "hitpoints": 1868,
+      "area_damage": 390,
+      "damage_per_second": 243,
+      "death_damage": 390
+    },
+    "12": {
+      "hitpoints": 2052,
+      "area_damage": 428,
+      "damage_per_second": 267,
+      "death_damage": 428
+    },
+    "13": {
+      "hitpoints": 2256,
+      "area_damage": 470,
+      "damage_per_second": 293,
+      "death_damage": 470
+    },
+    "14": {
+      "hitpoints": 2479,
+      "area_damage": 517,
+      "damage_per_second": 323,
+      "death_damage": 517
+    },
+    "15": {
+      "hitpoints": 2724,
+      "area_damage": 568,
+      "damage_per_second": 355,
+      "death_damage": 568
+    }
+  },
+  "evolution": {
+    "available": false
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 6.0,
+    "mass": null,
+    "collision_radius_tiles": 0.5
+  }
+}

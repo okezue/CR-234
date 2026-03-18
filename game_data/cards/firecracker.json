@@ -1,1 +1,149 @@
-{"name":"Firecracker","rarity":"Common","type":"Troop","elixir_cost":3,"movement":{"transport":"Ground","speed":{"classification":"Fast","value":90}},"attack":{"damage_type":"piercing_shrapnel","targets":["Air","Ground"],"range":{"type":"ranged","tiles":6.0},"hit_speed_sec":3.0,"shrapnel_count":5,"projectile_range_tiles":11.0,"recoil_tiles":1.0,"sight_range":8.0},"stats_by_level":{"1":{"hitpoints":119,"damage_per_shrapnel":25,"total_damage":125,"damage_per_second":41},"2":{"hitpoints":130,"damage_per_shrapnel":27,"total_damage":135,"damage_per_second":45},"3":{"hitpoints":143,"damage_per_shrapnel":30,"total_damage":150,"damage_per_second":50},"4":{"hitpoints":157,"damage_per_shrapnel":33,"total_damage":165,"damage_per_second":55},"5":{"hitpoints":173,"damage_per_shrapnel":36,"total_damage":180,"damage_per_second":60},"6":{"hitpoints":190,"damage_per_shrapnel":40,"total_damage":200,"damage_per_second":66},"7":{"hitpoints":209,"damage_per_shrapnel":44,"total_damage":220,"damage_per_second":73},"8":{"hitpoints":229,"damage_per_shrapnel":48,"total_damage":240,"damage_per_second":80},"9":{"hitpoints":252,"damage_per_shrapnel":53,"total_damage":265,"damage_per_second":88},"10":{"hitpoints":277,"damage_per_shrapnel":58,"total_damage":290,"damage_per_second":96},"11":{"hitpoints":304,"damage_per_shrapnel":64,"total_damage":320,"damage_per_second":106},"12":{"hitpoints":334,"damage_per_shrapnel":70,"total_damage":350,"damage_per_second":116},"13":{"hitpoints":367,"damage_per_shrapnel":77,"total_damage":385,"damage_per_second":128},"14":{"hitpoints":403,"damage_per_shrapnel":85,"total_damage":425,"damage_per_second":141},"15":{"hitpoints":443,"damage_per_shrapnel":93,"total_damage":465,"damage_per_second":155},"16":{"hitpoints":487,"damage_per_shrapnel":102,"total_damage":510,"damage_per_second":170}},"evolution":{"available":true,"cycles_to_activate":2,"changes":{"big_spark_trail":true,"small_sparks":5,"spark_slow_percent":-15},"evo_levels":"1-15"},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Firecracker",
+  "rarity": "Common",
+  "type": "Troop",
+  "elixir_cost": 3,
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Fast",
+      "value": 90
+    }
+  },
+  "attack": {
+    "damage_type": "piercing_shrapnel",
+    "targets": [
+      "Air",
+      "Ground"
+    ],
+    "range": {
+      "type": "ranged",
+      "tiles": 6.0
+    },
+    "hit_speed_sec": 3.0,
+    "shrapnel_count": 5,
+    "projectile_range_tiles": 11.0,
+    "recoil_tiles": 1.0,
+    "sight_range": 8.0
+  },
+  "stats_by_level": {
+    "1": {
+      "hitpoints": 119,
+      "damage_per_shrapnel": 25,
+      "total_damage": 125,
+      "damage_per_second": 41
+    },
+    "2": {
+      "hitpoints": 130,
+      "damage_per_shrapnel": 27,
+      "total_damage": 135,
+      "damage_per_second": 45
+    },
+    "3": {
+      "hitpoints": 143,
+      "damage_per_shrapnel": 30,
+      "total_damage": 150,
+      "damage_per_second": 50
+    },
+    "4": {
+      "hitpoints": 157,
+      "damage_per_shrapnel": 33,
+      "total_damage": 165,
+      "damage_per_second": 55
+    },
+    "5": {
+      "hitpoints": 173,
+      "damage_per_shrapnel": 36,
+      "total_damage": 180,
+      "damage_per_second": 60
+    },
+    "6": {
+      "hitpoints": 190,
+      "damage_per_shrapnel": 40,
+      "total_damage": 200,
+      "damage_per_second": 66
+    },
+    "7": {
+      "hitpoints": 209,
+      "damage_per_shrapnel": 44,
+      "total_damage": 220,
+      "damage_per_second": 73
+    },
+    "8": {
+      "hitpoints": 229,
+      "damage_per_shrapnel": 48,
+      "total_damage": 240,
+      "damage_per_second": 80
+    },
+    "9": {
+      "hitpoints": 252,
+      "damage_per_shrapnel": 53,
+      "total_damage": 265,
+      "damage_per_second": 88
+    },
+    "10": {
+      "hitpoints": 277,
+      "damage_per_shrapnel": 58,
+      "total_damage": 290,
+      "damage_per_second": 96
+    },
+    "11": {
+      "hitpoints": 304,
+      "damage_per_shrapnel": 64,
+      "total_damage": 320,
+      "damage_per_second": 106
+    },
+    "12": {
+      "hitpoints": 334,
+      "damage_per_shrapnel": 70,
+      "total_damage": 350,
+      "damage_per_second": 116
+    },
+    "13": {
+      "hitpoints": 367,
+      "damage_per_shrapnel": 77,
+      "total_damage": 385,
+      "damage_per_second": 128
+    },
+    "14": {
+      "hitpoints": 403,
+      "damage_per_shrapnel": 85,
+      "total_damage": 425,
+      "damage_per_second": 141
+    },
+    "15": {
+      "hitpoints": 443,
+      "damage_per_shrapnel": 93,
+      "total_damage": 465,
+      "damage_per_second": 155
+    },
+    "16": {
+      "hitpoints": 487,
+      "damage_per_shrapnel": 102,
+      "total_damage": 510,
+      "damage_per_second": 170
+    }
+  },
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 2,
+    "changes": {
+      "big_spark_trail": true,
+      "small_sparks": 5,
+      "spark_slow_percent": -15
+    },
+    "evo_levels": "1-15"
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "mass": 2,
+    "collision_radius_tiles": 0.4
+  }
+}

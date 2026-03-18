@@ -1,1 +1,130 @@
-{"name":"Dart Goblin","key":"dart_goblin","rarity":"Rare","type":"Troop","elixir":3,"speed":"Very Fast (120)","range":"Ranged: 6.5","hit_speed":"0.8s","first_hit":"0.35s","projectile_speed":800,"targets":"Air & Ground","evolution":{"name":"Evolved Dart Goblin","mechanic":"Poison Darts","description":"Darts apply poison in 3 stages based on cumulative hits","poison_radius":1.5,"poison_duration":"1.0s"},"levels":{"min":3,"max":15,"stats":[{"level":3,"hp":123,"damage":51,"dps":63},{"level":4,"hp":135,"damage":56,"dps":70},{"level":5,"hp":148,"damage":62,"dps":77},{"level":6,"hp":163,"damage":68,"dps":85},{"level":7,"hp":179,"damage":74,"dps":92},{"level":8,"hp":196,"damage":82,"dps":102},{"level":9,"hp":216,"damage":90,"dps":112},{"level":10,"hp":237,"damage":98,"dps":122},{"level":11,"hp":260,"damage":108,"dps":135},{"level":12,"hp":285,"damage":119,"dps":148},{"level":13,"hp":314,"damage":130,"dps":162},{"level":14,"hp":344,"damage":143,"dps":178},{"level":15,"hp":378,"damage":157,"dps":196}]},"evo_levels":{"min":3,"max":15},"verification_status":"unverified_jan2026_snapshot","balance_patches_to_check":["dec_2025","jan_2026","feb_2026","mar_2026"]}
+{
+  "name": "Dart Goblin",
+  "key": "dart_goblin",
+  "rarity": "Rare",
+  "type": "Troop",
+  "elixir": 3,
+  "speed": "Very Fast (120)",
+  "range": "Ranged: 6.5",
+  "hit_speed": "0.8s",
+  "first_hit": "0.35s",
+  "projectile_speed": 800,
+  "targets": "Air & Ground",
+  "evolution": {
+    "available": true,
+    "cycles_to_activate": 2,
+    "changes": {
+      "poison_darts": true,
+      "poison_radius_tiles": 1.5,
+      "poison_duration_sec": 1.0,
+      "tier_1_dps": 51,
+      "tier_2_dps": 115,
+      "tier_3_dps": 307,
+      "tier_escalation_darts": [
+        1,
+        4,
+        7
+      ]
+    }
+  },
+  "levels": {
+    "min": 3,
+    "max": 15,
+    "stats": [
+      {
+        "level": 3,
+        "hp": 123,
+        "damage": 51,
+        "dps": 63
+      },
+      {
+        "level": 4,
+        "hp": 135,
+        "damage": 56,
+        "dps": 70
+      },
+      {
+        "level": 5,
+        "hp": 148,
+        "damage": 62,
+        "dps": 77
+      },
+      {
+        "level": 6,
+        "hp": 163,
+        "damage": 68,
+        "dps": 85
+      },
+      {
+        "level": 7,
+        "hp": 179,
+        "damage": 74,
+        "dps": 92
+      },
+      {
+        "level": 8,
+        "hp": 196,
+        "damage": 82,
+        "dps": 102
+      },
+      {
+        "level": 9,
+        "hp": 216,
+        "damage": 90,
+        "dps": 112
+      },
+      {
+        "level": 10,
+        "hp": 237,
+        "damage": 98,
+        "dps": 122
+      },
+      {
+        "level": 11,
+        "hp": 260,
+        "damage": 108,
+        "dps": 135
+      },
+      {
+        "level": 12,
+        "hp": 285,
+        "damage": 119,
+        "dps": 148
+      },
+      {
+        "level": 13,
+        "hp": 314,
+        "damage": 130,
+        "dps": 162
+      },
+      {
+        "level": 14,
+        "hp": 344,
+        "damage": 143,
+        "dps": 178
+      },
+      {
+        "level": 15,
+        "hp": 378,
+        "damage": 157,
+        "dps": 196
+      }
+    ]
+  },
+  "evo_levels": {
+    "min": 3,
+    "max": 15
+  },
+  "verification_status": "unverified_jan2026_snapshot",
+  "balance_patches_to_check": [
+    "dec_2025",
+    "jan_2026",
+    "feb_2026",
+    "mar_2026"
+  ],
+  "hidden_stats": {
+    "sight_range_tiles": 6.5,
+    "mass": 2,
+    "collision_radius_tiles": 0.4
+  }
+}

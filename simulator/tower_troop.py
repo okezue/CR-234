@@ -22,6 +22,7 @@ class TT:
         b=None;bd=999
         for e in en:
             if not e.alive:continue
+            if any(s.kind=='invisible' for s in getattr(e,'statuses',[])):continue
             d=math.sqrt((e.x-tw.cx)**2+(e.y-tw.cy)**2)
             if d<=self.RNG and d<bd:bd=d;b=e
         return b
@@ -40,7 +41,11 @@ class TPrincess(TT):
 class Cannoneer(TT):
     def __init__(self,lvl):
         super().__init__('cannoneer',lvl)
-        self.spd=2.2;self.fspd=0.8;self.eng=False
+        d=_ld('cannoneer')
+        a=d.get('attack',{})
+        self.spd=a.get('hit_speed_sec',2.2)
+        self.fspd=a.get('first_hit_speed_sec',0.8)
+        self.eng=False
     def tick(self,dt,tw,en,al,**kw):
         r=[];self.cd=max(0,self.cd-dt)
         t=self._tgt(tw,en)
@@ -56,7 +61,12 @@ class DaggerDuchess(TT):
     MXD=8
     def __init__(self,lvl):
         super().__init__('dagger_duchess',lvl)
-        self.bspd=0.5;self.cspd=0.9;self.dag=self.MXD
+        d=_ld('dagger_duchess')
+        db=d.get('attack',{}).get('mechanics',{}).get('dagger_burst',{})
+        self.bspd=db.get('burst_hit_speed_sec',0.5)
+        self.cspd=db.get('cooldown_hit_speed_sec',0.9)
+        self.MXD=db.get('max_daggers',8)
+        self.dag=self.MXD
     def tick(self,dt,tw,en,al,**kw):
         r=[];self.cd=max(0,self.cd-dt)
         if self.cd>0:return r
@@ -81,6 +91,7 @@ class RoyalChef(TT):
     def tick(self,dt,tw,en,al,pt_dead=0,**kw):
         r=[];self.cd=max(0,self.cd-dt)
         t=self._tgt(tw,en)
+        attacking=t is not None
         if t and self.cd<=0:
             r.append(('atk',t,self.dmg));self.cd=self.spd
         if self.ckdel>0:
@@ -89,20 +100,29 @@ class RoyalChef(TT):
             if not self.cking:
                 self.ckt=random.uniform(self.ckmin,self.ckmax)
                 self.cking=True
-            rate={0:1.0,1:0.7}.get(pt_dead,0)
+            if pt_dead>=2:
+                rate=0
+            elif attacking:
+                rate=0.6
+            else:
+                rate=1.0
             self.ckt-=dt*rate
             if self.ckt<=0:
                 self.prdy=True;self.cking=False
         if self.prdy and al:
             b=None;bh=0
             for a in al:
-                if not a.alive or a.hp/a.max_hp<=0.33:continue
+                if not a.alive or a.max_hp<1 or a.hp/a.max_hp<=0.33:continue
+                if getattr(a,'is_building',False):continue
+                if a.hp==1 and a.max_hp==1:continue
                 if id(a) in self.bst:continue
                 if a.hp>bh:bh=a.hp;b=a
             if not b:
                 self.bst.clear();bh=0
                 for a in al:
-                    if not a.alive or a.hp/a.max_hp<=0.33:continue
+                    if not a.alive or a.max_hp<1 or a.hp/a.max_hp<=0.33:continue
+                    if getattr(a,'is_building',False):continue
+                    if a.hp==1 and a.max_hp==1:continue
                     if a.hp>bh:bh=a.hp;b=a
             if b:
                 r.append(('pancake',b,1))

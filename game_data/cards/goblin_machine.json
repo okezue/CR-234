@@ -1,43 +1,142 @@
 {
-  "name":"Goblin Machine",
-  "rarity":"Legendary",
-  "type":"Troop",
-  "elixir_cost":5,
-  "arena_unlock":"Miner's Mine (Arena 15)",
-  "release_date":"2024-06-17",
-  "movement":{"transport":"Ground","speed":{"classification":"Medium","value":60}},
-  "deploy_time_sec":1.0,
-  "count":1,
-  "components":{
-    "body":{
-      "targets":["Ground"],
-      "attack":{"mode":"melee","damage_profile":"single_target","hit_speed_sec":1.2,"first_hit_speed_sec":0.5,"range":{"type":"melee","classification":"Medium","tiles":1.2}},
-      "stats_by_level":{
-        "9":{"hitpoints":1778,"damage":212,"damage_per_second":176},
-        "10":{"hitpoints":1955,"damage":233,"damage_per_second":194},
-        "11":{"hitpoints":2150,"damage":256,"damage_per_second":213},
-        "12":{"hitpoints":2360,"damage":281,"damage_per_second":234},
-        "13":{"hitpoints":2595,"damage":309,"damage_per_second":257},
-        "14":{"hitpoints":2847,"damage":340,"damage_per_second":283},
-        "15":{"hitpoints":3124,"damage":374,"damage_per_second":311}
+  "name": "Goblin Machine",
+  "rarity": "Legendary",
+  "type": "Troop",
+  "elixir_cost": 5,
+  "arena_unlock": "Miner's Mine (Arena 15)",
+  "release_date": "2024-06-17",
+  "movement": {
+    "transport": "Ground",
+    "speed": {
+      "classification": "Medium",
+      "value": 60
+    }
+  },
+  "deploy_time_sec": 1.0,
+  "count": 1,
+  "components": {
+    "body": {
+      "targets": [
+        "Ground"
+      ],
+      "attack": {
+        "mode": "melee",
+        "damage_profile": "single_target",
+        "hit_speed_sec": 1.2,
+        "first_hit_speed_sec": 0.5,
+        "range": {
+          "type": "melee",
+          "classification": "Medium",
+          "tiles": 1.2
+        }
+      },
+      "stats_by_level": {
+        "9": {
+          "hitpoints": 1778,
+          "damage": 212,
+          "damage_per_second": 176
+        },
+        "10": {
+          "hitpoints": 1955,
+          "damage": 233,
+          "damage_per_second": 194
+        },
+        "11": {
+          "hitpoints": 2150,
+          "damage": 256,
+          "damage_per_second": 213
+        },
+        "12": {
+          "hitpoints": 2360,
+          "damage": 281,
+          "damage_per_second": 234
+        },
+        "13": {
+          "hitpoints": 2595,
+          "damage": 309,
+          "damage_per_second": 257
+        },
+        "14": {
+          "hitpoints": 2847,
+          "damage": 340,
+          "damage_per_second": 283
+        },
+        "15": {
+          "hitpoints": 3124,
+          "damage": 374,
+          "damage_per_second": 311
+        }
       }
     },
-    "rocket_launcher":{
-      "targets":["Air","Ground"],
-      "attack":{"mode":"ranged","damage_profile":"area","hit_speed_sec":3.5,"first_hit_speed_sec":2.5,"range":{"min_tiles":2.5,"max_tiles":5.0},"blind_spot_min_range_tiles":2.5,"area_damage_radius_tiles":1.5,"projectile_speed":{"value":250},"crown_tower_damage_multiplier":1.0},
-      "stats_by_level":{
-        "9":{"damage":252,"crown_tower_damage":252,"damage_per_second":72},
-        "10":{"damage":277,"crown_tower_damage":277,"damage_per_second":79},
-        "11":{"damage":305,"crown_tower_damage":305,"damage_per_second":87},
-        "12":{"damage":335,"crown_tower_damage":335,"damage_per_second":95},
-        "13":{"damage":368,"crown_tower_damage":368,"damage_per_second":105},
-        "14":{"damage":404,"crown_tower_damage":404,"damage_per_second":115},
-        "15":{"damage":444,"crown_tower_damage":444,"damage_per_second":126}
+    "rocket_launcher": {
+      "targets": [
+        "Air",
+        "Ground"
+      ],
+      "attack": {
+        "mode": "ranged",
+        "damage_profile": "area",
+        "hit_speed_sec": 3.5,
+        "first_hit_speed_sec": 2.5,
+        "range": {
+          "min_tiles": 2.5,
+          "max_tiles": 5.0
+        },
+        "blind_spot_min_range_tiles": 2.5,
+        "area_damage_radius_tiles": 1.5,
+        "projectile_speed": {
+          "value": 250
+        },
+        "crown_tower_damage_multiplier": 1.0
+      },
+      "stats_by_level": {
+        "9": {
+          "damage": 252,
+          "crown_tower_damage": 252,
+          "damage_per_second": 72
+        },
+        "10": {
+          "damage": 277,
+          "crown_tower_damage": 277,
+          "damage_per_second": 79
+        },
+        "11": {
+          "damage": 305,
+          "crown_tower_damage": 305,
+          "damage_per_second": 87
+        },
+        "12": {
+          "damage": 335,
+          "crown_tower_damage": 335,
+          "damage_per_second": 95
+        },
+        "13": {
+          "damage": 368,
+          "crown_tower_damage": 368,
+          "damage_per_second": 105
+        },
+        "14": {
+          "damage": 404,
+          "crown_tower_damage": 404,
+          "damage_per_second": 115
+        },
+        "15": {
+          "damage": 444,
+          "crown_tower_damage": 444,
+          "damage_per_second": 126
+        }
       }
     }
   },
-  "hidden_stats":{"sight_range_tiles":null,"collision_radius_tiles":null,"mass":null},
-  "mechanics":{"rocket_launcher_attacks_independently":true,"rocket_launcher_has_blind_spot_min_range_tiles":2.5},
-  "balance_notes":"Rocket first hit corrected 1.5s->2.5s (Jul 2024). Body L11 damage corrected 212->256 (212 was L9). Crown tower multiplier corrected 50%->100% (2025 change reverted 50% reduction). Body DPS recalculated.",
-  "verification_status":"verified_mar2026"
+  "hidden_stats": {
+    "sight_range_tiles": 5.5,
+    "collision_radius_tiles": 0.6,
+    "mass": 10
+  },
+  "mechanics": {
+    "rocket_launcher_attacks_independently": true,
+    "rocket_launcher_has_blind_spot_min_range_tiles": 2.5
+  },
+  "balance_notes": "Rocket first hit corrected 1.5s->2.5s (Jul 2024). Body L11 damage corrected 212->256 (212 was L9). Crown tower multiplier corrected 50%->100% (2025 change reverted 50% reduction). Body DPS recalculated.",
+  "verification_status": "verified_mar2026"
 }

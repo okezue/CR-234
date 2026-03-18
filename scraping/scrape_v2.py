@@ -186,6 +186,95 @@ def extract_deck_per_battle(html):
             decks[bid]=cards
     return decks
 
+def _find_battle_container(el):
+    p=el
+    for _ in range(15):
+        p=p.parent
+        if not p:return None
+        if p.get("class") and any("battle" in c for c in p.get("class",[])):
+            return p
+    return None
+
+def _extract_crowns(container):
+    if not container:return 0,0,""
+    rh=container.select_one("div.result_header")
+    if not rh:
+        rh=container.select_one(".battle_header .result_header")
+    if not rh:
+        for el in container.select("div"):
+            txt=el.get_text(strip=True)
+            m=re.search(r"(\d+)\s*[-–]\s*(\d+)",txt)
+            if m:
+                tc,oc=int(m.group(1)),int(m.group(2))
+                res="W" if tc>oc else "L" if tc<oc else "D"
+                return tc,oc,res
+        return 0,0,""
+    txt=rh.get_text(strip=True)
+    m=re.search(r"(\d+)\s*[-–]\s*(\d+)",txt)
+    if m:
+        tc,oc=int(m.group(1)),int(m.group(2))
+        res="W" if tc>oc else "L" if tc<oc else "D"
+        return tc,oc,res
+    return 0,0,""
+
+def _extract_decks_levels(container):
+    if not container:return [],[],{},{}
+    sides=container.select("div.team-segment")
+    t_cards=[];o_cards=[];t_lvls={};o_lvls={}
+    for si,side in enumerate(sides[:2]):
+        cards=[];lvls={}
+        for cw in side.select("div.deck_card__four_wide"):
+            img=cw.select_one("img.deck_card")
+            if not img:continue
+            cn=img.get("data-card-key","")
+            if not cn:
+                src=img.get("src","")
+                m=re.search(r'/([a-z0-9_-]+?)(?:-ev1|-hero)?\.png',src)
+                cn=m.group(1) if m else ""
+            cn=re.sub(r'-(ev1|hero)$','',cn)
+            if not cn:continue
+            cards.append(cn)
+            ld=cw.select_one("div.card-level")
+            if ld:
+                m=re.search(r'(\d+)',ld.get_text())
+                if m:lvls[cn]=int(m.group(1))
+        if si==0:t_cards=cards;t_lvls=lvls
+        else:o_cards=cards;o_lvls=lvls
+    return t_cards,o_cards,t_lvls,o_lvls
+
+def _extract_king_lvl(container):
+    if not container:return 0,0
+    lvls=[]
+    for seg in container.select("div.team-segment"):
+        tt=seg.select_one("div.deck_tower_card__container")
+        if tt:
+            m=re.search(r'(\d+)',tt.get_text())
+            if m:lvls.append(int(m.group(1)));continue
+        for el in seg.select("div.card-level"):
+            m=re.search(r'(\d+)',el.get_text())
+            if m:lvls.append(int(m.group(1)));break
+    if len(lvls)>=2:return lvls[0],lvls[1]
+    if len(lvls)==1:return lvls[0],0
+    return 0,0
+
+def _extract_support_card(container):
+    if not container:return "",""
+    _TT={"tower-princess":"tower_princess","dagger-duchess":"dagger_duchess",
+         "cannoneer":"cannoneer","royal-chef":"royal_chef"}
+    sides=container.select("div.team-segment")
+    t_tt="";o_tt=""
+    for si,side in enumerate(sides[:2]):
+        tt=side.select_one("div.deck_tower_card__container")
+        if not tt:continue
+        for img in tt.select("img"):
+            src=img.get("src","")
+            for k,v in _TT.items():
+                if k in src:
+                    if si==0:t_tt=v
+                    else:o_tt=v
+                    break
+    return t_tt,o_tt
+
 def extract_meta(html,pid):
     soup=BeautifulSoup(html,"html.parser")
     rows=[]
@@ -208,7 +297,23 @@ def extract_meta(html,pid):
                 gm=el.get_text(strip=True).split("\n")[0]
                 break
             p=p.parent
-        rows.append({"replayTag":rid,"player_id":pid,"timestamp":ts,"team_tags":team,"opponent_tags":opp,"gameMode_name":gm})
+        bc=_find_battle_container(menu)
+        tc,oc,res=_extract_crowns(bc)
+        t_cards,o_cards,t_lvls,o_lvls=_extract_decks_levels(bc)
+        t_klvl,o_klvl=_extract_king_lvl(bc)
+        t_tt,o_tt=_extract_support_card(bc)
+        row={"replayTag":rid,"player_id":pid,"timestamp":ts,
+             "team_tags":team,"opponent_tags":opp,"gameMode_name":gm,
+             "result":res,"team_crowns":tc,"opp_crowns":oc,
+             "team_king_lvl":t_klvl,"opp_king_lvl":o_klvl,
+             "team_tower_troop":t_tt,"opp_tower_troop":o_tt}
+        for i,cn in enumerate(t_cards[:8]):
+            row[f"team_card_{i}"]=cn
+            if cn in t_lvls:row[f"team_card_{i}_lvl"]=t_lvls[cn]
+        for i,cn in enumerate(o_cards[:8]):
+            row[f"opp_card_{i}"]=cn
+            if cn in o_lvls:row[f"opp_card_{i}_lvl"]=o_lvls[cn]
+        rows.append(row)
     return rows
 
 def extract_timestamps(html):
