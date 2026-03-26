@@ -220,6 +220,11 @@ async def scrape_player(pid,wi,start_time):
                 rhtml=await asyncio.get_running_loop().run_in_executor(None,fetch_replay,bid)
                 if rhtml:
                     rows=parse_replay(rhtml,bid)
+                    deck_rows=[r for r in rows if r.get("card")!="_invalid" and r.get("ability",0)==0]
+                    t_cards=set(r["card"] for r in deck_rows if r.get("side")=="t")
+                    o_cards=set(r["card"] for r in deck_rows if r.get("side")=="o")
+                    if len(t_cards)>8 or len(o_cards)>8:
+                        break
                     for r in rows:
                         r["player_id"]=pid
                     replay_data.extend(rows)
