@@ -18,3 +18,36 @@ debug_screenshot.png
 .DS_Store
 data/collected/all_card_placements.csv
 paper/
+
+# Data files - never commit
+data/collected/
+data/processed/
+data/ready_data/
+data/big_data/
+*.csv
+!data_scripts/*.csv
+
+# Model checkpoints
+training/checkpoints/
+*.pt
+
+# Node modules
+node_modules/
+
+# Logs
+error_log.txt
+*.log
+
+# Cache
+__pycache__/
+*.pyc
+
+# Scraper output
+scraping/scraped_players.txt
+scraping/__pycache__/
+
+# EC2 copies
+ec2-user@*/
+
+# OS files
+.DS_Store
