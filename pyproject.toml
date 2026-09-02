@@ -1,0 +1,36 @@
+[project]
+name = "cr234"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2.0",
+  "gymnasium>=1.0",
+  "pandas>=2.2",
+  "torch>=2.4",
+  "requests>=2.32",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "matplotlib>=3.9", "jupyter"]
+
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["sim", "data", "train"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["*.py"]
+python_functions = ["t_*", "test_*"]
+addopts = "-q"
+filterwarnings = ["ignore::pytest.PytestReturnNotNoneWarning"]
+
+[tool.ruff]
+line-length = 160
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E701", "E702", "E731", "E741", "E402"]

@@ -1,53 +1,18 @@
-/node_modeules
-/data/*
-!/data/collected/
-!/data/collected/*.csv
-!/data/processed/
-!/data/processed/*.csv
-/reference_code
-test*_*/
-*_error_log.txt
-*_progress_log.txt
-scraping/.scraper_profile/
-deploy/instances.txt
-deploy/*.pem
+data/raw/
+data/proc/
+data/*.csv
 *.csv
-!data/collected/*.csv
-!data/processed/*.csv
-debug_screenshot.png
-.DS_Store
-data/collected/all_card_placements.csv
-paper/
-
-# Data files - never commit
-data/collected/
-data/processed/
-data/ready_data/
-data/big_data/
-*.csv
-!data_scripts/*.csv
-
-# Model checkpoints
-training/checkpoints/
 *.pt
-
-# Node modules
-node_modules/
-
-# Logs
-error_log.txt
-*.log
-
-# Cache
+*.pem
+*Auth*.json
+local/
+checkpoints/
+runs/
 __pycache__/
 *.pyc
-
-# Scraper output
-scraping/scraped_players.txt
-scraping/__pycache__/
-
-# EC2 copies
-ec2-user@*/
-
-# OS files
+.venv/
 .DS_Store
+*.log
+node_modules/
+*.egg-info/
+.pytest_cache/

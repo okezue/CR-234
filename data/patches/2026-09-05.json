@@ -1,0 +1,25 @@
+[
+ {"card": "minion_giant", "path": "",
+  "value": {
+   "name": "Minion Giant", "id": null, "rarity": "rare", "kind": "troop", "cost": 4, "count": 1, "deployTime": null, "placement": "own",
+   "flying": true, "targets": ["buildings"], "speed": 60, "range": 4.0, "minRange": null, "sightRange": 6.5, "collisionRadius": 0.75, "mass": 15,
+   "hitSpeed": 1.5, "loadTime": null, "hitType": null, "radius": null, "duration": null, "lifetime": null,
+   "projectile": {"speed": null, "count": 1}, "kamikaze": false, "arena": "Arena5", "tribe": null,
+   "stats": {"hitpoints": {"level11": 1817}, "damage": {"level11": 189}, "towerDamage": {"level11": 189}},
+   "skills": {}, "evo": null, "hero": null, "units": {}
+  },
+  "note": "New card, release 2026-09-05 (Season 87). Level 11 values from the RoyaleAPI developer-build preview: 4 elixir Rare, flying, targets buildings, 1817 HP, 189 damage, 1.5s hit speed, range 4.0, sight 6.5, medium speed, mass 15, collision radius 0.75, immune to knockback, unlocks in Arena 5. Tower damage equals damage (7 hits = 1323 on a Princess Tower per the post). Not published, left null: id, deployTime, loadTime, hitType, projectile.speed; levels other than 11 are derived. https://royaleapi.com/blog/minion-giant-september-2026 https://royaleapi.com/blog/season-87-september-2026-season-info"},
+ {"card": "ice_wizard", "path": "hero",
+  "value": {
+   "ability": {
+    "name": "Frosty Fella", "cost": 2, "cooldown": null,
+    "skills": {
+     "spawn": {"character": "Snowman", "count": 1, "hitpoints": {"level11": 266}, "damage": {"level11": 89}, "towerDamage": {"level11": 38},
+               "lifetime": 7.0, "range": null, "targets": [], "radius": 2.5, "interval": null},
+     "stun": {"hitSpeedMultiplier": -100, "speedMultiplier": -100, "spawnSpeedMultiplier": -100, "duration": 7.0, "strikes": null, "radiusGrowth": null, "delayBetweenStrikes": null, "radius": 2.5}
+    }
+   },
+   "stats": {}
+  },
+  "note": "Hero Ice Wizard, release 2026-09-05 (Season 87). Ability Frosty Fella, 2 elixir, single use: triggers on the next slowing hit and spawns a Snowman 1 tile behind the target (works on towers). Snowman: 266 HP at level 11 draining over a 7s lifetime, spawn damage 89 in a 2.5 tile radius (38 to crown towers), freezes everything inside that radius for as long as it lives (duration 7.0 is the cap), self-destructs 2s after all frozen targets die. Not published: Snowman collision radius and mass; other levels derived. https://royaleapi.com/blog/hero-ice-wizard-september-2026"}
+]
