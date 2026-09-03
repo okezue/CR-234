@@ -413,7 +413,7 @@
    "sightRange": 6.0,
    "skills": {
     "dash": {
-     "chargeTime": 0.7,
+     "chargeTime": 0.8,
      "damage": [null, null, null, null, null, null, null, null, 322, 354, 389, 427, 469, 515, 565, 621],
      "maxRange": 6,
      "minRange": 3.5,
@@ -425,7 +425,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "skills.dash.chargeTime": "legacy:mechanics.dash",
+    "skills.dash.chargeTime": "patch:2026-09-03",
     "skills.dash.damage[]": "derived:levelMult",
     "skills.dash.speed": "legacy:mechanics.dash",
     "stats.damage[]": "derived:levelMult",

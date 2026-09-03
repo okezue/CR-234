@@ -401,28 +401,31 @@ class ElixirProd(Component):
             p.elixir=min(p.max_ex,p.elixir+self.amount)
             self.timer=self.interval
 class BanditDash(Component):
-    def __init__(self,mn,mx,ct):
-        self.mn=mn;self.mx=mx;self.ct=ct
-        self.charging=False;self.timer=0;self.osp=None;self.dtgt=None
+    # she stands for the wind-up, then closes at the dash speed (over the river if need be), immune, and lands the dash hit on arrival
+    def __init__(self,mn,mx,ct,spd):
+        self.mn=mn;self.mx=mx;self.ct=ct;self.spd=spd
+        self.charging=False;self.dashing=False;self.timer=0;self.osp=None;self.dtgt=None;self.to=None
+    def _end(self,tr):
+        if self.osp is not None:tr.spd=self.osp;self.osp=None
+        self.charging=self.dashing=False;self.dtgt=None;tr.statuses=[s for s in tr.statuses if s.kind!='invincible']
     def on_tick(self,tr,g):
+        if self.dashing:
+            t=self.dtgt
+            if t is not None and getattr(t,'alive',True):self.to=pos(t)
+            dx=self.to[0]-tr.x;dy=self.to[1]-tr.y;d=math.hypot(dx,dy);st=self.spd*g.DT
+            if d>st and not (t is not None and getattr(t,'alive',True) and g._dist(tr,t)<=tr.rng):tr.x+=dx/d*st;tr.y+=dy/d*st;return
+            if t is not None and getattr(t,'alive',True):hurt(t,getattr(tr,'dash_dmg',tr.dmg*2),g)
+            self._end(tr);return
         tgt=getattr(tr,'tgt',None)
         if not tgt:
-            if self.charging and self.osp is not None:tr.spd=self.osp;self.osp=None
-            self.charging=False;return
+            if self.charging:self._end(tr)
+            return
         if self.mn<=g._dist(tr,tgt)<=self.mx and not self.charging:
             self.charging=True;self.timer=self.ct;self.osp=tr.spd;tr.spd=0;self.dtgt=tgt
         if self.charging:
             self.timer-=g.DT
             if self.timer<=0:
-                self.charging=False
-                if self.osp is not None:tr.spd=self.osp;self.osp=None
-                if self.dtgt and getattr(self.dtgt,'alive',True):
-                    dd=getattr(tr,'dash_dmg',tr.dmg*2)
-                    self.dtgt.take_damage(dd)
-                    if hasattr(self.dtgt,'ttype') and not self.dtgt.alive:g._tower_down(self.dtgt)
-                    if hasattr(self.dtgt,'cx'):tr.x=self.dtgt.cx;tr.y=self.dtgt.cy
-                    else:tr.x=self.dtgt.x;tr.y=self.dtgt.y
-                self.dtgt=None
+                self.charging=False;self.dashing=True;self.to=pos(self.dtgt);tr.statuses.append(Status('invincible',2.0))
 class SoulCollect(Component):
     def __init__(self,cap):
         self.cap=cap;self.souls=0;self._prev=set()

@@ -193,5 +193,11 @@
   "path": "skills.areaDamageOnSpawn.damage[10]",
   "value": 84,
   "note": "Resurface damage 84 at level 11 (wiki table spawn_11 and the ClashStrategic damage stat); the legacy snapshot's 66 is stale. https://clashroyale.fandom.com/wiki/Goblin_Drill"
+ },
+ {
+  "card": "bandit",
+  "path": "skills.dash.chargeTime",
+  "value": 0.8,
+  "note": "Dash Time 0.8 sec (wiki attributes; the 12/6/2017 update decreased the time required for charging her dash to 0.8 seconds from 1 second); the legacy 0.7 is unsourced. She then covers the 3.5 to 6 tiles at Dash Speed 500, immune to damage while dashing. https://clashroyale.fandom.com/wiki/Bandit"
  }
 ]
