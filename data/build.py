@@ -469,6 +469,7 @@ def main():
             "produceElixir": "interval and amount", "teleport": "distance moved backwards on cast",
             "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still", "recoil": "self knockback per shot",
             "transform": "mode switch below hpPercent of hitpoints: speed, range, targets and lifetime of the new form (Goblin Demolisher's rocket)",
+            "charging": "whileMoving: the load time counts down while walking and the charge is kept across targets (Sparky)",
             "burrow": "underground travel from the own King Tower at speed (tiles/min) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill",
             "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "

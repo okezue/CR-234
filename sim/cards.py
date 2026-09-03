@@ -323,6 +323,7 @@ def troop(c,k,lvl,team,x,y,evolved,is_hero,ev,chain,sk,name):
     else:
         tr=Troop(team,x,y,cfg)
         if 'ability' in sk:tr.ability=uses(ability(c,sk['ability'],lvl,tr),sk['ability'])
+        if sk.get('charging',{}).get('whileMoving'):tr.preload=True;tr.first_atk=False;tr.cd=tr.fhspd
     if ev:evolve(c,k,sk,lvl,tr)
     if is_hero and c['hero']:tr.is_hero=True;tr.ability=uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])
     for x in tr.components:

@@ -8152,12 +8152,17 @@
    "range": 5.0,
    "rarity": "legendary",
    "sightRange": 5.0,
-   "skills": {},
+   "skills": {
+    "charging": {
+     "whileMoving": true
+    }
+   },
    "speed": 45,
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "wiki:Sparky",
+    "skills.charging": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9457,6 +9462,7 @@
   "legacySkills": {
    "areaDamageOnSpawn": "damage and radius dealt where the unit appears",
    "burrow": "underground travel from the own King Tower at speed (tiles/min) for at least the deploy time; resurfacePercent/resurfaceCount for the evo drill",
+   "charging": "whileMoving: the load time counts down while walking and the charge is kept across targets (Sparky)",
    "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, leader names its unit overrides",
    "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime, spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/duration, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
    "produceElixir": "interval and amount",

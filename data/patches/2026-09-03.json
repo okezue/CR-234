@@ -1,6 +1,22 @@
 [
- {"card": "giant_skeleton", "path": "mass", "value": 18,
-  "note": "No mass in the ClashStrategic or legacy data; the 1/4/2019 balance update raised the Giant Skeleton's mass to 18 (from 15). https://clashroyale.fandom.com/wiki/Giant_Skeleton"},
- {"card": "royal_hogs", "path": "mass", "value": 2,
-  "note": "The 5/11/2018 balance update decreased the Royal Hogs' mass to 2 (from 4); the legacy snapshot still carries 4. https://clashroyale.fandom.com/wiki/Royal_Hogs"}
+ {
+  "card": "giant_skeleton",
+  "path": "mass",
+  "value": 18,
+  "note": "No mass in the ClashStrategic or legacy data; the 1/4/2019 balance update raised the Giant Skeleton's mass to 18 (from 15). https://clashroyale.fandom.com/wiki/Giant_Skeleton"
+ },
+ {
+  "card": "royal_hogs",
+  "path": "mass",
+  "value": 2,
+  "note": "The 5/11/2018 balance update decreased the Royal Hogs' mass to 2 (from 4); the legacy snapshot still carries 4. https://clashroyale.fandom.com/wiki/Royal_Hogs"
+ },
+ {
+  "card": "sparky",
+  "path": "skills.charging",
+  "value": {
+   "whileMoving": true
+  },
+  "note": "Sparky charges up over time, releasing her attack when it is full and an enemy is within range; the charge is kept across targets and only a stun resets it. https://clashroyale.fandom.com/wiki/Sparky"
+ }
 ]
