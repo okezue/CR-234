@@ -27,6 +27,8 @@ GD_TILES = {"range": "range", "sightRange": "sightRange", "collisionRadius": "co
 GD_LEVELS = {"hitpoints": "hitpoints", "damage": "damage", "deathDamage": "deathDamage"}
 # the statsroyale dump stops at level 15 for towers; wiki Tower Princess (4858) and Cannoneer (4164) tables imply 347, ClashStrategic's script uses 346
 TOWER16 = 347
+# the official battle log reports 7728 king tower hitpoints at level 16 (1,671 untouched towers in data/raw/eval/battles.csv); the wiki table says 7704
+KING16 = 7728
 
 
 def fetch(url, name):
@@ -319,6 +321,7 @@ def king():
         L = int(wiki.num(r.get("Level")) or 0)
         if 1 <= L <= 16:
             hp[L - 1], dmg[L - 1] = int(wiki.num(r["Hitpoints"])), int(wiki.num(r["Damage"]))
+    hp[15] = KING16
     a = wiki.attrs(w)
     return {
         "name": "King's Tower", "id": None, "rarity": None, "kind": "tower", "cost": None, "count": 1, "deployTime": None, "placement": None,
@@ -327,7 +330,7 @@ def king():
         "loadTime": None, "hitType": "single", "radius": None,
         "duration": None, "lifetime": None, "projectile": {"speed": None, "count": 1}, "kamikaze": False, "arena": None, "tribe": None,
         "stats": {"hitpoints": hp, "damage": dmg, "towerDamage": None}, "skills": {}, "evo": None, "hero": None, "units": {},
-        "src": {"*": "wiki:King's Tower"},
+        "src": {"*": "wiki:King's Tower", "stats.hitpoints[15]": "royaleapi battle log (KING16)"},
     }
 
 
