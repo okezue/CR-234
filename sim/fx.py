@@ -279,57 +279,36 @@ class DualTarget(Component):
         else:
             tgt.take_damage(tr.dmg)
             if hasattr(tgt,'ttype') and not tgt.alive:g._tower_down(tgt)
+def bounce(g,opp,prev,r,skip):
+    # the bolt jumps to the nearest body within r of the last one hit, measured between centres (a crown tower does not chain into the king tower)
+    px,py=pos(prev);best=None;bd=r
+    for e in g.players[opp].troops:
+        if not e.alive or e in skip:continue
+        d=math.hypot(e.x-px,e.y-py)
+        if d<=bd:bd=d;best=e
+    for tw in g.arena.towers:
+        if tw.team!=opp or not tw.alive or tw in skip:continue
+        d=math.hypot(tw.cx-px,tw.cy-py)
+        if d<=bd:bd=d;best=tw
+    return best
+def chain(tr,tgt,g):
+    cc=getattr(tr,'chain_count',1);cr=getattr(tr,'chain_range',0);cs=getattr(tr,'chain_stun',0)
+    opp=g._opp(tr.team)
+    if cs>0 and hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',cs))
+    hit=[tgt]
+    for _ in range(cc-1):
+        best=bounce(g,opp,hit[-1],cr,hit)
+        if not best:break
+        best.take_damage(tr.dmg)
+        if cs>0 and hasattr(best,'statuses'):best.statuses.append(Status('stun',cs))
+        if hasattr(best,'ttype') and not best.alive:g._tower_down(best)
+        hit.append(best)
+    tr.chain_hit=hit
 class SuicideChain(Component):
     def on_attack(self,tr,tgt,g):
-        cc=getattr(tr,'chain_count',1)
-        cr=getattr(tr,'chain_range',0)
-        cs=getattr(tr,'chain_stun',0)
-        opp=g._opp(tr.team)
-        if cs>0 and hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',cs))
-        hit=[tgt];prev=tgt
-        for _ in range(cc-1):
-            px=prev.cx if hasattr(prev,'cx') else prev.x
-            py=prev.cy if hasattr(prev,'cy') else prev.y
-            best=None;bd=999
-            for e in g.players[opp].troops:
-                if not e.alive or e in hit:continue
-                d=math.sqrt((e.x-px)**2+(e.y-py)**2)
-                if d<=cr and d<bd:bd=d;best=e
-            for tw in g.arena.towers:
-                if tw.team!=opp or not tw.alive or tw in hit:continue
-                d=tw.dist(px,py)
-                if d<=cr and d<bd:bd=d;best=tw
-            if not best:break
-            best.take_damage(tr.dmg)
-            if cs>0 and hasattr(best,'statuses'):best.statuses.append(Status('stun',cs))
-            if hasattr(best,'ttype') and not best.alive:g._tower_down(best)
-            hit.append(best);prev=best
-        tr.is_suicide=True
+        chain(tr,tgt,g);tr.is_suicide=True
 class ChainAttack(Component):
-    def on_attack(self,tr,tgt,g):
-        cc=getattr(tr,'chain_count',1)
-        cr=getattr(tr,'chain_range',0)
-        cs=getattr(tr,'chain_stun',0)
-        opp=g._opp(tr.team)
-        if cs>0 and hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',cs))
-        hit=[tgt];prev=tgt
-        for _ in range(cc-1):
-            px=prev.cx if hasattr(prev,'cx') else prev.x
-            py=prev.cy if hasattr(prev,'cy') else prev.y
-            best=None;bd=999
-            for e in g.players[opp].troops:
-                if not e.alive or e in hit:continue
-                d=math.sqrt((e.x-px)**2+(e.y-py)**2)
-                if d<=cr and d<bd:bd=d;best=e
-            for tw in g.arena.towers:
-                if tw.team!=opp or not tw.alive or tw in hit:continue
-                d=tw.dist(px,py)
-                if d<=cr and d<bd:bd=d;best=tw
-            if not best:break
-            best.take_damage(tr.dmg)
-            if cs>0 and hasattr(best,'statuses'):best.statuses.append(Status('stun',cs))
-            if hasattr(best,'ttype') and not best.alive:g._tower_down(best)
-            hit.append(best);prev=best
+    def on_attack(self,tr,tgt,g):chain(tr,tgt,g)
 class HealBurst(Component):
     def __init__(self,heal,radius):
         self.heal=heal;self.radius=radius
@@ -1071,28 +1050,22 @@ class EvoHunter(Component):
             if tgt and hasattr(tgt,'statuses'):
                 tgt.statuses.append(Status('stun',self.net_dur))
                 self.cd=self.net_cd;self.first=False
+class Bolt:
+    # the Evolved Electro Dragon's bolt keeps jumping between the enemies within reach of the last one hit until only one is left
+    def __init__(self,team,prev,dmg,r,period):
+        self.team=team;self.prev=prev;self.dmg=dmg;self.radius=r;self.period=period;self.t=period;self.active=True;self.name='';self.x,self.y=pos(prev)
+    def tick(self,dt,g):
+        self.t-=dt
+        if self.t>0:return
+        best=bounce(g,g._opp(self.team),self.prev,self.radius,(self.prev,))
+        if best is None:self.active=False;return
+        hurt(best,self.dmg,g);self.prev=best;self.x,self.y=pos(best);self.t=self.period
 class EvoElectroDragon(Component):
-    def __init__(self,dmg_reduction,bounce_r):
-        self.dr=dmg_reduction;self.br=bounce_r
+    def __init__(self,dmg_pct,bounce_r,period):
+        self.pct=dmg_pct;self.br=bounce_r;self.period=period
     def on_attack(self,tr,tgt,g):
-        opp=g._opp(tr.team)
-        hit={id(tgt)};prev=tgt;rd=int(tr.dmg*(1-self.dr))
-        for _ in range(20):
-            px=prev.cx if hasattr(prev,'cx') else prev.x
-            py=prev.cy if hasattr(prev,'cy') else prev.y
-            best=None;bd=999
-            for e in g.players[opp].troops:
-                if not e.alive:continue
-                d=math.sqrt((e.x-px)**2+(e.y-py)**2)
-                if d<=self.br and d<bd:bd=d;best=e
-            for tw in g.arena.towers:
-                if tw.team!=opp or not tw.alive:continue
-                d=tw.dist(px,py)
-                if d<=self.br and d<bd:bd=d;best=tw
-            if not best or (id(best) in hit and len(hit)>1):break
-            best.take_damage(rd)
-            if hasattr(best,'ttype') and not best.alive:g._tower_down(best)
-            hit.add(id(best));prev=best
+        hit=getattr(tr,'chain_hit',[tgt])
+        if len(hit)>1:g.spells.append(Bolt(tr.team,hit[-1],int(tr.dmg*self.pct),self.br,self.period))
 class EvoWallBreakers(Component):
     def __init__(self,runner_cfg,cnt):
         self.runner_cfg=runner_cfg;self.cnt=cnt

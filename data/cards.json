@@ -1764,7 +1764,8 @@
       "bounceMode": "nearest",
       "bounces": 99,
       "radius": null,
-      "range": null
+      "range": null,
+      "speedMultiplier": -80
      },
      "stun": {
       "delayBetweenStrikes": null,
@@ -1826,6 +1827,7 @@
    "src": {
     "*": "cs2.4.0",
     "evo.skills.pierce.bounceDamagePercent": "legacy:evolution.changes.infinite_bounce",
+    "evo.skills.pierce.speedMultiplier": "patch:2026-09-03",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",

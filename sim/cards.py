@@ -301,7 +301,7 @@ def evolve(c,k,s,lvl,tr):
        'pekka':lambda:fx.EvoPekka(*[at(t,lvl) for t in hl['perKillTiers']],at(hl['overHeal'],lvl)),
        'goblin_giant':lambda:fx.EvoGoblinGiant(ps['hpPercent']/100,ps['pauseTime'],unit(c,ps,lvl)),
        'hunter':lambda:fx.EvoHunter(st['duration'],st['delayBetweenStrikes']),
-       'electro_dragon':lambda:fx.EvoElectroDragon(1-pi['bounceDamagePercent']/100,pi['bounceDistance']),
+       'electro_dragon':lambda:fx.EvoElectroDragon(pi['bounceDamagePercent']/100,pi['bounceDistance'],pi['bounceDelay']/mult(pi['speedMultiplier'])),
        'wall_breakers':lambda:fx.EvoWallBreakers(unit(c,sd,lvl),count(sd.get('count'))),
        'executioner':lambda:fx.EvoExecutioner(sn['range'],mult(sn['damageMultiplier']),sn['pushbackDistance']),
        'goblin_drill':lambda:fx.Resurface([p/100 for p in bu['resurfacePercent']],bu.get('resurfaceCount') or [count(sd.get('count'))],unit(c,sd,lvl)),
@@ -310,6 +310,8 @@ def evolve(c,k,s,lvl,tr):
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),unit(c,sp,lvl)),
        'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
     if k in E:tr.components.append(E[k]())
+    # the evolved bolt stuns and deals full damage on the base card's three targets; the bounces after them are the evolution
+    if k=='electro_dragon':tr.chain_count=c['skills']['pierce']['bounces']+1
     if k=='skeleton_barrel':tr.death_dmg=at(sd['damage'],lvl)
     if k=='royal_hogs':tr.transport='Air'
     if k=='battle_ram':tr.is_suicide=False

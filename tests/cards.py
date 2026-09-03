@@ -5723,6 +5723,10 @@ def t_evo_edrag_infinite():
     g.run(5)
     dmg1=5000-d1.hp;dmg2=5000-d2.hp
     assert dmg1>0 and dmg2>0,f"Both should take chain damage: {dmg1},{dmg2}"
+    assert dmg1>3*ed.dmg,f"Bolt should keep bouncing between the pair: {dmg1}"
+    g2=quiet(Game());e2=mk_card('electro_dragon',11,'blue',9,10,evolved=True);g2.deploy('blue',e2)
+    lone=Dummy('red',9,13,hp=5000,spd=0,dmg=0,rng=0);g2.deploy('red',lone);g2.run(5)
+    assert 5000-lone.hp==2*e2.dmg,f"A lone target has nothing to chain onto: {5000-lone.hp}"
     return f"Evo E-Dragon infinite chain (d1={dmg1}, d2={dmg2})"
 def t_evo_exe_smash():
     g=Game()
