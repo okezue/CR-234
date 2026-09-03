@@ -119,5 +119,23 @@
   "path": "loadTime",
   "value": 3.7,
   "note": "Mortar loadTime 3700 in the game data with a 4700 hit speed: the first shell leaves 1 s after a target enters range (wiki First Hit Speed 1 sec); the ClashStrategic 4.0 would make it 0.7 s. https://clashroyale.fandom.com/wiki/Mortar"
+ },
+ {
+  "card": "balloon",
+  "path": "skills.areaDamageOnDeath.radius",
+  "value": 3.0,
+  "note": "Bomb Attributes on the wiki: death damage splash radius 3 tiles, the bomb deploys for 3 seconds before it goes off and hits air and ground; the legacy snapshot had 2.0. https://clashroyale.fandom.com/wiki/Balloon"
+ },
+ {
+  "card": "giant_skeleton",
+  "path": "skills.areaDamageOnDeath.radius",
+  "value": 3.0,
+  "note": "Bomb Attributes on the wiki: death damage splash radius 3 tiles, the bomb deploys for 3 seconds before it goes off and hits air and ground; the legacy snapshot had 3.5. https://clashroyale.fandom.com/wiki/Giant_Skeleton"
+ },
+ {
+  "card": "bomb_tower",
+  "path": "skills.areaDamageOnDeath.radius",
+  "value": 3.0,
+  "note": "Bomb Attributes on the wiki: death damage splash radius 3 tiles, the bomb deploys for 3 seconds before it goes off and hits air and ground; the legacy snapshot had 2.5. https://clashroyale.fandom.com/wiki/Bomb_Tower"
  }
 ]

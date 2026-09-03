@@ -236,7 +236,8 @@ def gd_death(card, spell, tag):
     bomb = ch.get("deathSpawnCharacterData") or {}
     if ae.get("radius"):
         s["radius"], card["src"]["skills.areaDamageOnDeath.radius"] = ae["radius"] / 1000, tag
-    elif s.get("radius") is not None and (ch.get("deathDamage") or bomb.get("source") == "buildings"):
+    elif s.get("radius") is not None and (ch.get("deathDamage") or bomb.get("source") == "buildings") \
+            and not card["src"].get("skills.areaDamageOnDeath.radius", "").startswith("patch:"):
         s["radius"], card["src"]["skills.areaDamageOnDeath.radius"] = None, f"{tag} (cs value {s['radius']} is the collision radius, dropped)"
     if bomb.get("source") == "buildings" and bomb.get("deployTime"):
         s["fuse"], card["src"]["skills.areaDamageOnDeath.fuse"] = bomb["deployTime"] / 1000, tag

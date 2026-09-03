@@ -179,11 +179,15 @@ class SpawnTimer(Component):
                 g.players[tr.team].troops.append(t)
             self.timer=self.interval
 class DeathDamage(Component):
-    def __init__(self,kb=0):self.kb=kb
+    # a fuse (Balloon, Giant Skeleton, Bomb Tower: 3 s) leaves the bomb where the body fell and blasts whoever is there when it goes off
+    def __init__(self,kb=0,fuse=0):self.kb=kb;self.fuse=fuse
     def on_death(self,tr,g):
-        dd=getattr(tr,'death_dmg',0)
+        dd=getattr(tr,'death_dmg',0);r=getattr(tr,'death_splash_r',0);x,y,team=tr.x,tr.y,tr.team
         if dd<=0:return
-        for e in near(g,tr.team,tr.x,tr.y,getattr(tr,'death_splash_r',0)):hurt(e,dd,g);push(e,tr.x,tr.y,self.kb)
+        def blast(g):
+            for e in near(g,team,x,y,r):hurt(e,dd,g);push(e,x,y,self.kb)
+        if self.fuse>0:g.spells.append(Timer(self.fuse,blast,x,y,team))
+        else:blast(g)
 class DeathNova(Component):
     def __init__(self,slow_pct,slow_dur):
         self.slow_pct=slow_pct;self.slow_dur=slow_dur

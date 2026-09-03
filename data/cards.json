@@ -339,7 +339,7 @@
      "areaEffect": null,
      "damage": [null, null, null, null, null, 150, 165, 181, 199, 219, 240, 264, 290, 318, 349, 384],
      "fuse": 3.0,
-     "radius": 2.0
+     "radius": 3.0
     }
    },
    "speed": 60,
@@ -352,7 +352,7 @@
     "mass": "legacy:hidden_stats.mass",
     "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
     "skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
-    "skills.areaDamageOnDeath.radius": "legacy:death_damage",
+    "skills.areaDamageOnDeath.radius": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -1056,7 +1056,7 @@
      "areaEffect": null,
      "damage": [null, null, 105, 115, 127, 139, 153, 167, 184, 202, 222, 244, 268, 294, 323, 355],
      "fuse": 3.0,
-     "radius": 2.5
+     "radius": 3.0
     }
    },
    "speed": null,
@@ -1065,7 +1065,7 @@
     "projectile.speed": "wiki:Bomb Tower",
     "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
     "skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
-    "skills.areaDamageOnDeath.radius": "legacy:death_damage",
+    "skills.areaDamageOnDeath.radius": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -2920,7 +2920,7 @@
      "areaEffect": null,
      "damage": [null, null, null, null, null, 430, 473, 519, 570, 626, 688, 755, 831, 911, 1000, 1100],
      "fuse": 3.0,
-     "radius": 3.5
+     "radius": 3.0
     }
    },
    "speed": 60,
@@ -2929,7 +2929,7 @@
     "mass": "patch:2026-09-03",
     "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
     "skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
-    "skills.areaDamageOnDeath.radius": "legacy:death_damage",
+    "skills.areaDamageOnDeath.radius": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"

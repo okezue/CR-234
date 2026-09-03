@@ -116,7 +116,7 @@ def attach(cfg,c,sk,lvl,chain=None):
         if 'boost' in sk:
             b=sk['boost'];cs.append(fx.RageDrop(b.get('radius') or dd.get('radius') or 0,b.get('duration') or 0,mult(b.get('speedMultiplier') or 0)-1))
         elif sl.get('duration') and cfg['atk_type']!='area':cs.append(fx.DeathNova(-(sl.get('speedMultiplier') or 0),sl['duration']))
-        else:cs.append(fx.DeathDamage(kb))
+        else:cs.append(fx.DeathDamage(kb,dd.get('fuse') or 0))
     elif sk.get('slow',{}).get('duration') and 'secondaryAttack' not in sk:
         sl=sk['slow'];cfg['slow_dur']=sl['duration'];cfg['slow_val']=mult(sl.get('speedMultiplier') or 0)
     if ps.get('character') and ps.get('pauseTime') and not ps.get('hpPercent') and not egg:

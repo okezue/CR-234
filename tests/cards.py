@@ -389,14 +389,16 @@ def t_balloon_air():
     assert b.targets==['Buildings']
     return f"Balloon is Air, targets buildings (hp={b.hp})"
 def t_balloon_death_dmg():
-    g=Game()
+    g=quiet(Game())
     b=mk_card('balloon',11,'blue',9,14)
     g.deploy('blue',b)
     d=Dummy('red',9,14.5,hp=50000,spd=0)
     g.deploy('red',d)
-    b.hp=0;b.alive=False;b.on_death(g)
+    b.hp=0;b.alive=False;g.run(2.9)
+    assert d.hp==50000,"The bomb has a 3 s fuse"
+    g.run(0.2)
     assert 50000-d.hp==240,f"Expected 240 death dmg, got {50000-d.hp}"
-    return f"Balloon death damage ({50000-d.hp})"
+    return f"Balloon death damage ({50000-d.hp}) 3 s after the fall"
 def t_lava_air():
     lh=mk_card('lava_hound',11,'blue',9,10)
     assert lh.transport=='Air'
@@ -1183,15 +1185,15 @@ def t_gskel_load():
     assert abs(gs.spd-1.0)<0.01
     return f"Giant Skeleton load (hp={gs.hp} dmg={gs.dmg})"
 def t_gskel_death_dmg():
-    g=Game()
+    g=quiet(Game())
     gs=mk_card('giant_skeleton',11,'blue',9,14)
     g.deploy('blue',gs)
     d1=Dummy('red',9,14.5,hp=5000,spd=0)
     d2=Dummy('red',11,14.5,hp=5000,spd=0)
     g.deploy('red',d1);g.deploy('red',d2)
-    gs.hp=0;gs.alive=False;gs.on_death(g)
+    gs.hp=0;gs.alive=False;g.run(3.1)
     assert d1.hp==5000-688,f"Expected 688 death dmg, got {5000-d1.hp}"
-    assert d2.hp==5000-688,"Second target should also take 688 dmg (within 3.5 radius)"
+    assert d2.hp==5000-688,"Second target should also take 688 dmg (within 3 tile radius)"
     return f"Giant Skeleton death damage ({5000-d1.hp} each)"
 def t_gskel_death_radius():
     g=Game()
@@ -1200,10 +1202,10 @@ def t_gskel_death_radius():
     d_near=Dummy('red',9,14.5,hp=5000,spd=0)
     d_far=Dummy('red',9,18.5,hp=5000,spd=0)
     g.deploy('red',d_near);g.deploy('red',d_far)
-    gs.hp=0;gs.alive=False;gs.on_death(g)
+    gs.hp=0;gs.alive=False;g.run(3.1)
     assert d_near.hp<5000,"Near target should be hit"
     assert d_far.hp==5000,"Far target (4 tiles away) should be safe"
-    return "Giant Skeleton death radius (3.5 tiles to the target's collision edge)"
+    return "Giant Skeleton death radius (3 tiles to the target's collision edge)"
 def t_gskel_v_skarmy():
     g=Game()
     random.seed(42)
@@ -1214,7 +1216,7 @@ def t_gskel_v_skarmy():
     gs.hp=1
     d=Dummy('red',9,14.5,hp=50000,dmg=500,spd=0,hspd=0.5)
     g.deploy('red',d)
-    g.run(2)
+    g.run(3.5)
     assert not gs.alive
     dead=[s for s in sk if not s.alive]
     assert len(dead)>=10,f"Giant Skeleton bomb should kill most skarmy, only killed {len(dead)}"
@@ -2566,7 +2568,7 @@ def t_bld_bombtower():
     assert isinstance(bt,Building)
     assert bt.hp==1356 and bt.dmg==222
     assert bt.splash_r>0
-    assert bt.death_dmg==222 and bt.death_splash_r==2.5
+    assert bt.death_dmg==222 and bt.death_splash_r==3.0
     assert any(isinstance(c,DeathDamage) for c in bt.components)
     return f"Bomb Tower Building (hp={bt.hp} dmg={bt.dmg} death_dmg={bt.death_dmg})"
 def t_bld_inferno():
@@ -2889,7 +2891,7 @@ def t_bld_bombtower_death_dmg():
     hp_before=d.hp
     bt.hp=1;g.run(0.2)
     assert not bt.alive,"Bomb tower should die"
-    dd=hp_before-d.hp
+    g.run(3.0);dd=hp_before-d.hp
     assert dd>0,f"Death damage should hit nearby enemy, dealt {dd}"
     return f"Bomb Tower death damage ({dd} dmg)"
 def t_bld_bombtower_death_on_expire():
