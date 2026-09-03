@@ -14,7 +14,7 @@ class Troop:
         self.components=list(cfg.get('components',[]))
         self.statuses=[];self.alive=True
         self.lvl=cfg.get('lvl',11)
-        self.cd=0;self.first_atk=True;self.tgt=None
+        self.cd=self.fhspd;self.tgt=None
         self.name=cfg.get('name','')
         self.charge_dmg=cfg.get('charge_dmg',0);self.death_dmg=cfg.get('death_dmg',0)
         self.death_splash_r=cfg.get('death_splash_r',0)
@@ -64,7 +64,7 @@ class Building:
         self.splash_r=cfg.get('splash_r',0);self.ct_dmg=cfg.get('ct_dmg',0)
         self.components=list(cfg.get('components',[]))
         self.statuses=[];self.alive=True
-        self.lvl=cfg.get('lvl',11);self.cd=0;self.first_atk=True;self.tgt=None
+        self.lvl=cfg.get('lvl',11);self.cd=self.fhspd;self.tgt=None
         self.name=cfg.get('name','');self.is_building=True
         self.lifetime=cfg.get('lifetime',30.0)
         self.decay=self.max_hp/self.lifetime if self.lifetime>0 else 0

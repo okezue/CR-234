@@ -25,6 +25,8 @@ UNIT_FIELDS = {"hitpoints": "hitpoints", "damage": "damage", "hitspeed": "hitSpe
 GD_MS = {"hitSpeed": "hitSpeed", "loadTime": "loadTime", "deployTime": "deployTime", "lifeTime": "lifetime"}
 GD_TILES = {"range": "range", "sightRange": "sightRange", "collisionRadius": "collisionRadius"}
 GD_LEVELS = {"hitpoints": "hitpoints", "damage": "damage", "deathDamage": "deathDamage"}
+# game data character names whose ClashStrategic unit key differs from snake(name)
+GD_UNIT = {"Goblinstein_doctor": "doctor"}
 # the statsroyale dump stops at level 15 for towers; wiki Tower Princess (4858) and Cannoneer (4164) tables imply 347, ClashStrategic's script uses 346
 TOWER16 = 347
 # the official battle log reports 7728 king tower hitpoints at level 16 (1,671 untouched towers in data/raw/eval/battles.csv); the wiki table says 7704
@@ -170,11 +172,13 @@ def gd_units(spell, lo, pct, tag, src):
     roots = [(root, f, root.get("deathSpawnCount" if "death" in f else "spawnNumber"))
              for f in ("spawnCharacterData", "deathSpawnCharacterData", "spawnCharacter2Data", "deathSpawnCharacter2Data")]
     roots += [(proj, "spawnCharacterData", proj.get("spawnCharacterCount")), (proj.get("spawnProjectileData") or {}, "spawnCharacterData", 1)]
+    # the companions of a group card (Goblin Gang's Spear Goblins, Rascal Girls, Goblinstein's doctor)
+    roots += [(spell, "summonCharacterSecondData", spell.get("summonCharacterSecondCount"))]
     for root, f, n in roots:
         ch = root.get(f)
         if not ch or ch.get("hitpoints") is None:
             continue
-        k = snake(ch["name"])
+        k = GD_UNIT.get(ch["name"], snake(ch["name"]))
         pj = ch.get("projectileData") or {}
         u = {"name": ch["name"], "card": UNIT_CARD.get(ch["name"]), "from": [f"gd.{f}"], "count": n, "targets": TARGETS.get(ch.get("tidTarget"))}
         for a, b in GD_LEVELS.items():
@@ -482,7 +486,8 @@ def main():
             "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still", "recoil": "self knockback per shot",
             "transform": "mode switch below hpPercent of hitpoints: speed, range, targets and lifetime of the new form (Goblin Demolisher's rocket); "
                          "building: the new form is a rooted building whose remaining hitpoints drain over the lifetime (Cannon Cart)",
-            "charging": "whileMoving: the load time counts down while walking and the charge is kept across targets (Sparky)",
+            "charging": "loadFirstHit: the unit comes in unloaded and charges the whole hit speed before its first hit, a stun empties the charge (Sparky); "
+                        "every other unit deploys loaded and loads while walking, so its first hit takes hit speed less load time",
             "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
             "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
             "spawn.minRadius": "a periodic spell spawn rises between this distance and the spell radius from the centre (Graveyard)",

@@ -620,25 +620,23 @@ class Game:
                         if tr.hp<=0:tr.hp=0;tr.alive=False;continue
                 halt,arate,mrate=self._status_mods(tr)
                 if halt:
-                    # stun and freeze pause the swing (only a knockback resets it) and the target is re-picked afterwards; Sparky's charge is the exception
+                    # stun and freeze pause the swing and the target is re-picked afterwards; a knockback empties the load, as does a stun for Sparky
                     tr.aggro_tgt=None
-                    if getattr(tr,'preload',False):tr.cd=tr.hspd
-                elif has(tr,'knockback'):tr.cd=getattr(tr,'fhspd',tr.hspd);tr.first_atk=False
+                    if getattr(tr,'load_first',False):tr.cd=tr.hspd
+                elif has(tr,'knockback'):tr.cd=tr.hspd
                 spd=0 if halt else tr.spd*mrate
                 tgt,td=self._find_target(tr)
-                # a target that has to be walked to is engaged after the load time; one already in reach continues the swing
-                if tgt is not tr.tgt and tr.tgt is not None and not getattr(tr,'preload',False) and td>tr.rng:tr.first_atk=True
                 tr.tgt=tgt
-                if not tgt or halt:continue
+                if halt:continue
                 mr=getattr(tr,'min_rng',0)
-                if td<=tr.rng and td>=mr:
-                    if getattr(tr,'first_atk',False):tr.cd=getattr(tr,'fhspd',tr.hspd);tr.first_atk=False
+                if tgt and td<=tr.rng and td>=mr:
                     tr.cd=max(0,tr.cd-self.DT*arate)
                     if tr.cd<=0:
                         self._fire(tr,tgt);tr.cd=tr.hspd
                 else:
-                    if not getattr(tr,'first_atk',False):tr.cd=max(0,tr.cd-self.DT*arate)
-                    if spd>0 and not getattr(tr,'is_building',False):
+                    # walking or idle, the swing loads down to the first hit time (hit speed less load time), never below
+                    tr.cd=max(tr.fhspd,tr.cd-self.DT*arate)
+                    if tgt and spd>0 and not getattr(tr,'is_building',False):
                         tx,ty=self._pos(tgt)
                         self._move(tr,spd,tx,ty)
     def _proc_statuses(self):

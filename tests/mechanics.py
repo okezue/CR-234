@@ -23,7 +23,7 @@ def _comps(t):return [type(c).__name__ for c in t.components]
 def t_magic_archer_pierces_line():
     g=_game();ma=mk_card('magic_archer',11,'blue',9,10);g.deploy('blue',ma)
     a,b,c=_dummies(g,(9,14),(9,18),(13,14))
-    g.run(2)
+    g.run(2.3)
     assert 50000-a.hp==50000-b.hp==2*ma.dmg and c.hp==50000,f"{a.hp} {b.hp} {c.hp}"
     assert 'LineAttack' in _comps(ma) and 'SplashAttack' not in _comps(ma)
     return f"Magic Archer arrow hits both units on its 11 tile line ({50000-a.hp} each), none beside it"
@@ -235,9 +235,9 @@ def t_evo_minion_horde_veil():
     return "Evo Minion: the first hit veils it for 3 s (untargetable, immune, hit and move speed x0.67)"
 def t_evo_princess_icy_arrows_and_frost_zone():
     g=_game();pr=mk_card('princess',11,'blue',9,10,evolved=True);g.deploy('blue',pr);d,=_dummies(g,(9,16))
-    g.run(3.5);s=[x for x in d.statuses if x.kind=='slow']
+    g.run(1.0);s=[x for x in d.statuses if x.kind=='slow']
     assert s and s[0].val==0.7 and s[0].dur>5.0
-    d.statuses=[];g.run(3);assert not has(d,'slow')
+    d.statuses=[];g.run(3.5);assert not has(d,'slow')
     g.run(3);assert has(d,'slow')
     n,=_dummies(g,(9,12));pr.alive=False;g.run(0.2)
     assert 50000-n.hp==168 and any(getattr(z,'name','')=='Frost' for z in g.spells) and has(n,'slow')

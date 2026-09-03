@@ -45,6 +45,10 @@ def targets(t):
     if 'buildings' in t and 'ground' not in t:return ['Buildings']
     return sorted(TGT[x] for x in t if x!='buildings')
 def count(v):return v.get('base',1) if isinstance(v,dict) else (v or 1)
+def first(hs,lt):
+    # the load time is the part of the swing a unit carries in while walking, so a loaded unit hits after hit speed less load time
+    # (the wiki's First Hit Speed); a load time at or above the hit speed (Inferno Tower) leaves the whole hit speed
+    return hs-lt if lt and lt<hs else hs
 def merge(a,b):
     # evo skills override the base skill parameter by parameter
     return {**a,**{k:{**a.get(k,{}),**{p:v for p,v in b[k].items() if v is not None}} for k in b}}
@@ -61,7 +65,7 @@ def base(chain,lvl,name,parent=None):
     rng=0 if p('kind')=='building' and (hs>=10 or not tg) else p('range') or 0 if p('kind')=='building' else max(p('range') or 0,0.5)
     # a spread of small projectiles (Hunter, Firecracker) lists the damage per pellet
     shots=pj.get('count') or 1 if p('kind')!='spell' and (p('radius') or 0)<=0.5 else 1
-    return {'hp':at(p('hitpoints'),lvl) or 0,'dmg':(at(p('damage'),lvl) or 0)*shots,'hspd':hs,'fhspd':p('loadTime') or hs,
+    return {'hp':at(p('hitpoints'),lvl) or 0,'dmg':(at(p('damage'),lvl) or 0)*shots,'hspd':hs,'fhspd':first(hs,p('loadTime')),
             'spd':(p('speed') or 0)/60.0,'rng':rng,'min_rng':p('minRange') or 0,'targets':tg,
             'transport':'Air' if p('flying') else 'Ground','atk_type':'area' if splash else 'single_target','splash_r':p('radius') if splash else 0,
             'ct_dmg':(at(p('towerDamage'),lvl) or 0)*shots,'components':[],'lvl':lvl,'name':name,'mass':p('mass') or 4,'sight_r':p('sightRange') or 5.5,
@@ -164,11 +168,11 @@ def attach(cfg,c,sk,lvl,chain=None):
             # the card lists the union of both attackers; the mount itself only hits buildings
             cfg['targets']=['Buildings'];cs.append(fx.BuildingTarget())
         if p('minRange') is not None:
-            cs.append(fx.RocketLauncher(at(p('damage'),lvl),p('hitSpeed'),p('loadTime') or p('hitSpeed'),p('minRange'),p('range'),p('radius') or 0))
+            cs.append(fx.RocketLauncher(at(p('damage'),lvl),p('hitSpeed'),first(p('hitSpeed'),p('loadTime')),p('minRange'),p('range'),p('radius') or 0))
         else:
             sl=sk.get('slow',{})
             cs.append(fx.RiderAttack(at(p('damage'),lvl),p('hitSpeed'),p('range'),1-mult(sl.get('speedMultiplier') or 0) if sl.get('duration') else 0,
-                sl.get('duration') or 0,p('loadTime'),count(p('count'))))
+                sl.get('duration') or 0,first(p('hitSpeed'),p('loadTime')),count(p('count'))))
     pe=sk.get('produceElixir',{})
     if pe.get('interval'):cs.append(fx.ElixirProd(pe['interval'],pe.get('amount') or 1))
     if kb and 'areaDamageOnDeath' not in sk and 'dash' not in sk and 'pierce' not in sk and cfg['atk_type']!='area':
@@ -326,7 +330,8 @@ def troop(c,k,lvl,team,x,y,evolved,is_hero,ev,chain,sk,name):
     else:
         tr=Troop(team,x,y,cfg)
         if 'ability' in sk:tr.ability=uses(ability(c,sk['ability'],lvl,tr),sk['ability'])
-        if sk.get('charging',{}).get('whileMoving'):tr.preload=True;tr.first_atk=False;tr.cd=tr.fhspd
+        # LoadFirstHit (Sparky): she comes in unloaded and must charge the whole hit speed, and a stun empties the charge
+        if sk.get('charging',{}).get('loadFirstHit'):tr.load_first=True;tr.cd=tr.hspd
         if sk.get('immunity',{}).get('knockback'):tr.kb_immune=True
     if ev:evolve(c,k,sk,lvl,tr)
     if is_hero and c['hero']:tr.is_hero=True;tr.ability=uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])

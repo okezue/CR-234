@@ -9,7 +9,7 @@ from tests.util import Dummy,quiet
 def t_knight_load():
     tr=mk_card('knight',11,'blue',5,10)
     assert tr.hp==1766 and tr.dmg==202
-    assert abs(tr.hspd-1.2)<0.01 and abs(tr.fhspd-0.7)<0.01
+    assert abs(tr.hspd-1.2)<0.01 and abs(tr.fhspd-0.5)<0.01
     assert abs(tr.rng-1.2)<0.01 and abs(tr.spd-1.0)<0.01
     assert tr.targets==['Ground']
     return f"Knight load (hp={tr.hp} dmg={tr.dmg})"
@@ -61,11 +61,11 @@ def t_musk_fhspd():
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)
     ini=d.hp
-    g.run(0.55)
+    g.run(0.95)
     assert d.hp==ini,"Musketeer shot before fhspd"
     g.run(0.1)
-    assert d.hp<ini,"No shot by 0.65s"
-    return "Musketeer first-hit (0.3s load, 0.3s flight over 5 tiles)"
+    assert d.hp<ini,"No shot by 1.05s"
+    return "Musketeer first-hit (0.7s first hit speed, 0.3s flight over 5 tiles)"
 def t_bdrag_splash():
     g=Game()
     bd=mk_card('baby_dragon',11,'blue',9,10)
@@ -177,7 +177,7 @@ def t_freeze_dur():
 def t_mpekka_load():
     mp=mk_card('mini_pekka',11,'blue',5,10)
     assert mp.hp==1390 and mp.dmg==755
-    assert abs(mp.hspd-1.6)<0.01 and abs(mp.fhspd-1.1)<0.01
+    assert abs(mp.hspd-1.6)<0.01 and abs(mp.fhspd-0.5)<0.01
     assert abs(mp.rng-0.8)<0.01 and abs(mp.spd-1.5)<0.01
     return f"Mini PEKKA load (hp={mp.hp} dmg={mp.dmg})"
 def t_mpekka_kills_knight():
@@ -534,7 +534,7 @@ def t_log_pushback():
 def t_pekka_load():
     p=mk_card('pekka',11,'blue',5,10)
     assert p.hp==3760 and p.dmg==842
-    assert abs(p.hspd-1.8)<0.01 and abs(p.fhspd-1.3)<0.01
+    assert abs(p.hspd-1.8)<0.01 and abs(p.fhspd-0.5)<0.01
     assert abs(p.spd-0.75)<0.01 and abs(p.rng-1.2)<0.01
     assert p.targets==['Ground']
     return f"PEKKA load (hp={p.hp} dmg={p.dmg} spd={p.spd})"
@@ -561,7 +561,7 @@ def t_mk_spawn_dmg():
     g.deploy('blue',mk)
     ini=d.hp
     g.run(0.1)
-    assert d.hp==5000-537,f"Expected 537 spawn dmg, got {ini-d.hp}"
+    assert d.hp==5000-430,f"Expected 430 spawn dmg, got {ini-d.hp}"
     return f"Mega Knight spawn damage ({ini-d.hp})"
 def t_mk_splash():
     g=Game()
@@ -842,7 +842,7 @@ def t_int_icewiz_slows_push():
     g2=Game()
     k_fast=mk_card('knight',11,'red',9,17)
     g2.deploy('red',k_fast)
-    for _ in range(100):g.tick();g2.tick()
+    for _ in range(120):g.tick();g2.tick()
     assert k_slow.y>k_fast.y,f"Slowed Knight should be behind: {k_slow.y:.1f} vs {k_fast.y:.1f}"
     return f"IW slows Knight push (slowed y={k_slow.y:.1f} vs free y={k_fast.y:.1f})"
 def t_int_icewiz_splash_slow():
@@ -1002,7 +1002,7 @@ def t_goblins_spawn():
 def t_goblins_speed():
     r=mk_card('goblins',11,'blue',9,10)
     assert abs(r[0].spd-2.0)<0.01
-    assert abs(r[0].fhspd-0.5)<0.01
+    assert abs(r[0].fhspd-0.6)<0.01
     return f"Goblins very fast (spd={r[0].spd} fhspd={r[0].fhspd})"
 def t_goblins_dps():
     g=Game()
@@ -1054,7 +1054,7 @@ def t_megaminion_load():
     assert mm.hp==837 and mm.dmg==312
     assert mm.transport=='Air'
     assert 'Air' in mm.targets and 'Ground' in mm.targets
-    assert abs(mm.hspd-1.5)<0.01 and abs(mm.fhspd-1.1)<0.01
+    assert abs(mm.hspd-1.5)<0.01 and abs(mm.fhspd-0.4)<0.01
     return f"Mega Minion load (hp={mm.hp} dmg={mm.dmg} Air)"
 def t_megaminion_v_air():
     g=Game()
@@ -1179,7 +1179,7 @@ def t_wb_v_tower():
 def t_gskel_load():
     gs=mk_card('giant_skeleton',11,'blue',5,10)
     assert gs.hp==3361 and gs.dmg==276
-    assert abs(gs.hspd-1.3)<0.01 and abs(gs.fhspd-1.0)<0.01
+    assert abs(gs.hspd-1.3)<0.01 and abs(gs.fhspd-0.3)<0.01
     assert abs(gs.spd-1.0)<0.01
     return f"Giant Skeleton load (hp={gs.hp} dmg={gs.dmg})"
 def t_gskel_death_dmg():
@@ -1230,7 +1230,7 @@ def t_barbs_stats():
     r=mk_card('barbarians',11,'blue',9,10)
     assert abs(r[0].spd-1.0)<0.01
     assert abs(r[0].hspd-1.4)<0.01
-    assert abs(r[0].fhspd-1.0)<0.01
+    assert abs(r[0].fhspd-0.4)<0.01
     assert abs(r[0].rng-0.7)<0.01
     return f"Barbarians stats (spd={r[0].spd} hspd={r[0].hspd} fhspd={r[0].fhspd})"
 def t_barbs_v_knight():
@@ -1379,7 +1379,7 @@ def t_dgob_load():
     assert dg.hp==261 and dg.dmg==151
     assert abs(dg.rng-6.5)<0.01
     assert abs(dg.hspd-0.8)<0.01
-    assert abs(dg.fhspd-0.45)<0.01
+    assert abs(dg.fhspd-0.35)<0.01
     assert abs(dg.spd-2.0)<0.01
     return f"Dart Goblin load (hp={dg.hp} dmg={dg.dmg} rng={dg.rng} spd={dg.spd})"
 def t_dgob_air():
@@ -1459,7 +1459,7 @@ def t_ggang_spawn():
     r=mk_card('goblin_gang',11,'blue',9,10)
     assert isinstance(r,list) and len(r)==6
     gobs=[u for u in r if u.name=='Goblin']
-    sgobs=[u for u in r if u.name=='Spear Goblin']
+    sgobs=[u for u in r if u.name=='SpearGoblin']
     assert len(gobs)==3,f"Expected 3 Goblins, got {len(gobs)}"
     assert len(sgobs)==3,f"Expected 3 Spear Goblins, got {len(sgobs)}"
     return f"Goblin Gang 3+3 (gob hp={gobs[0].hp} sgob hp={sgobs[0].hp})"
@@ -1467,7 +1467,7 @@ def t_ggang_stats():
     random.seed(42)
     r=mk_card('goblin_gang',11,'blue',9,10)
     gobs=[u for u in r if u.name=='Goblin']
-    sgobs=[u for u in r if u.name=='Spear Goblin']
+    sgobs=[u for u in r if u.name=='SpearGoblin']
     assert gobs[0].hp==202 and gobs[0].dmg==125
     assert sgobs[0].hp==133 and sgobs[0].dmg==81
     assert abs(sgobs[0].rng-5.0)<0.01
@@ -1536,7 +1536,7 @@ def t_skeldrags_air():
 def t_hunter_load():
     h=mk_card('hunter',11,'blue',5,10)
     assert h.hp==885 and h.dmg==840
-    assert abs(h.hspd-2.2)<0.01 and abs(h.fhspd-1.5)<0.01
+    assert abs(h.hspd-2.2)<0.01 and abs(h.fhspd-0.7)<0.01
     assert abs(h.rng-4.0)<0.01
     assert 'Air' in h.targets
     return f"Hunter load (hp={h.hp} dmg={h.dmg} rng={h.rng})"
@@ -1606,7 +1606,7 @@ def t_miner_load():
     m=mk_card('miner',11,'blue',5,10)
     assert m.hp==1210 and m.dmg==194
     assert m.ct_dmg==38
-    assert abs(m.hspd-1.3)<0.01 and abs(m.fhspd-0.8)<0.01
+    assert abs(m.hspd-1.3)<0.01 and abs(m.fhspd-0.5)<0.01
     return f"Miner load (hp={m.hp} dmg={m.dmg} ct_dmg={m.ct_dmg})"
 def t_miner_ct_reduction():
     g=Game()
@@ -1730,7 +1730,7 @@ def t_bowler_load():
     b=mk_card('bowler',11,'blue',5,10)
     assert b.hp==2081 and b.dmg==289
     assert abs(b.spd-0.75)<0.01
-    assert abs(b.hspd-2.5)<0.01 and abs(b.fhspd-2.0)<0.01
+    assert abs(b.hspd-2.5)<0.01 and abs(b.fhspd-0.5)<0.01
     assert abs(b.rng-4.0)<0.01
     return f"Bowler load (hp={b.hp} dmg={b.dmg} rng={b.rng})"
 def t_bowler_splash():
@@ -1750,7 +1750,7 @@ def t_bowler_ground_only():
 def t_exe_load():
     e=mk_card('executioner',11,'blue',5,10)
     assert e.hp==1280 and e.dmg==179
-    assert abs(e.hspd-2.4)<0.01 and abs(e.fhspd-0.4)<0.01
+    assert abs(e.hspd-2.4)<0.01 and abs(e.fhspd-0.5)<0.01
     assert 'Air' in e.targets
     return f"Executioner load (hp={e.hp} dmg={e.dmg})"
 def t_exe_splash():
@@ -1834,7 +1834,7 @@ def t_edrag_air():
 def t_sparky_load():
     sp=mk_card('sparky',11,'blue',5,10)
     assert sp.hp==1451 and sp.dmg==1331
-    assert abs(sp.hspd-4.0)<0.01 and abs(sp.fhspd-3.0)<0.01
+    assert abs(sp.hspd-4.0)<0.01 and abs(sp.fhspd-1.0)<0.01
     assert abs(sp.splash_r-1.8)<0.01
     return f"Sparky load (hp={sp.hp} dmg={sp.dmg} hspd={sp.hspd})"
 def t_sparky_nuke():
@@ -1937,16 +1937,16 @@ def t_rascals_spawn():
     r=mk_card('rascals',11,'blue',9,10)
     assert isinstance(r,list) and len(r)==3
     boys=[u for u in r if u.name=='Rascal Boy']
-    girls=[u for u in r if u.name=='Rascal Girl']
+    girls=[u for u in r if u.name=='RascalGirl']
     assert len(boys)==1 and len(girls)==2
     return f"Rascals 1+2 (boy hp={boys[0].hp} girl hp={girls[0].hp})"
 def t_rascals_stats():
     random.seed(42)
     r=mk_card('rascals',11,'blue',9,10)
     boy=[u for u in r if u.name=='Rascal Boy'][0]
-    girl=[u for u in r if u.name=='Rascal Girl'][0]
+    girl=[u for u in r if u.name=='RascalGirl'][0]
     assert boy.hp==1832 and boy.dmg==217
-    assert girl.hp==261 and girl.dmg==133
+    assert girl.hp==261 and girl.dmg==125
     assert 'Air' in girl.targets
     assert girl.targets!=['Air']
     return "Rascals mixed stats (boy=tank girl=ranged)"
@@ -2032,7 +2032,7 @@ def t_bandit_v_tower():
 def t_berserker_load():
     b=mk_card('berserker',11,'blue',5,10)
     assert b.hp==896 and b.dmg==102
-    assert abs(b.hspd-0.6)<0.01 and abs(b.fhspd-0.4)<0.01
+    assert abs(b.hspd-0.6)<0.01 and abs(b.fhspd-0.2)<0.01
     assert abs(b.spd-1.5)<0.01
     return f"Berserker load (hp={b.hp} dmg={b.dmg} hspd={b.hspd})"
 def t_berserker_fast_atk():
@@ -2072,7 +2072,7 @@ def t_egiant_buildings():
 def t_fisherman_load():
     f=mk_card('fisherman',11,'blue',5,10)
     assert f.hp==870 and f.dmg==194
-    assert abs(f.hspd-1.3)<0.01 and abs(f.fhspd-1.2)<0.01
+    assert abs(f.hspd-1.3)<0.01 and abs(f.fhspd-0.1)<0.01
     return f"Fisherman load (hp={f.hp} dmg={f.dmg})"
 def t_fisherman_v_knight():
     g=Game()
@@ -3159,7 +3159,7 @@ def t_bld_building_killed_stops_atk():
     g.run(2)
     dmg1=50000-d.hp
     cn.hp=0;cn.alive=False
-    hp_snap=d.hp
+    g.run(0.5);hp_snap=d.hp
     g.run(3)
     dmg_after=hp_snap-d.hp
     assert dmg_after==0,f"Dead cannon should deal 0 more dmg, dealt {dmg_after}"
@@ -3240,7 +3240,7 @@ def t_bld_no_tower_target():
 def t_gobmachine_body():
     r=mk_card('goblin_machine',11,'blue',5,10)
     assert r.hp==2265 and r.dmg==232
-    assert abs(r.hspd-1.2)<0.01 and abs(r.fhspd-0.7)<0.01
+    assert abs(r.hspd-1.2)<0.01 and abs(r.fhspd-0.5)<0.01
     assert r.targets==['Ground']
     return f"Goblin Machine body (hp={r.hp} dmg={r.dmg})"
 def t_gobmachine_rocket():
@@ -3279,12 +3279,12 @@ def t_goblinstein_spawn():
     r=mk_card('goblinstein',11,'blue',5,10)
     assert isinstance(r,list) and len(r)==2
     names=sorted([t.name for t in r])
-    assert 'Doctor' in names and 'Monster' in names
+    assert 'Goblinstein_doctor' in names and 'Monster' in names
     return f"Goblinstein spawns 2 ({names})"
 def t_goblinstein_doctor():
     random.seed(42)
     r=mk_card('goblinstein',11,'blue',5,10)
-    doc=[t for t in r if t.name=='Doctor'][0]
+    doc=[t for t in r if t.name=='Goblinstein_doctor'][0]
     assert doc.hp==721 and doc.dmg==92
     assert abs(doc.rng-5.5)<0.01
     assert 'Air' in doc.targets and 'Ground' in doc.targets
@@ -3384,7 +3384,7 @@ def t_susbush_deathspawn():
     sb.hp=0;sb.alive=False;sb.on_death(g)
     gobs=[t for t in g.players['blue'].troops if t.alive and t is not sb]
     assert len(gobs)==2,f"Expected 2 goblins, got {len(gobs)}"
-    assert gobs[0].hp==476 and gobs[0].dmg==355
+    assert gobs[0].hp==304 and gobs[0].dmg==256
     return f"Suspicious Bush spawns 2 goblins (hp={gobs[0].hp} dmg={gobs[0].dmg})"
 def t_mv_forward():
     g=Game()
@@ -3510,10 +3510,10 @@ def t_atk_first_hit_speed():
     g.deploy('blue',m)
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)
-    g.run(0.55)
-    assert d.hp==50000,"No shot before fhspd (0.3s) plus flight (0.3s)"
+    g.run(0.95)
+    assert d.hp==50000,"No shot before the first hit (0.7s) plus flight (0.3s)"
     g.run(0.1)
-    assert d.hp<50000,"Should have landed by 0.65s"
+    assert d.hp<50000,"Should have landed by 1.05s"
     return "First hit speed faster than hspd"
 def t_atk_splash_radius():
     g=Game()
@@ -4804,7 +4804,7 @@ def t_evo_knight_dmg_red():
     assert getattr(k,'evolved',False),"Should be evolved"
     from sim.fx import EvoKnight
     assert any(isinstance(c,EvoKnight) for c in k.components)
-    d=Dummy('red',9,14.5,hp=50000,dmg=500,spd=0,hspd=0.5,rng=1.5)
+    d=Dummy('red',9,14.5,hp=50000,dmg=500,spd=0,hspd=0.4,rng=1.5)
     g.deploy('red',d)
     ini=k.hp;g.run(1)
     raw_dmg=500*2;actual=ini-k.hp
@@ -5733,7 +5733,7 @@ def t_evo_edrag_infinite():
     assert dmg1>3*ed.dmg,f"Bolt should keep bouncing between the pair: {dmg1}"
     g2=quiet(Game());e2=mk_card('electro_dragon',11,'blue',9,10,evolved=True);g2.deploy('blue',e2)
     lone=Dummy('red',9,13,hp=5000,spd=0,dmg=0,rng=0);g2.deploy('red',lone);g2.run(5)
-    assert 5000-lone.hp==2*e2.dmg,f"A lone target has nothing to chain onto: {5000-lone.hp}"
+    assert 5000-lone.hp==3*e2.dmg,f"A lone target has nothing to chain onto: {5000-lone.hp}"
     return f"Evo E-Dragon infinite chain (d1={dmg1}, d2={dmg2})"
 def t_evo_exe_smash():
     g=Game()

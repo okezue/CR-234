@@ -100,21 +100,21 @@ class BuildingTarget(Component):
 class RiderAttack(Component):
     def __init__(self,dmg,hspd,rng,slow_pct=0,slow_dur=0,fhspd=None,count=1):
         self.dmg=dmg;self.hspd=hspd;self.rng=rng;self.count=count
-        self.slow_pct=slow_pct;self.slow_dur=slow_dur;self.cd=fhspd if fhspd is not None else hspd
+        self.slow_pct=slow_pct;self.slow_dur=slow_dur;self.fhspd=fhspd if fhspd is not None else hspd;self.cd=self.fhspd
     def on_tick(self,tr,g):
-        self.cd=max(0,self.cd-g.DT)
-        if self.cd>0:return
         opp=g._opp(tr.team)
         best=None;bd=999
         for e in g.players[opp].troops:
             if not e.alive:continue
             d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
             if d<=self.rng and d<bd:bd=d;best=e
-        if best:
-            best.take_damage(self.dmg*self.count)
-            if self.slow_pct>0 and hasattr(best,'statuses'):
-                best.statuses.append(Status('slow',self.slow_dur,1.0-self.slow_pct))
-            self.cd=self.hspd
+        if not best:self.cd=max(self.fhspd,self.cd-g.DT);return
+        self.cd=max(0,self.cd-g.DT)
+        if self.cd>0:return
+        best.take_damage(self.dmg*self.count)
+        if self.slow_pct>0 and hasattr(best,'statuses'):
+            best.statuses.append(Status('slow',self.slow_dur,1.0-self.slow_pct))
+        self.cd=self.hspd
 class Recoil(Component):
     def __init__(self,dist):self.dist=dist
     def on_attack(self,tr,tgt,g):
@@ -145,7 +145,7 @@ class Charge(Component):
             self.charged=False;self.moved=0;return
         if not self.charged and self.moved>=self.dist:
             self.charged=True;self.orig_spd=tr.spd;tr.spd*=2
-            self._ofh=getattr(tr,'fhspd',tr.hspd);tr.fhspd=self.fhspd
+            self._ofh=getattr(tr,'fhspd',tr.hspd);tr.fhspd=self.fhspd;tr.cd=min(tr.cd,self.fhspd)
     def on_attack(self,tr,tgt,g):
         if not self.charged:return
         extra=getattr(tr,'charge_dmg',tr.dmg*2)-tr.dmg
@@ -344,13 +344,9 @@ class RocketLauncher(Component):
     def __init__(self,dmg,hspd,fhspd,rng_min,rng_max,splash_r):
         self.dmg=dmg;self.hspd=hspd;self.fhspd=fhspd
         self.rng_min=rng_min;self.rng_max=rng_max;self.splash_r=splash_r
-        self.cd=fhspd;self.first=True
+        self.cd=fhspd
     def on_tick(self,tr,g):
-        frz=any(s.kind=='freeze' for s in getattr(tr,'statuses',[]))
-        stn=any(s.kind=='stun' for s in getattr(tr,'statuses',[]))
-        if frz or stn:return
-        self.cd-=g.DT
-        if self.cd>0:return
+        if has(tr,'stun','freeze'):return
         opp=g._opp(tr.team)
         best=None;bd=999
         for e in g.players[opp].troops:
@@ -361,7 +357,9 @@ class RocketLauncher(Component):
             if tw.team!=opp or not tw.alive:continue
             d=tw.dist(tr.x,tr.y)
             if self.rng_min<=d<=self.rng_max and d<bd:bd=d;best=tw
-        if not best:self.cd=0.1;return
+        if not best:self.cd=max(self.fhspd,self.cd-g.DT);return
+        self.cd-=g.DT
+        if self.cd>0:return
         tx,ty=(best.cx,best.cy) if hasattr(best,'cx') else (best.x,best.y)
         best.take_damage(self.dmg)
         if hasattr(best,'ttype') and not best.alive:g._tower_down(best)

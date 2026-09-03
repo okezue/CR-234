@@ -15,9 +15,9 @@
   "card": "sparky",
   "path": "skills.charging",
   "value": {
-   "whileMoving": true
+   "loadFirstHit": true
   },
-  "note": "Sparky charges up over time, releasing her attack when it is full and an enemy is within range; the charge is kept across targets and only a stun resets it. https://clashroyale.fandom.com/wiki/Sparky"
+  "note": "Sparky is the one unit that deploys unloaded (the game data's LoadFirstHit): a fresh Sparky charges the whole 4 s hit speed before her first shot, then loads 3 s of it while walking so a loaded Sparky fires 1 s after a target is in range (the 3/11/2020 balance note: first attack time interval 1 s), and a stun empties the charge. https://royaleapi.com/blog/secret-stats https://clashroyale.fandom.com/wiki/Sparky"
  },
  {
   "card": "royal_recruits",
@@ -71,5 +71,53 @@
    "building": true
   },
   "note": "Since the 5/5/2025 update the Cannon Cart has no shield; when its hitpoints fall below 50% it becomes a building with a 15 second lifetime (rooted, knockback immune since 6/8/2018), its remaining hitpoints draining over that time. The ClashStrategic record has no skill for the mode switch. https://clashroyale.fandom.com/wiki/Cannon_Cart"
+ },
+ {
+  "card": "goblinstein",
+  "path": "units.doctor.damage[10]",
+  "value": 92,
+  "note": "The Doctor's shot deals 92 at level 11 (wiki table and the legacy snapshot agree); the game data dump carries a level 1 projectile damage of 53 that would give 135 and is not corroborated. https://clashroyale.fandom.com/wiki/Goblinstein"
+ },
+ {
+  "card": "mega_knight",
+  "path": "skills.areaDamageOnSpawn.damage[10]",
+  "value": 430,
+  "note": "Spawn damage 430 at level 11 (wiki table; the legacy snapshot copied the 537 jump damage). https://clashroyale.fandom.com/wiki/Mega_Knight"
+ },
+ {
+  "card": "mega_knight",
+  "path": "skills.areaDamageOnSpawn.radius",
+  "value": 2.2,
+  "note": "The 12/2/2018 balance update set the spawn area radius to 2.2 tiles (from 2.5); the legacy snapshot had 3.5. https://clashroyale.fandom.com/wiki/Mega_Knight"
+ },
+ {
+  "card": "mega_knight",
+  "path": "skills.dash.radius",
+  "value": 2.2,
+  "note": "The jump lands with the same 2.2 tile area as the spawn (Liquipedia and wiki hidden stats); the legacy snapshot had 3.5, so a jump hit everything within 3.5 tiles for 537. https://liquipedia.net/clashroyale/Mega_Knight"
+ },
+ {
+  "card": "suspicious_bush",
+  "path": "units.bush_goblin.damage[10]",
+  "value": 256,
+  "note": "Bush Goblins deal 256 at level 11 after the 9/4/2025 12% buff (wiki table dmg_11); the legacy snapshot's 355 is unsourced. https://clashroyale.fandom.com/wiki/Suspicious_Bush"
+ },
+ {
+  "card": "suspicious_bush",
+  "path": "units.bush_goblin.hitpoints[10]",
+  "value": 304,
+  "note": "Bush Goblins have 304 hitpoints at level 11 (wiki table hp_11); the legacy snapshot's 476 is unsourced. https://clashroyale.fandom.com/wiki/Suspicious_Bush"
+ },
+ {
+  "card": "executioner",
+  "path": "loadTime",
+  "value": 1.9,
+  "note": "The game data gives the Executioner a 0.9 s hit speed with a 0.4 s load time and a 1.5 s axe flight (pingpongVisualTime), so his first axe leaves 0.5 s after acquiring a target (wiki First Hit Speed) while the card's 2.4 s cycle includes the flight; against that cycle the load time that yields the 0.5 s first hit is 1.9 s (the ClashStrategic 0.4 pairs with the 0.9 s cycle). https://clashroyale.fandom.com/wiki/Executioner"
+ },
+ {
+  "card": "mortar",
+  "path": "loadTime",
+  "value": 3.7,
+  "note": "Mortar loadTime 3700 in the game data with a 4700 hit speed: the first shell leaves 1 s after a target enters range (wiki First Hit Speed 1 sec); the ClashStrategic 4.0 would make it 0.7 s. https://clashroyale.fandom.com/wiki/Mortar"
  }
 ]

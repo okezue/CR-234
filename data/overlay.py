@@ -50,6 +50,12 @@ def tps(v):
     return round(v / 60, 3) if isinstance(v, (int, float)) else None
 
 
+def load_time(hs, first_hit):
+    # the legacy first hit speed is hit speed less load time (the wiki's First Hit Speed); the schema keeps the game's load time
+    hs, fh = num(hs), num(first_hit)
+    return round(hs - fh, 3) if hs is not None and fh is not None and 0 < fh < hs else None
+
+
 def targets(v):
     if isinstance(v, str):
         s = v.lower().replace("_and_", " & ").replace("air_and_ground", "air & ground")
@@ -121,7 +127,7 @@ class Overlay:
         self.put(f"{base}.count", count if count is not None else u.get("count"), field)
         atk = u.get("attack", {})
         self.put(f"{base}.hitSpeed", atk.get("hit_speed_sec", u.get("hit_speed_sec")), field)
-        self.put(f"{base}.loadTime", atk.get("first_hit_speed_sec", u.get("first_hit_speed_sec")), field)
+        self.put(f"{base}.loadTime", load_time(g(self.c, f"{base}.hitSpeed"), atk.get("first_hit_speed_sec", u.get("first_hit_speed_sec"))), field)
         self.put(f"{base}.range", g(atk, "range.tiles", u.get("range_tiles")), field)
         self.put(f"{base}.speed", speed(g(u, "movement.speed", u.get("movement_speed"))), field)
         self.put(f"{base}.targets", targets(atk.get("targets", u.get("targets"))), field)
@@ -179,8 +185,8 @@ class Overlay:
             if isinstance(hs.get(b), (int, float)):
                 self.put(a, hs[b], f"hidden_stats.{b}")
         atk = d.get("attack", {})
-        self.put("loadTime", atk.get("first_hit_speed_sec", d.get("first_hit_speed_sec")), "attack.first_hit_speed_sec")
-        self.put("loadTime", num(d.get("first_hit")), "first_hit")
+        self.put("loadTime", load_time(c["hitSpeed"], atk.get("first_hit_speed_sec", d.get("first_hit_speed_sec"))), "attack.first_hit_speed_sec")
+        self.put("loadTime", load_time(c["hitSpeed"], d.get("first_hit")), "first_hit")
         self.put("deployTime", d.get("deploy_time_sec", g(d, "building_attributes.deploy_time_sec")), "deploy_time_sec")
         if c["kind"] == "building":
             self.put("lifetime", g(d, "building_attributes.lifetime_sec", g(d, "building_stats.lifetime_sec", d.get("lifetime_sec"))), "lifetime_sec")
@@ -274,7 +280,8 @@ class Overlay:
         if rl:
             a, lv = rl["attack"], g(rl, "stats_by_level.11", {})
             self.skill("skills", "secondaryAttack", "components.rocket_launcher", character="RocketLauncher", hitSpeed=a.get("hit_speed_sec"),
-                       loadTime=a.get("first_hit_speed_sec"), minRange=g(a, "range.min_tiles"), range=g(a, "range.max_tiles"),
+                       loadTime=load_time(a.get("hit_speed_sec"), a.get("first_hit_speed_sec")), minRange=g(a, "range.min_tiles"),
+                       range=g(a, "range.max_tiles"),
                        radius=a.get("area_damage_radius_tiles"), targets=targets(rl.get("targets")))
             self.arr("skills.secondaryAttack.damage", lv.get("damage"), "components.rocket_launcher")
             self.arr("skills.secondaryAttack.towerDamage", lv.get("crown_tower_damage"), "components.rocket_launcher")

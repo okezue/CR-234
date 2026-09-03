@@ -1,5 +1,5 @@
 import random
-from sim.cards import card,at
+from sim.cards import card,at,first
 from sim.units import hidden
 
 def king(lvl):
@@ -23,7 +23,7 @@ class TT:
         self.lvl=lvl;self.name=jn;self.cd=0;self.lock=None
         d=card(jn);s=d['stats']
         self.hp=at(s['hitpoints'],lvl);self.dmg=at(s['damage'],lvl)
-        self.spd=d['hitSpeed'];self.fspd=d['loadTime'] or d['hitSpeed'];self.RNG=d['range']
+        self.spd=d['hitSpeed'];self.fspd=first(d['hitSpeed'],d['loadTime']);self.RNG=d['range']
         self.proj_spd=(d['projectile'] or {}).get('speed') or 0
     def _tgt(self,tw,en):
         # the tower holds its target until it dies, hides or leaves range (a stun resets it); a tank keeps the fire off what follows

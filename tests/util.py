@@ -5,11 +5,11 @@ class Dummy:
         self.team=team;self.x=float(x);self.y=float(y)
         self.hp=hp;self.max_hp=hp;self.dmg=dmg
         self.spd=spd;self.hspd=hspd;self.rng=rng
-        self.alive=True;self.lvl=lvl;self.cd=0
+        self.alive=True;self.lvl=lvl;self.cd=hspd
         self.transport='Ground';self.targets=['Ground']
         self.components=[];self.statuses=[]
         self.atk_type='single_target';self.splash_r=0
-        self.fhspd=hspd;self.first_atk=True;self.tgt=None
+        self.fhspd=hspd;self.tgt=None
         self.name='dummy';self.ct_dmg=0;self.mass=mass
         self.sight_r=5.5;self.collision_r=0.5
         self.retarget_cd=0;self.aggro_tgt=None;self.proj_spd=0
