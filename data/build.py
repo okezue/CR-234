@@ -491,6 +491,7 @@ def main():
                         "every other unit deploys loaded and loads while walking, so its first hit takes hit speed less load time",
             "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
             "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
+            "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
             "spawn.minRadius": "a periodic spell spawn rises between this distance and the spell radius from the centre (Graveyard)",
             "burrow": "underground travel from the own King Tower at speed (tiles/min) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill",

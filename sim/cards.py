@@ -178,6 +178,8 @@ def attach(cfg,c,sk,lvl,chain=None):
     if kb and 'areaDamageOnDeath' not in sk and 'dash' not in sk and 'pierce' not in sk and cfg['atk_type']!='area':
         cs.append(fx.MonkCombo(pb['cycle'],kb) if pb.get('cycle') else fx.Knockback(kb))
     if sk.get('recoil',{}).get('distance'):cs.append(fx.Recoil(sk['recoil']['distance']))
+    ms=sk.get('meleeSwitch',{})
+    if not empty(ms.get('damage')):cs.append(fx.MeleeSwitch(at(ms['damage'],lvl),ms.get('range') or 1.6))
     rh=sk.get('rampingHitSpeed',{})
     if rh.get('hitSpeedTiers'):cs.append(fx.LPRamp(rh['hitSpeedTiers'],rh.get('hitsPerTier') or 1))
     iv=sk.get('invisibility',{})

@@ -137,5 +137,49 @@
   "path": "skills.areaDamageOnDeath.radius",
   "value": 3.0,
   "note": "Bomb Attributes on the wiki: death damage splash radius 3 tiles, the bomb deploys for 3 seconds before it goes off and hits air and ground; the legacy snapshot had 2.5. https://clashroyale.fandom.com/wiki/Bomb_Tower"
+ },
+ {
+  "card": "three_musketeers",
+  "path": "stats.hitpoints[10]",
+  "value": 883,
+  "note": "The 3/11/2025 rework spawns three Elite Musketeers with 883 hitpoints at level 11 (wiki table hp_11); ClashStrategic still lists the Musketeer's 721. https://clashroyale.fandom.com/wiki/Three_Musketeers"
+ },
+ {
+  "card": "three_musketeers",
+  "path": "stats.damage[10]",
+  "value": 204,
+  "note": "Elite Musketeer ranged damage 204 at level 11 (wiki table range dmg_11) since the 3/11/2025 rework; ClashStrategic still lists the Musketeer's 217. https://clashroyale.fandom.com/wiki/Three_Musketeers"
+ },
+ {
+  "card": "three_musketeers",
+  "path": "stats.towerDamage[10]",
+  "value": 204,
+  "note": "Full damage to towers, as for every troop. https://clashroyale.fandom.com/wiki/Three_Musketeers"
+ },
+ {
+  "card": "three_musketeers",
+  "path": "hitSpeed",
+  "value": 1.3,
+  "note": "Elite Musketeers hit every 1.3 s (wiki Hit Speed) since the 3/11/2025 rework; ClashStrategic still lists 1.0. https://clashroyale.fandom.com/wiki/Three_Musketeers"
+ },
+ {
+  "card": "three_musketeers",
+  "path": "loadTime",
+  "value": 0.6,
+  "note": "First Hit Speed 0.7 s (4/2/2025 balance note) against the 1.3 s hit speed. https://clashroyale.fandom.com/wiki/Three_Musketeers"
+ },
+ {
+  "card": "three_musketeers",
+  "path": "skills.meleeSwitch",
+  "value": {
+   "damage": {
+    "level11": 314
+   },
+   "range": 1.6,
+   "targets": [
+    "ground"
+   ]
+  },
+  "note": "Elite Musketeers switch to a Melee: Long (1.6) bayonet attack against close ground enemies, 314 damage at level 11 (wiki table melee dmg_11), and back to the 6 tile shot when enemies are far. https://clashroyale.fandom.com/wiki/Three_Musketeers"
  }
 ]

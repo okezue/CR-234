@@ -115,6 +115,13 @@ class RiderAttack(Component):
         if self.slow_pct>0 and hasattr(best,'statuses'):
             best.statuses.append(Status('slow',self.slow_dur,1.0-self.slow_pct))
         self.cd=self.hspd
+class MeleeSwitch(Component):
+    # a close ground enemy is met with the bayonet: the hit deals the melee damage while the target is a ground unit within melee reach
+    def __init__(self,dmg,rng):self.dmg=dmg;self.rng=rng;self.shot=None
+    def on_tick(self,tr,g):
+        if self.shot is None:self.shot=tr.dmg
+        t=tr.tgt
+        tr.dmg=self.dmg if t is not None and not hasattr(t,'ttype') and getattr(t,'transport','Ground')!='Air' and g._dist(tr,t)<=self.rng else self.shot
 class Recoil(Component):
     def __init__(self,dist):self.dist=dist
     def on_attack(self,tr,tgt,g):

@@ -2244,10 +2244,10 @@ def t_3musk_spawn():
     random.seed(42)
     r=mk_card('three_musketeers',11,'blue',9,10)
     assert isinstance(r,list) and len(r)==3
-    assert all(m.hp==721 for m in r)
-    assert all(m.dmg==217 for m in r)
-    assert abs(r[0].rng-6.0)<0.01
-    return f"Three Musketeers spawn 3 (hp={r[0].hp} dmg={r[0].dmg})"
+    assert all(m.hp==883 for m in r)
+    assert all(m.dmg==204 for m in r)
+    assert abs(r[0].rng-6.0)<0.01 and abs(r[0].hspd-1.3)<0.01
+    return f"Three Musketeers spawn 3 Elite Musketeers (hp={r[0].hp} dmg={r[0].dmg})"
 def t_3musk_dps():
     g=Game()
     random.seed(42)
