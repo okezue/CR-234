@@ -3,7 +3,7 @@ import os
 import argparse
 import random
 from sim.game import Game,card_info,MAX_LEVEL
-from sim.cards import load,key,card
+from sim.cards import load,key,card,at
 
 _FILLER=['knight','archers','fireball','zap','valkyrie','musketeer','baby_dragon','mini_pekka']
 _BASE=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -199,16 +199,32 @@ def load_meta_v2(path):
             if not r_klvl:r_klvl=max(r_lvls.values()) if r_lvls else 11
             b_tt=r.get('team_tower_troop','') or 'tower_princess'
             r_tt=r.get('opp_tower_troop','') or 'tower_princess'
+            b_hp=_hp(r,'team');r_hp=_hp(r,'opp');gm=r.get('gameMode_name','') or r.get('battle_type','')
+            # the level column is the tower troop's; a king that ended above that level's hitpoints reveals a higher king level
+            b_kl=max(b_klvl,_hp_to_klvl(b_hp[0])) if b_hp and b_hp[0] else b_klvl
+            r_kl=max(r_klvl,_hp_to_klvl(r_hp[0])) if r_hp and r_hp[0] else r_klvl
             out[tag]={'result':res,'tc':tc,'oc':oc,
                 'b_deck':b_deck,'r_deck':r_deck,
                 'b_lvls':b_lvls,'r_lvls':r_lvls,
-                'b_klvl':b_klvl,'r_klvl':r_klvl,
+                'b_klvl':b_kl,'r_klvl':r_kl,'b_ttlvl':b_klvl,'r_ttlvl':r_klvl,
                 'b_tt':b_tt,'r_tt':r_tt,
                 't0_tag':team_tags,'o0_tag':opp_tags,
-                'gameMode':r.get('gameMode_name','') or r.get('battle_type',''),
-                'b_hp':_hp(r,'team'),'r_hp':_hp(r,'opp'),
+                'gameMode':gm,
+                'b_hp':b_hp,'r_hp':r_hp,
                 'b_evo':b_evo,'r_evo':r_evo,'b_hero':b_hero,'r_hero':r_hero}
+            out[tag]['modifier']=_modifier(out[tag])
     return out
+
+_MODIFIER_MODES=('C.H.A.O.S','7x Elixir','Sudden Death Battle')
+def _modifier(o):
+    # event modes with doubled tower hitpoints or other modifiers, or towers that ended above any level's hitpoints, cannot be simulated with standard rules
+    if o['gameMode'].startswith(_MODIFIER_MODES):return True
+    for tm in ('b','r'):
+        hp=o[f'{tm}_hp']
+        if not hp:continue
+        kmax=at(card('king_tower')['stats']['hitpoints'],o[f'{tm}_klvl']);pmax=at(card(o[f'{tm}_tt'])['stats']['hitpoints'],o[f'{tm}_ttlvl'])
+        if hp[0]>kmax or max(hp[1],hp[2])>pmax:return True
+    return False
 
 def _hp(r,side):
     v=[r.get(f'{side}_king_hp',''),r.get(f'{side}_princess_hp_0',''),r.get(f'{side}_princess_hp_1','')]
@@ -370,9 +386,9 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
     rh,rn,rq=_engineer_hand(decks['red'],red_plays)
     random.seed(42)
     g=Game(
-        p1={'deck':decks['blue'],'king_lvl':b_klvl,'tt_name':b_tt,'drag_del':0,'drag_std':0,
+        p1={'deck':decks['blue'],'king_lvl':b_klvl,'tt_name':b_tt,'tt_lvl':outcome.get('b_ttlvl'),'drag_del':0,'drag_std':0,
             'ability_del':0,'ability_std':0,'card_levels':b_lvls},
-        p2={'deck':decks['red'],'king_lvl':r_klvl,'tt_name':r_tt,'drag_del':0,'drag_std':0,
+        p2={'deck':decks['red'],'king_lvl':r_klvl,'tt_name':r_tt,'tt_lvl':outcome.get('r_ttlvl'),'drag_del':0,'drag_std':0,
             'ability_del':0,'ability_std':0,'card_levels':r_lvls}
     )
     bd=g.players['blue'].deck
@@ -522,10 +538,14 @@ def main():
     else:
         bids=sorted(matched)
         if args.limit>0:bids=bids[:args.limit]
+    bids=[b for b in bids if b in outcomes]
+    skip=[b for b in bids if outcomes[b].get('modifier')]
+    if skip and not args.battle:
+        bids=[b for b in bids if b not in set(skip)]
+        print(f"Excluded {len(skip)} modifier-mode battles (event modes or towers above their level's hitpoints)")
     tot=len(bids)
     wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[]
     print(f"Running {tot} battles...\n")
-    bids=[b for b in bids if b in outcomes]
     if args.jobs>1 and not args.visualize:
         from multiprocessing import Pool
         pool=Pool(args.jobs);runs=pool.imap(_run,[(b,placements[b],outcomes[b],pids.get(b)) for b in bids],chunksize=4)
