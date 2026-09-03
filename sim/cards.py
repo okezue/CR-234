@@ -324,6 +324,7 @@ def troop(c,k,lvl,team,x,y,evolved,is_hero,ev,chain,sk,name):
         tr=Troop(team,x,y,cfg)
         if 'ability' in sk:tr.ability=uses(ability(c,sk['ability'],lvl,tr),sk['ability'])
         if sk.get('charging',{}).get('whileMoving'):tr.preload=True;tr.first_atk=False;tr.cd=tr.fhspd
+        if sk.get('immunity',{}).get('knockback'):tr.kb_immune=True
     if ev:evolve(c,k,sk,lvl,tr)
     if is_hero and c['hero']:tr.is_hero=True;tr.ability=uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])
     for x in tr.components:
@@ -387,7 +388,8 @@ def spell(c,lvl,team,x,y,evolved,is_hero=False):
         if is_hero and c['hero']:tc['hero']=lambda tr:uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])
         if pi.get('range'):return BarbarianBarrelSpell(team,x,y,{**cfg,'range':pi['range'],'width':r*2,'pushback':pb.get('distance') or 0,'troop_cfg':tc})
         if sp.get('interval'):
-            gy={'troop_cfg':tc,'total':n,'interval':sp['interval'],'radius':r,'dur':dur,'name':name,'first_delay':sp.get('firstDelay') or 0}
+            gy={'troop_cfg':tc,'total':n,'interval':sp['interval'],'radius':r,'min_radius':sp.get('minRadius') or r,'dur':dur,'name':name,
+                'first_delay':sp.get('firstDelay') or 0}
             return GraveyardSpell(team,x,y,gy)
         if c['hitType']=='splash':return RoyalDeliverySpell(team,x,y,{**cfg,'troop_cfg':tc})
         if bs is not sp:

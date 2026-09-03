@@ -16,15 +16,26 @@ def enemies(g,team,air=True,towers=True):
     if towers:
         for tw in g.arena.towers:
             if tw.team==opp and tw.alive:yield tw
-def near(g,team,x,y,r,air=True,towers=True):return [e for e in enemies(g,team,air,towers) if math.hypot(pos(e)[0]-x,pos(e)[1]-y)<=r]
+def tdist(u,x,y):
+    # area effects reach a body when they touch it: the tower footprint or the troop's collision circle, not only the centre
+    return u.dist(x,y) if hasattr(u,'ttype') else max(0.0,math.hypot(u.x-x,u.y-y)-getattr(u,'collision_r',0))
+def near(g,team,x,y,r,air=True,towers=True):return [e for e in enemies(g,team,air,towers) if tdist(e,x,y)<=r]
 def hurt(u,dmg,g):
     u.take_damage(dmg)
     if hasattr(u,'ttype') and not u.alive:g._tower_down(u)
+_A=Arena()
 def push(u,ox,oy,dist):
-    # knockback away from (ox,oy); towers, buildings and heavy troops (mass 6+) ignore it
-    if dist<=0 or hasattr(u,'ttype') or getattr(u,'is_building',False) or getattr(u,'mass',4)>=6:return
+    # knockback away from (ox,oy): towers, buildings, mass 10+ (P.E.K.K.A, Goblin Machine) and immune cards ignore it; a hit troop's swing and charge restart
+    if dist<=0 or hasattr(u,'ttype') or getattr(u,'is_building',False) or getattr(u,'kb_immune',False) or getattr(u,'mass',4)>=10:return
     dx=u.x-ox;dy=u.y-oy;d=math.hypot(dx,dy)
-    if d>0:u.x+=dx/d*dist;u.y+=dy/d*dist
+    if d<=0:return
+    gnd=getattr(u,'transport','Ground')!='Air';n=max(1,int(dist*4));x0,y0=u.x,u.y
+    for i in range(1,n+1):
+        nx=min(max(x0+dx/d*dist*i/n,0.3),_A.W-0.3);ny=min(max(y0+dy/d*dist*i/n,0.3),_A.H-0.3)
+        # a ground body stops at the river bank or a tower footprint instead of being thrown onto it
+        if gnd and (_A.blocked(int(nx),int(ny),True) or (int(ny) in _A.RIVER and not _A.on_bridge(nx))):break
+        u.x,u.y=nx,ny
+    if hasattr(u,'statuses'):u.statuses.append(Status('knockback',0.05))
 def strip(g,team,x0,y0,x1,y1,hw,air=True,skip=()):
     # enemies whose body overlaps the segment: perpendicular distance within hw plus their own radius
     dx=x1-x0;dy=y1-y0;L=math.hypot(dx,dy)
@@ -71,8 +82,7 @@ class SplashAttack(Component):
             if not e.alive or e is tgt:continue
             et=getattr(e,'transport','Ground')
             if et=='Air' and 'Air' not in atgts:continue
-            d=math.sqrt((e.x-tx)**2+(e.y-ty)**2)
-            if d<=tr.splash_r:
+            if tdist(e,tx,ty)<=tr.splash_r:
                 e.take_damage(tr.dmg)
                 if sd>0 and hasattr(e,'statuses'):
                     e.statuses.append(Status('slow',sd,sv))
@@ -80,7 +90,7 @@ class SplashAttack(Component):
                     e.statuses.append(Status('stun',st))
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive or tw is tgt:continue
-            d=math.sqrt((tw.cx-tx)**2+(tw.cy-ty)**2)
+            d=tw.dist(tx,ty)
             if d<=tr.splash_r:
                 tw.take_damage(tr.dmg)
                 if not tw.alive:g._tower_down(tw)
@@ -128,7 +138,7 @@ class Charge(Component):
             dx=tr.x-self.px;dy=tr.y-self.py
             self.moved+=math.sqrt(dx*dx+dy*dy)
         self.px=tr.x;self.py=tr.y
-        if any(s.kind in ('stun','freeze') for s in getattr(tr,'statuses',[])):
+        if any(s.kind in ('stun','freeze','knockback') for s in getattr(tr,'statuses',[])):
             if self.charged and self.orig_spd is not None:
                 tr.spd=self.orig_spd
             if self.charged and hasattr(self,'_ofh'):tr.fhspd=self._ofh
@@ -191,7 +201,7 @@ class DeathNova(Component):
                 if hasattr(e,'statuses'):e.statuses.append(Status('slow',self.slow_dur,sv))
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tw.cx-tr.x)**2+(tw.cy-tr.y)**2)
+            d=tw.dist(tr.x,tr.y)
             if d<=dr:
                 tw.take_damage(dd)
                 if not tw.alive:g._tower_down(tw)
@@ -258,7 +268,7 @@ class DualTarget(Component):
             if d<=tr.rng:cands.append((d,e))
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive or tw is tgt:continue
-            d=math.sqrt((tr.x-tw.cx)**2+(tr.y-tw.cy)**2)
+            d=tw.dist(tr.x,tr.y)
             if d<=tr.rng:cands.append((d,tw))
         if cands:
             cands.sort(key=lambda x:x[0])
@@ -287,7 +297,7 @@ class SuicideChain(Component):
                 if d<=cr and d<bd:bd=d;best=e
             for tw in g.arena.towers:
                 if tw.team!=opp or not tw.alive or tw in hit:continue
-                d=math.sqrt((tw.cx-px)**2+(tw.cy-py)**2)
+                d=tw.dist(px,py)
                 if d<=cr and d<bd:bd=d;best=tw
             if not best:break
             best.take_damage(tr.dmg)
@@ -313,7 +323,7 @@ class ChainAttack(Component):
                 if d<=cr and d<bd:bd=d;best=e
             for tw in g.arena.towers:
                 if tw.team!=opp or not tw.alive or tw in hit:continue
-                d=math.sqrt((tw.cx-px)**2+(tw.cy-py)**2)
+                d=tw.dist(px,py)
                 if d<=cr and d<bd:bd=d;best=tw
             if not best:break
             best.take_damage(tr.dmg)
@@ -370,7 +380,7 @@ class RocketLauncher(Component):
             if self.rng_min<=d<=self.rng_max and d<bd:bd=d;best=e
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tr.x-tw.cx)**2+(tr.y-tw.cy)**2)
+            d=tw.dist(tr.x,tr.y)
             if self.rng_min<=d<=self.rng_max and d<bd:bd=d;best=tw
         if not best:self.cd=0.1;return
         tx,ty=(best.cx,best.cy) if hasattr(best,'cx') else (best.x,best.y)
@@ -382,7 +392,7 @@ class RocketLauncher(Component):
             if d<=self.splash_r:e.take_damage(self.dmg)
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive or tw is best:continue
-            d=math.sqrt((tw.cx-tx)**2+(tw.cy-ty)**2)
+            d=tw.dist(tx,ty)
             if d<=self.splash_r:
                 tw.take_damage(self.dmg)
                 if not tw.alive:g._tower_down(tw)
@@ -472,9 +482,7 @@ class Stealth(Component):
 class Knockback(Component):
     def __init__(self,dist):self.dist=dist
     def on_attack(self,tr,tgt,g):
-        if hasattr(tgt,'x') and getattr(tgt,'mass',4)<6:
-            dx=tgt.x-tr.x;dy=tgt.y-tr.y;d=math.hypot(dx,dy)
-            if d>0:tgt.x+=dx/d*self.dist;tgt.y+=dy/d*self.dist
+        if hasattr(tgt,'x'):push(tgt,tr.x,tr.y,self.dist)
 class Ability:
     CAST_TIME=1.0
     def __init__(self,cost,cd,delay=1.0):
@@ -509,7 +517,7 @@ class DashingDash(Ability):
             if d<=self.sr and d<bd:bd=d;best=e
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive or id(tw) in self.hit:continue
-            d=math.sqrt((tr.x-tw.cx)**2+(tr.y-tw.cy)**2)
+            d=tw.dist(tr.x,tr.y)
             if d<=self.sr and d<bd:bd=d;best=tw
         if not best:self.dashing=False;return
         best.take_damage(self.dd)
@@ -587,7 +595,7 @@ class ExplosiveEscape(Ability):
             if d<=self.bomb_r:e.take_damage(self.bomb_dmg)
         for tw in g.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tw.cx-ox)**2+(tw.cy-oy)**2)
+            d=tw.dist(ox,oy)
             if d<=self.bomb_r:
                 tw.take_damage(self.bomb_dmg)
                 if not tw.alive:g._tower_down(tw)
@@ -611,7 +619,7 @@ class LightningLink(Ability):
                 if d<=self.radius:e.take_damage(self.tick_dmg)
             for tw in g.arena.towers:
                 if tw.team!=opp or not tw.alive:continue
-                d=math.sqrt((tw.cx-tr.x)**2+(tw.cy-tr.y)**2)
+                d=tw.dist(tr.x,tr.y)
                 if d<=self.radius:
                     td=self.tick_ct if self.tick_ct>0 else self.tick_dmg
                     tw.take_damage(td)
@@ -709,7 +717,7 @@ class EvoBomber(Component):
                 if d<=self.br and d<bd:bd=d;best=e
             for tw in g.arena.towers:
                 if tw.team!=opp or not tw.alive or id(tw) in hit:continue
-                d=math.sqrt((tw.cx-px)**2+(tw.cy-py)**2)
+                d=tw.dist(px,py)
                 if d<=self.br and d<bd:bd=d;best=tw
             if not best:break
             best.take_damage(tr.dmg)
@@ -1079,7 +1087,7 @@ class EvoElectroDragon(Component):
                 if d<=self.br and d<bd:bd=d;best=e
             for tw in g.arena.towers:
                 if tw.team!=opp or not tw.alive:continue
-                d=math.sqrt((tw.cx-px)**2+(tw.cy-py)**2)
+                d=tw.dist(px,py)
                 if d<=self.br and d<bd:bd=d;best=tw
             if not best or (id(best) in hit and len(hit)>1):break
             best.take_damage(rd)

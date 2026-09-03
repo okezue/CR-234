@@ -727,8 +727,8 @@ def t_gy_spawns():
     g.run(10)
     skels=[t for t in g.players['blue'].troops if t.alive]
     total=gy.spawned
-    assert total==12,f"Expected 12 spawns, got {total}"
-    return f"Graveyard spawns 12 skeletons ({len(skels)} alive)"
+    assert total==13,f"Expected 13 spawns, got {total}"
+    return f"Graveyard spawns 13 skeletons ({len(skels)} alive)"
 def t_gy_attack():
     g=Game()
     random.seed(42)
@@ -1196,12 +1196,12 @@ def t_gskel_death_radius():
     gs=mk_card('giant_skeleton',11,'blue',9,14)
     g.deploy('blue',gs)
     d_near=Dummy('red',9,14.5,hp=5000,spd=0)
-    d_far=Dummy('red',9,18,hp=5000,spd=0)
+    d_far=Dummy('red',9,18.5,hp=5000,spd=0)
     g.deploy('red',d_near);g.deploy('red',d_far)
     gs.hp=0;gs.alive=False;gs.on_death(g)
     assert d_near.hp<5000,"Near target should be hit"
     assert d_far.hp==5000,"Far target (4 tiles away) should be safe"
-    return "Giant Skeleton death radius (3.5 tiles)"
+    return "Giant Skeleton death radius (3.5 tiles to the target's collision edge)"
 def t_gskel_v_skarmy():
     g=Game()
     random.seed(42)
@@ -2142,9 +2142,9 @@ def t_tornado_ct():
     return f"Tornado CT ({dmg} dmg)"
 def t_void_strikes():
     g=Game()
-    d=Dummy('red',9,25,hp=5000,spd=0)
+    d=Dummy('red',9,22,hp=5000,spd=0)
     g.deploy('red',d)
-    v=mk_card('void',11,'blue',9,25)
+    v=mk_card('void',11,'blue',9,22)
     v.apply(g);g.spells.append(v)
     g.run(4)
     dmg=5000-d.hp
@@ -3891,8 +3891,8 @@ def t_scn_gy_vs_arrows():
     random.seed(42)
     dk_b=_mk_deck(['graveyard'])
     dk_r=_mk_deck(['arrows'])
-    g=Game(p1={'deck':dk_b,'drag_del':0.0,'drag_std':0},
-           p2={'deck':dk_r,'drag_del':0.0,'drag_std':0})
+    g=quiet(Game(p1={'deck':dk_b,'drag_del':0.0,'drag_std':0},
+           p2={'deck':dk_r,'drag_del':0.0,'drag_std':0}))
     _force_hand(g,'blue','graveyard');_force_hand(g,'red','arrows')
     g.players['blue'].elixir=10;g.players['red'].elixir=10
     g.play_card('blue','graveyard',14,24)
@@ -4020,13 +4020,13 @@ def t_travel_none():
     return "Travel: no projSpeed means instant hit"
 def t_fb_no_kb_heavy():
     g=Game()
-    d=Dummy('red',9,10,hp=50000,spd=0,mass=8)
+    d=Dummy('red',9,10,hp=50000,spd=0,mass=10)
     g.deploy('red',d)
     ox=d.x
     fb=mk_card('fireball',11,'blue',8,10)
     fb.apply(g)
     assert abs(d.x-ox)<0.01,f"Heavy troop should not be knocked back ({ox}->{d.x})"
-    return "Fireball no KB on heavy (mass=8)"
+    return "Fireball no KB on heavy (mass=10)"
 def t_fb_kb_light():
     g=Game()
     d=Dummy('red',9,10,hp=50000,spd=0,mass=4)
@@ -4125,9 +4125,9 @@ def t_tornado_no_bldg_dmg():
     return f"Tornado no bldg damage (spell_dmg={spell_dmg:.0f})"
 def t_void_single_full():
     g=Game()
-    d=Dummy('red',9,25,hp=50000,spd=0)
+    d=Dummy('red',9,22,hp=50000,spd=0)
     g.deploy('red',d)
-    v=mk_card('void',11,'blue',9,25)
+    v=mk_card('void',11,'blue',9,22)
     v.apply(g);g.spells.append(v)
     g.run(4)
     dmg=50000-d.hp
@@ -6006,7 +6006,7 @@ def t_mk_jump_crosses_river():
     g=Game()
     mk_t=mk_card('mega_knight',11,'blue',9,14)
     g.deploy('blue',mk_t)
-    d=Dummy('red',9,18,hp=50000,spd=0)
+    d=Dummy('red',9,19,hp=50000,spd=0)
     g.deploy('red',d)
     g.run(5)
     assert mk_t.y>16,f"MK should jump across river: y={mk_t.y:.1f}"

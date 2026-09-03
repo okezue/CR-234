@@ -981,10 +981,8 @@ def t_stun_timed():
     g.run(0.95)
     assert tgt.hp==hp0,"stunned unit does not attack"
     g.run(0.9)
-    assert tgt.hp==hp0,"attack cycle restarts from load time after the stun"
-    g.run(0.3)
-    assert tgt.hp<hp0
-    return "Stun is a timed status that halts and resets the attack cycle"
+    assert tgt.hp<hp0,"the paused attack cycle resumes where it stopped after the stun"
+    return "Stun is a timed status that pauses the attack cycle"
 def t_stun_halts_movement():
     g=Game()
     k=mk_card('knight',11,'blue',9,10)

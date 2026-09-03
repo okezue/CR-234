@@ -427,8 +427,8 @@ class Game:
             halt,rate,_=self._status_mods(t)
             tt=t.troop
             if halt:
-                if tt:tt.cd=getattr(tt,'spd',tt.cd);tt.lock=None
-                else:t.cd=max(t.cd,t.spd);t.lock=None
+                if tt:tt.lock=None
+                else:t.lock=None
                 continue
             if t.ttype=='princess' and tt:
                 pd=sum(1 for x in self.arena.towers
@@ -512,13 +512,11 @@ class Game:
         if ag and getattr(ag,'alive',False):
             is_tower=hasattr(ag,'ttype')
             is_bldg_troop=getattr(tr,'targets',['Ground'])==['Buildings']
-            if is_bldg_troop:
-                # a building targeter heads for the nearest building, so a closer one pulls it until it is already hitting its target
-                d=self._dist(tr,ag)
+            d=self._dist(tr,ag)
+            # a building or tower target holds only while being hit (a closer building pulls; a Giant pushing the attacker out of range makes it retarget)
+            if is_bldg_troop or is_tower:
                 if d<=tr.rng:return ag,d
-            elif not is_tower:
-                d=self._dist(tr,ag)
-                if d<=max(getattr(tr,'sight_r',5.5),tr.rng+0.5):return ag,d
+            elif d<=max(getattr(tr,'sight_r',5.5),tr.rng+0.5):return ag,d
         opp=self._opp(tr.team)
         tgts=getattr(tr,'targets',['Ground'])
         if not tgts:return None,0
@@ -624,12 +622,14 @@ class Game:
                         if tr.hp<=0:tr.hp=0;tr.alive=False;continue
                 halt,arate,mrate=self._status_mods(tr)
                 if halt:
-                    # stun and freeze interrupt the swing: it restarts from load time and the target is re-picked
-                    tr.cd=getattr(tr,'fhspd',tr.hspd);tr.first_atk=False;tr.aggro_tgt=None
+                    # stun and freeze pause the swing (only a knockback resets it) and the target is re-picked afterwards; Sparky's charge is the exception
+                    tr.aggro_tgt=None
+                    if getattr(tr,'preload',False):tr.cd=tr.hspd
+                elif has(tr,'knockback'):tr.cd=getattr(tr,'fhspd',tr.hspd);tr.first_atk=False
                 spd=0 if halt else tr.spd*mrate
                 tgt,td=self._find_target(tr)
-                # every new target is engaged after the load time (first hit speed), not only the first one
-                if tgt is not tr.tgt and tr.tgt is not None and not getattr(tr,'preload',False):tr.first_atk=True
+                # a target that has to be walked to is engaged after the load time; one already in reach continues the swing
+                if tgt is not tr.tgt and tr.tgt is not None and not getattr(tr,'preload',False) and td>tr.rng:tr.first_atk=True
                 tr.tgt=tgt
                 if not tgt or halt:continue
                 mr=getattr(tr,'min_rng',0)

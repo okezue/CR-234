@@ -1,7 +1,7 @@
 import math
 import random
 from sim.units import Status,Troop
-from sim.fx import strip,hurt
+from sim.fx import strip,hurt,push
 class Spell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
@@ -29,18 +29,15 @@ class Spell:
         opp=game._opp(self.team)
         for e in game.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+            d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
             if d<=self.radius:
                 e.take_damage(self.dmg)
-                if self.kb>0 and getattr(e,'mass',4)<6:
-                    dx=e.x-self.x;dy=e.y-self.y
-                    ds=math.sqrt(dx*dx+dy*dy)
-                    if ds>0:e.x+=dx/ds*self.kb;e.y+=dy/ds*self.kb
+                push(e,self.x,self.y,self.kb)
                 if self.status_kind and hasattr(e,'statuses'):
                     e.statuses.append(Status(self.status_kind,self.dur,self.status_val))
         for tw in game.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+            d=tw.dist(self.x,self.y)
             if d<=self.radius:
                 dm=self.ct_dmg if self.ct_dmg else self.dmg
                 tw.take_damage(dm)
@@ -69,14 +66,14 @@ class Spell:
                 opp=game._opp(self.team)
                 for e in game.players[opp].troops:
                     if not e.alive:continue
-                    d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+                    d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
                     if d<=self.radius:
                         e.take_damage(self.tick_dmg)
                         if self.slow_pct>0 and hasattr(e,'statuses'):
                             e.statuses.append(Status('mslow',self.tick_interval,1.0-self.slow_pct))
                 for tw in game.arena.towers:
                     if tw.team!=opp or not tw.alive:continue
-                    d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+                    d=tw.dist(self.x,self.y)
                     if d<=self.radius:
                         tw.take_damage(self.tick_ct_dmg)
                         if not tw.alive:game._tower_down(tw)
@@ -116,7 +113,7 @@ class GraveyardSpell:
         self.team=team;self.x=float(x);self.y=float(y)
         self.tcfg=cfg['troop_cfg']
         self.total=cfg['total'];self.interval=cfg['interval']
-        self.radius=cfg['radius'];self.dur=cfg['dur']
+        self.radius=cfg['radius'];self.min_radius=cfg.get('min_radius',cfg['radius']);self.dur=cfg['dur']
         self.active=False;self.applied=False
         self.spawned=0;self.timer=0;self.dur_left=self.dur
         self.name=cfg.get('name','')
@@ -128,10 +125,9 @@ class GraveyardSpell:
         if not self.active or not game:return
         self.dur_left-=dt;self.timer-=dt
         if self.timer<0.001 and self.spawned<self.total:
-            ang=random.uniform(0,2*math.pi)
-            ox=self.radius*math.cos(ang)
-            oy=self.radius*math.sin(ang)
-            t=Troop(self.team,self.x+ox,self.y+oy,dict(self.tcfg,components=list(self.tcfg.get('components',[]))))
+            ang=random.uniform(0,2*math.pi);rr=random.uniform(self.min_radius,self.radius)
+            ox=rr*math.cos(ang);oy=rr*math.sin(ang)
+            t=Troop(self.team,min(max(self.x+ox,0.3),17.7),min(max(self.y+oy,0.3),31.7),dict(self.tcfg,components=list(self.tcfg.get('components',[]))))
             game.players[self.team].troops.append(t)
             self.spawned+=1;self.timer=self.interval
         if self.spawned>=self.total or self.dur_left<=0:self.active=False
@@ -151,11 +147,11 @@ class RageSpell:
         opp=game._opp(self.team)
         for e in game.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+            d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
             if d<=self.radius:e.take_damage(self.dmg)
         for tw in game.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+            d=tw.dist(self.x,self.y)
             if d<=self.radius:
                 dm=self.ct_dmg if self.ct_dmg else self.dmg
                 tw.take_damage(dm)
@@ -195,11 +191,11 @@ class LightningSpell:
         cands=[]
         for e in game.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+            d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
             if d<=self.radius:cands.append((-getattr(e,'max_hp',e.hp),e,'troop'))
         for tw in game.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+            d=tw.dist(self.x,self.y)
             if d<=self.radius:cands.append((-getattr(tw,'max_hp',tw.hp),tw,'tower'))
         cands.sort(key=lambda x:x[0])
         for _,tgt,kind in cands[:self.max_tgt]:
@@ -283,7 +279,7 @@ class EarthquakeSpell:
             for e in game.players[opp].troops:
                 if not e.alive:continue
                 if getattr(e,'transport','Ground')=='Air':continue
-                d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+                d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
                 if d<=self.radius:
                     dm=self.bldg_dmg if getattr(e,'is_building',False) else self.troop_dmg
                     e.take_damage(dm)
@@ -291,7 +287,7 @@ class EarthquakeSpell:
                         e.statuses.append(Status('mslow',self.interval,1.0-self.slow_pct))
             for tw in game.arena.towers:
                 if tw.team!=opp or not tw.alive:continue
-                d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+                d=tw.dist(self.x,self.y)
                 if d<=self.radius:
                     tw.take_damage(self.ct_dmg)
                     if not tw.alive:game._tower_down(tw)
@@ -333,11 +329,11 @@ class TornadoSpell:
                 for e in game.players[opp].troops:
                     if not e.alive:continue
                     if getattr(e,'is_building',False):continue
-                    d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+                    d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
                     if d<=self.radius:e.take_damage(self.tick_dmg)
                 for tw in game.arena.towers:
                     if tw.team!=opp or not tw.alive:continue
-                    d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+                    d=tw.dist(self.x,self.y)
                     if d<=self.radius:
                         tw.take_damage(self.ct_dmg)
                         if not tw.alive:game._tower_down(tw)
@@ -366,11 +362,11 @@ class VoidSpell:
             tgts=[]
             for e in game.players[opp].troops:
                 if not e.alive:continue
-                d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+                d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
                 if d<=self.radius:tgts.append(('troop',e))
             for tw in game.arena.towers:
                 if tw.team!=opp or not tw.alive:continue
-                d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+                d=tw.dist(self.x,self.y)
                 if d<=self.radius:tgts.append(('tower',tw))
             i=self._tier(len(tgts))
             for kind,t in tgts:
@@ -400,7 +396,7 @@ class VinesSpell:
         for e in game.players[opp].troops:
             if not e.alive:continue
             if getattr(e,'is_building',False):continue
-            d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+            d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
             if d<=self.radius:cands.append((-getattr(e,'max_hp',e.hp),e))
         cands.sort(key=lambda x:x[0])
         for _,e in cands[:self.max_tgt]:
@@ -440,7 +436,7 @@ class GoblinCurseSpell:
         opp=game._opp(self.team)
         for e in game.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+            d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
             if d<=self.radius:self.cursed.append(e)
     def tick(self,dt,game=None):
         if not game:return
@@ -453,7 +449,7 @@ class GoblinCurseSpell:
                     if e.alive:e.take_damage(self.tick_dmg)
                 for tw in game.arena.towers:
                     if tw.team!=opp or not tw.alive:continue
-                    d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+                    d=tw.dist(self.x,self.y)
                     if d<=self.radius:
                         tw.take_damage(self.ct_dmg)
                         if not tw.alive:game._tower_down(tw)
@@ -479,11 +475,11 @@ class RoyalDeliverySpell:
         opp=game._opp(self.team)
         for e in game.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+            d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
             if d<=self.radius:e.take_damage(self.dmg)
         for tw in game.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+            d=tw.dist(self.x,self.y)
             if d<=self.radius:
                 dm=self.ct_dmg if self.ct_dmg else self.dmg
                 tw.take_damage(dm)
@@ -518,14 +514,14 @@ class EvoZapSpell(Spell):
             opp='red' if self.team=='blue' else 'blue'
             for e in game.players[opp].troops:
                 if not e.alive:continue
-                d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+                d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
                 if d<=self.r2:
                     e.take_damage(self.dmg)
                     if hasattr(e,'statuses') and self.dur>0:
                         e.statuses.append(Status('stun',self.dur))
             for tw in game.arena.towers:
                 if tw.team!=opp or not tw.alive:continue
-                d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+                d=tw.dist(self.x,self.y)
                 if d<=self.r2:
                     td=self.ct_dmg if self.ct_dmg else self.dmg
                     tw.take_damage(td)
@@ -548,14 +544,14 @@ class EvoSnowballSpell:
         self.dir_y=1 if self.team=='blue' else -1
         for e in game.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)
+            d=max(0.0,math.sqrt((e.x-self.x)**2+(e.y-self.y)**2)-getattr(e,'collision_r',0))
             if d<=self.radius:
                 e.take_damage(self.dmg)
                 if hasattr(e,'statuses'):e.statuses.append(Status('slow',self.slow_dur,self.slow_val))
                 self.captured.append(e)
         for tw in game.arena.towers:
             if tw.team!=opp or not tw.alive:continue
-            d=math.sqrt((tw.cx-self.x)**2+(tw.cy-self.y)**2)
+            d=tw.dist(self.x,self.y)
             if d<=self.radius:
                 td=self.ct_dmg if self.ct_dmg else self.dmg
                 tw.take_damage(td)

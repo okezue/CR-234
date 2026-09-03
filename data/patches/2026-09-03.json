@@ -26,5 +26,33 @@
    "spacing": 2.0
   },
   "note": "Deployment is a horizontal line spanning the Arena (the game data's summonRadius 500 is not that); shifting the central tile by one turns the 3-3 lane split into 4-2, which bounds the spacing between 1 and 3 tiles; 2 puts the outer recruits in front of the Princess Towers. https://clashroyale.fandom.com/wiki/Royal_Recruits"
+ },
+ {
+  "card": "prince",
+  "path": "skills.immunity",
+  "value": {
+   "knockback": true
+  },
+  "note": "The Bowler cannot reset the charges of the Prince and Dark Prince because they are immune to knockback; the Prince has an immunity to all forms of knockback, unlike the Battle Ram. https://clashroyale.fandom.com/wiki/Bowler https://clashroyale.fandom.com/wiki/Prince"
+ },
+ {
+  "card": "dark_prince",
+  "path": "skills.immunity",
+  "value": {
+   "knockback": true
+  },
+  "note": "The Bowler cannot reset the charges of the Prince and Dark Prince because they are immune to knockback; the Prince has an immunity to all forms of knockback, unlike the Battle Ram. https://clashroyale.fandom.com/wiki/Bowler https://clashroyale.fandom.com/wiki/Prince"
+ },
+ {
+  "card": "graveyard",
+  "path": "count",
+  "value": 13,
+  "note": "The Graveyard spawns 13 Skeletons (14 on 12/1/2026, back to 13 on 14/1/2026), one every 0.5 s for 9 s after a 2.2 s delay. https://clashroyale.fandom.com/wiki/Graveyard"
+ },
+ {
+  "card": "graveyard",
+  "path": "skills.spawn.minRadius",
+  "value": 3.0,
+  "note": "Skeletons rise between 3 tiles from the centre (minimum spawn range, 3/11/2020 and 18/11/2020 changes) and the 4 tile edge of the spell. https://clashroyale.fandom.com/wiki/Graveyard"
  }
 ]
