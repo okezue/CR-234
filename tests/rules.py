@@ -4,7 +4,7 @@ from sim.game import Game,Deck,Player,validate_deck,card_info
 from sim.arena import Arena
 from sim.cards import create as mk_card
 from sim.towers import create as mk_tt
-from sim.units import Status
+from sim.units import Status,has
 from tests.util import Dummy,quiet
 _DK=['knight','bandit','ice_wizard','dart_goblin','mega_minion','fisherman','royal_ghost','princess']
 
@@ -314,17 +314,20 @@ def t_deploy_delay():
     g.play_card('blue',c,9,10)
     assert len(g.players['blue'].troops)==0
     assert len(g.pending)==1
-    g.run(0.4+dep)
-    assert len(g.players['blue'].troops)==0,"Spawned too early"
-    g.run(0.2)
-    assert len(g.players['blue'].troops)==1,f"Not spawned after {0.6+dep:.1f}s"
-    return f"Deploy delay (0.5s drag + {dep}s deploy)"
+    g.run(0.4)
+    assert len(g.players['blue'].troops)==0,"Placed before the drag"
+    g.run(0.2+dep/2)
+    tr=g.players['blue'].troops
+    assert len(tr)==1 and has(tr[0],'deploying'),"Should stand on the field deploying"
+    g.run(dep/2+0.1)
+    assert not has(tr[0],'deploying'),f"Still deploying after {0.7+dep:.1f}s"
+    return f"Deploy delay (0.5s drag, then {dep}s deploying on the field)"
 def t_drag_pro_vs_casual():
     random.seed(99)
     g1=Game(p1={'deck':_DK,'drag_del':0.3,'drag_std':0})
     c=g1.players['blue'].deck.hand[0];dep=card_info(c)['deploy']
     g1.play_card('blue',c,9,10)
-    g1.run(0.2+dep)
+    g1.run(0.2)
     assert len(g1.players['blue'].troops)==0
     g1.run(0.2)
     assert len(g1.players['blue'].troops)==1
@@ -332,7 +335,7 @@ def t_drag_pro_vs_casual():
     g2=Game(p1={'deck':_DK,'drag_del':0.7,'drag_std':0})
     c=g2.players['blue'].deck.hand[0]
     g2.play_card('blue',c,9,10)
-    g2.run(0.6+dep)
+    g2.run(0.6)
     assert len(g2.players['blue'].troops)==0
     g2.run(0.2)
     assert len(g2.players['blue'].troops)==1

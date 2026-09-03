@@ -76,9 +76,9 @@ class Deck:
         return f"hand={self.hand} nxt={self.nxt}({self.nxt_cd:.1f}s) q={self.q}"
 
 class Pending:
-    def __init__(self,team,card,x,y,rem,evolved=False,hero=False):
+    def __init__(self,team,card,x,y,rem,evolved=False,hero=False,deploy=0):
         self.team=team;self.card=card
-        self.x=x;self.y=y;self.rem=rem
+        self.x=x;self.y=y;self.rem=rem;self.deploy=deploy
         self.evolved=evolved;self.hero=hero
 class PendingAbility:
     def __init__(self,team,troop,ability,rem,is_banner=False):
@@ -331,9 +331,8 @@ class Game:
             p.elixir-=mc
             p.deck.play(card,self._qcd())
             drag=p.sample_drag()
-            delay=drag+lci['deploy']
-            self.pending.append(Pending(team,'mirror:'+p.last_card,x,y,delay,evolved,hero))
-            self.log.append(f"[{self.t:.1f}] {team} plays mirror({p.last_card}) at ({ix},{iy}) drag={drag:.2f}s delay={delay:.2f}s")
+            self.pending.append(Pending(team,'mirror:'+p.last_card,x,y,drag,evolved,hero,lci['deploy']))
+            self.log.append(f"[{self.t:.1f}] {team} plays mirror({p.last_card}) at ({ix},{iy}) drag={drag:.2f}s deploy={lci['deploy']:.2f}s")
             return True,"ok"
         ci=card_info(card)
         if p.elixir<ci['cost']:return False,"not enough elixir"
@@ -341,9 +340,8 @@ class Game:
         p.elixir-=ci['cost']
         p.deck.play(card,self._qcd())
         drag=p.sample_drag()
-        delay=drag+ci['deploy']
-        self.pending.append(Pending(team,card,x,y,delay,evolved,hero))
-        self.log.append(f"[{self.t:.1f}] {team} plays {card} at ({ix},{iy}) drag={drag:.2f}s delay={delay:.2f}s")
+        self.pending.append(Pending(team,card,x,y,drag,evolved,hero,ci['deploy']))
+        self.log.append(f"[{self.t:.1f}] {team} plays {card} at ({ix},{iy}) drag={drag:.2f}s deploy={ci['deploy']:.2f}s")
         p.last_card=card
         return True,"ok"
     def _spawn(self,team,card,x,y,evolved=False,hero=False):
@@ -355,6 +353,10 @@ class Game:
         else:
             mlvl=p.card_levels.get(actual,p.king_lvl)
         return mk_card(actual,mlvl,team,x,y,evolved=evolved,hero=hero)
+    def _place(self,team,tr,dep):
+        # a deploying unit stands on the field, targetable and damageable, and acts only when its deploy time is over
+        if dep>0:tr.statuses.append(Status('deploying',dep))
+        self.players[team].troops.append(tr);self.players[team]._register_champ(tr)
     def _proc_pending(self):
         done=[];stagger_add=[]
         for pd in self.pending:
@@ -362,25 +364,20 @@ class Game:
             if pd.rem<=0:
                 st=getattr(pd,'_stagger_troop',None)
                 if st:
-                    self.players[pd.team].troops.append(st)
-                    self.players[pd.team]._register_champ(st)
+                    self._place(pd.team,st,pd.deploy)
                     done.append(pd);continue
                 r=self._spawn(pd.team,pd.card,pd.x,pd.y,pd.evolved,pd.hero)
                 if isinstance(r,list):
                     for j,tr in enumerate(r):
                         at=getattr(tr,'deploy_at',j*0.1)
-                        if at<=0:
-                            self.players[pd.team].troops.append(tr)
-                            self.players[pd.team]._register_champ(tr)
+                        if at<=0:self._place(pd.team,tr,pd.deploy)
                         else:
-                            sp=Pending(pd.team,'_stagger_'+str(j),tr.x,tr.y,at)
+                            sp=Pending(pd.team,'_stagger_'+str(j),tr.x,tr.y,at,deploy=pd.deploy)
                             sp._stagger_troop=tr
                             stagger_add.append(sp)
                 elif hasattr(r,'apply'):
                     self._cast(pd.team,r,pd.x,pd.y)
-                else:
-                    self.players[pd.team].troops.append(r)
-                    self.players[pd.team]._register_champ(r)
+                else:self._place(pd.team,r,pd.deploy)
                 self.log.append(f"[{self.t:.1f}] {pd.card} spawned at ({pd.x:.0f},{pd.y:.0f})")
                 done.append(pd)
         for d in done:self.pending.remove(d)
@@ -617,7 +614,7 @@ class Game:
         for tm in ('blue','red'):
             p=self.players[tm]
             for tr in p.troops:
-                if not tr.alive:continue
+                if not tr.alive or has(tr,'deploying'):continue
                 ab=getattr(tr,'ability',None)
                 if ab:ab.tick(self.DT,tr,self)
                 for c in getattr(tr,'components',[]):c.on_tick(tr,self)
