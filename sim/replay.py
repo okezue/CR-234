@@ -353,7 +353,16 @@ def _mirror_x(plays):
     for p in plays:
         p['tile_x']=18.0-p['tile_x']
 
-def replay_battle(bid,plays,outcome,verbose=False,pid=None):
+def _probe(g,tm,tx,ty,ts,plays,deaths):
+    # miss classification: a sim enemy within 2.5 tiles; else one that died there in the last 6 s; else the opponent troops placed near it in the last 12 s
+    en=[u for u in g.players[g._opp(tm)].troops if u.alive]
+    near=sorted((math.hypot(u.x-tx,u.y-ty),u.name,round(u.x,1),round(u.y,1)) for u in en)
+    died=sorted({n for t,x,y,n in deaths if 0<=ts-t<=6 and math.hypot(x-tx,y-ty)<=4})
+    placed=sorted({norm(p['card'])[0] for p in plays if p['team']!=tm and 0<=ts-p['time']/20<=12 and math.hypot(p['tile_x']-tx,p['tile_y']-ty)<=8
+                   and norm(p['card'])[0] and _has_json(norm(p['card'])[0]) and card(norm(p['card'])[0])['kind']!='spell'})
+    return {'hit':bool(near and near[0][0]<=2.5),'near':near[:3],'died':died,'placed':placed}
+
+def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
     if _detect_true_red(plays):
         _mirror_x(plays)
     t0_deck=outcome.get('b_deck',[])
@@ -407,7 +416,12 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
         if e or p.get('card_type')=='evo':evo_cards[p['team']].add(b)
     n_played={'blue':{},'red':{}}
     errs=[]
-    aim=[0,0]
+    aim=[0,0];probes=[];deaths=[]
+    if probe:
+        pd_=g._proc_deaths
+        def rec():
+            deaths.extend((g.t,u.x,u.y,u.name) for tm_ in ('blue','red') for u in g.players[tm_].troops if not u.alive);pd_()
+        g._proc_deaths=rec
     for p in plays:
         ts=p['time']/20.0
         base,_,_=norm(p['card'])
@@ -435,6 +449,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
         if base in AIMED and not any(t.alive and t.dist(tx,ty)<=3.0 for t in g.arena.towers if t.team!=tm):
             # a real player aimed this spell at units that were there: a position oracle for the simulated state
             aim[0]+=1;aim[1]+=any(u.alive and math.hypot(u.x-tx,u.y-ty)<=2.5 for u in g.players[g._opp(tm)].troops)
+            if probe:probes.append({'spell':base,'team':tm,'t':ts,'x':tx,'y':ty,**_probe(g,tm,tx,ty,ts,plays,deaths)})
         if not ci.get('deploy_anywhere'):
             _open_pocket(g,tm,itx,ity)
         _force_hand(g,tm,base)
@@ -472,7 +487,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
     info={'bid':bid,'sim_winner':sw,'sim_bc':bc,'sim_rc':rc,
           'actual_winner':actual_winner,'actual_bc':atc,'actual_rc':aoc,
           'win_match':win_match,'crown_exact':crown_exact,'crown_close':crown_close,
-          'stm':stm,'end_t':g.t,'last_play':last,'premature':g.t<last-1,'hp_err':None,'tower_state':None,'aim':tuple(aim)}
+          'stm':stm,'end_t':g.t,'last_play':last,'premature':g.t<last-1,'hp_err':None,'tower_state':None,'aim':tuple(aim),'probes':probes}
     if outcome.get('b_hp') and outcome.get('r_hp'):
         errs=[];states=[]
         for tm,act in (('blue',outcome['b_hp']),('red',outcome['r_hp'])):
@@ -494,7 +509,29 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
     return g,info
 
 def _run(a):
-    return None,replay_battle(a[0],a[1],a[2],pid=a[3])[1]
+    return None,replay_battle(a[0],a[1],a[2],pid=a[3],probe=a[4])[1]
+
+def _aim_report(probes):
+    n=len(probes);hit=sum(p['hit'] for p in probes);died=sum(1 for p in probes if not p['hit'] and p['died'])
+    far=[p for p in probes if not p['hit'] and not p['died']];nop=sum(1 for p in far if not p['placed'])
+    print(f"\n=== Aim misses ===\n{n} casts: hit {hit} ({100*hit/n:.1f}%), died there <6 s {died} ({100*died/n:.1f}%), elsewhere {len(far)}"
+          f" ({100*len(far)/n:.1f}%) of which no troop placed within 8 tiles/12 s {nop} ({100*nop/n:.1f}%)")
+    ds=sorted(p['near'][0][0] for p in far if p['near'])
+    if ds:print(f"nearest sim enemy on 'elsewhere' misses: median {ds[len(ds)//2]:.1f} tiles")
+    by={}
+    for p in probes:
+        for c in p['placed']:by.setdefault(c,[0,0]);by[c][0]+=1;by[c][1]+=p['hit']
+    print("per placed troop card (casts, hit%), most missed first:")
+    for c,(k,h) in sorted(by.items(),key=lambda kv:kv[1][1]/kv[1][0]):
+        if k>=15:print(f"  {c:22s} {k:4d} {100*h/k:5.1f}%")
+    sp={}
+    for p in probes:sp.setdefault(p['spell'],[0,0]);sp[p['spell']][0]+=1;sp[p['spell']][1]+=p['hit']
+    print("per spell: "+', '.join(f"{s} {100*h/k:.0f}% ({k})" for s,(k,h) in sorted(sp.items())))
+    dn={}
+    for p in probes:
+        if not p['hit'] and p['died']:
+            for c in p['died']:dn[c]=dn.get(c,0)+1
+    print("units that died there before the cast: "+', '.join(f"{c} {k}" for c,k in sorted(dn.items(),key=lambda kv:-kv[1])[:15]))
 
 def main():
     ap=argparse.ArgumentParser(description='Replay scraped battles through simulator')
@@ -508,6 +545,7 @@ def main():
     ap.add_argument('--visualize-multi',type=int,default=0,help='Visualize N battles with picker')
     ap.add_argument('--verbose',action='store_true')
     ap.add_argument('--jobs',type=int,default=1)
+    ap.add_argument('--aim-by-card',action='store_true',help='classify the spell aim misses and break the hits down per opponent troop card placed nearby')
     args=ap.parse_args()
     print("=== Battle Replay Validation ===")
     use_meta=args.meta and args.workers
@@ -551,12 +589,12 @@ def main():
         bids=[b for b in bids if b not in set(skip)]
         print(f"Excluded {len(skip)} modifier-mode battles (event modes or towers above their level's hitpoints)")
     tot=len(bids)
-    wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[];aimN=0;aimH=0
+    wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[];aimN=0;aimH=0;probes=[]
     print(f"Running {tot} battles...\n")
     if args.jobs>1 and not args.visualize:
         from multiprocessing import Pool
-        pool=Pool(args.jobs);runs=pool.imap(_run,[(b,placements[b],outcomes[b],pids.get(b)) for b in bids],chunksize=4)
-    else:runs=(replay_battle(b,placements[b],outcomes[b],verbose=args.verbose,pid=pids.get(b)) for b in bids)
+        pool=Pool(args.jobs);runs=pool.imap(_run,[(b,placements[b],outcomes[b],pids.get(b),args.aim_by_card) for b in bids],chunksize=4)
+    else:runs=(replay_battle(b,placements[b],outcomes[b],verbose=args.verbose,pid=pids.get(b),probe=args.aim_by_card) for b in bids)
     for g,info in runs:
         bid=info['bid']
         if info['win_match']:wm+=1
@@ -564,7 +602,7 @@ def main():
         if info['crown_close']:cc+=1
         if info['premature']:pm+=1
         if info['hp_err'] is not None:hpe.append(info['hp_err']);tst.append(info['tower_state'])
-        aimN+=info['aim'][0];aimH+=info['aim'][1]
+        aimN+=info['aim'][0];aimH+=info['aim'][1];probes.extend(info['probes'])
         done+=1
         if not args.verbose and done%10==0:
             print(f"  [{done:4d}/{tot}] last={bid} wm={wm}/{done} ({100*wm/done:.1f}%)")
@@ -580,6 +618,7 @@ def main():
     print(f"Ended before last human play: {pm}/{done} ({100*pm/done:.1f}%)")
     if hpe:print(f"Tower HP error (mean, fraction of max): {sum(hpe)/len(hpe):.3f}; tower alive/dead agreement: {100*sum(tst)/len(tst):.1f}%")
     if aimN:print(f"Spell aim agreement (sim unit within 2.5 tiles of a real cast away from towers): {aimH}/{aimN} ({100*aimH/aimN:.1f}%)")
+    if probes:_aim_report(probes)
     if args.visualize_multi>0:
         from sim.viz import visualize_browser
         vm=min(args.visualize_multi,len(bids))

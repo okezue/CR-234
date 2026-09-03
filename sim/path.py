@@ -17,12 +17,12 @@ class Pathfinder:
         self._gnd=self._build_grid(False)
         self._air=self._build_grid(True)
         self._cache.clear()
-    def seg_blocked(self,x0,y0,x1,y1,air=False):
+    def seg_blocked(self,x0,y0,x1,y1,air=False,skip=()):
         grid=self._air if air else self._gnd
         n=max(1,int(math.hypot(x1-x0,y1-y0)*4))
         for i in range(1,n+1):
             t=i/n;x=int(x0+(x1-x0)*t);y=int(y0+(y1-y0)*t)
-            if 0<=x<self.W and 0<=y<self.H and not grid[y][x]:return True
+            if 0<=x<self.W and 0<=y<self.H and not grid[y][x] and (x,y) not in skip:return True
         return False
     def _octile(self,x1,y1,x2,y2):
         dx=abs(x2-x1);dy=abs(y2-y1)

@@ -580,15 +580,17 @@ class Game:
         a=self.arena
         if int(y) in a.RIVER:return rj or a.on_bridge(x)
         return not a.blocked(int(x),int(y))
-    def _move(self,tr,spd,tx,ty):
+    def _move(self,tr,spd,tx,ty,tgt=None):
         a=self.arena;gnd=getattr(tr,'transport','Ground')!='Air'
         rj=any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))
         wx,wy=self._waypoint(tr,tx,ty)
-        # river crossing is handled by _waypoint, so A* only detours towers and fences (the air grid)
-        if gnd and self._pf.seg_blocked(tr.x,tr.y,wx,wy,True):
+        # river crossing is handled by _waypoint, so A* only detours towers and fences (the air grid); the target's own footprint is no
+        # obstacle since the unit stops at range in front of it (detouring to the free tile nearest the start sent it to the tower's far corner)
+        own=set(tgt.tiles()) if hasattr(tgt,'tiles') else ()
+        if gnd and self._pf.seg_blocked(tr.x,tr.y,wx,wy,True,own):
             path=[q for q in self._pf.get_path(tr,wx,wy,True) if math.hypot(q[0]-tr.x,q[1]-tr.y)>0.25]
             for px,py in reversed(path):
-                if not self._pf.seg_blocked(tr.x,tr.y,px,py,True):wx,wy=px,py;break
+                if not self._pf.seg_blocked(tr.x,tr.y,px,py,True,own):wx,wy=px,py;break
             else:
                 if path:wx,wy=path[0]
         dx=wx-tr.x;dy=wy-tr.y;ds=math.hypot(dx,dy)
@@ -638,7 +640,7 @@ class Game:
                     tr.cd=max(tr.fhspd,tr.cd-self.DT*arate)
                     if tgt and spd>0 and not getattr(tr,'is_building',False):
                         tx,ty=self._pos(tgt)
-                        self._move(tr,spd,tx,ty)
+                        self._move(tr,spd,tx,ty,tgt)
     def _proc_statuses(self):
         for u in [t for tm in ('blue','red') for t in self.players[tm].troops]+self.arena.towers:
             sl=getattr(u,'statuses',None)
