@@ -1,5 +1,6 @@
 import math
 import heapq
+from sim.units import has
 _SQRT2=math.sqrt(2)
 _DIRS=[(1,0,1.0),(-1,0,1.0),(0,1,1.0),(0,-1,1.0),
        (1,1,_SQRT2),(-1,1,_SQRT2),(1,-1,_SQRT2),(-1,-1,_SQRT2)]
@@ -95,50 +96,26 @@ class Pathfinder:
         p=self.a_star(sx,sy,gx,gy,air)
         self._cache[key]=p
         return list(p)
+    def _shift(self,u,dx,dy):
+        a=self.arena;nx=min(max(u.x+dx,0.3),self.W-0.3);ny=min(max(u.y+dy,0.3),self.H-0.3)
+        if getattr(u,'transport','Ground')!='Air' and (a.blocked(int(nx),int(ny),True) or (int(ny) in a.RIVER and not a.on_bridge(nx))):return
+        u.x=nx;u.y=ny
     def resolve_collisions(self,troops,dt=0.1):
-        cs=2.0
-        alive=[tr for tr in troops if tr.alive]
+        # bodies of either team separate within their layer (ground or air); the overlap is split in inverse proportion to mass, buildings never move
+        cs=2.0;key=lambda u:(u.id,type(u).__name__)
+        alive=[tr for tr in troops if tr.alive and not has(tr,'burrowed')]
         buckets={}
-        for tr in alive:
-            bx=int(tr.x/cs);by=int(tr.y/cs)
-            buckets.setdefault((bx,by),[]).append(tr)
-        checked=set()
-        for (bx,by),lst in list(buckets.items()):
-            nbrs=[]
-            for ddx in (-1,0,1):
-                for ddy in (-1,0,1):
-                    k=(bx+ddx,by+ddy)
-                    if k in buckets:nbrs.extend(buckets[k])
+        for tr in alive:buckets.setdefault((int(tr.x/cs),int(tr.y/cs)),[]).append(tr)
+        for (bx,by),lst in buckets.items():
+            nbrs=[u for ddx in (-1,0,1) for ddy in (-1,0,1) for u in buckets.get((bx+ddx,by+ddy),())]
             for a in lst:
                 for b in nbrs:
-                    if a.id>=b.id:continue
-                    pair=(a.id,b.id)
-                    if pair in checked:continue
-                    checked.add(pair)
-                    a_imm=getattr(a,'is_building',False)
-                    b_imm=getattr(b,'is_building',False)
+                    if key(a)>=key(b) or getattr(a,'transport','Ground')!=getattr(b,'transport','Ground'):continue
+                    a_imm=getattr(a,'is_building',False);b_imm=getattr(b,'is_building',False)
                     if a_imm and b_imm:continue
-                    if getattr(a,'team',None)!=getattr(b,'team',None) and not (a_imm or b_imm):continue
-                    at=getattr(a,'transport','Ground')
-                    bt=getattr(b,'transport','Ground')
-                    if at!=bt:continue
-                    dx=a.x-b.x;dy=a.y-b.y
-                    d=math.sqrt(dx*dx+dy*dy)
-                    mr=getattr(a,'collision_r',0.5)+getattr(b,'collision_r',0.5)
-                    if d>=mr or d<0.001:continue
-                    overlap=mr-d
-                    nx=dx/d;ny=dy/d
-                    ma=getattr(a,'mass',4);mb=getattr(b,'mass',4)
-                    tm=ma+mb
-                    if tm<=0:continue
-                    if a_imm:
-                        b.x-=nx*overlap;b.y-=ny*overlap
-                    elif b_imm:
-                        a.x+=nx*overlap;a.y+=ny*overlap
-                    else:
-                        ra=mb/tm;rb=ma/tm
-                        a.x+=nx*overlap*0.02*ra;a.y+=ny*overlap*0.02*ra
-                        b.x-=nx*overlap*0.02*rb;b.y-=ny*overlap*0.02*rb
-        for tr in alive:
-            tr.x=max(0.3,min(17.7,tr.x))
-            tr.y=max(0.3,min(31.7,tr.y))
+                    dx=a.x-b.x;dy=a.y-b.y;d=math.hypot(dx,dy);mr=getattr(a,'collision_r',0.5)+getattr(b,'collision_r',0.5)
+                    if d>=mr:continue
+                    if d<1e-6:dx,dy,d=1.0,0.0,1.0
+                    ov=mr-d;nx=dx/d;ny=dy/d;ma=getattr(a,'mass',4);mb=getattr(b,'mass',4)
+                    fa,fb=(0,1) if a_imm else (1,0) if b_imm else (mb/(ma+mb),ma/(ma+mb))
+                    self._shift(a,nx*ov*fa,ny*ov*fa);self._shift(b,-nx*ov*fb,-ny*ov*fb)

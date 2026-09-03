@@ -5059,7 +5059,7 @@ def t_int_evo_skeletons_cap_8():
 def t_int_evo_archers_v_tower():
     g=Game()
     random.seed(42)
-    ea=mk_card('archers',11,'blue',3,14,evolved=True)
+    ea=mk_card('archers',11,'blue',3,19,evolved=True)
     if isinstance(ea,list):
         for a in ea:g.deploy('blue',a)
     else:g.deploy('blue',ea)
@@ -5068,7 +5068,7 @@ def t_int_evo_archers_v_tower():
     g.run(10)
     edm=ini-rpt.hp
     g2=Game()
-    na=mk_card('archers',11,'blue',3,14)
+    na=mk_card('archers',11,'blue',3,19)
     if isinstance(na,list):
         for a in na:g2.deploy('blue',a)
     else:g2.deploy('blue',na)

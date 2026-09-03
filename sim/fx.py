@@ -411,10 +411,7 @@ class BanditDash(Component):
         if not tgt:
             if self.charging and self.osp is not None:tr.spd=self.osp;self.osp=None
             self.charging=False;return
-        tx=tgt.cx if hasattr(tgt,'cx') else tgt.x
-        ty=tgt.cy if hasattr(tgt,'cy') else tgt.y
-        d=math.sqrt((tr.x-tx)**2+(tr.y-ty)**2)
-        if self.mn<=d<=self.mx and not self.charging:
+        if self.mn<=g._dist(tr,tgt)<=self.mx and not self.charging:
             self.charging=True;self.timer=self.ct;self.osp=tr.spd;tr.spd=0;self.dtgt=tgt
         if self.charging:
             self.timer-=g.DT
@@ -826,10 +823,7 @@ class EvoArchers(Component):
     def __init__(self,mn_rng,mx_rng,dmg_m):
         self.mn=mn_rng;self.mx=mx_rng;self.dmg_m=dmg_m
     def on_attack(self,tr,tgt,g):
-        tx=tgt.cx if hasattr(tgt,'cx') else tgt.x
-        ty=tgt.cy if hasattr(tgt,'cy') else tgt.y
-        d=math.sqrt((tr.x-tx)**2+(tr.y-ty)**2)
-        if self.mn<=d<=self.mx:
+        if self.mn<=g._dist(tr,tgt)<=self.mx:
             extra=int(tr.dmg*(self.dmg_m-1))
             tgt.take_damage(extra)
             if hasattr(tgt,'ttype') and not tgt.alive:g._tower_down(tgt)
@@ -1173,13 +1167,11 @@ class MKJump(Component):
         if not tgt:
             if self.charging and self.osp is not None:tr.spd=self.osp;self.osp=None
             self.charging=False;return
-        tx=tgt.cx if hasattr(tgt,'cx') else tgt.x
-        ty=tgt.cy if hasattr(tgt,'cy') else tgt.y
-        d=math.sqrt((tr.x-tx)**2+(tr.y-ty)**2)
-        if self.mn<=d<=self.mx and not self.charging:
+        tx,ty=pos(tgt);d=math.hypot(tr.x-tx,tr.y-ty);rd=g._dist(tr,tgt)
+        if self.mn<=rd<=self.mx and not self.charging:
             self.charging=True;self.timer=max(0.0,self.dur-d/self.jspd);self.osp=tr.spd;tr.spd=0;self.jtgt=tgt;self.jdist=d
         if self.charging:
-            if tgt and tgt is not self.jtgt and d<self.mn:
+            if tgt and tgt is not self.jtgt and rd<self.mn:
                 self.jtgt=tgt;self.jdist=d
             self.timer-=g.DT
             if self.timer<=0:
@@ -1396,8 +1388,8 @@ class EvoEliteBarbarians(Component):
     def on_tick(self,tr,g):
         self.t=max(0,self.t-g.DT);tgt=getattr(tr,'tgt',None)
         if self.t>0 or not tgt or not getattr(tgt,'alive',False) or getattr(tgt,'transport','Ground')=='Air':return
-        tx,ty=pos(tgt);d=math.hypot(tx-tr.x,ty-tr.y)
-        if not self.mn<=d<=self.mx:return
+        tx,ty=pos(tgt)
+        if not self.mn<=g._dist(tr,tgt)<=self.mx:return
         self.t=self.cd;hurt(tgt,self.dmg,g)
         for f in (0.5,1.0):g.spells.append(Zone(tr.team,tr.x+(tx-tr.x)*f,tr.y+(ty-tr.y)*f,self.rr,self.rdur,'rage',self.boost,ally=True,name='Rage'))
 class EvoFurnace(Component):

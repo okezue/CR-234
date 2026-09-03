@@ -5,7 +5,7 @@ from sim.arena import Arena
 from sim.cards import create as mk_card
 from sim.towers import create as mk_tt
 from sim.units import Status
-from tests.util import Dummy
+from tests.util import Dummy,quiet
 _DK=['knight','bandit','ice_wizard','dart_goblin','mega_minion','fisherman','royal_ghost','princess']
 
 def t_phases():
@@ -786,7 +786,7 @@ def t_pf_aggro_lock():
     assert tgt2 is tgt1,"Aggro should stay locked on first target"
     return "Aggro lock keeps target"
 def t_pf_retarget_delay():
-    g=Game()
+    g=quiet(Game())
     tr=mk_card('knight',11,'blue',9,14)
     g.deploy('blue',tr)
     d1=Dummy('red',9,15,hp=1,spd=0)

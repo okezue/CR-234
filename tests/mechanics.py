@@ -99,12 +99,12 @@ def t_phoenix_egg_can_be_destroyed():
     assert not _named(g,'blue','PhoenixNoRespawn')
     return "A destroyed egg does not hatch"
 def t_mega_knight_jump_time_and_knockback():
-    g=_game();mk=mk_card('mega_knight',11,'blue',9,10);g.deploy('blue',mk);d,=_dummies(g,(9,14.5))
+    g=_game();mk=mk_card('mega_knight',11,'blue',9,10);g.deploy('blue',mk);d,=_dummies(g,(9,15.5))
     t0=None
     while g.t<3 and t0 is None:
         g.tick()
         if d.hp<50000:t0=g.t
-    assert t0 is not None and abs(t0-0.9)<=0.1 and abs(d.y-15.5)<0.01,f"{t0} {d.y}"
+    assert t0 is not None and abs(t0-0.9)<=0.1 and abs(d.y-16.5)<0.01,f"{t0} {d.y}"
     return f"Mega Knight jump lands after {t0:.2f} s (Jump Time 0.9) for 537 and 1 tile knockback"
 def t_miner_burrows_untargetable():
     g=Game();mn=mk_card('miner',11,'blue',9,25);g.deploy('blue',mn)
