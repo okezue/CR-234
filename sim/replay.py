@@ -202,8 +202,14 @@ def load_meta_v2(path):
                 'b_klvl':b_klvl,'r_klvl':r_klvl,
                 'b_tt':b_tt,'r_tt':r_tt,
                 't0_tag':team_tags,'o0_tag':opp_tags,
-                'gameMode':r.get('gameMode_name','')}
+                'gameMode':r.get('gameMode_name','') or r.get('battle_type',''),
+                'b_hp':_hp(r,'team'),'r_hp':_hp(r,'opp')}
     return out
+
+def _hp(r,side):
+    v=[r.get(f'{side}_king_hp',''),r.get(f'{side}_princess_hp_0',''),r.get(f'{side}_princess_hp_1','')]
+    try:return [int(float(x)) for x in v]
+    except ValueError:return None
 
 def load_worker_rows(path,ids,meta=None):
     ok_pids={}
@@ -440,7 +446,16 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
     info={'bid':bid,'sim_winner':sw,'sim_bc':bc,'sim_rc':rc,
           'actual_winner':actual_winner,'actual_bc':atc,'actual_rc':aoc,
           'win_match':win_match,'crown_exact':crown_exact,'crown_close':crown_close,
-          'stm':stm,'end_t':g.t,'last_play':last,'premature':g.t<last-1}
+          'stm':stm,'end_t':g.t,'last_play':last,'premature':g.t<last-1,'hp_err':None,'tower_state':None}
+    if outcome.get('b_hp') and outcome.get('r_hp'):
+        errs=[];states=[]
+        for tm,act in (('blue',outcome['b_hp']),('red',outcome['r_hp'])):
+            k=g.arena.get_tower(tm,'king');ps=[g.arena.get_tower(tm,'princess',s) for s in ('left','right')]
+            # RoyaleAPI does not say which princess tower is which, so pair them in the order that fits better
+            pair=min(((ps[0],act[1]),(ps[1],act[2])),((ps[0],act[2]),(ps[1],act[1])),key=lambda pr:sum(abs(tw.hp-a) for tw,a in pr))
+            for tw,a in ((k,act[0]),)+pair:
+                errs.append(abs(tw.hp-a)/tw.max_hp);states.append((tw.hp>0)==(a>0))
+        info['hp_err']=sum(errs)/6;info['tower_state']=sum(states)/6
     if verbose:
         sym='Y' if win_match else 'X'
         csym='exact' if crown_exact else ('~1' if crown_close else 'diff')
@@ -501,7 +516,7 @@ def main():
         bids=sorted(matched)
         if args.limit>0:bids=bids[:args.limit]
     tot=len(bids)
-    wm=0;ce=0;cc=0;pm=0;done=0
+    wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[]
     print(f"Running {tot} battles...\n")
     for i,bid in enumerate(bids):
         if bid not in outcomes:continue
@@ -510,6 +525,7 @@ def main():
         if info['crown_exact']:ce+=1
         if info['crown_close']:cc+=1
         if info['premature']:pm+=1
+        if info['hp_err'] is not None:hpe.append(info['hp_err']);tst.append(info['tower_state'])
         done+=1
         if not args.verbose and done%10==0:
             print(f"  [{done:4d}/{tot}] last={bid} wm={wm}/{done} ({100*wm/done:.1f}%)")
@@ -523,6 +539,7 @@ def main():
     print(f"Crown exact:  {ce}/{done} ({100*ce/done:.1f}%)")
     print(f"Crown +/-1:   {cc}/{done} ({100*cc/done:.1f}%)")
     print(f"Ended before last human play: {pm}/{done} ({100*pm/done:.1f}%)")
+    if hpe:print(f"Tower HP error (mean, fraction of max): {sum(hpe)/len(hpe):.3f}; tower alive/dead agreement: {100*sum(tst)/len(tst):.1f}%")
     if args.visualize_multi>0:
         from sim.viz import visualize_browser
         vm=min(args.visualize_multi,len(bids))
