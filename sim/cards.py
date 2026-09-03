@@ -103,10 +103,11 @@ def attach(cfg,c,sk,lvl,chain=None):
     sd=sk.get('spawnOnDeath',{});ps=sk.get('periodicSpawn',{})
     egg=ps.get('character') and ps.get('pauseTime') and snake(ps['character']).startswith(snake(c['name']))
     if egg:
-        # a respawn of the card itself: the death spawn is the egg, which hatches into the respawn after pauseTime
+        # a respawn of the card itself: the death spawn is the egg, which hatches into the respawn after pauseTime (its lifetime, counted from
+        # the moment it appears, so the egg deploys instantly)
         reborn=unit(c,ps,lvl)
         if sd.get('character'):
-            e=unit(c,sd,lvl);e['components'].append(fx.Hatch(reborn,ps['pauseTime']));cs.append(fx.DeathSpawn(e,1))
+            e=unit(c,sd,lvl);e['deploy']=0;e['components'].append(fx.Hatch(reborn,ps['pauseTime']));cs.append(fx.DeathSpawn(e,1))
         else:cs.append(fx.DeathSpawn(reborn,count(ps.get('count'))))
     elif sd.get('character') and count(sd.get('count')):cs.append(fx.DeathSpawn(unit(c,sd,lvl),count(sd.get('count'))))
     dd=sk.get('areaDamageOnDeath',{})

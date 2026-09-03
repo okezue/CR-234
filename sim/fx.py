@@ -181,7 +181,7 @@ class SpawnTimer(Component):
             def one(g):
                 if not tr.alive:return
                 t=Troop(team,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),dict(self.cfg,components=list(self.cfg.get('components',[]))))
-                t._spawner_id=id(tr);g.players[team].troops.append(t)
+                t._spawner_id=id(tr);g._place(team,t,self.cfg.get('deploy',0))
             for i in range(self.count):
                 if i and self.stagger:g.spells.append(Timer(i*self.stagger,one,x,y,team))
                 else:one(g)
@@ -218,13 +218,14 @@ class DeathNova(Component):
                 tw.take_damage(dd)
                 if not tw.alive:g._tower_down(tw)
 class DeathSpawn(Component):
+    # the spawns stand through their own deploy time where the body fell (Battle Ram Barbarians 1 s, Skeleton Barrel Skeletons 0.6 s)
     def __init__(self,cfg,count):
         self.cfg=cfg;self.count=count
     def on_death(self,tr,g):
         for i in range(self.count):
             ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5)
             t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.cfg,components=list(self.cfg.get('components',[]))))
-            g.players[tr.team].troops.append(t)
+            g._place(tr.team,t,self.cfg.get('deploy',0))
 class SpawnZap(Component):
     def __init__(self,kb=0):
         self.fired=False;self.kb=kb
