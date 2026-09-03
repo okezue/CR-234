@@ -519,12 +519,13 @@ class Game:
         if ag and getattr(ag,'alive',False):
             is_tower=hasattr(ag,'ttype')
             is_bldg_troop=getattr(tr,'targets',['Ground'])==['Buildings']
-            if is_tower and not is_bldg_troop:
-                pass
-            else:
+            if is_bldg_troop:
+                # a building targeter heads for the nearest building, so a closer one pulls it until it is already hitting its target
                 d=self._dist(tr,ag)
-                sr_a=max(getattr(tr,'sight_r',5.5),tr.rng+0.5)
-                if d<=sr_a:return ag,d
+                if d<=tr.rng:return ag,d
+            elif not is_tower:
+                d=self._dist(tr,ag)
+                if d<=max(getattr(tr,'sight_r',5.5),tr.rng+0.5):return ag,d
         opp=self._opp(tr.team)
         tgts=getattr(tr,'targets',['Ground'])
         if not tgts:return None,0
