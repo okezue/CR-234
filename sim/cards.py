@@ -1,5 +1,5 @@
 import json
-import random
+import math
 import re
 from pathlib import Path
 from sim.units import Troop,Building
@@ -329,6 +329,13 @@ def troop(c,k,lvl,team,x,y,evolved,is_hero,ev,chain,sk,name):
         if isinstance(x,fx.Burrow):x.start(tr)
     return tr
 
+def formation(n,r,x,y,team):
+    # summons stand evenly on a circle of the summon radius, the first at the front; a pair stands side by side, a single unit on the point
+    if n<=1:return [(x,y)]*n
+    if n==2:return [(x-r,y),(x+r,y)]
+    f=1 if team=='blue' else -1
+    return [(x+r*math.sin(2*math.pi*i/n),y+f*r*math.cos(2*math.pi*i/n)) for i in range(n)]
+
 def create(name,lvl,team,x,y,evolved=False,hero=False):
     c=card(name);k=key(name)
     if c['kind']=='spell':return spell(c,lvl,team,x,y,evolved)
@@ -337,19 +344,24 @@ def create(name,lvl,team,x,y,evolved=False,hero=False):
     chain=[ev['stats'] if ev else {},c]
     n=(ev or {}).get('count') or c['count'] or 1;out=[]
     grp=sk.get('group',{})
+    r=(ev or {}).get('summonRadius') or c['summonRadius'];delay=c['summonDeployDelay'] or 0
+    pts=formation(n,c['collisionRadius'] or 0.5 if r is None else r,x,y,team)
+    extra=sum(c['units'][snake(ch)]['count'] or 1 for ch in grp.get('characters',[]))
+    # a lone leader (Rascal Boy, Goblinstein) stands on the point with the companions side by side the summon radius behind
+    if n-extra==1:pts=[(x,y)]+[(px,y-(1 if team=='blue' else -1)*(r or 0)) for px,_ in formation(extra,c['collisionRadius'] or 0.5,x,y,team)]
     for ch in grp.get('characters',[]):
         u=c['units'][snake(ch)];n-=u['count'] or 1
         ref=load()['cards'].get(u.get('card')) if u.get('card') else None
         for _ in range(u['count'] or 1):
-            out.append(troop(c,k,lvl,team,x+random.uniform(-0.5,0.5),y+random.uniform(-0.5,0.5),False,False,None,[u]+([ref] if ref else [])+[c],
-                             merge(ref['skills'] if ref else {},u.get('skills',{})),u.get('name') or ch))
+            px,py=pts.pop()
+            out.append(troop(c,k,lvl,team,px,py,False,False,None,[u]+([ref] if ref else [])+[c],merge(ref['skills'] if ref else {},u.get('skills',{})),
+                             u.get('name') or ch))
     name=c['name']
     if grp.get('leader'):
         u=c['units'][snake(grp['leader'])];chain=[u]+chain;sk=merge(sk,u.get('skills',{}));name=u.get('name') or grp['leader']
     if n<=1 and not out:return troop(c,k,lvl,team,x,y,evolved,hero,ev,chain,sk,name)
-    o=0.5 if grp else 1.5
-    for _ in range(max(n,0)):
-        out.append(troop(c,k,lvl,team,x+random.uniform(-o,o),y+random.uniform(-o,o),evolved,hero,ev,chain,sk,name))
+    out=[troop(c,k,lvl,team,px,py,evolved,hero,ev,chain,sk,name) for px,py in pts[:max(n,0)]]+out
+    for i,t in enumerate(out):t.deploy_at=i*delay
     if hero and c['hero'] and len(out)>1:
         ab=next((t.ability for t in out if getattr(t,'ability',None)),None)
         for t in out:t.ability=ab;t.is_hero=True

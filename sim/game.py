@@ -368,11 +368,12 @@ class Game:
                 r=self._spawn(pd.team,pd.card,pd.x,pd.y,pd.evolved,pd.hero)
                 if isinstance(r,list):
                     for j,tr in enumerate(r):
-                        if j==0:
+                        at=getattr(tr,'deploy_at',j*0.1)
+                        if at<=0:
                             self.players[pd.team].troops.append(tr)
                             self.players[pd.team]._register_champ(tr)
                         else:
-                            sp=Pending(pd.team,'_stagger_'+str(j),tr.x,tr.y,j*0.1)
+                            sp=Pending(pd.team,'_stagger_'+str(j),tr.x,tr.y,at)
                             sp._stagger_troop=tr
                             stagger_add.append(sp)
                 elif hasattr(r,'apply'):

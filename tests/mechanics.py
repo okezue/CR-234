@@ -72,7 +72,7 @@ def t_elite_barbarians_no_unsourced_charge():
 def t_evo_elite_barbarians_rage_spears():
     g=_game();eb=mk_card('elite_barbarians',11,'blue',9,10,evolved=True)
     for t in eb:g.deploy('blue',t)
-    d,=_dummies(g,(9,14.5));g.run(0.3)
+    d,=_dummies(g,(9,15));g.run(0.3)
     assert 50000-d.hp in (220,440) and len([z for z in g.spells if getattr(z,'name','')=='Rage'])>=2,f"{50000-d.hp} {len(g.spells)}"
     k=mk_card('knight',11,'blue',9,12.3);g.deploy('blue',k);g.run(0.2)
     assert has(k,'rage')

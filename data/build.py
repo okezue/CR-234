@@ -197,6 +197,16 @@ def gd_proj(card, spell, tag):
         card["src"]["projectile.waves"] = tag
 
 
+def gd_summon(card, spell, tag):
+    # deploy formation: the summons stand summonRadius tiles from the point and appear summonDeployDelay apart; the evo may differ (Skeleton Army)
+    for f in ("summonRadius", "summonDeployDelay"):
+        if spell.get(f) is not None:
+            card[f], card["src"][f] = spell[f] / 1000, tag
+        ev = (spell.get("evolvedSpellsData") or {}).get(f)
+        if card["evo"] and ev is not None and ev != spell.get(f):
+            card["evo"][f], card["src"][f"evo.{f}"] = ev / 1000, tag
+
+
 def gd_death(card, spell, tag):
     # ClashStrategic's areaDamageOnDeath.radius is the dying object's collisionRadius (Golem 750, bomb buildings 450); only a
     # deathAreaEffectData radius (Ice Golem) is a blast radius, the rest is left for the wiki and legacy fills
@@ -260,7 +270,8 @@ def normalize(c, tag):
         "deployTime": c.get("deployTime"), "placement": PLACE.get(c.get("placement")), "flying": bool(c.get("flying")),
         "targets": sorted(c["targets"]), "speed": SPEED.get(c["speed"]) if kind == "troop" or (kind == "spell" and c["units"]) else None,
         "range": c["range"], "minRange": None, "sightRange": c["sightRange"], "collisionRadius": c["collisionRadius"], "mass": None,
-        "hitSpeed": c["hitspeed"], "loadTime": c.get("loadTime"), "hitType": HIT.get(c["hitType"], c["hitType"]), "radius": c.get("radius"),
+        "summonRadius": None, "summonDeployDelay": None, "hitSpeed": c["hitspeed"], "loadTime": c.get("loadTime"),
+        "hitType": HIT.get(c["hitType"], c["hitType"]), "radius": c.get("radius"),
         "duration": c.get("duration") if kind != "building" else None, "lifetime": c.get("duration") if kind == "building" else None,
         "projectile": {"speed": None, "count": c["projectileNumber"]} if c["projectile"] else None,
         "kamikaze": bool(c.get("kamikaze")), "arena": c["unlockArena"], "tribe": c["tribe"],
@@ -312,7 +323,8 @@ def king():
     return {
         "name": "King's Tower", "id": None, "rarity": None, "kind": "tower", "cost": None, "count": 1, "deployTime": None, "placement": None,
         "flying": False, "targets": ["air", "ground"], "speed": None, "range": wiki.num(a.get("Range")), "minRange": None, "sightRange": None,
-        "collisionRadius": None, "mass": None, "hitSpeed": wiki.num(a.get("Hit Speed")), "loadTime": None, "hitType": "single", "radius": None,
+        "collisionRadius": None, "mass": None, "summonRadius": None, "summonDeployDelay": None, "hitSpeed": wiki.num(a.get("Hit Speed")),
+        "loadTime": None, "hitType": "single", "radius": None,
         "duration": None, "lifetime": None, "projectile": {"speed": None, "count": 1}, "kamikaze": False, "arena": None, "tribe": None,
         "stats": {"hitpoints": hp, "damage": dmg, "towerDamage": None}, "skills": {}, "evo": None, "hero": None, "units": {},
         "src": {"*": "wiki:King's Tower"},
@@ -347,9 +359,11 @@ def apply_patches(cards, kinds):
         tag = f"patch:{pf.stem}"
         for e in json.loads(pf.read_text()):
             k = e["card"]
-            if e["path"] == "" and k not in cards:
-                cards[k] = {}
+            if e["path"] == "":
+                # a whole-card patch may predate schema fields: absent ones are null like a normalized card
+                cards.setdefault(k, {})
                 kinds[k] = e["value"]["kind"]
+                e["value"] = {**dict.fromkeys(next(c for c in cards.values() if c)), **e["value"]}
             set_path(cards[k], e["path"], e["value"], tag)
         applied.append(pf.stem)
     return applied
@@ -389,26 +403,31 @@ def main():
     raw = json.loads(fetch(CS + "data/cards.json", "csCards.json").read_text())
     gd = gamedata()
     gd_tag = f"gd:{gd['meta']['fingerprint'][:8]}"
-    spells = {s["englishName"].strip(): s for s in gd["items"]["spells"]}
+    # the English name is shared with event variants (Royal Recruits chess boards), so the card id keys the game record
+    spells = {s["id"]: s for s in gd["items"]["spells"]}
+    spells.update({s["englishName"].strip(): s for s in gd["items"]["spells"] if s["englishName"].strip() not in spells})
     pct, tower_pct = tables(gd)
     cards, kinds = {}, {}
     for c in raw["cards"] + raw["towerCards"]:
         k = key(c["name"])
         cards[k], kinds[k] = normalize(c, tag), c["type"]
-        if c["name"] in spells:
-            snap(cards[k], spells[c["name"]], tower_pct if c["type"] == "tower" else pct, gd_tag)
+        sp = spells.get(c["id"]) or spells.get(c["name"])
+        if sp:
+            snap(cards[k], sp, tower_pct if c["type"] == "tower" else pct, gd_tag)
     patches = apply_patches(cards, kinds)
     out = {"cards": {}, "towers": {"king_tower": king()}}
     for k, c in cards.items():
-        if c["name"] in spells:
-            gd_death(c, spells[c["name"]], gd_tag)
-            gd_proj(c, spells[c["name"]], gd_tag)
+        sp = spells.get(c["id"]) or spells.get(c["name"])
+        if sp:
+            gd_death(c, sp, gd_tag)
+            gd_proj(c, sp, gd_tag)
+            gd_summon(c, sp, gd_tag)
         wiki_fill(c)
         tower = kinds[k] == "tower"
         p = tower_pct if tower else pct
-        rec = finish(c, p, tower, spells.get(c["name"]), gd_tag)
-        if c["name"] in spells:
-            gd_area(rec, spells[c["name"]], MIN[c["rarity"]], p, gd_tag)
+        rec = finish(c, p, tower, sp, gd_tag)
+        if sp:
+            gd_area(rec, sp, MIN[c["rarity"]], p, gd_tag)
         # legacy mechanics fill only what is still null; level-11 legacy anchors are expanded through the same curve
         overlay.apply(rec, k, lambda v, lo=MIN[c["rarity"]], p=p: curve(fit(v, None, p), lo, p))
         rec["src"] = dict(sorted(rec["src"].items()))
@@ -419,7 +438,7 @@ def main():
             {"tag": tag, "name": "ClashStrategic/stats", "url": CS + "data/cards.json", "version": version, "license": "Apache-2.0"},
             {"tag": gd_tag, "name": "statsroyale game data dump (ClashStrategic's upstream)", "url": GD, "fingerprint": gd["meta"]["fingerprint"],
              "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget",
-                        "projectile.waves", "skills.areaDamageOnDeath.radius/fuse"]},
+                        "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay"]},
             {"tag": "wiki:<page>", "name": "Clash Royale Fandom wiki, MediaWiki API wikitext", "url": wiki.API,
              "fields": ["projectile.speed", "minRange", "towers.king_tower", "towerMult[15]", "skills.areaDamageOnDeath.radius",
                         "tick.count and per-hit damage anchors of ticking spells"]},
@@ -434,7 +453,9 @@ def main():
         "table for every rarity, indexed by absolute level); rarity only sets minLevel, levels below it are null; towers use towerMult (supportPowerLevel)",
         "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
         "units": {"speed": "tiles per minute (slow 45, medium 60, fast 90, very fast 120)", "projectile.speed": "tiles per second (game speed / 60)",
-                  "range": "tiles", "time": "seconds", "multipliers": "percent"},
+                  "range": "tiles", "time": "seconds", "multipliers": "percent",
+                  "summonRadius": "tiles from the deploy point to each summon of a multi-unit card (null: they appear touching)",
+                  "summonDeployDelay": "seconds between consecutive summons (null: all at once)"},
         "hitType": {"single": "one target per hit (source: unique)", "splash": "area hit"},
         "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
         "legacySkills": {

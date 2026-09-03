@@ -70,6 +70,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 1000, 1098, 1208, 1325, 1454, 1599],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 232, 255, 281, 308, 338, 372]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -135,13 +137,16 @@
     "projectile.speed": "wiki:Archers",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2"
    },
    "stats": {
     "damage": [44, 48, 53, 58, 64, 70, 77, 84, 93, 102, 112, 123, 135, 149, 163, 179],
     "hitpoints": [119, 130, 143, 158, 173, 190, 209, 229, 252, 277, 304, 334, 367, 403, 442, 486],
     "towerDamage": [44, 48, 53, 58, 64, 70, 77, 84, 93, 102, 112, 123, 135, 149, 163, 179]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": "Village",
    "units": {}
@@ -192,6 +197,8 @@
     "hitpoints": null,
     "towerDamage": [29, 31, 35, 38, 42, 46, 51, 55, 61, 67, 75, 81, 89, 98, 107, 119]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -268,6 +275,8 @@
     "hitpoints": [null, null, null, null, null, 720, 792, 868, 954, 1048, 1152, 1264, 1390, 1525, 1674, 1840],
     "towerDamage": [null, null, null, null, null, 100, 110, 121, 133, 146, 161, 177, 194, 213, 234, 257]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -357,6 +366,8 @@
     "hitpoints": [null, null, null, null, null, 1048, 1152, 1264, 1388, 1526, 1676, 1840, 2023, 2220, 2436, 2678],
     "towerDamage": [null, null, null, null, null, 400, 440, 482, 530, 582, 640, 702, 772, 847, 930, 1022]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -426,6 +437,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 750, 824, 906, 994, 1093, 1200, 1316, 1447],
     "towerDamage": [null, null, null, null, null, null, null, null, 161, 177, 194, 213, 234, 257, 282, 310]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -516,6 +529,8 @@
     "hitpoints": [null, null, null, null, null, 419, 461, 505, 555, 610, 670, 736, 809, 888, 974, 1070],
     "towerDamage": [null, null, null, null, null, 145, 160, 175, 192, 212, 233, 255, 281, 308, 338, 372]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -591,6 +606,8 @@
     "hitpoints": [null, null, 550, 605, 664, 728, 800, 878, 964, 1060, 1164, 1278, 1405, 1542, 1692, 1860],
     "towerDamage": [null, null, 75, 82, 90, 99, 109, 119, 131, 144, 159, 174, 191, 210, 230, 254]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -668,13 +685,17 @@
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [75, 82, 90, 99, 109, 120, 132, 144, 159, 174, 192, 210, 231, 254, 279, 306],
     "hitpoints": [280, 308, 338, 372, 408, 448, 492, 540, 593, 652, 716, 786, 865, 949, 1041, 1145],
     "towerDamage": [75, 82, 90, 99, 109, 120, 132, 144, 159, 174, 192, 210, 231, 254, 279, 306]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.7,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -732,13 +753,17 @@
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "hitpoints": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "towerDamage": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.75,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -793,6 +818,8 @@
     "hitpoints": [null, null, 907, 997, 1095, 1200, 1320, 1447, 1590, 1747, 1920, 2107, 2317, 2542, 2790, 3067],
     "towerDamage": [null, null, 127, 139, 153, 168, 184, 202, 222, 244, 268, 295, 324, 355, 390, 429]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -892,6 +919,8 @@
     "hitpoints": [null, null, 457, 502, 551, 604, 665, 729, 801, 880, 967, 1062, 1168, 1281, 1406, 1546],
     "towerDamage": [null, null, 135, 148, 163, 179, 197, 216, 237, 260, 286, 314, 346, 379, 416, 458]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -992,6 +1021,8 @@
     "hitpoints": [350, 385, 423, 465, 511, 560, 616, 675, 742, 815, 896, 983, 1081, 1186, 1302, 1431],
     "towerDamage": [40, 44, 48, 53, 58, 64, 70, 77, 84, 93, 102, 112, 123, 135, 148, 163]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -1049,6 +1080,8 @@
     "hitpoints": [null, null, 641, 704, 773, 848, 932, 1022, 1123, 1234, 1356, 1489, 1637, 1796, 1971, 2167],
     "towerDamage": [null, null, 105, 115, 127, 139, 153, 167, 184, 202, 222, 244, 268, 294, 323, 355]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -1117,6 +1150,8 @@
     "hitpoints": [119, 130, 143, 158, 173, 190, 209, 229, 252, 277, 304, 334, 367, 403, 442, 486],
     "towerDamage": [88, 96, 106, 117, 128, 140, 154, 169, 186, 205, 225, 247, 271, 298, 327, 359]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -1198,6 +1233,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 2624, 2880, 3167, 3474, 3813, 4192],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 245, 269, 296, 325, 357, 392]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -1284,6 +1321,8 @@
     "hitpoints": [null, null, null, null, null, 1300, 1430, 1569, 1723, 1894, 2081, 2284, 2512, 2756, 3024, 3325],
     "towerDamage": [null, null, null, null, null, 180, 198, 218, 239, 263, 289, 317, 349, 383, 420, 462]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -1353,6 +1392,8 @@
     "hitpoints": [322, 354, 389, 428, 470, 515, 566, 621, 682, 750, 824, 904, 994, 1091, 1197, 1316],
     "towerDamage": [79, 86, 95, 105, 115, 126, 139, 152, 167, 184, 202, 221, 244, 267, 293, 323]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -1401,6 +1442,8 @@
     "hitpoints": [null, null, null, null, null, 1131, 1244, 1364, 1498, 1647, 1809, 1986, 2184, 2396, 2630, 2891],
     "towerDamage": [null, null, null, null, null, 132, 146, 160, 175, 193, 212, 233, 256, 281, 308, 339]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -1449,6 +1492,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -1552,6 +1597,8 @@
     "hitpoints": [null, null, null, null, null, 750, 825, 905, 994, 1092, 1200, 1317, 1449, 1589, 1744, 1918],
     "towerDamage": [null, null, null, null, null, 166, 183, 200, 220, 242, 266, 292, 321, 352, 386, 425]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -1632,6 +1679,8 @@
     "hitpoints": [null, null, 123, 135, 148, 163, 179, 196, 216, 237, 261, 286, 315, 345, 379, 417],
     "towerDamage": [null, null, 71, 78, 86, 94, 103, 113, 125, 137, 151, 165, 182, 200, 219, 241]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -1685,6 +1734,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, 25, 27, 30, 33, 36, 40, 44, 48, 53, 59, 64, 71, 78, 85]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tick": {
     "count": 3
@@ -1784,6 +1835,8 @@
     "hitpoints": [null, null, null, null, null, 656, 721, 791, 869, 955, 1049, 1152, 1266, 1389, 1525, 1676],
     "towerDamage": [null, null, null, null, null, 120, 132, 144, 159, 174, 192, 210, 231, 254, 279, 306]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -1847,6 +1900,8 @@
     "hitpoints": [null, null, null, null, null, 2470, 2717, 2979, 3273, 3597, 3952, 4338, 4770, 5234, 5743, 6314],
     "towerDamage": [null, null, null, null, null, 115, 126, 138, 152, 167, 184, 202, 222, 244, 267, 294]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {}
@@ -1913,6 +1968,8 @@
     "hitpoints": [84, 92, 101, 111, 122, 134, 147, 162, 178, 195, 215, 236, 259, 284, 312, 343],
     "towerDamage": [39, 42, 47, 51, 56, 62, 68, 75, 82, 90, 99, 109, 120, 132, 145, 159]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -1978,6 +2035,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 591, 650, 714, 783, 862, 945, 1037, 1141],
     "towerDamage": [null, null, null, null, null, null, null, null, 97, 107, 118, 129, 142, 155, 171, 188]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -2064,13 +2123,17 @@
     "skills.charge.damage[]": "derived:levelMult",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [150, 165, 181, 199, 219, 240, 264, 289, 318, 349, 384, 421, 463, 508, 558, 613],
     "hitpoints": [524, 576, 634, 696, 765, 838, 922, 1011, 1110, 1220, 1341, 1472, 1619, 1776, 1949, 2143],
     "towerDamage": [150, 165, 181, 199, 219, 240, 264, 289, 318, 349, 384, 421, 463, 508, 558, 613]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.7,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -2120,6 +2183,8 @@
     "hitpoints": [null, null, 505, 555, 610, 668, 735, 806, 886, 973, 1070, 1174, 1291, 1417, 1554, 1709],
     "towerDamage": null
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": [],
    "tribe": null,
    "units": {}
@@ -2185,6 +2250,8 @@
     "hitpoints": [null, null, 741, 815, 894, 980, 1078, 1183, 1299, 1428, 1569, 1722, 1894, 2078, 2280, 2507],
     "towerDamage": [null, null, 119, 131, 144, 158, 174, 191, 209, 230, 253, 278, 305, 335, 368, 404]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -2303,6 +2370,8 @@
     "hitpoints": [null, null, null, null, null, 800, 880, 965, 1060, 1165, 1280, 1405, 1545, 1695, 1860, 2045],
     "towerDamage": [null, null, null, null, null, 112, 123, 135, 148, 163, 179, 196, 216, 237, 260, 286]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -2343,13 +2412,16 @@
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2"
    },
    "stats": {
     "damage": [81, 89, 98, 107, 118, 129, 142, 156, 171, 188, 207, 227, 250, 274, 301, 331],
     "hitpoints": [84, 92, 101, 111, 122, 134, 147, 162, 178, 195, 215, 236, 259, 284, 312, 343],
     "towerDamage": [81, 89, 98, 107, 118, 129, 142, 156, 171, 188, 207, 227, 250, 274, 301, 331]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -2404,6 +2476,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, 81, 89, 97, 107, 117, 129, 142, 156, 172, 188, 207, 227, 249, 274]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -2485,6 +2559,8 @@
     "hitpoints": [119, 130, 143, 158, 173, 190, 209, 229, 252, 277, 304, 334, 367, 403, 442, 486],
     "towerDamage": [25, 27, 30, 33, 36, 40, 44, 48, 53, 58, 64, 70, 77, 84, 93, 102]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -2529,6 +2605,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 720, 792, 870, 955, 1050, 1152, 1264, 1390],
     "towerDamage": [null, null, null, null, null, null, null, null, 161, 177, 194, 213, 234, 257, 282, 310]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -2577,6 +2655,8 @@
     "hitpoints": [null, null, 290, 319, 350, 384, 422, 463, 508, 559, 614, 674, 741, 813, 892, 981],
     "towerDamage": [null, null, 81, 89, 97, 107, 117, 129, 142, 156, 171, 188, 207, 227, 249, 274]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -2630,6 +2710,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 24, 26, 28, 31, 34, 37, 42, 46, 50, 55, 61]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -2708,6 +2790,8 @@
     "hitpoints": [null, null, 343, 377, 414, 454, 499, 548, 602, 661, 727, 798, 877, 962, 1056, 1161],
     "towerDamage": [null, null, 84, 93, 102, 112, 123, 135, 148, 163, 179, 196, 216, 237, 260, 286]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -2789,6 +2873,8 @@
     "hitpoints": [null, null, 1875, 2061, 2263, 2480, 2728, 2991, 3286, 3611, 3968, 4355, 4789, 5254, 5766, 6339],
     "towerDamage": [null, null, 119, 131, 144, 158, 174, 191, 209, 230, 253, 278, 305, 335, 368, 404]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": "Village",
    "units": {}
@@ -2843,6 +2929,8 @@
     "hitpoints": [null, null, null, null, null, 2100, 2310, 2534, 2783, 3059, 3361, 3689, 4057, 4451, 4884, 5370],
     "towerDamage": [null, null, null, null, null, 172, 190, 208, 228, 251, 276, 303, 333, 366, 401, 441]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -2925,6 +3013,8 @@
     "hitpoints": null,
     "towerDamage": [18, 19, 21, 23, 26, 28, 31, 34, 38, 41, 45, 50, 55, 61, 66, 73]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -3005,6 +3095,8 @@
     "hitpoints": [null, null, null, null, null, 126, 139, 152, 167, 184, 202, 221, 244, 267, 293, 323],
     "towerDamage": [null, null, null, null, null, 75, 82, 90, 99, 109, 120, 132, 145, 159, 174, 192]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings", "ground"],
    "tribe": null,
    "units": {
@@ -3092,6 +3184,8 @@
     "hitpoints": [null, null, 369, 405, 445, 488, 536, 588, 646, 710, 780, 857, 942, 1033, 1134, 1247],
     "towerDamage": [null, null, 145, 159, 175, 192, 211, 231, 254, 279, 306, 337, 370, 406, 446, 489]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -3180,6 +3274,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 6, 7, 7, 8, 9, 10, 11, 12, 13, 14, 16]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tick": {
     "count": 6
@@ -3264,6 +3360,8 @@
     "hitpoints": [null, null, 614, 675, 741, 812, 894, 980, 1076, 1183, 1300, 1427, 1569, 1722, 1889, 2077],
     "towerDamage": [null, null, 88, 97, 106, 116, 128, 140, 154, 170, 186, 205, 225, 247, 271, 298]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -3370,6 +3468,8 @@
     "hitpoints": [null, null, null, null, null, 820, 902, 990, 1087, 1195, 1313, 1441, 1585, 1739, 1908, 2098],
     "towerDamage": null
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings", "ground"],
    "tribe": null,
    "units": {
@@ -3434,6 +3534,8 @@
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage": "patch:2026-08-05",
     "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2",
     "units.goblin": "legacy:composition.Goblin",
     "units.goblin.count": "legacy:composition.Goblin",
     "units.goblin.hitSpeed": "legacy:composition.Goblin",
@@ -3455,6 +3557,8 @@
     "hitpoints": [79, 86, 95, 105, 115, 126, 139, 152, 167, 184, 202, 221, 244, 267, 293, 323],
     "towerDamage": [49, 53, 59, 65, 71, 78, 86, 94, 103, 114, 125, 137, 151, 166, 182, 200]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 1.0,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -3571,6 +3675,8 @@
     "hitpoints": [null, null, null, null, null, 1944, 2138, 2344, 2575, 2830, 3110, 3414, 3754, 4118, 4519, 4969],
     "towerDamage": [null, null, null, null, null, 110, 121, 133, 146, 160, 176, 193, 213, 233, 256, 282]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "buildings", "ground"],
    "tribe": null,
    "units": {
@@ -3661,6 +3767,8 @@
     "hitpoints": [null, null, 557, 613, 673, 737, 811, 889, 977, 1074, 1180, 1295, 1424, 1562, 1714, 1885],
     "towerDamage": [null, null, 31, 34, 37, 41, 45, 50, 55, 60, 67, 73, 80, 88, 96, 107]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -3748,6 +3856,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1876, 2062, 2265, 2486, 2734, 3000, 3292, 3619],
     "towerDamage": [null, null, null, null, null, null, null, null, 192, 212, 232, 255, 281, 308, 338, 372]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -3803,13 +3913,17 @@
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [49, 53, 59, 65, 71, 78, 86, 94, 103, 114, 125, 137, 151, 166, 182, 200],
     "hitpoints": [79, 86, 95, 105, 115, 126, 139, 152, 167, 184, 202, 221, 244, 267, 293, 323],
     "towerDamage": [49, 53, 59, 65, 71, 78, 86, 94, 103, 114, 125, 137, 151, 166, 182, 200]
    },
+   "summonDeployDelay": 0.2,
+   "summonRadius": 0.7,
    "targets": ["ground"],
    "tribe": "Goblin",
    "units": {
@@ -3894,6 +4008,7 @@
     "stats.hitpoints": "patch:2026-08-26",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
+    "summonRadius": "gd:debfe1e2",
     "units.doctor": "legacy:entities.doctor",
     "units.doctor.collisionRadius": "legacy:entities.doctor",
     "units.doctor.count": "legacy:entities.doctor",
@@ -3921,6 +4036,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 2240, 2458, 2703, 2966, 3255, 3578],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 128, 140, 154, 169, 186, 204]
    },
+   "summonDeployDelay": null,
+   "summonRadius": 3.5,
    "targets": ["air", "buildings", "ground"],
    "tribe": null,
    "units": {
@@ -4030,6 +4147,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 1799, 1975, 2172, 2383, 2615, 2875],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 161, 177, 194, 213, 234, 257]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -4094,6 +4213,8 @@
     "hitpoints": [null, null, null, null, null, 3200, 3520, 3860, 4240, 4660, 5120, 5620, 6180, 6780, 7440, 8180],
     "towerDamage": [null, null, null, null, null, 195, 214, 235, 258, 284, 312, 342, 376, 413, 453, 498]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -4177,6 +4298,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 67, 74, 82, 89, 98, 108, 119, 131],
     "towerDamage": [null, null, null, null, null, null, null, null, 67, 74, 82, 89, 98, 108, 119, 131]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings", "ground"],
    "tribe": null,
    "units": {
@@ -4232,13 +4355,16 @@
     "skills.shield.hitpoints[]": "derived:levelMult",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2"
    },
    "stats": {
     "damage": [null, null, null, null, null, 73, 80, 88, 97, 107, 117, 129, 142, 155, 171, 188],
     "hitpoints": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "towerDamage": [null, null, null, null, null, 73, 80, 88, 97, 107, 117, 129, 142, 155, 171, 188]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -4296,6 +4422,8 @@
     "hitpoints": [null, null, 101, 111, 122, 134, 147, 162, 178, 195, 215, 236, 259, 284, 312, 343],
     "towerDamage": [null, null, 52, 57, 62, 68, 75, 82, 91, 100, 110, 120, 132, 145, 159, 175]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -4345,6 +4473,8 @@
     "hitpoints": [null, null, 802, 881, 967, 1060, 1166, 1279, 1405, 1544, 1697, 1863, 2048, 2247, 2466, 2711],
     "towerDamage": [null, null, 150, 164, 181, 198, 218, 239, 262, 288, 317, 348, 383, 420, 461, 507]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {}
@@ -4415,6 +4545,8 @@
     "hitpoints": [null, null, null, null, null, 553, 608, 667, 733, 806, 885, 972, 1069, 1172, 1287, 1415],
     "towerDamage": [null, null, null, null, null, 52, 58, 63, 69, 76, 84, 92, 101, 111, 122, 134]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -4496,6 +4628,8 @@
     "hitpoints": [null, null, 621, 683, 750, 822, 904, 992, 1089, 1197, 1315, 1444, 1588, 1742, 1912, 2102],
     "towerDamage": [null, null, 39, 43, 48, 52, 58, 63, 69, 76, 84, 92, 101, 111, 122, 134]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {}
@@ -4584,6 +4718,8 @@
     "hitpoints": [84, 92, 101, 111, 122, 134, 147, 162, 178, 195, 215, 236, 259, 284, 312, 343],
     "towerDamage": [43, 47, 52, 57, 62, 68, 75, 82, 91, 100, 110, 120, 132, 145, 159, 175]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -4687,6 +4823,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 570, 626, 688, 755, 831, 911, 1000, 1100],
     "towerDamage": [null, null, null, null, null, null, null, null, 74, 81, 89, 98, 108, 118, 130, 143]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -4781,6 +4919,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1072, 1178, 1295, 1421, 1563, 1715, 1882, 2069],
     "towerDamage": [null, null, null, null, null, null, null, null, 29, 32, 35, 39, 43, 47, 52, 57]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -4836,6 +4976,8 @@
     "hitpoints": [null, null, 826, 908, 997, 1092, 1202, 1318, 1447, 1591, 1748, 1919, 2110, 2315, 2540, 2793],
     "towerDamage": [null, null, 20, 22, 24, 27, 29, 32, 36, 39, 43, 47, 52, 57, 63, 69]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -4917,6 +5059,8 @@
     "hitpoints": [690, 759, 834, 917, 1007, 1104, 1214, 1331, 1462, 1607, 1766, 1938, 2132, 2339, 2566, 2822],
     "towerDamage": [79, 86, 95, 105, 115, 126, 139, 152, 167, 184, 202, 221, 244, 267, 293, 323]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": "Kingdom",
    "units": {}
@@ -4976,6 +5120,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 2965, 3259, 3581, 3931, 4322, 4742, 5204, 5721],
     "towerDamage": [null, null, null, null, null, null, null, null, 44, 48, 53, 59, 64, 71, 78, 85]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -5057,6 +5203,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 166, 183, 200, 220, 242, 265, 292, 321, 352, 386, 425]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -5157,6 +5305,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 698, 767, 843, 925, 1015, 1116],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 104, 115, 126, 138, 152, 167]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -5259,6 +5409,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1062, 1167, 1282, 1407, 1548, 1698, 1863, 2049],
     "towerDamage": [null, null, null, null, null, null, null, null, 212, 233, 256, 281, 309, 339, 372, 409]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -5356,6 +5508,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 438, 482, 529, 581, 639, 701, 770, 846],
     "towerDamage": [null, null, null, null, null, null, null, null, 112, 123, 135, 148, 163, 179, 197, 216]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -5470,6 +5624,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 3307, 3634, 3993, 4383, 4820, 5288, 5803, 6380],
     "towerDamage": [null, null, null, null, null, null, null, null, 222, 244, 268, 295, 324, 355, 390, 429]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -5535,6 +5691,8 @@
     "hitpoints": [null, null, 395, 434, 477, 523, 575, 631, 693, 761, 837, 918, 1010, 1108, 1216, 1337],
     "towerDamage": [null, null, 147, 162, 178, 195, 214, 235, 258, 284, 312, 342, 376, 413, 453, 498]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -5612,6 +5770,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 2250, 2469, 2716, 2979, 3269, 3595],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 43, 47, 52, 57, 63, 69]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -5662,6 +5822,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1002, 1102, 1210, 1329, 1461, 1603, 1759, 1934],
     "towerDamage": [null, null, null, null, null, null, null, null, 31, 34, 38, 42, 46, 50, 55, 62]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -5727,6 +5889,8 @@
     "hitpoints": [null, null, 657, 722, 792, 868, 955, 1047, 1151, 1265, 1390, 1525, 1677, 1840, 2019, 2220],
     "towerDamage": [null, null, 356, 392, 430, 472, 519, 569, 625, 687, 755, 828, 911, 1000, 1097, 1206]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -5773,6 +5937,8 @@
     "hitpoints": [null, null, 859, 944, 1036, 1136, 1249, 1370, 1505, 1654, 1817, 1995, 2193, 2406, 2641, 2903],
     "towerDamage": [null, null, 89, 98, 108, 118, 130, 142, 156, 172, 189, 207, 228, 250, 275, 302]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {}
@@ -5833,13 +5999,17 @@
     "projectile.speed": "wiki:Minion Horde",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [42, 46, 50, 55, 61, 67, 73, 81, 89, 97, 107, 118, 129, 142, 156, 171],
     "hitpoints": [90, 99, 108, 119, 131, 144, 158, 173, 190, 209, 230, 252, 278, 305, 334, 368],
     "towerDamage": [42, 46, 50, 55, 61, 67, 73, 81, 89, 97, 107, 118, 129, 142, 156, 171]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.6,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -5881,13 +6051,16 @@
     "projectile.speed": "wiki:Minions",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2"
    },
    "stats": {
     "damage": [42, 46, 50, 55, 61, 67, 73, 81, 89, 97, 107, 118, 129, 142, 156, 171],
     "hitpoints": [90, 99, 108, 119, 131, 144, 158, 173, 190, 209, 230, 252, 278, 305, 334, 368],
     "towerDamage": [42, 46, 50, 55, 61, 67, 73, 81, 89, 97, 107, 118, 129, 142, 156, 171]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -5930,6 +6103,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": [],
    "tribe": null,
    "units": {}
@@ -6009,6 +6184,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 2214, 2430, 2672, 2932, 3217, 3537],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 140, 154, 169, 186, 204, 224]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -6074,6 +6251,8 @@
     "hitpoints": [535, 588, 647, 711, 781, 856, 941, 1032, 1134, 1246, 1369, 1503, 1653, 1813, 1990, 2188],
     "towerDamage": [104, 114, 125, 138, 151, 166, 183, 200, 220, 242, 266, 292, 321, 352, 386, 425]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -6157,6 +6336,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 438, 482, 529, 581, 639, 701, 770, 846],
     "towerDamage": [null, null, null, null, null, null, null, null, 110, 121, 133, 146, 160, 176, 193, 212]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -6270,6 +6451,8 @@
     "hitpoints": [null, null, 341, 375, 411, 451, 496, 544, 597, 657, 721, 792, 871, 955, 1049, 1153],
     "towerDamage": [null, null, 102, 113, 124, 136, 149, 164, 180, 198, 217, 238, 262, 288, 316, 347]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -6344,6 +6527,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 750, 824, 906, 994, 1093, 1200, 1316, 1447],
     "towerDamage": [null, null, null, null, null, null, null, null, 260, 286, 314, 345, 380, 416, 457, 503]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -6433,6 +6618,8 @@
     "hitpoints": [null, null, null, null, null, 2350, 2585, 2835, 3114, 3422, 3760, 4127, 4539, 4979, 5464, 6008],
     "towerDamage": [null, null, null, null, null, 510, 561, 615, 676, 743, 816, 896, 985, 1081, 1186, 1304]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": "Beast",
    "units": {}
@@ -6503,6 +6690,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 871, 957, 1052, 1154, 1269, 1393, 1528, 1680],
     "towerDamage": [null, null, null, null, null, null, null, null, 180, 198, 217, 238, 262, 288, 316, 347]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -6570,6 +6759,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 12, 14, 15, 16, 18, 21, 22, 24, 27, 29, 33]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tick": {
     "count": 8
@@ -6628,6 +6819,8 @@
     "hitpoints": [null, null, null, null, null, 1200, 1320, 1447, 1590, 1747, 1920, 2107, 2317, 2542, 2790, 3067],
     "towerDamage": [null, null, null, null, null, 244, 269, 295, 324, 356, 391, 429, 472, 518, 569, 625]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": "Magic",
    "units": {}
@@ -6704,6 +6897,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 216, 237, 261, 286, 315, 345, 379, 417],
     "towerDamage": [null, null, null, null, null, null, null, null, 139, 153, 168, 185, 203, 223, 245, 268]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -6765,6 +6960,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 28, 31, 34, 38, 41, 45, 50, 55, 61, 66, 73]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -6839,6 +7036,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1462, 1607, 1766, 1938, 2132, 2339, 2566, 2822],
     "towerDamage": [null, null, null, null, null, null, null, null, 207, 228, 250, 275, 302, 332, 364, 400]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "buildings", "ground"],
    "tribe": null,
    "units": {
@@ -6908,6 +7107,7 @@
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
+    "summonRadius": "gd:debfe1e2",
     "units.rascal_boy": "legacy:composition.Rascal Boy",
     "units.rascal_boy.count": "legacy:composition.Rascal Boy",
     "units.rascal_boy.hitSpeed": "legacy:composition.Rascal Boy",
@@ -6929,6 +7129,8 @@
     "hitpoints": [716, 787, 866, 952, 1045, 1145, 1260, 1381, 1517, 1668, 1832, 2011, 2212, 2427, 2663, 2928],
     "towerDamage": [85, 93, 102, 113, 124, 136, 149, 164, 180, 198, 217, 238, 262, 288, 316, 347]
    },
+   "summonDeployDelay": null,
+   "summonRadius": 3.0,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -7010,6 +7212,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, 162, 178, 195, 214, 235, 258, 284, 312, 343, 376, 414, 454, 498, 548]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -7064,6 +7268,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1473, 1619, 1779, 1952, 2147, 2356, 2585, 2842],
     "towerDamage": [null, null, null, null, null, null, null, null, 307, 337, 371, 407, 448, 491, 539, 593]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -7128,6 +7334,8 @@
     "hitpoints": [214, 235, 258, 284, 312, 342, 376, 413, 453, 498, 548, 601, 661, 725, 796, 875],
     "towerDamage": [150, 165, 181, 199, 219, 240, 264, 289, 318, 349, 384, 421, 463, 508, 558, 613]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -7212,6 +7420,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1002, 1102, 1210, 1329, 1461, 1603, 1759, 1934],
     "towerDamage": [null, null, null, null, null, null, null, null, 216, 237, 261, 286, 315, 345, 379, 417]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -7289,6 +7499,8 @@
     "hitpoints": [1236, 1359, 1495, 1643, 1804, 1977, 2175, 2385, 2620, 2879, 3164, 3473, 3819, 4190, 4597, 5055],
     "towerDamage": [120, 132, 145, 159, 175, 192, 211, 231, 254, 279, 307, 337, 370, 406, 446, 490]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {}
@@ -7351,13 +7563,17 @@
     "mass": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [null, null, 35, 38, 42, 46, 51, 55, 61, 67, 74, 81, 89, 98, 107, 118],
     "hitpoints": [null, null, 395, 434, 477, 523, 575, 631, 693, 761, 837, 918, 1010, 1108, 1216, 1337],
     "towerDamage": [null, null, 35, 38, 42, 46, 51, 55, 61, 67, 74, 81, 89, 98, 107, 118]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.001,
    "targets": ["buildings"],
    "tribe": null,
    "units": {}
@@ -7420,13 +7636,17 @@
     "skills.shield.hitpoints[]": "derived:levelMult",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [52, 57, 62, 69, 75, 83, 91, 100, 110, 121, 133, 146, 160, 176, 193, 212],
     "hitpoints": [214, 235, 258, 284, 312, 342, 376, 413, 453, 498, 547, 601, 661, 725, 796, 875],
     "towerDamage": [52, 57, 62, 69, 75, 83, 91, 100, 110, 121, 133, 146, 160, 176, 193, 212]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.5,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -7488,6 +7708,8 @@
     "hitpoints": [null, null, null, null, null, 1760, 1936, 2123, 2332, 2563, 2816, 3091, 3399, 3729, 4092, 4499],
     "towerDamage": [null, null, null, null, null, 96, 105, 115, 127, 139, 153, 168, 185, 203, 223, 245]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {}
@@ -7518,7 +7740,8 @@
      "damage": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
      "hitpoints": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
      "towerDamage": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130]
-    }
+    },
+    "summonRadius": 0.4
    },
    "flying": false,
    "hero": null,
@@ -7547,6 +7770,7 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
+    "evo.summonRadius": "gd:debfe1e2",
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -7561,6 +7785,8 @@
     "hitpoints": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "towerDamage": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -7662,6 +7888,8 @@
     "hitpoints": [208, 228, 251, 276, 303, 332, 366, 401, 440, 484, 532, 584, 642, 705, 773, 850],
     "towerDamage": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 129]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -7716,13 +7944,17 @@
     "projectile.speed": "wiki:Skeleton Dragons",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [59, 64, 71, 78, 86, 94, 103, 113, 125, 137, 151, 165, 182, 200, 219, 241],
     "hitpoints": [219, 240, 264, 291, 319, 350, 385, 422, 464, 510, 560, 615, 676, 742, 814, 895],
     "towerDamage": [59, 64, 71, 78, 86, 94, 103, 113, 125, 137, 151, 165, 182, 200, 219, 241]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 1.5,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -7802,6 +8034,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, null, null, 2298, 2523, 2774, 3044, 3340, 3672],
     "towerDamage": [null, null, null, null, null, null, null, null, null, null, 204, 224, 247, 271, 297, 327]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -7875,13 +8109,16 @@
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "hitpoints": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "towerDamage": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130]
    },
+   "summonDeployDelay": null,
+   "summonRadius": 0.7,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -7930,6 +8167,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1202, 1321, 1451, 1593, 1752, 1922, 2109, 2319],
     "towerDamage": [null, null, null, null, null, null, null, null, 1102, 1211, 1331, 1461, 1606, 1762, 1934, 2126]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -7971,13 +8210,17 @@
     "projectile.speed": "wiki:Spear Goblins",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "hitpoints": [52, 57, 62, 69, 75, 83, 91, 100, 110, 121, 133, 146, 160, 176, 193, 212],
     "towerDamage": [32, 35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.8,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -8041,6 +8284,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 1038, 1141, 1255, 1376, 1514, 1661, 1822, 2005],
     "towerDamage": [null, null, null, null, null, null, null, null, 254, 279, 307, 337, 370, 406, 446, 490]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -8122,6 +8367,8 @@
     "hitpoints": [null, null, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
     "towerDamage": [null, null, 121, 133, 146, 160, 176, 193, 212, 233, 256, 281, 309, 339, 372, 409]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -8204,6 +8451,8 @@
     "hitpoints": [462, 508, 559, 614, 674, 739, 813, 891, 979, 1076, 1182, 1298, 1427, 1566, 1718, 1889],
     "towerDamage": [86, 94, 104, 114, 125, 137, 151, 165, 182, 200, 220, 241, 265, 291, 319, 351]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -8264,6 +8513,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, null, null, null, 29, 32, 35, 39, 43, 47, 52, 57]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -8311,13 +8562,16 @@
     "stats.hitpoints": "patch:2026-08-05",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage": "patch:2026-08-05",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2"
    },
    "stats": {
     "damage": [null, null, 102, 113, 124, 136, 149, 164, 180, 198, 217, 238, 262, 288, 316, 347],
     "hitpoints": [null, null, 341, 375, 411, 451, 496, 544, 597, 657, 721, 792, 871, 955, 1049, 1153],
     "towerDamage": [null, null, 102, 113, 124, 136, 149, 164, 180, 198, 217, 238, 262, 288, 316, 347]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -8418,6 +8672,8 @@
     "hitpoints": [null, null, 250, 275, 302, 331, 364, 399, 438, 482, 529, 581, 639, 701, 770, 846],
     "towerDamage": [null, null, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 129]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {
@@ -8495,6 +8751,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 17, 19, 21, 23, 25, 29, 30, 33, 37, 40, 44]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -8595,6 +8853,8 @@
     "hitpoints": [null, null, 901, 990, 1087, 1192, 1311, 1437, 1579, 1735, 1907, 2093, 2302, 2525, 2771, 3047],
     "towerDamage": [null, null, 125, 138, 151, 166, 183, 200, 220, 242, 266, 292, 321, 352, 386, 425]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -8648,6 +8908,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 24, 26, 28, 31, 34, 39, 42, 46, 50, 55, 61]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tick": {
     "count": 2
@@ -8711,6 +8973,8 @@
     "hitpoints": null,
     "towerDamage": [null, null, null, null, null, 60, 66, 73, 80, 88, 97, 106, 117, 128, 141, 155]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tick": {
     "count": 3
@@ -8776,6 +9040,8 @@
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2",
     "units.runner.damage": "legacy:evolution.sub_units.Runner",
     "units.runner.hitpoints": "legacy:evolution.sub_units.Runner",
     "units.runner.range": "legacy:evolution.sub_units.Runner",
@@ -8787,6 +9053,8 @@
     "hitpoints": [null, null, null, null, null, 206, 227, 248, 273, 300, 330, 362, 398, 437, 479, 527],
     "towerDamage": [null, null, null, null, null, 176, 193, 212, 233, 256, 281, 309, 339, 372, 409, 449]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 0.75,
    "targets": ["buildings"],
    "tribe": null,
    "units": {
@@ -8880,6 +9148,8 @@
     "hitpoints": [null, null, null, null, null, 524, 577, 633, 695, 764, 839, 921, 1013, 1111, 1220, 1341],
     "towerDamage": [null, null, null, null, null, 84, 93, 102, 112, 123, 135, 148, 163, 179, 197, 216]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {
@@ -8989,6 +9259,8 @@
     "hitpoints": [null, null, 356, 392, 430, 472, 519, 569, 625, 687, 755, 828, 911, 1000, 1097, 1206],
     "towerDamage": [null, null, 133, 146, 160, 176, 193, 212, 233, 256, 281, 309, 339, 372, 409, 449]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -9036,6 +9308,8 @@
     "hitpoints": [null, null, null, null, null, 1000, 1100, 1206, 1325, 1456, 1600, 1756, 1931, 2118, 2325, 2556],
     "towerDamage": [null, null, null, null, null, 36, 40, 44, 48, 53, 58, 64, 71, 77, 85, 94]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["ground"],
    "tribe": null,
    "units": {}
@@ -9108,6 +9382,8 @@
     "hitpoints": null,
     "towerDamage": [19, 20, 22, 25, 27, 30, 33, 36, 40, 44, 48, 53, 58, 64, 70, 77]
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -9155,13 +9431,17 @@
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
-    "stats.towerDamage[]": "derived:levelMult"
+    "stats.towerDamage[]": "derived:levelMult",
+    "summonDeployDelay": "gd:debfe1e2",
+    "summonRadius": "gd:debfe1e2"
    },
    "stats": {
     "damage": [null, null, 55, 61, 67, 73, 80, 88, 97, 107, 117, 129, 142, 155, 171, 188],
     "hitpoints": [null, null, 250, 275, 302, 331, 364, 399, 438, 482, 529, 581, 639, 701, 770, 846],
     "towerDamage": [null, null, 55, 61, 67, 73, 80, 88, 97, 107, 117, 129, 142, 155, 171, 188]
    },
+   "summonDeployDelay": 0.1,
+   "summonRadius": 1.0,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -9204,7 +9484,7 @@
     "version": "2.4.0"
    },
    {
-    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse"],
+    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay"],
     "fingerprint": "debfe1e2c24562a36ef753ebca3a0f239e12b4c0",
     "name": "statsroyale game data dump (ClashStrategic's upstream)",
     "tag": "gd:debfe1e2",
@@ -9256,6 +9536,8 @@
    "projectile.speed": "tiles per second (game speed / 60)",
    "range": "tiles",
    "speed": "tiles per minute (slow 45, medium 60, fast 90, very fast 120)",
+   "summonDeployDelay": "seconds between consecutive summons (null: all at once)",
+   "summonRadius": "tiles from the deploy point to each summon of a multi-unit card (null: they appear touching)",
    "time": "seconds"
   }
  },
@@ -9303,6 +9585,8 @@
     "hitpoints": [null, null, null, null, null, 1740, 1872, 2016, 2172, 2388, 2616, 2868, 3144, 3456, 3792, 4164],
     "towerDamage": null
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -9358,6 +9642,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 2298, 2527, 2768, 3035, 3327, 3657, 4013, 4406],
     "towerDamage": null
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -9401,6 +9687,8 @@
     "hitpoints": [2400, 2568, 2736, 2904, 3096, 3312, 3528, 3768, 4008, 4392, 4824, 5304, 5832, 6408, 7032, 7704],
     "towerDamage": null
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -9458,6 +9746,8 @@
     "hitpoints": [null, null, null, null, null, null, null, null, 2244, 2467, 2703, 2963, 3248, 3571, 3918, 4302],
     "towerDamage": null
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
@@ -9503,6 +9793,8 @@
     "hitpoints": [1400, 1512, 1624, 1750, 1890, 2030, 2184, 2352, 2534, 2786, 3052, 3346, 3668, 4032, 4424, 4858],
     "towerDamage": null
    },
+   "summonDeployDelay": null,
+   "summonRadius": null,
    "targets": ["air", "ground"],
    "tribe": null,
    "units": {}
