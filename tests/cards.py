@@ -504,11 +504,13 @@ def t_poison_ct():
     assert abs(dmg-168)<50,f"Expected ~168 CT dmg, got {dmg}"
     return f"Poison crown tower ({dmg} dmg)"
 def t_log_ground():
-    g=Game()
+    g=quiet(Game())
     d1=Dummy('red',9,12,hp=1000,spd=0)
     g.deploy('red',d1)
     log=mk_card('the_log',11,'blue',9,10)
-    log.apply(g)
+    g._cast('blue',log,9,10);g.run(0.4)
+    assert d1.hp==1000,"the log rolls 2 tiles in 0.6 s before it reaches the dummy"
+    g.run(0.4)
     assert d1.hp==1000-269,f"Expected 269 dmg, got {1000-d1.hp}"
     return f"Log damages ground (hp={d1.hp})"
 def t_log_no_air():
@@ -526,7 +528,7 @@ def t_log_pushback():
     g.deploy('red',d)
     oy=d.y
     log=mk_card('the_log',11,'blue',9,10)
-    log.apply(g)
+    g._cast('blue',log,9,10);g.run(1)
     assert abs(d.y-oy-0.7)<0.01,f"Expected +0.7 pushback, got {d.y-oy}"
     return f"Log pushback ({d.y-oy:.1f} tiles)"
 def t_pekka_load():
@@ -1899,11 +1901,11 @@ def t_marcher_v_air():
     assert bd.hp<ini
     return f"Magic Archer hits air ({ini}->{bd.hp})"
 def t_bbarrel_dmg():
-    g=Game()
+    g=quiet(Game())
     d=Dummy('red',9,12,hp=5000,spd=0)
     g.deploy('red',d)
     bb=mk_card('barbarian_barrel',11,'blue',9,10)
-    bb.apply(g)
+    g._cast('blue',bb,9,10);g.run(1)
     assert d.hp==5000-233,f"Expected 233 dmg, got {5000-d.hp}"
     return f"Barbarian Barrel damage ({5000-d.hp})"
 def t_bbarrel_ground():
@@ -4002,14 +4004,16 @@ def t_travel_log_roll():
     g=quiet(Game())
     d=Dummy('red',9,14,hp=50000,spd=0)
     g.deploy('red',d)
-    lg=mk_card('the_log',11,'blue',9,10);lg.proj_spd=3.37
+    lg=mk_card('the_log',11,'blue',9,10)
     g._cast('blue',lg,9.0,10.0)
-    exp=lg.rng/3.37
+    exp=(4-0.5)/lg.speed
     g.run(exp-0.1)
     assert d.hp==50000,"Log still rolling"
     g.run(0.2)
-    assert d.hp<50000,"Log should hit after rolling its range"
-    return f"Travel: log rolls {exp:.2f}s"
+    assert d.hp<50000,"Log should hit when its front reaches the dummy"
+    g.run(lg.rng/lg.speed)
+    assert not lg.active,"the roll ends after 10.1 tiles"
+    return f"Travel: log front reaches a body 4 tiles ahead after {exp:.2f}s"
 def t_travel_none():
     g=Game()
     d=Dummy('red',9,25,hp=50000,spd=0)
@@ -4051,7 +4055,7 @@ def t_log_kb_heavy():
     g.deploy('red',d)
     oy=d.y
     log=mk_card('the_log',11,'blue',9,10)
-    log.apply(g)
+    g._cast('blue',log,9,10);g.run(1)
     assert abs(d.y-oy)>0.01,"Log should push heavy troops (no mass check)"
     return f"Log pushes heavy (mass=10, {oy:.1f}->{d.y:.2f})"
 def t_lightning_max_hp_sort():
@@ -4241,9 +4245,12 @@ def t_rdelivery_shield():
 def t_bbarrel_spawn():
     g=Game()
     bb=mk_card('barbarian_barrel',11,'blue',9,10)
-    bb.apply(g)
+    g._cast('blue',bb,9,10);g.run(1)
+    assert not g.players['blue'].troops,"the barrel is still rolling"
+    g.run(0.4)
     barbs=[t for t in g.players['blue'].troops if t.alive]
     assert len(barbs)==1,f"Should spawn 1 barbarian, got {len(barbs)}"
+    assert abs(barbs[0].y-14.5)<0.01 and any(s.kind=='deploying' for s in barbs[0].statuses),"he pops out at the end of the 4.5 tile roll and deploys for 1 s"
     b=barbs[0]
     assert b.name=='Barbarian'
     assert b.hp==716,f"Expected barbarian hp=716, got {b.hp}"
@@ -5757,19 +5764,15 @@ def t_hero_bbarrel_reroll():
     g=Game()
     from sim.fx import RowdyReroll
     bb=mk_card('barbarian_barrel',11,'blue',9,14,hero=True)
-    if hasattr(bb,'apply'):
-        bb.apply(g)
-        barbs=[t for t in g.players['blue'].troops if t.alive and 'arb' in getattr(t,'name','').lower()]
-        if barbs:
-            b=barbs[0];iy=b.y
-            b.ability=RowdyReroll(4.0,0.5,b.dmg,1)
-            b.is_hero=True;g.players['blue']._register_champ(b)
-            g.players['blue'].elixir=10
-            g.activate_ability('blue',b)
-            g.run(1.5)
-            assert b.y>iy+2,f"Should roll forward: y {iy:.1f}->{b.y:.1f}"
-            return f"Hero Barbarian Barrel reroll (y: {iy:.1f}->{b.y:.1f})"
-    return "Hero Barbarian Barrel (spell card)"
+    g._cast('blue',bb,9,14);g.run(1.4)
+    barbs=[t for t in g.players['blue'].troops if t.alive and 'arb' in getattr(t,'name','').lower()]
+    assert len(barbs)==1 and isinstance(barbs[0].ability,RowdyReroll) and barbs[0].is_hero,"the barrel's Barbarian carries the hero ability"
+    b=barbs[0];iy=b.y;g.run(1.0)
+    g.players['blue'].elixir=10
+    g.activate_ability('blue',b)
+    g.run(1.5)
+    assert b.y>iy+2,f"Should roll forward: y {iy:.1f}->{b.y:.1f}"
+    return f"Hero Barbarian Barrel reroll (y: {iy:.1f}->{b.y:.1f})"
 def t_int_evo_pekka_v_skarmy():
     g=Game()
     pk=mk_card('pekka',11,'blue',9,10,evolved=True)

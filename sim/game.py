@@ -413,11 +413,8 @@ class Game:
         def hit(g,pr):sp.apply(g);g.spells.append(sp)
         v=getattr(sp,'proj_spd',0)
         if v<=0:hit(self,None);return
-        roll=getattr(sp,'roll',0)
         kt=self.arena.get_tower(team,'king')
-        sx,sy=(x,y) if roll else (kt.cx,kt.cy)
-        ty=y+roll*(1 if team=='blue' else -1) if roll else y
-        self.projs.append(Projectile(team,sx,sy,v,None,x,ty,hit,False))
+        self.projs.append(Projectile(team,kt.cx,kt.cy,v,None,x,y,hit,False))
     def _proc_towers(self):
         for t in self.arena.towers:
             if not t.alive:continue

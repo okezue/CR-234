@@ -51,9 +51,9 @@ def t_firecracker_sparks_and_tower_volley():
     return f"Firecracker: one pellet on the target, {50000-b.hp} from sparks behind it, the full 5 pellet volley (320) on a tower"
 def t_the_log_shares_the_strip():
     g=Game();random.seed(1);sk=mk_card('skeleton_army',11,'red',9,22)
-    for s in sk:g.deploy('red',s)
+    for s in sk:g._place('red',s,1.0)
     b=mk_card('cannon',11,'red',9,21);g.deploy('red',b);by=b.y
-    lg=mk_card('the_log',11,'blue',9,18);lg.apply(g);g.spells.append(lg)
+    lg=mk_card('the_log',11,'blue',9,18);lg.apply(g);g.spells.append(lg);g.run(2)
     assert not any(s.alive for s in sk) and b.hp<b.max_hp and b.y==by
     return "The Log rolls through the strip: 15 skeletons dead, the cannon damaged but not pushed"
 def t_little_prince_charge_is_the_guardienne_dash():

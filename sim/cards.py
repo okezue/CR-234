@@ -65,7 +65,7 @@ def base(chain,lvl,name,parent=None):
             'spd':(p('speed') or 0)/60.0,'rng':rng,'min_rng':p('minRange') or 0,'targets':tg,
             'transport':'Air' if p('flying') else 'Ground','atk_type':'area' if splash else 'single_target','splash_r':p('radius') if splash else 0,
             'ct_dmg':(at(p('towerDamage'),lvl) or 0)*shots,'components':[],'lvl':lvl,'name':name,'mass':p('mass') or 4,'sight_r':p('sightRange') or 5.5,
-            'collision_r':p('collisionRadius') or 0.5,'projSpeed':pj.get('speed') or 0,
+            'collision_r':p('collisionRadius') or 0.5,'projSpeed':pj.get('speed') or 0,'deploy':p('deployTime') or 0,
             'is_suicide':bool(pick([o for o in chain if o is not parent],'kamikaze'))}
 
 def unit(c,sk,lvl):
@@ -381,6 +381,7 @@ def spell(c,lvl,team,x,y,evolved,is_hero=False):
     # ticking spells: damage is per hit, tick.count hits over the duration (hitSpeed is the interval when given)
     ticks=(c.get('tick') or {}).get('count') or (round(dur/hs) if hs and dur else 0)
     hs=dur/ticks if ticks and c.get('tick') else hs
+    roll={**cfg,'range':pi.get('range'),'width':r*2,'pushback':pb.get('distance') or 0,'speed':pi.get('speed') or 0}
     if sp.get('character'):
         # the evo spawn (decoy goblins) rides along with the base spawn, so the real troops come from the base skill
         bs=c['skills']['spawn'] if ev and 'spawn' in ev['skills'] else sp
@@ -388,7 +389,7 @@ def spell(c,lvl,team,x,y,evolved,is_hero=False):
         if not empty(sk.get('shield',{}).get('hitpoints')):tc['shield_hp']=tc['max_shield_hp']=at(sk['shield']['hitpoints'],lvl)
         # a hero spell's ability belongs to the troop it spawns (Barbarian Barrel's Rowdy Reroll)
         if is_hero and c['hero']:tc['hero']=lambda tr:uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])
-        if pi.get('range'):return BarbarianBarrelSpell(team,x,y,{**cfg,'range':pi['range'],'width':r*2,'pushback':pb.get('distance') or 0,'troop_cfg':tc})
+        if pi.get('range'):return BarbarianBarrelSpell(team,x,y,{**roll,'troop_cfg':tc})
         if sp.get('interval'):
             gy={'troop_cfg':tc,'total':n,'interval':sp['interval'],'radius':r,'min_radius':sp.get('minRadius') or r,'dur':dur,'name':name,
                 'first_delay':sp.get('firstDelay') or 0}
@@ -400,7 +401,7 @@ def spell(c,lvl,team,x,y,evolved,is_hero=False):
                                               'decoy_count':count(sp.get('count'))})
         return SpawnSpell(team,x,y,{'troop_cfg':tc,'count':n,'name':name,'projSpeed':cfg['projSpeed']})
     if 'multiply' in sk:return CloneSpell(team,x,y,{'radius':r,'name':name})
-    if pi.get('range'):return LogSpell(team,x,y,{**cfg,'range':pi['range'],'width':r*2,'pushback':pb.get('distance') or 0})
+    if pi.get('range'):return LogSpell(team,x,y,roll)
     if 'multiTarget' in sk:
         m=sk['multiTarget'];iv=c['hitSpeed'];strikes=len([t for t in range(ticks) if m['firstDelay']+t*iv<dur])
         return VoidSpell(team,x,y,{'radius':r,'tiers':[at(t,lvl) for t in m['damageTiers']],'tower_tiers':[at(t,lvl) for t in m['towerDamageTiers']],

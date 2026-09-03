@@ -95,10 +95,15 @@ class SpawnSpell:
         self.applied=True
         for i in range(self.count):
             ox=random.uniform(-1.0,1.0);oy=random.uniform(-1.0,1.0)
-            t=Troop(self.team,self.x+ox,self.y+oy,dict(self.tcfg,components=list(self.tcfg.get('components',[]))))
-            game.players[self.team].troops.append(t)
+            spawn(game,self.team,self.x+ox,self.y+oy,self.tcfg)
         self.active=False
     def tick(self,dt,game=None):pass
+def spawn(game,team,x,y,cfg):
+    # a character a spell drops stands through its own deploy time like a played card
+    t=Troop(team,x,y,dict(cfg,components=list(cfg.get('components',[]))))
+    if 'hero' in cfg:t.ability=cfg['hero'](t);t.is_hero=True
+    game._place(team,t,cfg.get('deploy',0))
+    return t
 class DecoyBarrelSpell(SpawnSpell):
     # the evo barrel: a decoy barrel lands on the mirrored tile of the other lane with its own goblins
     def __init__(self,team,x,y,cfg):
@@ -106,8 +111,7 @@ class DecoyBarrelSpell(SpawnSpell):
     def apply(self,game):
         if self.applied:return
         super().apply(game);mx=game.arena.W-self.x
-        for i in range(self.dcount):
-            game.players[self.team].troops.append(Troop(self.team,mx+random.uniform(-1,1),self.y+random.uniform(-1,1),dict(self.dcfg,components=list(self.dcfg.get('components',[])))))
+        for i in range(self.dcount):spawn(game,self.team,mx+random.uniform(-1,1),self.y+random.uniform(-1,1),self.dcfg)
 class GraveyardSpell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
@@ -238,23 +242,31 @@ class CloneSpell:
         self.active=False
     def tick(self,dt,game=None):pass
 class LogSpell:
+    # dropped at the cast point, it rolls forward at the pierce speed and hits each body once as the front reaches it
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
         self.dmg=cfg['dmg'];self.ct_dmg=cfg.get('ct_dmg',0)
-        self.rng=cfg['range'];self.width=cfg['width']
+        self.rng=cfg['range'];self.width=cfg['width'];self.speed=cfg.get('speed',0)
         self.pushback=cfg.get('pushback',0)
         self.active=False;self.applied=False
         self.name=cfg.get('name','')
-        self.proj_spd=cfg.get('projSpeed',0);self.roll=self.rng
+        self.front=0.0;self.hit=[]
+    def _dir(self):return 1 if self.team=='blue' else -1
+    def _sweep(self,game,a,b):
+        d=self._dir()
+        for e in strip(game,self.team,self.x,self.y+d*a,self.x,self.y+d*b,self.width/2.0,air=False,skip=self.hit):
+            self.hit.append(e);hurt(e,self.ct_dmg if hasattr(e,'ttype') and self.ct_dmg else self.dmg,game)
+            if not hasattr(e,'ttype') and not getattr(e,'is_building',False):e.y+=d*self.pushback
     def apply(self,game):
         if self.applied:return
         self.applied=True
-        dy=self.rng if self.team=='blue' else -self.rng
-        for e in strip(game,self.team,self.x,self.y,self.x,self.y+dy,self.width/2.0,air=False):
-            hurt(e,self.ct_dmg if hasattr(e,'ttype') and self.ct_dmg else self.dmg,game)
-            if not hasattr(e,'ttype') and not getattr(e,'is_building',False):e.y+=dy/self.rng*self.pushback
-        self.active=False
-    def tick(self,dt,game=None):pass
+        if self.speed>0:self.active=True;return
+        self._sweep(game,0,self.rng);self.done(game)
+    def tick(self,dt,game=None):
+        if not self.active or not game:return
+        f=min(self.rng,self.front+self.speed*dt);self._sweep(game,self.front,f);self.front=f
+        if self.front>=self.rng:self.active=False;self.done(game)
+    def done(self,game):pass
 class EarthquakeSpell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
@@ -493,14 +505,8 @@ class BarbarianBarrelSpell(LogSpell):
     def __init__(self,team,x,y,cfg):
         super().__init__(team,x,y,cfg)
         self.tcfg=cfg.get('troop_cfg',{})
-    def apply(self,game):
-        super().apply(game)
-        if self.tcfg:
-            if self.team=='blue':sy=self.y+self.rng
-            else:sy=self.y-self.rng
-            t=Troop(self.team,self.x,sy,dict(self.tcfg,components=list(self.tcfg.get('components',[]))))
-            if 'hero' in self.tcfg:t.ability=self.tcfg['hero'](t);t.is_hero=True
-            game.deploy(self.team,t)
+    def done(self,game):
+        if self.tcfg:spawn(game,self.team,self.x,self.y+self._dir()*self.rng,self.tcfg)
 class EvoZapSpell(Spell):
     def __init__(self,team,x,y,cfg):
         super().__init__(team,x,y,cfg)

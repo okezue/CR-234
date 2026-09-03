@@ -186,7 +186,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "projectile.speed": "wiki:Arrows",
+    "projectile.speed": "gd:debfe1e2",
     "projectile.waves": "gd:debfe1e2",
     "stats.damage": "patch:2026-08-05",
     "stats.damage[]": "derived:levelMult",
@@ -495,7 +495,8 @@
      "bounceMode": null,
      "bounces": null,
      "radius": null,
-     "range": 4.5
+     "range": 4.5,
+     "speed": 3.333
     },
     "spawn": {
      "character": "Barbarian",
@@ -507,22 +508,14 @@
     "*": "cs2.4.0",
     "hero.ability.skills.redeploy.damage[]": "derived:levelMult",
     "hero.ability.uses": "legacy:hero.ability.uses_per_deploy",
+    "skills.pierce.speed": "gd:debfe1e2",
     "skills.spawn.character": "legacy:spawned_unit",
     "skills.spawn.count": "legacy:spawned_unit",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
-    "units.barbarian": "legacy:spawned_unit",
-    "units.barbarian.collisionRadius": "legacy:spawned_unit",
-    "units.barbarian.count": "legacy:spawned_unit",
-    "units.barbarian.deployTime": "legacy:spawned_unit",
-    "units.barbarian.hitSpeed": "legacy:spawned_unit",
-    "units.barbarian.loadTime": "legacy:spawned_unit",
-    "units.barbarian.mass": "legacy:spawned_unit",
-    "units.barbarian.range": "legacy:spawned_unit",
-    "units.barbarian.sightRange": "legacy:spawned_unit",
-    "units.barbarian.speed": "legacy:spawned_unit",
-    "units.barbarian.targets": "legacy:spawned_unit"
+    "units.barbarian": "gd:debfe1e2",
+    "units.barbarian.mass": "legacy:spawned_unit"
    },
    "stats": {
     "damage": [null, null, null, null, null, 145, 160, 175, 192, 212, 233, 255, 281, 308, 338, 372],
@@ -538,13 +531,15 @@
      "card": "barbarians",
      "collisionRadius": 0.5,
      "count": 1,
+     "damage": [null, null, null, null, null, 120, 132, 144, 159, 174, 192, 210, 231, 254, 279, 306],
      "deployTime": 1.0,
-     "from": ["legacy:spawned_unit"],
-     "hitSpeed": 1.3,
-     "loadTime": 0.4,
+     "from": ["gd.spawnCharacterData", "legacy:spawned_unit"],
+     "hitSpeed": 1.4,
+     "hitpoints": [null, null, null, null, null, 448, 492, 540, 593, 652, 716, 786, 865, 949, 1041, 1145],
+     "loadTime": 1.0,
      "mass": 4,
      "name": "Barbarian",
-     "range": 0.5,
+     "range": 0.7,
      "sightRange": 5.5,
      "speed": 60,
      "targets": ["ground"]
@@ -2472,7 +2467,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "projectile.speed": "wiki:Fireball",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage": "gd:debfe1e2 (cs anchor 689 rounded off the curve)",
     "stats.damage[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -2982,7 +2977,7 @@
    "placement": "any",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 13.333
    },
    "radius": 2.5,
    "range": 5.0,
@@ -3010,6 +3005,7 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.towerDamage[15]": "derived:levelMult (source level16 71 is off the level curve)",
     "evo.stats.towerDamage[]": "derived:levelMult",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.towerDamage[15]": "derived:levelMult (source level16 71 is off the level curve)",
     "stats.towerDamage[]": "derived:levelMult"
@@ -3068,7 +3064,7 @@
    "placement": "any",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 6.667
    },
    "radius": 1.5,
    "range": null,
@@ -3088,13 +3084,13 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
+    "projectile.speed": "gd:debfe1e2",
     "skills.spawn.character": "legacy:spawns",
     "skills.spawn.count": "legacy:spawns",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
-    "units.goblin.hitSpeed": "legacy:spawns",
-    "units.goblin.speed": "legacy:spawns"
+    "units.goblin": "gd:debfe1e2"
    },
    "stats": {
     "damage": [null, null, null, null, null, 75, 82, 90, 99, 109, 120, 132, 145, 159, 174, 192],
@@ -3108,11 +3104,17 @@
    "units": {
     "goblin": {
      "card": "goblins",
+     "collisionRadius": 0.5,
      "count": 3,
-     "from": ["evo.skills.spawn", "legacy:spawns", "legacy:sub_units.Goblin"],
+     "damage": [null, null, null, null, null, 78, 86, 94, 103, 114, 125, 137, 151, 166, 182, 200],
+     "deployTime": 1.0,
+     "from": ["gd.spawnCharacterData", "evo.skills.spawn", "legacy:spawns", "legacy:sub_units.Goblin"],
      "hitSpeed": 1.1,
+     "hitpoints": [null, null, null, null, null, 126, 139, 152, 167, 184, 202, 221, 244, 267, 293, 323],
+     "loadTime": 0.7,
      "name": "Goblin",
      "range": 0.5,
+     "sightRange": 5.5,
      "speed": 120,
      "targets": ["ground"]
     }
@@ -7215,7 +7217,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "projectile.speed": "wiki:Rocket",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage": "gd:debfe1e2 (cs anchor 1485 rounded off the curve)",
     "stats.damage[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -8515,7 +8517,8 @@
      "bounceMode": null,
      "bounces": null,
      "radius": null,
-     "range": 10.1
+     "range": 10.1,
+     "speed": 3.333
     },
     "pushback": {
      "damage": null,
@@ -8527,6 +8530,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "skills.pierce.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
    },

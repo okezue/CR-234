@@ -165,14 +165,18 @@ def gd_units(spell, lo, pct, tag, src):
     # spawned characters carried by the game data (Golemite, Lava Pups, Witch skeletons ...) with level 1 bases
     out = {}
     root = spell.get("summonCharacterData") or {}
-    for f in ("spawnCharacterData", "deathSpawnCharacterData", "spawnCharacter2Data", "deathSpawnCharacter2Data"):
+    proj = spell.get("projectileData") or {}
+    # a spell's projectile (Goblin Barrel) or its rolling projectile (Barbarian Barrel) carries the character it spawns
+    roots = [(root, f, root.get("deathSpawnCount" if "death" in f else "spawnNumber"))
+             for f in ("spawnCharacterData", "deathSpawnCharacterData", "spawnCharacter2Data", "deathSpawnCharacter2Data")]
+    roots += [(proj, "spawnCharacterData", proj.get("spawnCharacterCount")), (proj.get("spawnProjectileData") or {}, "spawnCharacterData", 1)]
+    for root, f, n in roots:
         ch = root.get(f)
         if not ch or ch.get("hitpoints") is None:
             continue
         k = snake(ch["name"])
         pj = ch.get("projectileData") or {}
-        u = {"name": ch["name"], "card": UNIT_CARD.get(ch["name"]), "from": [f"gd.{f}"],
-             "count": root.get("deathSpawnCount" if "death" in f else "spawnNumber"), "targets": TARGETS.get(ch.get("tidTarget"))}
+        u = {"name": ch["name"], "card": UNIT_CARD.get(ch["name"]), "from": [f"gd.{f}"], "count": n, "targets": TARGETS.get(ch.get("tidTarget"))}
         for a, b in GD_LEVELS.items():
             v = ch.get(a) if ch.get(a) is not None else pj.get(a) if a == "damage" else None
             if isinstance(v, int):
@@ -197,6 +201,14 @@ def gd_proj(card, spell, tag):
     if card["projectile"] and spell.get("projectileWaves"):
         card["projectile"]["waves"], card["projectile"]["waveInterval"] = spell["projectileWaves"], spell["projectileWaveInterval"] / 1000
         card["src"]["projectile.waves"] = tag
+    pj = spell.get("projectileData") or {}
+    roll = pj.get("spawnProjectileData") or {}
+    if roll.get("speed") and "pierce" in card["skills"]:
+        # a rolling spell (The Log, Barbarian Barrel) drops at the cast point and its spawned projectile rolls at this speed; the drop speed is not used
+        card["skills"]["pierce"]["speed"], card["src"]["skills.pierce.speed"] = round(roll["speed"] / 60, 3), tag
+    elif card["kind"] == "spell" and card["projectile"] and card["projectile"]["speed"] is None and pj.get("speed"):
+        # thrown from the king tower (Goblin Barrel, Giant Snowball)
+        card["projectile"]["speed"], card["src"]["projectile.speed"] = round(pj["speed"] / 60, 3), tag
 
 
 def gd_summon(card, spell, tag):

@@ -19,8 +19,9 @@ def t_fireball_alone_spares_musketeer():
     return f"Fireball alone leaves a Musketeer at {m.hp}"
 def t_log_kills_skeleton_army():
     g=Game();random.seed(1);sk=_troops('skeleton_army',9,22)
-    for s in sk:g.deploy('red',s)
-    _cast(g,'the_log',9,18)
+    # the log answers a freshly placed army: the skeletons stand through their 1 s deploy while it rolls up to them
+    for s in sk:g._place('red',s,1.0)
+    _cast(g,'the_log',9,18);g.run(2)
     assert not any(s.alive for s in sk),f"{sum(s.alive for s in sk)} skeletons survived"
     return "The Log kills all 15 Skeleton Army skeletons"
 def t_arrows_kill_minions():
