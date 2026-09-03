@@ -3437,7 +3437,7 @@
    "sightRange": 5.5,
    "skills": {
     "areaDamageOnSpawn": {
-     "damage": [null, null, null, null, null, 41, 45, 50, 55, 60, 66, 73, 80, 88, 96, 106],
+     "damage": [null, null, null, null, null, 52, 58, 63, 69, 76, 84, 92, 101, 111, 122, 134],
      "radius": 2.0,
      "towerDamage": 0
     },
@@ -3467,13 +3467,15 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
-    "skills.areaDamageOnSpawn.damage": "legacy:spawn_damage",
+    "skills.areaDamageOnSpawn.damage": "patch:2026-09-03",
+    "skills.areaDamageOnSpawn.damage[]": "derived:levelMult",
     "skills.areaDamageOnSpawn.radius": "legacy:spawn_damage",
     "skills.areaDamageOnSpawn.towerDamage": "patch:2026-09-01",
     "skills.periodicSpawn.firstDelay": "legacy:spawn",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
+    "targets": "patch:2026-09-03",
     "units.goblin.hitSpeed": "legacy:sub_units.Goblin",
     "units.goblin.loadTime": "legacy:sub_units.Goblin",
     "units.goblin.range": "legacy:sub_units.Goblin",
@@ -3487,7 +3489,7 @@
    },
    "summonDeployDelay": null,
    "summonRadius": null,
-   "targets": ["buildings", "ground"],
+   "targets": [],
    "tribe": null,
    "units": {
     "goblin": {

@@ -181,5 +181,17 @@
    ]
   },
   "note": "Elite Musketeers switch to a Melee: Long (1.6) bayonet attack against close ground enemies, 314 damage at level 11 (wiki table melee dmg_11), and back to the 6 tile shot when enemies are far. https://clashroyale.fandom.com/wiki/Three_Musketeers"
+ },
+ {
+  "card": "goblin_drill",
+  "path": "targets",
+  "value": [],
+  "note": "The drill itself has no attack: it surfaces with an area blast and then only spawns Goblins (a Goblin every 3 s, two when destroyed); ClashStrategic lists the Goblins' targets on the card, which made the rangeless building hit the tower it was placed on for its 84 spawn damage every 1.2 s. https://clashroyale.fandom.com/wiki/Goblin_Drill"
+ },
+ {
+  "card": "goblin_drill",
+  "path": "skills.areaDamageOnSpawn.damage[10]",
+  "value": 84,
+  "note": "Resurface damage 84 at level 11 (wiki table spawn_11 and the ClashStrategic damage stat); the legacy snapshot's 66 is stale. https://clashroyale.fandom.com/wiki/Goblin_Drill"
  }
 ]

@@ -127,18 +127,18 @@ def t_miner_close_placement_waits_the_deploy_time():
 def t_goblin_drill_surfaces_and_spawns():
     g=_game();gd=mk_card('goblin_drill',11,'blue',9,20);g.deploy('blue',gd);d,=_dummies(g,(9,21))
     g.run(0.9);assert has(gd,'burrowed') and d.hp==50000 and gd.hp==gd.max_hp
-    g.run(0.2);assert not has(gd,'burrowed') and 50000-d.hp==66
+    g.run(0.2);assert not has(gd,'burrowed') and 50000-d.hp==84
     g.run(1.0);assert len(_named(g,'blue','Goblin'))==1
     g.run(3.0);assert len(_named(g,'blue','Goblin'))==2
-    g=Game();gd=mk_card('goblin_drill',11,'blue',14.5,23.5);g.deploy('blue',gd);tw=g.arena.get_tower('red','princess','right');ini=tw.hp;g.run(1.2)
-    assert tw.hp==ini
-    return "Goblin Drill surfaces after 1 s with 66 spawn damage (none to towers), a Goblin 1 s later then every 3 s"
+    g=Game();gd=mk_card('goblin_drill',11,'blue',14.5,25.5);g.deploy('blue',gd);tw=g.arena.get_tower('red','princess','right');ini=tw.hp;g.run(1.9)
+    assert tw.hp==ini,"the drill itself never attacks, even sitting on the tower"
+    return "Goblin Drill surfaces after 1 s with 84 spawn damage (none to towers), a Goblin 1 s later then every 3 s"
 def t_evo_goblin_drill_resurfaces_twice():
     g=_game();gd=mk_card('goblin_drill',11,'blue',9,20,evolved=True);g.deploy('blue',gd);d,=_dummies(g,(9,21));g.run(1.1)
     n0=len(_named(g,'blue','Goblin'));h0=50000-d.hp
     gd.hp=int(gd.max_hp*0.6);g.run(0.1);n1=len(_named(g,'blue','Goblin'))
     gd.hp=int(gd.max_hp*0.3);g.run(0.1);n2=len(_named(g,'blue','Goblin'))
-    assert (n1-n0,n2-n1)==(2,1) and 50000-d.hp==h0+2*66
+    assert (n1-n0,n2-n1)==(2,1) and 50000-d.hp==h0+2*84
     return "Evo Goblin Drill resurfaces at 66% and 33% leaving 2 then 1 Goblins and repeating its spawn damage"
 def t_mother_witch_cursed_hog():
     g=_game();mw=mk_card('mother_witch',11,'blue',9,10);g.deploy('blue',mw);d,=_dummies(g,(9,13),hp=150)
