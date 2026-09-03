@@ -2,6 +2,7 @@ import csv
 import os
 import argparse
 import random
+import math
 from sim.game import Game,card_info,MAX_LEVEL
 from sim.cards import load,key,card,at
 
@@ -98,6 +99,8 @@ def _ability_troop(g,tm,base):
     tr=next((t for t in p.troops if t.alive and getattr(t,'ability',None) and getattr(t,'name','') in nm),None)
     if tr and tr is not p.active_champ and not hasattr(tr.ability,'banner_pos'):p.active_champ=tr
     return tr
+
+AIMED={'fireball','arrows','zap','giant_snowball','lightning','poison','rocket'}
 
 def _open_pocket(g,tm,x,y):
     if tm=='red' and y<15:
@@ -404,6 +407,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
         if e or p.get('card_type')=='evo':evo_cards[p['team']].add(b)
     n_played={'blue':{},'red':{}}
     errs=[]
+    aim=[0,0]
     for p in plays:
         ts=p['time']/20.0
         base,_,_=norm(p['card'])
@@ -428,6 +432,9 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
             n=n_played[tm].get(base,0)+1;n_played[tm][base]=n
             evo=n%((card(base)['evo'].get('cycles') or 1)+1)==0
         ci=card_info(base)
+        if base in AIMED and not any(t.alive and t.dist(tx,ty)<=3.0 for t in g.arena.towers if t.team!=tm):
+            # a real player aimed this spell at units that were there: a position oracle for the simulated state
+            aim[0]+=1;aim[1]+=any(u.alive and math.hypot(u.x-tx,u.y-ty)<=2.5 for u in g.players[g._opp(tm)].troops)
         if not ci.get('deploy_anywhere'):
             _open_pocket(g,tm,itx,ity)
         _force_hand(g,tm,base)
@@ -465,7 +472,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
     info={'bid':bid,'sim_winner':sw,'sim_bc':bc,'sim_rc':rc,
           'actual_winner':actual_winner,'actual_bc':atc,'actual_rc':aoc,
           'win_match':win_match,'crown_exact':crown_exact,'crown_close':crown_close,
-          'stm':stm,'end_t':g.t,'last_play':last,'premature':g.t<last-1,'hp_err':None,'tower_state':None}
+          'stm':stm,'end_t':g.t,'last_play':last,'premature':g.t<last-1,'hp_err':None,'tower_state':None,'aim':tuple(aim)}
     if outcome.get('b_hp') and outcome.get('r_hp'):
         errs=[];states=[]
         for tm,act in (('blue',outcome['b_hp']),('red',outcome['r_hp'])):
@@ -544,7 +551,7 @@ def main():
         bids=[b for b in bids if b not in set(skip)]
         print(f"Excluded {len(skip)} modifier-mode battles (event modes or towers above their level's hitpoints)")
     tot=len(bids)
-    wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[]
+    wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[];aimN=0;aimH=0
     print(f"Running {tot} battles...\n")
     if args.jobs>1 and not args.visualize:
         from multiprocessing import Pool
@@ -557,6 +564,7 @@ def main():
         if info['crown_close']:cc+=1
         if info['premature']:pm+=1
         if info['hp_err'] is not None:hpe.append(info['hp_err']);tst.append(info['tower_state'])
+        aimN+=info['aim'][0];aimH+=info['aim'][1]
         done+=1
         if not args.verbose and done%10==0:
             print(f"  [{done:4d}/{tot}] last={bid} wm={wm}/{done} ({100*wm/done:.1f}%)")
@@ -571,6 +579,7 @@ def main():
     print(f"Crown +/-1:   {cc}/{done} ({100*cc/done:.1f}%)")
     print(f"Ended before last human play: {pm}/{done} ({100*pm/done:.1f}%)")
     if hpe:print(f"Tower HP error (mean, fraction of max): {sum(hpe)/len(hpe):.3f}; tower alive/dead agreement: {100*sum(tst)/len(tst):.1f}%")
+    if aimN:print(f"Spell aim agreement (sim unit within 2.5 tiles of a real cast away from towers): {aimH}/{aimN} ({100*aimH/aimN:.1f}%)")
     if args.visualize_multi>0:
         from sim.viz import visualize_browser
         vm=min(args.visualize_multi,len(bids))
