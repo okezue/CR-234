@@ -503,7 +503,8 @@ class BarbarianBarrelSpell(LogSpell):
             if self.team=='blue':sy=self.y+self.rng
             else:sy=self.y-self.rng
             t=Troop(self.team,self.x,sy,dict(self.tcfg,components=list(self.tcfg.get('components',[]))))
-            game.players[self.team].troops.append(t)
+            if 'hero' in self.tcfg:t.ability=self.tcfg['hero'](t);t.is_hero=True
+            game.deploy(self.team,t)
 class EvoZapSpell(Spell):
     def __init__(self,team,x,y,cfg):
         super().__init__(team,x,y,cfg)

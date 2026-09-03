@@ -339,7 +339,7 @@ def formation(n,r,x,y,team):
 
 def create(name,lvl,team,x,y,evolved=False,hero=False):
     c=card(name);k=key(name)
-    if c['kind']=='spell':return spell(c,lvl,team,x,y,evolved)
+    if c['kind']=='spell':return spell(c,lvl,team,x,y,evolved,hero)
     ev=c['evo'] if evolved and c['evo'] else None
     sk=merge(c['skills'],ev['skills']) if ev else c['skills']
     chain=[ev['stats'] if ev else {},c]
@@ -368,7 +368,7 @@ def create(name,lvl,team,x,y,evolved=False,hero=False):
         for t in out:t.ability=ab;t.is_hero=True
     return out
 
-def spell(c,lvl,team,x,y,evolved):
+def spell(c,lvl,team,x,y,evolved,is_hero=False):
     ev=c['evo'] if evolved and c['evo'] else None
     sk=merge(c['skills'],ev['skills']) if ev else c['skills'];st=ev['stats'] if ev else c['stats']
     dmg=at(st['damage'],lvl) or 0;ct=at(st['towerDamage'],lvl) or 0;r=c['radius'] or 0;dur=c['duration'] or 0;hs=c['hitSpeed'] or 0
@@ -383,6 +383,8 @@ def spell(c,lvl,team,x,y,evolved):
         bs=c['skills']['spawn'] if ev and 'spawn' in ev['skills'] else sp
         tc=unit(c,bs,lvl);n=count(bs.get('count')) if bs.get('count') else (c['count'] or 1)
         if not empty(sk.get('shield',{}).get('hitpoints')):tc['shield_hp']=tc['max_shield_hp']=at(sk['shield']['hitpoints'],lvl)
+        # a hero spell's ability belongs to the troop it spawns (Barbarian Barrel's Rowdy Reroll)
+        if is_hero and c['hero']:tc['hero']=lambda tr:uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])
         if pi.get('range'):return BarbarianBarrelSpell(team,x,y,{**cfg,'range':pi['range'],'width':r*2,'pushback':pb.get('distance') or 0,'troop_cfg':tc})
         if sp.get('interval'):
             gy={'troop_cfg':tc,'total':n,'interval':sp['interval'],'radius':r,'dur':dur,'name':name,'first_delay':sp.get('firstDelay') or 0}

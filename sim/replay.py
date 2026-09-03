@@ -94,8 +94,8 @@ def _force_hand(g,tm,card):
 def _ability_troop(g,tm,base):
     # the recorded ability names its card; the harness makes that troop the active one since the real game did
     if not base or not _has_json(base):return None
-    nm=card(base)['name'];p=g.players[tm]
-    tr=next((t for t in p.troops if t.alive and getattr(t,'ability',None) and getattr(t,'name','')==nm),None)
+    c=card(base);nm={c['name']}|{u.get('name') for u in c['units'].values()};p=g.players[tm]
+    tr=next((t for t in p.troops if t.alive and getattr(t,'ability',None) and getattr(t,'name','') in nm),None)
     if tr and tr is not p.active_champ and not hasattr(tr.ability,'banner_pos'):p.active_champ=tr
     return tr
 
