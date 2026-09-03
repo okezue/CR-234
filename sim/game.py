@@ -631,6 +631,8 @@ class Game:
                     tr.cd=getattr(tr,'fhspd',tr.hspd);tr.first_atk=False;tr.aggro_tgt=None
                 spd=0 if halt else tr.spd*mrate
                 tgt,td=self._find_target(tr)
+                # every new target is engaged after the load time (first hit speed), not only the first one
+                if tgt is not tr.tgt and tr.tgt is not None:tr.first_atk=True
                 tr.tgt=tgt
                 if not tgt or halt:continue
                 mr=getattr(tr,'min_rng',0)
