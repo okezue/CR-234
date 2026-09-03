@@ -1,6 +1,7 @@
 import random
 from sim.cards import card,at,first
 from sim.units import hidden
+from sim.knobs import K
 
 def king(lvl):
     k=card('king_tower')
@@ -15,6 +16,7 @@ def lock(o,tw,en,rng):
         if not e.alive or hidden(e):continue
         d=tw.dist(e.x,e.y)-getattr(e,'collision_r',0)
         if d<=rng and d<bd:bd=d;b=e
+    if b is not None and b is not l:o.cd=max(o.cd,K['tower_acq']+(K['tower_first'] if l is None else 0))
     o.lock=b
     return b
 
@@ -46,7 +48,7 @@ class Cannoneer(TT):
         r=[];self.cd=max(0,self.cd-dt)
         t=self._tgt(tw,en)
         if t:
-            if not self.eng:self.cd=self.fspd;self.eng=True
+            if not self.eng:self.cd=max(self.cd,self.fspd);self.eng=True
             if self.cd<=0:
                 r.append(('atk',t,self.dmg));self.cd=self.spd
         else:

@@ -6,6 +6,7 @@ from sim.units import Troop,Building
 from sim import fx
 from sim.spells import (Spell,SpawnSpell,GraveyardSpell,RageSpell,LightningSpell,CloneSpell,LogSpell,EarthquakeSpell,TornadoSpell,VoidSpell,
     VinesSpell,GoblinCurseSpell,RoyalDeliverySpell,BarbarianBarrelSpell,EvoZapSpell,EvoSnowballSpell,DecoyBarrelSpell)
+from sim.knobs import K
 
 DATA=Path(__file__).resolve().parents[1]/'data'
 TGT={'air':'Air','ground':'Ground','buildings':'Buildings'}
@@ -48,7 +49,7 @@ def count(v):return v.get('base',1) if isinstance(v,dict) else (v or 1)
 def first(hs,lt):
     # the load time is the part of the swing a unit carries in while walking, so a loaded unit hits after hit speed less load time
     # (the wiki's First Hit Speed); a load time at or above the hit speed (Inferno Tower) leaves the whole hit speed
-    return hs-lt if lt and lt<hs else hs
+    return hs-K['load_carry']*lt if lt and lt<hs else hs
 def merge(a,b):
     # evo skills override the base skill parameter by parameter
     return {**a,**{k:{**a.get(k,{}),**{p:v for p,v in b[k].items() if v is not None}} for k in b}}

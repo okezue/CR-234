@@ -2,6 +2,7 @@ import math
 import random
 from sim.units import Status,Troop,Building,has
 from sim.arena import Arena
+from sim.knobs import K
 class Component:
     def on_tick(self,tr,g):pass
     def on_attack(self,tr,tgt,g):pass
@@ -18,7 +19,7 @@ def enemies(g,team,air=True,towers=True):
             if tw.team==opp and tw.alive:yield tw
 def tdist(u,x,y):
     # area effects reach a body when they touch it: the tower footprint or the troop's collision circle, not only the centre
-    return u.dist(x,y) if hasattr(u,'ttype') else max(0.0,math.hypot(u.x-x,u.y-y)-getattr(u,'collision_r',0))
+    return u.dist(x,y) if hasattr(u,'ttype') else max(0.0,math.hypot(u.x-x,u.y-y)-K['splash_hitbox']*getattr(u,'collision_r',0))
 def near(g,team,x,y,r,air=True,towers=True):return [e for e in enemies(g,team,air,towers) if tdist(e,x,y)<=r]
 def hurt(u,dmg,g):
     u.take_damage(dmg)
@@ -27,7 +28,7 @@ _A=Arena()
 def push(u,ox,oy,dist):
     # knockback away from (ox,oy): towers, buildings, mass 10+ (P.E.K.K.A, Goblin Machine) and immune cards ignore it; a hit troop's swing and charge restart
     if dist<=0 or hasattr(u,'ttype') or getattr(u,'is_building',False) or getattr(u,'kb_immune',False) or getattr(u,'mass',4)>=10:return
-    dx=u.x-ox;dy=u.y-oy;d=math.hypot(dx,dy)
+    dx=u.x-ox;dy=u.y-oy;d=math.hypot(dx,dy);dist*=K['kb_scale']
     if d<=0:return
     gnd=getattr(u,'transport','Ground')!='Air';n=max(1,int(dist*4));x0,y0=u.x,u.y
     for i in range(1,n+1):
@@ -138,7 +139,7 @@ class RiverJump(Component):
 class Charge(Component):
     # the charged swing's load time is level independent and not in cards.json
     def __init__(self,dist,fhspd=0.4):
-        self.dist=dist;self.fhspd=fhspd;self.moved=0;self.charged=False
+        self.dist=dist*K['charge_scale'];self.fhspd=fhspd;self.moved=0;self.charged=False
         self.px=None;self.py=None;self.orig_spd=None
     def on_tick(self,tr,g):
         if self.px is not None:
@@ -222,10 +223,13 @@ class DeathSpawn(Component):
     def __init__(self,cfg,count):
         self.cfg=cfg;self.count=count
     def on_death(self,tr,g):
+        x,y,team=tr.x,tr.y,tr.team
+        def one(g):
+            t=Troop(team,x+random.uniform(-0.5,0.5),y+random.uniform(-0.5,0.5),dict(self.cfg,components=list(self.cfg.get('components',[]))))
+            g._place(team,t,self.cfg.get('deploy',0))
         for i in range(self.count):
-            ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5)
-            t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.cfg,components=list(self.cfg.get('components',[]))))
-            g._place(tr.team,t,self.cfg.get('deploy',0))
+            if i and K['death_stagger']:g.spells.append(Timer(i*K['death_stagger'],one,x,y,team))
+            else:one(g)
 class SpawnZap(Component):
     def __init__(self,kb=0):
         self.fired=False;self.kb=kb

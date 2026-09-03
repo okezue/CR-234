@@ -1,6 +1,7 @@
 import math
 import heapq
 from sim.units import has
+from sim.knobs import K
 _SQRT2=math.sqrt(2)
 _DIRS=[(1,0,1.0),(-1,0,1.0),(0,1,1.0),(0,-1,1.0),
        (1,1,_SQRT2),(-1,1,_SQRT2),(1,-1,_SQRT2),(-1,-1,_SQRT2)]
@@ -20,7 +21,7 @@ class Pathfinder:
     def seg_blocked(self,x0,y0,x1,y1,air=False,skip=()):
         grid=self._air if air else self._gnd
         n=max(1,int(math.hypot(x1-x0,y1-y0)*4))
-        for i in range(1,n+1):
+        for i in range(1,min(n,max(1,int(K['detour_look']*4)))+1):
             t=i/n;x=int(x0+(x1-x0)*t);y=int(y0+(y1-y0)*t)
             if 0<=x<self.W and 0<=y<self.H and not grid[y][x] and (x,y) not in skip:return True
         return False
@@ -104,18 +105,19 @@ class Pathfinder:
         # bodies of either team separate within their layer (ground or air); the overlap is split in inverse proportion to mass, buildings never move
         cs=2.0;key=lambda u:(u.id,type(u).__name__)
         alive=[tr for tr in troops if tr.alive and not has(tr,'burrowed')]
-        buckets={}
-        for tr in alive:buckets.setdefault((int(tr.x/cs),int(tr.y/cs)),[]).append(tr)
-        for (bx,by),lst in buckets.items():
-            nbrs=[u for ddx in (-1,0,1) for ddy in (-1,0,1) for u in buckets.get((bx+ddx,by+ddy),())]
-            for a in lst:
-                for b in nbrs:
-                    if key(a)>=key(b) or getattr(a,'transport','Ground')!=getattr(b,'transport','Ground'):continue
-                    a_imm=getattr(a,'is_building',False);b_imm=getattr(b,'is_building',False)
-                    if a_imm and b_imm:continue
-                    dx=a.x-b.x;dy=a.y-b.y;d=math.hypot(dx,dy);mr=getattr(a,'collision_r',0.5)+getattr(b,'collision_r',0.5)
-                    if d>=mr:continue
-                    if d<1e-6:dx,dy,d=1.0,0.0,1.0
-                    ov=mr-d;nx=dx/d;ny=dy/d;ma=getattr(a,'mass',4);mb=getattr(b,'mass',4)
-                    fa,fb=(0,1) if a_imm else (1,0) if b_imm else (mb/(ma+mb),ma/(ma+mb))
-                    self._shift(a,nx*ov*fa,ny*ov*fa);self._shift(b,-nx*ov*fb,-ny*ov*fb)
+        for _ in range(int(K['sep_iters'])):
+            buckets={}
+            for tr in alive:buckets.setdefault((int(tr.x/cs),int(tr.y/cs)),[]).append(tr)
+            for (bx,by),lst in buckets.items():
+                nbrs=[u for ddx in (-1,0,1) for ddy in (-1,0,1) for u in buckets.get((bx+ddx,by+ddy),())]
+                for a in lst:
+                    for b in nbrs:
+                        if key(a)>=key(b) or getattr(a,'transport','Ground')!=getattr(b,'transport','Ground'):continue
+                        a_imm=getattr(a,'is_building',False);b_imm=getattr(b,'is_building',False)
+                        if a_imm and b_imm:continue
+                        dx=a.x-b.x;dy=a.y-b.y;d=math.hypot(dx,dy);mr=getattr(a,'collision_r',0.5)+getattr(b,'collision_r',0.5)
+                        if d>=mr:continue
+                        if d<1e-6:dx,dy,d=1.0,0.0,1.0
+                        ov=(mr-d)*K['sep_strength'];nx=dx/d;ny=dy/d;ma=getattr(a,'mass',4);mb=getattr(b,'mass',4)
+                        fa,fb=(0,1) if a_imm else (1,0) if b_imm else (mb/(ma+mb),ma/(ma+mb))
+                        self._shift(a,nx*ov*fa,ny*ov*fa);self._shift(b,-nx*ov*fb,-ny*ov*fb)

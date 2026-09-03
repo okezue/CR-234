@@ -6,6 +6,7 @@ from sim.units import Status,hidden,has
 from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade
 from sim.path import Pathfinder
 from sim.cards import create as mk_card,card
+from sim.knobs import K
 
 MAX_LEVEL=16
 _CC={}
@@ -443,7 +444,7 @@ class Game:
                 t.cd=max(0,t.cd-self.DT*rate)
                 if t.cd<=0:
                     b=tower_lock(t,t,en,t.rng)
-                    if b:
+                    if b and t.cd<=0:
                         self._shoot(t.team,t.cx,t.cy,t.proj_spd,b,lambda g,pr,b=b,dmg=t.dmg:b.take_damage(dmg));t.cd=t.spd
     def _waypoint(self,tr,tx,ty):
         if getattr(tr,'transport','Ground')=='Air' or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[])):return tx,ty
@@ -459,6 +460,9 @@ class Game:
         if not across:return tx,ty
         if on_br and abs(tr.y-mid)<=2.0:return tr.x,far+(0.1 if tr.y<mid else 0)
         lx=min(a.LANES,key=lambda lc:abs(tr.x-lc)+abs(tx-lc))
+        if K['bridge_blend']:
+            ix=tr.x+(tx-tr.x)*(near-tr.y)/(ty-tr.y) if ty!=tr.y else tr.x;hw=max(0.0,a.BRIDGE_HW-getattr(tr,'collision_r',0.5))
+            lx+=K['bridge_blend']*(min(max(ix,lx-hw),lx+hw)-lx)
         return lx,near
     def activate_ability(self,team,troop=None):
         p=self.players[team]
@@ -507,6 +511,7 @@ class Game:
         if getattr(tr,'retarget_cd',0)>0:
             return self._default_target(tr)
         ag=getattr(tr,'aggro_tgt',None)
+        sr=max(getattr(tr,'sight_r',5.5),tr.rng+0.5)+K['sight_slack']
         if ag and getattr(ag,'alive',False):
             is_tower=hasattr(ag,'ttype')
             is_bldg_troop=getattr(tr,'targets',['Ground'])==['Buildings']
@@ -515,11 +520,10 @@ class Game:
             # an engaged troop is followed as long as possible (wiki Basics of Battle), not only while it stays within sight
             if is_bldg_troop or is_tower or getattr(tr,'is_building',False):
                 if d<=tr.rng:return ag,d
-            elif not hidden(ag):return ag,d
+            elif not hidden(ag) and not (K['kite_drop'] and d>sr+K['kite_slack']):return ag,d
         opp=self._opp(tr.team)
         tgts=getattr(tr,'targets',['Ground'])
         if not tgts:return None,0
-        sr=max(getattr(tr,'sight_r',5.5),tr.rng+0.5)
         all_c=[];near_c=[]
         for e in self.players[opp].troops:
             if not e.alive or hidden(e):continue
