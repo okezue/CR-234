@@ -920,7 +920,7 @@ class HeroicHurl(Ability):
         best=None;bhp=0
         for e in g.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-tr.x)**2+(e.y-tr.y)**2)
+            d=g._dist(tr,e)
             if d<=2.0 and e.max_hp>bhp:bhp=e.max_hp;best=e
         if not best:self.cd=0;return
         if tr.x<9:best.x=min(17,best.x+self.throw_rng)

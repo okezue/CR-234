@@ -470,6 +470,9 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
                 print(f"    Tower {tw.team} {tw.ttype} (cx={tw.cx}) hp={tw.hp}/{tw.max_hp} {st}")
     return g,info
 
+def _run(a):
+    return None,replay_battle(a[0],a[1],a[2],pid=a[3])[1]
+
 def main():
     ap=argparse.ArgumentParser(description='Replay scraped battles through simulator')
     ap.add_argument('--meta',default=None,help='all_battle_meta_data.csv (has card levels)')
@@ -481,6 +484,7 @@ def main():
     ap.add_argument('--visualize',action='store_true')
     ap.add_argument('--visualize-multi',type=int,default=0,help='Visualize N battles with picker')
     ap.add_argument('--verbose',action='store_true')
+    ap.add_argument('--jobs',type=int,default=1)
     args=ap.parse_args()
     print("=== Battle Replay Validation ===")
     use_meta=args.meta and args.workers
@@ -521,9 +525,13 @@ def main():
     tot=len(bids)
     wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[]
     print(f"Running {tot} battles...\n")
-    for i,bid in enumerate(bids):
-        if bid not in outcomes:continue
-        g,info=replay_battle(bid,placements[bid],outcomes[bid],verbose=args.verbose,pid=pids.get(bid))
+    bids=[b for b in bids if b in outcomes]
+    if args.jobs>1 and not args.visualize:
+        from multiprocessing import Pool
+        pool=Pool(args.jobs);runs=pool.imap(_run,[(b,placements[b],outcomes[b],pids.get(b)) for b in bids],chunksize=4)
+    else:runs=(replay_battle(b,placements[b],outcomes[b],verbose=args.verbose,pid=pids.get(b)) for b in bids)
+    for g,info in runs:
+        bid=info['bid']
         if info['win_match']:wm+=1
         if info['crown_exact']:ce+=1
         if info['crown_close']:cc+=1

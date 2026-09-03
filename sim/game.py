@@ -246,9 +246,10 @@ class Game:
     def _opp(self,t):return 'red' if t=='blue' else 'blue'
     def _pos(self,u):return (u.cx,u.cy) if hasattr(u,'cx') else (u.x,u.y)
     def _dist(self,tr,u):
-        if hasattr(u,'cx'):return u.dist(tr.x,tr.y)
-        d=math.hypot(tr.x-u.x,tr.y-u.y)
-        return max(0.0,d-u.collision_r) if getattr(u,'is_building',False) else d
+        # range is edge to edge: both collision radii add to the reach (Giant Skeleton range 2 -> 0.8 with collision 1.2 kept the same reach)
+        r=getattr(tr,'collision_r',0)
+        if hasattr(u,'cx'):return max(0.0,u.dist(tr.x,tr.y)-r)
+        return max(0.0,math.hypot(tr.x-u.x,tr.y-u.y)-getattr(u,'collision_r',0)-r)
     def _gen_ex(self):
         a=self.DT*self._erate()/self.EBASE
         for p in self.players.values():

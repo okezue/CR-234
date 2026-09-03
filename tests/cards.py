@@ -234,7 +234,7 @@ def t_zap_stun():
     return "Zap stun resets attack cycle"
 def t_prince_charge():
     g=Game()
-    p=mk_card('prince',11,'blue',9,10)
+    p=mk_card('prince',11,'blue',9,9)
     g.deploy('blue',p)
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)

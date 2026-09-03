@@ -78,13 +78,13 @@ def t_evo_elite_barbarians_rage_spears():
     assert has(k,'rage')
     return "Evo Elite Barbarians throw 220 spears at 3.5 to 5 tiles and leave 1 tile rage circles that rage allies"
 def t_goblin_demolisher_rocket_ride():
-    g=_game();gd=mk_card('goblin_demolisher',11,'blue',9,14);g.deploy('blue',gd)
-    b=mk_card('cannon',11,'red',9,20);g.deploy('red',b);d,=_dummies(g,(9.5,20.5),hp=5000)
+    g=_game();gd=mk_card('goblin_demolisher',11,'blue',9,17);g.deploy('blue',gd)
+    b=mk_card('cannon',11,'red',9,20);g.deploy('red',b);d,=_dummies(g,(10.5,19),hp=5000)
     gd.hp=int(gd.max_hp*0.4);g.run(0.1)
     assert gd.targets==['Buildings'] and abs(gd.spd-2.0)<0.01 and gd.is_suicide
     g.run(6)
-    assert not gd.alive and not b.alive and 5000-d.hp==847 and d.y>20.5,f"{b.hp} {d.hp} {d.y}"
-    return f"Goblin Demolisher below 50% rides the rocket to the cannon and explodes for 847 in 2.5 tiles with knockback (dummy y {d.y:.1f})"
+    assert not gd.alive and not b.alive and 5000-d.hp==847 and d.x>10.5,f"{b.hp} {d.hp} {d.x}"
+    return f"Goblin Demolisher below 50% rides the rocket to the cannon and explodes for 847 in 2.5 tiles with knockback (dummy x {d.x:.1f})"
 def t_phoenix_egg_hatches():
     g=_game();ph=mk_card('phoenix',11,'blue',9,14);g.deploy('blue',ph);d,=_dummies(g,(9.5,14),hp=5000)
     ph.alive=False;g.run(0.1)
