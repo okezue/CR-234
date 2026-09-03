@@ -61,11 +61,11 @@ def t_musk_fhspd():
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)
     ini=d.hp
-    g.run(0.6)
+    g.run(0.55)
     assert d.hp==ini,"Musketeer shot before fhspd"
-    g.run(0.2)
-    assert d.hp<ini,"No shot by 0.8s"
-    return "Musketeer first-hit (fhspd=0.7s)"
+    g.run(0.1)
+    assert d.hp<ini,"No shot by 0.65s"
+    return "Musketeer first-hit (0.3s load, 0.3s flight over 5 tiles)"
 def t_bdrag_splash():
     g=Game()
     bd=mk_card('baby_dragon',11,'blue',9,10)
@@ -3510,10 +3510,10 @@ def t_atk_first_hit_speed():
     g.deploy('blue',m)
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)
-    g.run(0.6)
-    assert d.hp==50000,"No shot before fhspd (0.7s)"
-    g.run(0.2)
-    assert d.hp<50000,"Should have fired by 0.8s"
+    g.run(0.55)
+    assert d.hp==50000,"No shot before fhspd (0.3s) plus flight (0.3s)"
+    g.run(0.1)
+    assert d.hp<50000,"Should have landed by 0.65s"
     return "First hit speed faster than hspd"
 def t_atk_splash_radius():
     g=Game()

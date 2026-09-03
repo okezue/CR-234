@@ -215,7 +215,8 @@ class Replay:
                     ln.append(f"T={s['t']:.1f}s {e}")
         return '\n'.join(ln)
 class Game:
-    REG=180.0;OT=120.0;END=REG+OT;EBASE=2.8;DT=0.05
+    # the game runs on 50 ms ticks; the hair above 0.05 makes every float countdown reach zero on its tick (0.4-8*0.05 stayed positive: a 9th tick)
+    REG=180.0;OT=120.0;END=REG+OT;EBASE=2.8;DT=0.05+1e-12
     def __init__(self,p1=None,p2=None):
         self.arena=Arena();self.t=0
         self.phase='regulation';self.winner=None
