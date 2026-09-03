@@ -555,9 +555,10 @@ class Game:
         cands.sort(key=lambda x:x[0])
         tr.aggro_tgt=cands[0][1]
         return cands[0][1],cands[0][0]
-    def _do_attack(self,tr,tgt):
-        bd=tr.dmg
-        if hasattr(tgt,'ttype') and getattr(tr,'ct_dmg',0)>0:bd=tr.ct_dmg
+    def _do_attack(self,tr,tgt,shot=None):
+        # shot carries the damage and suicide flag as they were when a projectile left, not as they are on impact
+        dmg,ct,suicide=shot or (tr.dmg,getattr(tr,'ct_dmg',0),getattr(tr,'is_suicide',False))
+        bd=ct if hasattr(tgt,'ttype') and ct>0 else dmg
         for c in getattr(tgt,'components',[]):
             if hasattr(c,'pre_damage'):bd=c.pre_damage(tgt,tr,bd,self)
         tgt.take_damage(bd)
@@ -571,13 +572,13 @@ class Game:
         stn=getattr(tr,'stun_dur',0)
         if stn>0 and not any(isinstance(c,DualTarget) for c in getattr(tr,'components',[])):
             if hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',stn))
-        if getattr(tr,'is_suicide',False):tr.alive=False
+        if suicide:tr.alive=False
     def _fire(self,tr,tgt):
         v=getattr(tr,'proj_spd',0)
         if v<=0:self._do_attack(tr,tgt);return
-        tx,ty=self._pos(tgt)
+        tx,ty=self._pos(tgt);shot=(tr.dmg,getattr(tr,'ct_dmg',0),getattr(tr,'is_suicide',False))
         def hit(g,pr):
-            if pr.homing or math.hypot(*(a-b for a,b in zip(g._pos(tgt),(pr.x,pr.y))))<=tr.splash_r+0.5:g._do_attack(tr,tgt)
+            if pr.homing or math.hypot(*(a-b for a,b in zip(g._pos(tgt),(pr.x,pr.y))))<=tr.splash_r+0.5:g._do_attack(tr,tgt,shot)
         self.projs.append(Projectile(tr.team,tr.x,tr.y,v,tgt,tx,ty,hit,getattr(tr,'proj_homing',True)))
     def _walkable(self,x,y,rj):
         a=self.arena
