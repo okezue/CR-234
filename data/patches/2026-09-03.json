@@ -18,5 +18,13 @@
    "whileMoving": true
   },
   "note": "Sparky charges up over time, releasing her attack when it is full and an enemy is within range; the charge is kept across targets and only a stun resets it. https://clashroyale.fandom.com/wiki/Sparky"
+ },
+ {
+  "card": "royal_recruits",
+  "path": "skills.line",
+  "value": {
+   "spacing": 2.0
+  },
+  "note": "Deployment is a horizontal line spanning the Arena (the game data's summonRadius 500 is not that); shifting the central tile by one turns the 3-3 lane split into 4-2, which bounds the spacing between 1 and 3 tiles; 2 puts the outer recruits in front of the Princess Towers. https://clashroyale.fandom.com/wiki/Royal_Recruits"
  }
 ]

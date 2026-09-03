@@ -7619,6 +7619,9 @@
    "rarity": "common",
    "sightRange": 5.5,
    "skills": {
+    "line": {
+     "spacing": 2.0
+    },
     "shield": {
      "damageReductionPercent": null,
      "hitpoints": [94, 103, 113, 125, 137, 150, 165, 181, 199, 219, 240, 264, 290, 318, 349, 384]
@@ -7633,6 +7636,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
+    "skills.line": "patch:2026-09-03",
     "skills.shield.hitpoints[]": "derived:levelMult",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9464,6 +9468,7 @@
    "burrow": "underground travel from the own King Tower at speed (tiles/min) for at least the deploy time; resurfacePercent/resurfaceCount for the evo drill",
    "charging": "whileMoving: the load time counts down while walking and the charge is kept across targets (Sparky)",
    "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, leader names its unit overrides",
+   "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
    "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime, spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/duration, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
    "produceElixir": "interval and amount",
    "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still",

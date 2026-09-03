@@ -345,8 +345,8 @@ def create(name,lvl,team,x,y,evolved=False,hero=False):
     chain=[ev['stats'] if ev else {},c]
     n=(ev or {}).get('count') or c['count'] or 1;out=[]
     grp=sk.get('group',{})
-    r=(ev or {}).get('summonRadius') or c['summonRadius'];delay=c['summonDeployDelay'] or 0
-    pts=formation(n,c['collisionRadius'] or 0.5 if r is None else r,x,y,team)
+    r=(ev or {}).get('summonRadius') or c['summonRadius'];delay=c['summonDeployDelay'] or 0;ln=sk.get('line',{}).get('spacing')
+    pts=[(x+(i-(n-1)/2)*ln,y) for i in range(n)] if ln else formation(n,c['collisionRadius'] or 0.5 if r is None else r,x,y,team)
     extra=sum(c['units'][snake(ch)]['count'] or 1 for ch in grp.get('characters',[]))
     # a lone leader (Rascal Boy, Goblinstein) stands on the point with the companions side by side the summon radius behind
     if n-extra==1:pts=[(x,y)]+[(px,y-(1 if team=='blue' else -1)*(r or 0)) for px,_ in formation(extra,c['collisionRadius'] or 0.5,x,y,team)]
