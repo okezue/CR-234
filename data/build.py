@@ -480,7 +480,8 @@ def main():
             "areaDamageOnSpawn": "damage and radius dealt where the unit appears",
             "produceElixir": "interval and amount", "teleport": "distance moved backwards on cast",
             "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still", "recoil": "self knockback per shot",
-            "transform": "mode switch below hpPercent of hitpoints: speed, range, targets and lifetime of the new form (Goblin Demolisher's rocket)",
+            "transform": "mode switch below hpPercent of hitpoints: speed, range, targets and lifetime of the new form (Goblin Demolisher's rocket); "
+                         "building: the new form is a rooted building whose remaining hitpoints drain over the lifetime (Cannon Cart)",
             "charging": "whileMoving: the load time counts down while walking and the charge is kept across targets (Sparky)",
             "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
             "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",

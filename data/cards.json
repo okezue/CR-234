@@ -1422,12 +1422,20 @@
    "range": 5.5,
    "rarity": "epic",
    "sightRange": 6.0,
-   "skills": {},
+   "skills": {
+    "transform": {
+     "building": true,
+     "hpPercent": 50,
+     "lifetime": 15.0,
+     "speed": 0
+    }
+   },
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "wiki:Cannon Cart",
+    "skills.transform": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9494,7 +9502,7 @@
    "secondaryAttack": "independent attached attacker (rocket launcher, rider, backpack goblins); character names the unit",
    "spawn.minRadius": "a periodic spell spawn rises between this distance and the spell radius from the centre (Graveyard)",
    "teleport": "distance moved backwards on cast",
-   "transform": "mode switch below hpPercent of hitpoints: speed, range, targets and lifetime of the new form (Goblin Demolisher's rocket)"
+   "transform": "mode switch below hpPercent of hitpoints: speed, range, targets and lifetime of the new form (Goblin Demolisher's rocket); building: the new form is a rooted building whose remaining hitpoints drain over the lifetime (Cannon Cart)"
   },
   "levelMult": [1.0, 1.1, 1.21, 1.33, 1.46, 1.6, 1.76, 1.93, 2.12, 2.33, 2.56, 2.81, 3.09, 3.39, 3.72, 4.09],
   "levelRule": "stat[L] = floor(base * levelMult[L-1]); base is the integer level 1 value of the game data (rarities.powerLevelMultiplier, the same table for every rarity, indexed by absolute level); rarity only sets minLevel, levels below it are null; towers use towerMult (supportPowerLevel)",

@@ -1292,6 +1292,12 @@ class RocketRide(Component):
             return
         self.t-=g.DT
         if self.t<=0:tr.alive=False
+class Breakdown(Component):
+    # below pct of hp the cart is a rooted, knockback immune building whose remaining hitpoints drain over the lifetime
+    def __init__(self,pct,life):self.pct=pct;self.life=life;self.on=False
+    def on_tick(self,tr,g):
+        if self.on or tr.hp>tr.max_hp*self.pct:return
+        self.on=True;tr.is_building=True;tr.spd=0;tr.kb_immune=True;tr.decay=tr.hp/self.life if self.life>0 else 0;tr.aggro_tgt=None
 class Hatch(Component):
     # the egg is removed without death effects and the reborn unit takes its place
     def __init__(self,cfg,delay):self.cfg=cfg;self.t=delay

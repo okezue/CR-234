@@ -60,5 +60,16 @@
   "path": "evo.skills.pierce.speedMultiplier",
   "value": -80,
   "note": "After the first three targets the Evolved Electro Dragon's bolt keeps bouncing between the enemies within reach of the last one hit until only one remains, dealing 33% less damage, travelling 80% slower and no longer stunning; a lone target gets nothing to chain onto. https://clashroyale.fandom.com/wiki/Electro_Dragon/Evolution"
+ },
+ {
+  "card": "cannon_cart",
+  "path": "skills.transform",
+  "value": {
+   "hpPercent": 50,
+   "lifetime": 15.0,
+   "speed": 0,
+   "building": true
+  },
+  "note": "Since the 5/5/2025 update the Cannon Cart has no shield; when its hitpoints fall below 50% it becomes a building with a 15 second lifetime (rooted, knockback immune since 6/8/2018), its remaining hitpoints draining over that time. The ClashStrategic record has no skill for the mode switch. https://clashroyale.fandom.com/wiki/Cannon_Cart"
  }
 ]
