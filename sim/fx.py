@@ -163,27 +163,28 @@ class Charge(Component):
         if hasattr(self,'_ofh'):tr.fhspd=self._ofh
         self.charged=False;self.moved=0
 class SpawnTimer(Component):
-    def __init__(self,cfg,interval,count,first_delay,pattern=''):
-        self.cfg=cfg;self.interval=interval;self.count=count
-        self.timer=first_delay;self.pattern=pattern
+    # a wave appears in front of the spawner (toward its target, else toward the enemy side), its units stagger seconds apart; a spawner with a
+    # spawn range (Goblin Hut) sleeps until an enemy is within it and then spawns its first unit after the first delay
+    def __init__(self,cfg,interval,count,first_delay,stagger=0,rng=0):
+        self.cfg=cfg;self.interval=interval;self.count=count;self.stagger=stagger;self.rng=rng
+        self.timer=self.first=first_delay
     def on_tick(self,tr,g):
         if has(tr,'burrowed'):return
+        if self.rng and not near(g,tr.team,tr.x,tr.y,self.rng,towers=False):self.timer=self.first;return
         self.timer-=g.DT
         if self.timer<=0:
-            tgt=getattr(tr,'tgt',None)
-            dx,dy=0,0
+            tgt=getattr(tr,'tgt',None);dx,dy=0,(1 if tr.team=='blue' else -1)
             if tgt:
-                tx=tgt.cx if hasattr(tgt,'cx') else tgt.x
-                ty=tgt.cy if hasattr(tgt,'cy') else tgt.y
-                dx=tx-tr.x;dy=ty-tr.y
-                ds=math.sqrt(dx*dx+dy*dy)
+                tx,ty=pos(tgt);dx=tx-tr.x;dy=ty-tr.y;ds=math.hypot(dx,dy)
                 if ds>0:dx/=ds;dy/=ds
+            x,y,team=tr.x+dx*2.0,tr.y+dy*2.0,tr.team
+            def one(g):
+                if not tr.alive:return
+                t=Troop(team,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),dict(self.cfg,components=list(self.cfg.get('components',[]))))
+                t._spawner_id=id(tr);g.players[team].troops.append(t)
             for i in range(self.count):
-                ox=random.uniform(-1.0,1.0);oy=random.uniform(-1.0,1.0)
-                ox+=dx*2.0;oy+=dy*2.0
-                t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.cfg,components=list(self.cfg.get('components',[]))))
-                t._spawner_id=id(tr)
-                g.players[tr.team].troops.append(t)
+                if i and self.stagger:g.spells.append(Timer(i*self.stagger,one,x,y,team))
+                else:one(g)
             self.timer=self.interval
 class DeathDamage(Component):
     # a fuse (Balloon, Giant Skeleton, Bomb Tower: 3 s) leaves the bomb where the body fell and blasts whoever is there when it goes off

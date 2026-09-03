@@ -576,7 +576,8 @@
     "periodicSpawn": {
      "character": "Barbarian",
      "count": 3,
-     "pauseTime": 14
+     "pauseTime": 14,
+     "spawnInterval": 0.5
     },
     "spawnOnDeath": {
      "character": "Barbarian",
@@ -590,6 +591,7 @@
    "src": {
     "*": "cs2.4.0",
     "sightRange": "legacy:hidden_stats.sight_range_tiles",
+    "skills.periodicSpawn.spawnInterval": "patch:2026-09-03",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -2778,7 +2780,7 @@
     "periodicSpawn": {
      "character": "Fire Spirit",
      "count": 1,
-     "pauseTime": 5
+     "pauseTime": 7
     }
    },
    "speed": 60,
@@ -2787,6 +2789,7 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
+    "skills.periodicSpawn.pauseTime": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -3756,7 +3759,9 @@
     "periodicSpawn": {
      "character": "Spear Goblin",
      "count": 1,
-     "pauseTime": 1.9
+     "firstDelay": 0.5,
+     "pauseTime": 2.2,
+     "range": 6
     },
     "spawnOnDeath": {
      "character": "SpearGoblin",
@@ -3772,7 +3777,9 @@
     "sightRange": "legacy:hidden_stats.sight_range_tiles",
     "skills.periodicSpawn.character": "legacy:spawn",
     "skills.periodicSpawn.count": "legacy:spawn",
-    "skills.periodicSpawn.pauseTime": "legacy:spawn",
+    "skills.periodicSpawn.firstDelay": "patch:2026-09-03",
+    "skills.periodicSpawn.pauseTime": "patch:2026-09-03",
+    "skills.periodicSpawn.range": "patch:2026-09-03",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -8680,7 +8687,9 @@
     "periodicSpawn": {
      "character": "Skeleton",
      "count": 2,
-     "pauseTime": 3.5
+     "firstDelay": 0,
+     "pauseTime": 3.5,
+     "spawnInterval": 0.5
     },
     "spawnOnDeath": {
      "character": "Skeleton",
@@ -8699,6 +8708,8 @@
     "hero.ability.skills.spawn.hitpoints[]": "derived:levelMult",
     "hero.stats.hitpoints": "patch:2026-08-05",
     "hero.stats.hitpoints[]": "derived:levelMult",
+    "skills.periodicSpawn.firstDelay": "patch:2026-09-03",
+    "skills.periodicSpawn.spawnInterval": "patch:2026-09-03",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints": "patch:2026-08-05",
@@ -9500,7 +9511,7 @@
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
    "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
    "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
-   "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime, spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/duration, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
+   "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/duration, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
    "produceElixir": "interval and amount",
    "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still",
    "recoil": "self knockback per shot",

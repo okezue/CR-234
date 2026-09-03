@@ -496,7 +496,8 @@ def main():
             "burrow": "underground travel from the own King Tower at speed (tiles/min) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill",
             "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "
-                      "periodicSpawn.firstDelay/hpPercent/lifetime, spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, "
+                      "periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy "
+                      "unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, "
                       "heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, "
                       "slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, "
                       "jump.damage/radius/duration, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, "

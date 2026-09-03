@@ -2635,11 +2635,15 @@ def t_bld_tombstone():
     st=[c for c in t.components if isinstance(c,SpawnTimer)]
     assert len(st)==1
     assert st[0].cfg['hp']==81 and st[0].cfg['dmg']==81
-    assert st[0].count==2 and abs(st[0].interval-3.5)<0.01
-    g=Game();g.deploy('blue',t);g.run(4)
-    spawned=[tr for tr in g.players['blue'].troops if tr is not t]
-    assert len(spawned)==2
-    return f"Tombstone Building (hp={t.hp} lifetime={t.lifetime} spawned={len(spawned)})"
+    assert st[0].count==2 and abs(st[0].interval-3.5)<0.01 and st[0].first==0 and st[0].stagger==0.5
+    # the first pair rises at once, the second skeleton of a pair 0.5 s after the first
+    g=Game()
+    for tw in g.arena.towers:tw.alive=False
+    g.deploy('blue',t);g.run(0.1);assert len([tr for tr in g.players['blue'].troops if tr is not t])==1
+    g.run(0.5);assert len([tr for tr in g.players['blue'].troops if tr is not t])==2
+    g.run(3.6);spawned=[tr for tr in g.players['blue'].troops if tr is not t]
+    assert len(spawned)==4
+    return f"Tombstone Building (hp={t.hp} lifetime={t.lifetime} spawned={len(spawned)} in 4.2 s: an instant pair, then every 3.5 s)"
 def t_bld_gobcage():
     from sim.units import Building
     from sim.fx import DeathSpawn
@@ -2676,11 +2680,15 @@ def t_bld_gobhut():
     st=[c for c in gh.components if isinstance(c,SpawnTimer)]
     assert len(st)==1
     assert st[0].cfg['name']=='SpearGoblin'
-    assert abs(st[0].interval-1.9)<0.01
+    assert abs(st[0].interval-2.2)<0.01 and st[0].rng==6 and st[0].first==0.5
+    # the reworked hut is dormant until an enemy is within 6 tiles, then spawns 0.5 s later and every 2.2 s
     g=Game();g.deploy('blue',gh);g.run(4)
-    spawned=[tr for tr in g.players['blue'].troops if tr is not gh]
-    assert len(spawned)>=2
-    return f"Goblin Hut Building (hp={gh.hp} spawned={len(spawned)})"
+    assert not [tr for tr in g.players['blue'].troops if tr is not gh]
+    d=Dummy('red',5,15,hp=50000,spd=0,dmg=0);g.deploy('red',d);g.run(0.6)
+    assert len([tr for tr in g.players['blue'].troops if tr is not gh])==1
+    g.run(2.2);spawned=[tr for tr in g.players['blue'].troops if tr is not gh]
+    assert len(spawned)==2
+    return f"Goblin Hut Building (hp={gh.hp}): dormant alone, {len(spawned)} Spear Goblins 2.8 s after an enemy came within 6 tiles"
 def t_bld_furnace():
     from sim.units import Building
     fn=mk_card('furnace',11,'blue',8.5,5)
@@ -2691,11 +2699,11 @@ def t_bld_furnace():
     st=[c for c in fn.components if isinstance(c,SpawnTimer)]
     assert len(st)==1
     assert st[0].cfg['name']=='Fire Spirit'
-    assert abs(st[0].interval-5)<0.01
-    g=Game();g.deploy('blue',fn);g.run(5.5)
+    assert abs(st[0].interval-7)<0.01
+    g=Game();g.deploy('blue',fn);g.run(7.5)
     spawned=[tr for tr in g.players['blue'].troops if tr is not fn]
     assert len(spawned)>=1
-    return f"Furnace troop (hp={fn.hp} dmg={fn.dmg} spawned={len(spawned)})"
+    return f"Furnace troop (hp={fn.hp} dmg={fn.dmg} spawned={len(spawned)} in 7.5 s: a Fire Spirit every 7 s since 7/8/2025)"
 def t_bld_elixcoll():
     from sim.units import Building
     ec=mk_card('elixir_collector',11,'blue',5,10)
@@ -2923,9 +2931,10 @@ def t_bld_tombstone_death_spawn():
     g.deploy('blue',ts)
     ts.hp=1;g.run(0.2)
     assert not ts.alive
+    # the instant first pair (one of them still pending on the 0.5 s stagger, cancelled by the destruction) plus the 4 death spawns
     spawned=[tr for tr in g.players['blue'].troops if tr is not ts and tr.alive]
-    assert len(spawned)==4,f"Tombstone death should spawn 4 skeletons, got {len(spawned)}"
-    return f"Tombstone death spawn ({len(spawned)} skeletons)"
+    assert len(spawned)==5,f"Tombstone death should spawn 4 skeletons on top of the first one, got {len(spawned)}"
+    return f"Tombstone death spawn ({len(spawned)-1} skeletons)"
 def t_bld_tombstone_spawn_waves():
     ts=mk_card('tombstone',11,'blue',9,10)
     g=Game()
@@ -2940,12 +2949,12 @@ def t_bld_tombstone_killed_early():
     g=Game()
     for t in g.arena.towers:t.alive=False
     g.deploy('blue',ts)
-    g.run(4)
+    g.run(4.3)
     before=[tr for tr in g.players['blue'].troops if tr is not ts and tr.alive]
     ts.hp=1;g.run(0.2)
     after=[tr for tr in g.players['blue'].troops if tr is not ts and tr.alive]
     new_spawns=len(after)-len(before)
-    assert new_spawns==4,f"Death spawn should add 4 skeletons, added {new_spawns}"
+    assert len(before)==4 and new_spawns==4,f"Death spawn should add 4 skeletons to the 4 spawned, added {new_spawns} to {len(before)}"
     return f"Tombstone killed early (before={len(before)} after={len(after)} death_spawn=+{new_spawns})"
 def t_bld_gobcage_brawler_fights():
     gc=mk_card('goblin_cage',11,'blue',9,10)
@@ -2995,13 +3004,13 @@ def t_bld_gobhut_spawns():
     gh=mk_card('goblin_hut',11,'blue',9,10)
     g=Game()
     for t in g.arena.towers:t.alive=False
-    g.deploy('blue',gh)
+    g.deploy('blue',gh);g.deploy('red',Dummy('red',9,14,hp=50000,spd=0,dmg=0))
     g.run(6)
     spawned=[tr for tr in g.players['blue'].troops if tr is not gh and tr.alive]
-    assert len(spawned)>=3,f"Goblin Hut should spawn >=3 in 6s (1.9s interval), got {len(spawned)}"
+    assert len(spawned)==3,f"Goblin Hut should spawn 3 in 6s with an enemy in range (0.5 s then every 2.2 s), got {len(spawned)}"
     nm=spawned[0].name if spawned else ''
     assert 'Spear' in nm or 'Goblin' in nm,f"Should spawn Spear Goblins, got '{nm}'"
-    return f"Goblin Hut spawns ({len(spawned)} Spear Goblins in 6s)"
+    return f"Goblin Hut spawns ({len(spawned)} Spear Goblins in 6s with an enemy within 6 tiles)"
 def t_bld_gobhut_death_spawn():
     gh=mk_card('goblin_hut',11,'blue',9,10)
     g=Game()

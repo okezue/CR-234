@@ -216,8 +216,8 @@ def t_evo_cannon_barrage():
 def t_evo_furnace_hot_spawns():
     g=_game();fu=mk_card('furnace',11,'blue',9,10,evolved=True);g.deploy('blue',fu);st=[c for c in fu.components if isinstance(c,fx.SpawnTimer)][0]
     g.run(0.2);cold=st.interval;_dummies(g,(9,13));g.run(0.2);hot=st.interval
-    assert cold==5 and abs(hot-5/2.91)<0.01,f"{cold} {hot}"
-    return f"Evo Furnace spawns every {hot:.2f} s while attacking instead of every 5 s"
+    assert cold==7 and abs(hot-7/2.91)<0.01,f"{cold} {hot}"
+    return f"Evo Furnace spawns every {hot:.2f} s while attacking instead of every 7 s"
 def t_evo_goblin_barrel_decoys():
     g=_game();gb=mk_card('goblin_barrel',11,'blue',3.5,25,evolved=True);gb.apply(g)
     real=_named(g,'blue','Goblin');dec=_named(g,'blue','Decoy Goblin')
@@ -310,9 +310,10 @@ def t_hero_ice_wizard_frosty_fella():
 def t_hero_tombstone_regal_revive():
     g=_game();ts=mk_card('tombstone',11,'blue',9,10,hero=True);g.deploy('blue',ts)
     assert isinstance(ts.ability,fx.RegalRevive) and ts.ability.cost==5 and ts.hp==529
+    g.run(0.6);n=len(_named(g,'blue','Skeleton'));assert n==2
     _act(g,ts);g.run(1.3);q=_named(g,'blue','Tomb Queen')
     assert not ts.alive and len(q)==1 and q[0].hp==4224 and q[0].dmg==422 and q[0].hspd==2.1 and q[0].targets==['Buildings'] and q[0].sight_r==7.0
-    assert not _named(g,'blue','Skeleton')
+    assert len(_named(g,'blue','Skeleton'))==n
     return "Regal Revive (5 elixir) replaces the tombstone with the 4224 hp Tomb Queen: 422 damage every 2.1 s at buildings, sight 7"
 def t_hero_valkyrie_wild_whirlwind():
     g=_game();vk=mk_card('valkyrie',11,'blue',9,10,hero=True);g.deploy('blue',vk);d,=_dummies(g,(9,14))

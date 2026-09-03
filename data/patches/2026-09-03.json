@@ -199,5 +199,47 @@
   "path": "skills.dash.chargeTime",
   "value": 0.8,
   "note": "Dash Time 0.8 sec (wiki attributes; the 12/6/2017 update decreased the time required for charging her dash to 0.8 seconds from 1 second); the legacy 0.7 is unsourced. She then covers the 3.5 to 6 tiles at Dash Speed 500, immune to damage while dashing. https://clashroyale.fandom.com/wiki/Bandit"
+ },
+ {
+  "card": "tombstone",
+  "path": "skills.periodicSpawn.firstDelay",
+  "value": 0,
+  "note": "The first pair of Skeletons rises as soon as the Tombstone has deployed (the wiki notes the Troop Rush variant had a first spawn speed of 2 seconds instead of instant); the sim waited a full 3.5 s spawn interval. https://clashroyale.fandom.com/wiki/Tombstone"
+ },
+ {
+  "card": "tombstone",
+  "path": "skills.periodicSpawn.spawnInterval",
+  "value": 0.5,
+  "note": "Every 3.5 seconds a group of two Skeletons with a 0.5 seconds delay from each other (wiki; game data spawnInterval 500). https://clashroyale.fandom.com/wiki/Tombstone"
+ },
+ {
+  "card": "barbarian_hut",
+  "path": "skills.periodicSpawn.spawnInterval",
+  "value": 0.5,
+  "note": "A group of three Barbarians with a 0.5 seconds delay from each other. https://clashroyale.fandom.com/wiki/Barbarian_Hut"
+ },
+ {
+  "card": "goblin_hut",
+  "path": "skills.periodicSpawn.pauseTime",
+  "value": 2.2,
+  "note": "Spawn Speed 2.2 sec since the 6/4/2026 balance update (2.1 before, 1.9 after the August 2025 change the legacy snapshot carries). https://clashroyale.fandom.com/wiki/Goblin_Hut"
+ },
+ {
+  "card": "goblin_hut",
+  "path": "skills.periodicSpawn.range",
+  "value": 6,
+  "note": "Since the May 2025 rework the hut is reactive: it summons a Spear Goblin every spawn period only when an enemy is within its 6 tile Spawn Range and stays dormant otherwise; the sim spawned continuously. https://clashroyale.fandom.com/wiki/Goblin_Hut https://royaleapi.com/blog/card-reworks-2025-may"
+ },
+ {
+  "card": "goblin_hut",
+  "path": "skills.periodicSpawn.firstDelay",
+  "value": 0.5,
+  "note": "Spawn Delay 0.5 sec: the first Spear Goblin comes 0.5 s after an enemy enters the spawn range (August 2025 balance change). https://clashroyale.fandom.com/wiki/Goblin_Hut"
+ },
+ {
+  "card": "furnace",
+  "path": "skills.periodicSpawn.pauseTime",
+  "value": 7,
+  "note": "The 7/8/2025 maintenance break increased the spawn time for its Fire Spirits to 7 seconds (from 5 seconds). https://clashroyale.fandom.com/wiki/Furnace"
  }
 ]

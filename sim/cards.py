@@ -120,7 +120,8 @@ def attach(cfg,c,sk,lvl,chain=None):
     elif sk.get('slow',{}).get('duration') and 'secondaryAttack' not in sk:
         sl=sk['slow'];cfg['slow_dur']=sl['duration'];cfg['slow_val']=mult(sl.get('speedMultiplier') or 0)
     if ps.get('character') and ps.get('pauseTime') and not ps.get('hpPercent') and not egg:
-        cs.append(fx.SpawnTimer(unit(c,ps,lvl),ps['pauseTime'],count(ps.get('count')),ps.get('firstDelay') or ps['pauseTime']))
+        fd=ps.get('firstDelay');cs.append(fx.SpawnTimer(unit(c,ps,lvl),ps['pauseTime'],count(ps.get('count')),ps['pauseTime'] if fd is None else fd,
+                                                            ps.get('spawnInterval') or 0,ps.get('range') or 0))
     az=sk.get('areaDamageOnSpawn',{})
     if not empty(az.get('damage')):
         cs.append(fx.SpawnZap(kb if 'dash' in sk else 0));cfg['spawn_zap_dmg']=at(az['damage'],lvl);cfg['spawn_zap_r']=az.get('radius') or 0
