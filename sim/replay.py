@@ -91,6 +91,14 @@ def _force_hand(g,tm,card):
         return True
     return False
 
+def _ability_troop(g,tm,base):
+    # the recorded ability names its card; the harness makes that troop the active one since the real game did
+    if not base or not _has_json(base):return None
+    nm=card(base)['name'];p=g.players[tm]
+    tr=next((t for t in p.troops if t.alive and getattr(t,'ability',None) and getattr(t,'name','')==nm),None)
+    if tr and tr is not p.active_champ and not hasattr(tr.ability,'banner_pos'):p.active_champ=tr
+    return tr
+
 def _open_pocket(g,tm,x,y):
     if tm=='red' and y<15:
         side='left' if x<=8 else 'right'
@@ -172,23 +180,18 @@ def load_meta_v2(path):
                 res='W' if tc>oc else 'L' if tc<oc else 'D'
             team_tags=r.get('team_tags','').lstrip('#')
             opp_tags=r.get('opponent_tags','').lstrip('#')
-            b_deck=[];b_lvls={};r_deck=[];r_lvls={}
+            b_deck=[];b_lvls={};r_deck=[];r_lvls={};b_evo=set();r_evo=set();b_hero=set();r_hero=set()
             for i in range(8):
-                cn=r.get(f'team_card_{i}','')
-                cl=r.get(f'team_card_{i}_lvl','')
-                if cn:
-                    jn=key(cn) or cn.replace('-','_')
-                    b_deck.append(jn)
+                for pfx,deck,lvls,evos,heroes in (('team',b_deck,b_lvls,b_evo,b_hero),('opp',r_deck,r_lvls,r_evo,r_hero)):
+                    cn=r.get(f'{pfx}_card_{i}','')
+                    cl=r.get(f'{pfx}_card_{i}_lvl','')
+                    if not cn:continue
+                    jn,evo,hero=norm(cn)
+                    deck.append(jn)
+                    if evo:evos.add(jn)
+                    if hero:heroes.add(jn)
                     if cl:
-                        try:b_lvls[jn]=min(int(float(cl)),MAX_LEVEL)
-                        except ValueError:pass
-                cn=r.get(f'opp_card_{i}','')
-                cl=r.get(f'opp_card_{i}_lvl','')
-                if cn:
-                    jn=key(cn) or cn.replace('-','_')
-                    r_deck.append(jn)
-                    if cl:
-                        try:r_lvls[jn]=min(int(float(cl)),MAX_LEVEL)
+                        try:lvls[jn]=min(int(float(cl)),MAX_LEVEL)
                         except ValueError:pass
             b_klvl=int(float(r.get('team_king_lvl',0) or 0))
             r_klvl=int(float(r.get('opp_king_lvl',0) or 0))
@@ -203,7 +206,8 @@ def load_meta_v2(path):
                 'b_tt':b_tt,'r_tt':r_tt,
                 't0_tag':team_tags,'o0_tag':opp_tags,
                 'gameMode':r.get('gameMode_name','') or r.get('battle_type',''),
-                'b_hp':_hp(r,'team'),'r_hp':_hp(r,'opp')}
+                'b_hp':_hp(r,'team'),'r_hp':_hp(r,'opp'),
+                'b_evo':b_evo,'r_evo':r_evo,'b_hero':b_hero,'r_hero':r_hero}
     return out
 
 def _hp(r,side):
@@ -242,11 +246,12 @@ def load_worker_rows(path,ids,meta=None):
             except ValueError:tx=9.0
             try:ty=float(y_raw)/1000.0
             except ValueError:ty=16.0
-            is_ability=card.startswith('ability-') or card=='_invalid'
+            is_ability=card.startswith('ability-') or card=='_invalid' or (r.get('ability') or '0').startswith('1')
             data[bid].append({
                 'card':card,'time':t,'team':tm,
                 'tile_x':tx,'tile_y':ty,
                 'ability':1 if is_ability else 0,
+                'card_type':r.get('card_type','normal'),
             })
     for bid in data:
         data[bid].sort(key=lambda p:p['time'])
@@ -374,40 +379,38 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None):
     bd.hand=list(bh);bd.nxt=bn;bd.q=list(bq)
     rd=g.players['red'].deck
     rd.hand=list(rh);rd.nxt=rn;rd.q=list(rq)
-    hero_cards={'blue':set(),'red':set()}
+    hero_cards={'blue':set(outcome.get('b_hero',())),'red':set(outcome.get('r_hero',()))}
+    evo_cards={'blue':set(outcome.get('b_evo',())),'red':set(outcome.get('r_evo',()))}
     for p in plays:
         b,e,h=norm(p['card'])
-        if h and b:hero_cards[p['team']].add(b)
+        if not b:continue
+        if h or p.get('card_type')=='hero':hero_cards[p['team']].add(b)
+        if e or p.get('card_type')=='evo':evo_cards[p['team']].add(b)
+    n_played={'blue':{},'red':{}}
     errs=[]
     for p in plays:
         ts=p['time']/20.0
-        base,evo,hero=norm(p['card'])
+        base,_,_=norm(p['card'])
         tm=p['team']
-        if not hero and base in hero_cards.get(tm,set()):hero=True
         tx,ty=p['tile_x'],p['tile_y']
         itx,ity=int(tx),int(ty)
         if g.ended:break
         g.run_to(ts)
         if g.ended:break
         if p['ability']==1:
-            if evo and base and _has_json(base):
-                pass
-            else:
-                if base is None or base=='_invalid':
-                    g.players[tm].elixir=10
-                    g.activate_ability(tm)
-                    continue
-                if base and _has_json(base):
-                    g.players[tm].elixir=10
-                    g.activate_ability(tm)
-                    continue
-                g.players[tm].elixir=10
-                g.activate_ability(tm)
-                continue
+            g.players[tm].elixir=10
+            g.activate_ability(tm,_ability_troop(g,tm,base))
+            continue
         if base is None:continue
         if not _has_json(base):
             if verbose:errs.append(f"  skip {base} (no json)")
             continue
+        hero=base in hero_cards[tm]
+        evo=False
+        if base in evo_cards[tm] and card(base)['evo']:
+            # every (cycles+1)th deployment of an evolution card is the evolved one
+            n=n_played[tm].get(base,0)+1;n_played[tm][base]=n
+            evo=n%((card(base)['evo'].get('cycles') or 1)+1)==0
         ci=card_info(base)
         if not ci.get('deploy_anywhere'):
             _open_pocket(g,tm,itx,ity)
