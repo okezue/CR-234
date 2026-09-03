@@ -2810,7 +2810,7 @@
    "kind": "troop",
    "lifetime": null,
    "loadTime": 1.0,
-   "mass": null,
+   "mass": 18,
    "minRange": null,
    "name": "Giant Skeleton",
    "placement": "own",
@@ -2830,6 +2830,7 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
+    "mass": "patch:2026-09-03",
     "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
     "skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
     "skills.areaDamageOnDeath.radius": "legacy:death_damage",
@@ -7324,7 +7325,7 @@
    "kind": "troop",
    "lifetime": null,
    "loadTime": 0.8,
-   "mass": 4,
+   "mass": 2,
    "minRange": null,
    "name": "Royal Hogs",
    "placement": "own",
@@ -7347,7 +7348,7 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
-    "mass": "legacy:hidden_stats.mass",
+    "mass": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9168,7 +9169,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-02",
+  "built": "2026-09-03",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9238,6 +9239,10 @@
    {
     "name": "data/patches/2026-09-01.json",
     "tag": "patch:2026-09-01"
+   },
+   {
+    "name": "data/patches/2026-09-03.json",
+    "tag": "patch:2026-09-03"
    },
    {
     "name": "data/patches/2026-09-05.json",
