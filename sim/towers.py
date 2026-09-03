@@ -7,20 +7,27 @@ def king(lvl):
     return {'hp':at(k['stats']['hitpoints'],lvl),'dmg':at(k['stats']['damage'],lvl),'spd':k['hitSpeed'],'rng':k['range'],
             'projSpeed':(k['projectile'] or {}).get('speed') or 0}
 
+def lock(o,tw,en,rng):
+    l=getattr(o,'lock',None)
+    if l is not None and l.alive and l in en and not hidden(l) and tw.dist(l.x,l.y)-getattr(l,'collision_r',0)<=rng:return l
+    b=None;bd=999
+    for e in en:
+        if not e.alive or hidden(e):continue
+        d=tw.dist(e.x,e.y)-getattr(e,'collision_r',0)
+        if d<=rng and d<bd:bd=d;b=e
+    o.lock=b
+    return b
+
 class TT:
     def __init__(self,jn,lvl):
-        self.lvl=lvl;self.name=jn;self.cd=0
+        self.lvl=lvl;self.name=jn;self.cd=0;self.lock=None
         d=card(jn);s=d['stats']
         self.hp=at(s['hitpoints'],lvl);self.dmg=at(s['damage'],lvl)
         self.spd=d['hitSpeed'];self.fspd=d['loadTime'] or d['hitSpeed'];self.RNG=d['range']
         self.proj_spd=(d['projectile'] or {}).get('speed') or 0
     def _tgt(self,tw,en):
-        b=None;bd=999
-        for e in en:
-            if not e.alive or hidden(e):continue
-            d=tw.dist(e.x,e.y)-getattr(e,'collision_r',0)
-            if d<=self.RNG and d<bd:bd=d;b=e
-        return b
+        # the tower holds its target until it dies, hides or leaves range (a stun resets it); a tank keeps the fire off what follows
+        return lock(self,tw,en,self.RNG)
     def tick(self,dt,tw,en,al,**kw):return []
 
 class TPrincess(TT):

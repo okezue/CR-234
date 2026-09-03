@@ -1,7 +1,7 @@
 import math
 import random
 from sim.arena import Arena
-from sim.towers import create as mk_tt,king
+from sim.towers import create as mk_tt,king,lock as tower_lock
 from sim.units import Status,hidden,has
 from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade
 from sim.path import Pathfinder
@@ -427,8 +427,8 @@ class Game:
             halt,rate,_=self._status_mods(t)
             tt=t.troop
             if halt:
-                if tt:tt.cd=getattr(tt,'spd',tt.cd)
-                else:t.cd=max(t.cd,t.spd)
+                if tt:tt.cd=getattr(tt,'spd',tt.cd);tt.lock=None
+                else:t.cd=max(t.cd,t.spd);t.lock=None
                 continue
             if t.ttype=='princess' and tt:
                 pd=sum(1 for x in self.arena.towers
@@ -444,11 +444,7 @@ class Game:
             elif t.ttype=='king' and t.active:
                 t.cd=max(0,t.cd-self.DT*rate)
                 if t.cd<=0:
-                    b=None;bd=999
-                    for e in en:
-                        if not e.alive or hidden(e):continue
-                        d=t.dist(e.x,e.y)-getattr(e,'collision_r',0)
-                        if d<=t.rng and d<bd:bd=d;b=e
+                    b=tower_lock(t,t,en,t.rng)
                     if b:
                         self._shoot(t.team,t.cx,t.cy,t.proj_spd,b,lambda g,pr,b=b,dmg=t.dmg:b.take_damage(dmg));t.cd=t.spd
     def _waypoint(self,tr,tx,ty):
