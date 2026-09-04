@@ -5,6 +5,7 @@ import random
 import math
 from sim.game import Game,card_info,MAX_LEVEL
 from sim.cards import load,key,card,at
+from sim.units import Troop,Building
 
 _FILLER=['knight','archers','fireball','zap','valkyrie','musketeer','baby_dragon','mini_pekka']
 _BASE=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -394,6 +395,9 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         decks=extract_decks(plays)
     blue_plays=[norm(p['card'])[0] for p in plays if p['team']=='blue' and norm(p['card'])[0]]
     red_plays=[norm(p['card'])[0] for p in plays if p['team']=='red' and norm(p['card'])[0]]
+    # the hand shuffle is seeded too and unit ids restart, so a battle replays identically whatever ran before it in the worker
+    # (the id order decides which of two overlapping bodies is pushed first); the game itself keeps its own seed
+    random.seed(42);Troop._n=Building._n=0
     bh,bn,bq=_engineer_hand(decks['blue'],blue_plays)
     rh,rn,rq=_engineer_hand(decks['red'],red_plays)
     random.seed(42)

@@ -182,7 +182,7 @@ class SpawnTimer(Component):
             def one(g):
                 if not tr.alive:return
                 t=Troop(team,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),dict(self.cfg,components=list(self.cfg.get('components',[]))))
-                t._spawner_id=id(tr);g._place(team,t,self.cfg.get('deploy',0))
+                t._spawner=tr;g._place(team,t,self.cfg.get('deploy',0))
             for i in range(self.count):
                 if i and self.stagger:g.spells.append(Timer(i*self.stagger,one,x,y,team))
                 else:one(g)
@@ -437,7 +437,7 @@ class SoulCollect(Component):
         self.cap=cap;self.souls=0;self._prev=set()
     def on_tick(self,tr,g):
         opp=g._opp(tr.team)
-        alive=set(id(e) for e in g.players[opp].troops if e.alive)
+        alive=set(e for e in g.players[opp].troops if e.alive)
         died=self._prev-alive
         self.souls=min(self.cap,self.souls+len(died))
         self._prev=alive
@@ -509,16 +509,16 @@ class DashingDash(Ability):
         opp=g._opp(tr.team)
         best=None;bd=999
         for e in g.players[opp].troops:
-            if not e.alive or id(e) in self.hit:continue
+            if not e.alive or e in self.hit:continue
             d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
             if d<=self.sr and d<bd:bd=d;best=e
         for tw in g.arena.towers:
-            if tw.team!=opp or not tw.alive or id(tw) in self.hit:continue
+            if tw.team!=opp or not tw.alive or tw in self.hit:continue
             d=tw.dist(tr.x,tr.y)
             if d<=self.sr and d<bd:bd=d;best=tw
         if not best:self.dashing=False;return
         best.take_damage(self.dd)
-        self.hit.add(id(best))
+        self.hit.add(best)
         if hasattr(best,'cx'):tr.x=best.cx;tr.y=best.cy
         else:tr.x=best.x;tr.y=best.y
         if hasattr(best,'ttype'):
@@ -630,7 +630,7 @@ class RoyalRescue(Ability):
     def activate(self,tr,g):
         gt=Troop(tr.team,tr.x,tr.y,dict(self.gcfg,components=list(self.gcfg.get('components',[]))))
         g.players[tr.team].troops.append(gt)
-        c=[(math.hypot(e.x-tr.x,e.y-tr.y),id(e),e) for e in enemies(g,tr.team,air=False,towers=False)]
+        c=[(math.hypot(e.x-tr.x,e.y-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False,towers=False))]
         c=[x for x in c if x[0]<=self.rng]
         if c:
             best=min(c)[2];gt.x,gt.y=best.x,best.y;best.take_damage(self.cdmg);push(best,tr.x,tr.y,self.kb)
@@ -1031,8 +1031,7 @@ class EvoWitch(Component):
     def __init__(self,heal,cap):self.heal=heal;self.cap=cap
     def on_tick(self,tr,g):
         cap=self.cap
-        wid=id(tr)
-        dead=[t for t in g.players[tr.team].troops if not t.alive and 'keleton' in getattr(t,'name','') and getattr(t,'_spawner_id',None)==wid]
+        dead=[t for t in g.players[tr.team].troops if not t.alive and 'keleton' in getattr(t,'name','') and getattr(t,'_spawner',None) is tr]
         for d in dead:
             if tr.hp<cap:tr.hp=min(cap,tr.hp+self.heal)
 class EvoPekka(Component):
@@ -1360,7 +1359,7 @@ class Enchant(Component):
         n=sum(1 for a in al if any(isinstance(c,Enchanted) and c.src is tr for c in a.components))
         if n>=self.limit:return
         ok=lambda a:not getattr(a,'is_building',False) and not a.is_suicide and not any(isinstance(c,Enchanted) for c in a.components)
-        cands=sorted((math.hypot(a.x-tr.x,a.y-tr.y),id(a),a) for a in al if ok(a) and math.hypot(a.x-tr.x,a.y-tr.y)<=self.rng)
+        cands=sorted((math.hypot(a.x-tr.x,a.y-tr.y),i,a) for i,a in enumerate(al) if ok(a) and math.hypot(a.x-tr.x,a.y-tr.y)<=self.rng)
         for _,_,a in cands[:self.limit-n]:a.components.append(Enchanted(self.bonus,self.every,tr,self.linger))
 class EvoBattleRam(Component):
     # survives the connection (the recoil re-arms the charge), bulldozes troops on its charge path and rages the barbarians it drops
@@ -1369,8 +1368,8 @@ class EvoBattleRam(Component):
         ch=next((c for c in tr.components if isinstance(c,Charge)),None)
         if not ch or not ch.charged:self.hit.clear();return
         for e in enemies(g,tr.team,air=False,towers=False):
-            if id(e) in self.hit or getattr(e,'is_building',False) or math.hypot(e.x-tr.x,e.y-tr.y)>tr.collision_r+e.collision_r+0.2:continue
-            self.hit.add(id(e));e.take_damage(self.dmg);push(e,tr.x,tr.y,self.kb)
+            if e in self.hit or getattr(e,'is_building',False) or math.hypot(e.x-tr.x,e.y-tr.y)>tr.collision_r+e.collision_r+0.2:continue
+            self.hit.add(e);e.take_damage(self.dmg);push(e,tr.x,tr.y,self.kb)
     def on_attack(self,tr,tgt,g):
         # it won't stop charging: the recoil re-arms the charge without another run-up
         for c in tr.components:
@@ -1451,7 +1450,7 @@ class CoffinCadets(Ability):
     def __init__(self,cfg,dmg,ct,rng,cost,cd):
         super().__init__(cost,cd);self.cfg=cfg;self.dmg=dmg;self.ct=ct;self.rng=rng
     def activate(self,tr,g):
-        c=[(math.hypot(pos(e)[0]-tr.x,pos(e)[1]-tr.y),id(e),e) for e in enemies(g,tr.team,air=False)]
+        c=[(math.hypot(pos(e)[0]-tr.x,pos(e)[1]-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False))]
         c=[x for x in c if x[0]<=self.rng];best=min(c)[2] if c else None
         x,y=pos(best) if best else (tr.x,tr.y)
         if best:hurt(best,self.ct if hasattr(best,'ttype') else self.dmg,g)
@@ -1530,7 +1529,7 @@ class WildWhirlwind(Ability):
     def __init__(self,dash,dur,hs,dmg,ctm,r,sp,red,cost,cd):
         super().__init__(cost,cd);self.dash=dash;self.max_dur=dur;self.hs=hs;self.dmg=dmg;self.ctm=ctm;self.r=r;self.sp=sp;self.red=red
     def activate(self,tr,g):
-        c=[(math.hypot(e.x-tr.x,e.y-tr.y),id(e),e) for e in enemies(g,tr.team,air=False,towers=False)]
+        c=[(math.hypot(e.x-tr.x,e.y-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False,towers=False))]
         c=[x for x in c if x[0]<=self.dash]
         if c:
             e=min(c)[2];d=min(c)[0]

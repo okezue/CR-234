@@ -110,7 +110,7 @@ class RoyalChef(TT):
                 if not a.alive or a.max_hp<1 or a.hp/a.max_hp<=0.33:continue
                 if getattr(a,'is_building',False):continue
                 if a.hp==1 and a.max_hp==1:continue
-                if id(a) in self.bst:continue
+                if a in self.bst:continue
                 if a.hp>bh:bh=a.hp;b=a
             if not b:
                 self.bst.clear();bh=0
@@ -121,7 +121,7 @@ class RoyalChef(TT):
                     if a.hp>bh:bh=a.hp;b=a
             if b:
                 r.append(('pancake',b,1))
-                self.prdy=False;self.bst.add(id(b))
+                self.prdy=False;self.bst.add(b)
         return r
 
 def create(name,lvl):
