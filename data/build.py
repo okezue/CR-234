@@ -25,6 +25,9 @@ UNIT_FIELDS = {"hitpoints": "hitpoints", "damage": "damage", "hitspeed": "hitSpe
 GD_MS = {"hitSpeed": "hitSpeed", "loadTime": "loadTime", "deployTime": "deployTime", "lifeTime": "lifetime"}
 GD_TILES = {"range": "range", "sightRange": "sightRange", "collisionRadius": "collisionRadius"}
 GD_LEVELS = {"hitpoints": "hitpoints", "damage": "damage", "deathDamage": "deathDamage"}
+# every game speed (characters.csv Speed and JumpSpeed, projectiles.csv Speed) is in units per tick at 20 ticks/s and 1000 units per tile,
+# so tiles/s = value / 50: measured on the walking speed (vid/, medium 60 = 1.2 tiles/s); the projectile, dash and jump columns share the unit
+GD_TPS = 50
 # game data character names whose ClashStrategic unit key differs from snake(name)
 GD_UNIT = {"Goblinstein_doctor": "doctor"}
 # the statsroyale dump stops at level 15 for towers; wiki Tower Princess (4858) and Cannoneer (4164) tables imply 347, ClashStrategic's script uses 346
@@ -194,7 +197,7 @@ def gd_units(spell, lo, pct, tag, src):
         if ch.get("speed") is not None:
             u["speed"] = ch["speed"]
         if pj:
-            u["projectile"] = {"speed": round(pj["speed"] / 60, 3) if pj.get("speed") else None, "count": 1}
+            u["projectile"] = {"speed": round(pj["speed"] / GD_TPS, 3) if pj.get("speed") else None, "count": 1}
         out[k] = u
         src[f"units.{k}"] = tag
     return out
@@ -207,12 +210,20 @@ def gd_proj(card, spell, tag):
         card["src"]["projectile.waves"] = tag
     pj = spell.get("projectileData") or {}
     roll = pj.get("spawnProjectileData") or {}
+    ch = spell.get("summonCharacterData") or spell.get("statCharacterData") or {}
     if roll.get("speed") and "pierce" in card["skills"]:
         # a rolling spell (The Log, Barbarian Barrel) drops at the cast point and its spawned projectile rolls at this speed; the drop speed is not used
-        card["skills"]["pierce"]["speed"], card["src"]["skills.pierce.speed"] = round(roll["speed"] / 60, 3), tag
+        card["skills"]["pierce"]["speed"], card["src"]["skills.pierce.speed"] = round(roll["speed"] / GD_TPS, 3), tag
     elif card["kind"] == "spell" and card["projectile"] and card["projectile"]["speed"] is None and pj.get("speed"):
         # thrown from the king tower (Goblin Barrel, Giant Snowball)
-        card["projectile"]["speed"], card["src"]["projectile.speed"] = round(pj["speed"] / 60, 3), tag
+        card["projectile"]["speed"], card["src"]["projectile.speed"] = round(pj["speed"] / GD_TPS, 3), tag
+    elif card["projectile"] and card["projectile"]["speed"] is None and (ch.get("projectileData") or {}).get("speed"):
+        # a shooter's own projectile (troops, the tower troops' arrows, cannonballs and spatulas)
+        card["projectile"]["speed"], card["src"]["projectile.speed"] = round(ch["projectileData"]["speed"] / GD_TPS, 3), tag
+    da = card["skills"].get("dash")
+    if da is not None and ch.get("jumpSpeed") and not card["src"].get("skills.dash.speed", "").startswith("patch:"):
+        # the Bandit's dash and the Mega Knight's jump travel at the character's JumpSpeed
+        da["speed"], card["src"]["skills.dash.speed"] = round(ch["jumpSpeed"] / GD_TPS, 3), tag
 
 
 def gd_summon(card, spell, tag):
@@ -311,7 +322,7 @@ def wiki_fill(card):
     tag = f"wiki:{card['name']}"
     ps = wiki.num(a.get("Projectile Speed"))
     if card["projectile"] and card["projectile"]["speed"] is None and ps:
-        card["projectile"]["speed"], card["src"]["projectile.speed"] = round(ps / 60, 3), tag
+        card["projectile"]["speed"], card["src"]["projectile.speed"] = round(ps / GD_TPS, 3), tag
     m = re.fullmatch(r"([\d.]+)\s*-\s*([\d.]+)", a.get("Range", ""))
     if m and card["minRange"] is None:
         card["minRange"], card["src"]["minRange"] = float(m.group(1)), tag
@@ -458,7 +469,8 @@ def main():
             {"tag": tag, "name": "ClashStrategic/stats", "url": CS + "data/cards.json", "version": version, "license": "Apache-2.0"},
             {"tag": gd_tag, "name": "statsroyale game data dump (ClashStrategic's upstream)", "url": GD, "fingerprint": gd["meta"]["fingerprint"],
              "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget",
-                        "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay"]},
+                        "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay", "projectile.speed",
+                        "skills.dash.speed"]},
             {"tag": "wiki:<page>", "name": "Clash Royale Fandom wiki, MediaWiki API wikitext", "url": wiki.API,
              "fields": ["projectile.speed", "minRange", "towers.king_tower", "towerMult[15]", "skills.areaDamageOnDeath.radius",
                         "tick.count and per-hit damage anchors of ticking spells"]},
@@ -474,7 +486,7 @@ def main():
         "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
         "units": {"speed": "game units per tick (20 ticks/s, 1000 units per tile): tiles/s = speed / 50, "
                            "slow 45 = 0.9, medium 60 = 1.2, fast 90 = 1.8, very fast 120 = 2.4 (vid/)",
-                  "projectile.speed": "tiles per second (game speed / 60)",
+                  "projectile.speed": "tiles per second (game speed / 50, the same units per tick as the walking speed)",
                   "range": "tiles", "time": "seconds", "multipliers": "percent",
                   "summonRadius": "tiles from the deploy point to each summon of a multi-unit card (null: they appear touching)",
                   "summonDeployDelay": "seconds between consecutive summons (null: all at once)"},
@@ -495,7 +507,7 @@ def main():
             "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
             "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
             "spawn.minRadius": "a periodic spell spawn rises between this distance and the spell radius from the centre (Graveyard)",
-            "burrow": "underground travel from the own King Tower at speed (tiles/min) for at least the deploy time; "
+            "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill",
             "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "
                       "periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy "

@@ -54,8 +54,8 @@ def refresh(u,kind,dur,val=0):
     else:u.statuses.append(Status(kind,dur,val))
 class Timer:
     # a delayed callback living in g.spells
-    def __init__(self,delay,fn,x=0,y=0,team=''):
-        self.t=delay;self.fn=fn;self.x=x;self.y=y;self.team=team;self.active=True;self.name='';self.radius=0
+    def __init__(self,delay,fn,x=0,y=0,team='',name=''):
+        self.t=delay;self.fn=fn;self.x=x;self.y=y;self.team=team;self.active=True;self.name=name;self.radius=0
     def tick(self,dt,g):
         self.t-=dt
         if self.t<=0:self.active=False;self.fn(g)
@@ -195,7 +195,7 @@ class DeathDamage(Component):
         if dd<=0:return
         def blast(g):
             for e in near(g,team,x,y,r):hurt(e,dd,g);push(e,x,y,self.kb)
-        if self.fuse>0:g.spells.append(Timer(self.fuse,blast,x,y,team))
+        if self.fuse>0:g.spells.append(Timer(self.fuse,blast,x,y,team,tr.name))
         else:blast(g)
 class DeathNova(Component):
     def __init__(self,slow_pct,slow_dur):
@@ -1069,8 +1069,8 @@ class EvoHunter(Component):
                 self.cd=self.net_cd;self.first=False
 class Bolt:
     # the Evolved Electro Dragon's bolt keeps jumping between the enemies within reach of the last one hit until only one is left
-    def __init__(self,team,prev,dmg,r,period):
-        self.team=team;self.prev=prev;self.dmg=dmg;self.radius=r;self.period=period;self.t=period;self.active=True;self.name='';self.x,self.y=pos(prev)
+    def __init__(self,team,prev,dmg,r,period,name=''):
+        self.team=team;self.prev=prev;self.dmg=dmg;self.radius=r;self.period=period;self.t=period;self.active=True;self.name=name;self.x,self.y=pos(prev)
     def tick(self,dt,g):
         self.t-=dt
         if self.t>0:return
@@ -1082,7 +1082,7 @@ class EvoElectroDragon(Component):
         self.pct=dmg_pct;self.br=bounce_r;self.period=period
     def on_attack(self,tr,tgt,g):
         hit=getattr(tr,'chain_hit',[tgt])
-        if len(hit)>1:g.spells.append(Bolt(tr.team,hit[-1],int(tr.dmg*self.pct),self.br,self.period))
+        if len(hit)>1:g.spells.append(Bolt(tr.team,hit[-1],int(tr.dmg*self.pct),self.br,self.period,tr.name))
 class EvoWallBreakers(Component):
     def __init__(self,runner_cfg,cnt):
         self.runner_cfg=runner_cfg;self.cnt=cnt

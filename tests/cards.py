@@ -61,11 +61,11 @@ def t_musk_fhspd():
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)
     ini=d.hp
-    g.run(0.95)
+    g.run(0.9)
     assert d.hp==ini,"Musketeer shot before fhspd"
     g.run(0.1)
-    assert d.hp<ini,"No shot by 1.05s"
-    return "Musketeer first-hit (0.7s first hit speed, 0.3s flight over 5 tiles)"
+    assert d.hp<ini,"No shot by 1.0s"
+    return "Musketeer first-hit (0.7s first hit speed, 0.25s flight over 5 tiles at 1000 units per tick)"
 def t_bdrag_splash():
     g=Game()
     bd=mk_card('baby_dragon',11,'blue',9,10)
@@ -510,9 +510,9 @@ def t_log_ground():
     d1=Dummy('red',9,12,hp=1000,spd=0)
     g.deploy('red',d1)
     log=mk_card('the_log',11,'blue',9,10)
-    g._cast('blue',log,9,10);g.run(0.4)
-    assert d1.hp==1000,"the log rolls 2 tiles in 0.6 s before it reaches the dummy"
-    g.run(0.4)
+    g._cast('blue',log,9,10);g.run(0.3)
+    assert d1.hp==1000,"the log rolls 1.5 tiles to the dummy's edge in 0.375 s (200 units per tick)"
+    g.run(0.5)
     assert d1.hp==1000-269,f"Expected 269 dmg, got {1000-d1.hp}"
     return f"Log damages ground (hp={d1.hp})"
 def t_log_no_air():
@@ -1216,7 +1216,8 @@ def t_gskel_v_skarmy():
     gs.hp=1
     d=Dummy('red',9,14.5,hp=50000,dmg=500,spd=0,hspd=0.5)
     g.deploy('red',d)
-    g.run(3.5)
+    # the tower arrows now fly (600 units per tick), so the last tower kill lands a hair after the 3.5 s bomb
+    g.run(3.6)
     assert not gs.alive
     dead=[s for s in sk if not s.alive]
     assert len(dead)>=10,f"Giant Skeleton bomb should kill most skarmy, only killed {len(dead)}"
@@ -3521,10 +3522,10 @@ def t_atk_first_hit_speed():
     g.deploy('blue',m)
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)
-    g.run(0.95)
-    assert d.hp==50000,"No shot before the first hit (0.7s) plus flight (0.3s)"
+    g.run(0.9)
+    assert d.hp==50000,"No shot before the first hit (0.7s) plus flight (0.25s)"
     g.run(0.1)
-    assert d.hp<50000,"Should have landed by 1.05s"
+    assert d.hp<50000,"Should have landed by 1.0s"
     return "First hit speed faster than hspd"
 def t_atk_splash_radius():
     g=Game()

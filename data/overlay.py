@@ -46,9 +46,8 @@ def speed(v):
 
 
 def tps(v):
-    # dash and jump speeds kept at the tiles-per-minute reading; walking speed is units per tick (/50, sim/cards.py) and these
-    # probably share the unit, but no recording has measured a dash yet
-    return round(v / 60, 3) if isinstance(v, (int, float)) else None
+    # legacy dash, jump and projectile speeds are the game values: units per tick, tiles/s = value / 50 (data/build.py GD_TPS)
+    return round(v / 50, 3) if isinstance(v, (int, float)) else None
 
 
 def load_time(hs, first_hit):

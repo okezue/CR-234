@@ -23,7 +23,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 13.333
+    "speed": 16.0
    },
    "radius": null,
    "range": 5.0,
@@ -55,7 +55,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Archer Queen",
+    "projectile.speed": "gd:debfe1e2",
     "skills.ability.cooldown": "patch:2026-09-01",
     "skills.ability.skills.boost.speedMultiplier": "legacy:ability.effects.movement_speed_override",
     "skills.ability.skills.invisibility.duration": "legacy:ability.effects.invisibility",
@@ -119,7 +119,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 10.0
+    "speed": 12.0
    },
    "radius": null,
    "range": 5.0,
@@ -134,7 +134,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Archers",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -174,7 +174,7 @@
    "placement": "any",
    "projectile": {
     "count": 10,
-    "speed": 18.333,
+    "speed": 22.0,
     "waveInterval": 0.2,
     "waves": 3
    },
@@ -251,7 +251,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 8.333
+    "speed": 10.0
    },
    "radius": 1.5,
    "range": 3.5,
@@ -265,7 +265,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Baby Dragon",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -417,7 +417,7 @@
      "damage": [null, null, null, null, null, null, null, null, 322, 354, 389, 427, 469, 515, 565, 621],
      "maxRange": 6,
      "minRange": 3.5,
-     "speed": 8.333,
+     "speed": 10.0,
      "targetType": null
     }
    },
@@ -427,7 +427,7 @@
     "mass": "legacy:hidden_stats.mass",
     "skills.dash.chargeTime": "patch:2026-09-03",
     "skills.dash.damage[]": "derived:levelMult",
-    "skills.dash.speed": "legacy:mechanics.dash",
+    "skills.dash.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -496,7 +496,7 @@
      "bounces": null,
      "radius": null,
      "range": 4.5,
-     "speed": 3.333
+     "speed": 4.0
     },
     "spawn": {
      "character": "Barbarian",
@@ -1047,7 +1047,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 8.333
+    "speed": 10.0
    },
    "radius": 1.5,
    "range": 6.0,
@@ -1064,7 +1064,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "projectile.speed": "wiki:Bomb Tower",
+    "projectile.speed": "gd:debfe1e2",
     "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
     "skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
     "skills.areaDamageOnDeath.radius": "patch:2026-09-03",
@@ -1123,7 +1123,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 6.667
+    "speed": 8.0
    },
    "radius": 1.5,
    "range": 4.5,
@@ -1137,7 +1137,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Bomber",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1205,7 +1205,7 @@
      "damage": [null, null, null, null, null, null, null, null, null, null, 491, 539, 593, 650, 714, 785],
      "maxRange": 6.0,
      "minRange": 3.5,
-     "speed": 8.333
+     "speed": 10.0
     }
    },
    "speed": 90,
@@ -1280,7 +1280,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 2.833
+    "speed": 3.4
    },
    "radius": 1.8,
    "range": 4.0,
@@ -1308,7 +1308,7 @@
     "hero.ability.castTime": "patch:2026-09-01",
     "hero.ability.skills.snipe.towerDamagePercent": "patch:2026-09-01",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Bowler",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1363,7 +1363,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 5.5,
@@ -1379,7 +1379,7 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
-    "projectile.speed": "wiki:Cannon",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1418,7 +1418,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 5.5,
@@ -1436,7 +1436,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Cannon Cart",
+    "projectile.speed": "gd:debfe1e2",
     "skills.transform": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -1662,7 +1662,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 13.333
+    "speed": 16.0
    },
    "radius": null,
    "range": 6.5,
@@ -1678,7 +1678,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Dart Goblin",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1803,7 +1803,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 40.0
    },
    "radius": null,
    "range": 3.5,
@@ -1837,6 +1837,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1940,7 +1941,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 20.0
    },
    "radius": null,
    "range": 2.5,
@@ -1969,6 +1970,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
+    "projectile.speed": "gd:debfe1e2",
     "skills.pierce.bounceDistance": "patch:2026-08-26",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -2346,7 +2348,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 9.167
+    "speed": 11.0
    },
    "radius": 1.0,
    "range": 4.5,
@@ -2371,7 +2373,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "loadTime": "patch:2026-09-03",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Executioner",
+    "projectile.speed": "gd:debfe1e2",
     "skills.pierce.returnTime": "patch:2026-09-01",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -2411,7 +2413,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 8.0
    },
    "radius": 2.3,
    "range": 2.5,
@@ -2422,6 +2424,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -2461,7 +2464,7 @@
    "placement": "any",
    "projectile": {
     "count": 1,
-    "speed": 10.0
+    "speed": 12.0
    },
    "radius": 2.5,
    "range": null,
@@ -2533,7 +2536,7 @@
    "placement": "own",
    "projectile": {
     "count": 5,
-    "speed": 9.167
+    "speed": 10.0
    },
    "radius": null,
    "range": 6.0,
@@ -2560,7 +2563,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Firecracker",
+    "projectile.speed": "gd:debfe1e2",
     "skills.recoil.distance": "legacy:attack.recoil_tiles",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -2646,7 +2649,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 13.333
+    "speed": 16.0
    },
    "radius": null,
    "range": 6.0,
@@ -2657,7 +2660,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Flying Machine",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -2770,7 +2773,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 12.0
    },
    "radius": null,
    "range": 5.5,
@@ -2789,6 +2792,7 @@
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
+    "projectile.speed": "gd:debfe1e2",
     "skills.periodicSpawn.pauseTime": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -2989,7 +2993,7 @@
    "placement": "any",
    "projectile": {
     "count": 1,
-    "speed": 13.333
+    "speed": 16.0
    },
    "radius": 2.5,
    "range": 5.0,
@@ -3076,7 +3080,7 @@
    "placement": "any",
    "projectile": {
     "count": 1,
-    "speed": 6.667
+    "speed": 8.0
    },
    "radius": 1.5,
    "range": null,
@@ -3338,7 +3342,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 6.667
+    "speed": 8.0
    },
    "radius": 1.5,
    "range": 5.0,
@@ -3367,7 +3371,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Goblin Demolisher",
+    "projectile.speed": "gd:debfe1e2",
     "skills.areaDamageOnDeath.damage": "legacy:death_damage",
     "skills.areaDamageOnDeath.radius": "legacy:death_damage",
     "skills.transform": "patch:2026-09-01",
@@ -3601,7 +3605,7 @@
      "name": "SpearGoblin",
      "projectile": {
       "count": 1,
-      "speed": 8.333
+      "speed": 10.0
      },
      "range": 5.0,
      "sightRange": 5.5,
@@ -3720,7 +3724,7 @@
      "name": "SpearGoblinGiant",
      "projectile": {
       "count": 1,
-      "speed": 8.333
+      "speed": 10.0
      },
      "range": 5.0,
      "sightRange": 5.0,
@@ -3809,7 +3813,7 @@
      "name": "SpearGoblin",
      "projectile": {
       "count": 1,
-      "speed": 8.333
+      "speed": 10.0
      },
      "radius": 0.5,
      "range": 5.0,
@@ -4072,7 +4076,7 @@
      "name": "Goblinstein_doctor",
      "projectile": {
       "count": 1,
-      "speed": 8.333
+      "speed": 10.0
      },
      "range": 5.5,
      "sightRange": 5.5,
@@ -4146,7 +4150,7 @@
        "damage": [null, null, null, null, null, null, null, null, null, null, 335, 368, 404, 444, 487, 535],
        "maxRange": 5.5,
        "minRange": null,
-       "speed": 2.0,
+       "speed": 2.4,
        "targetType": null
       }
      }
@@ -4418,7 +4422,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 8.0
    },
    "radius": 1.5,
    "range": 2.5,
@@ -4437,6 +4441,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
+    "projectile.speed": "gd:debfe1e2",
     "skills.heal.perAttack[]": "derived:levelMult",
     "skills.heal.radius": "legacy:mechanics.healing",
     "stats.damage[]": "derived:levelMult",
@@ -4546,7 +4551,7 @@
    "placement": "own",
    "projectile": {
     "count": 10,
-    "speed": 9.167
+    "speed": 11.0
    },
    "radius": 0.1,
    "range": 4.0,
@@ -4561,7 +4566,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Hunter",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -4709,7 +4714,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 8.0
    },
    "radius": 1.5,
    "range": 2.5,
@@ -4735,6 +4740,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -4804,7 +4810,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 11.667
+    "speed": 14.0
    },
    "radius": 3.0,
    "range": 5.5,
@@ -5114,7 +5120,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 6.667
+    "speed": 8.0
    },
    "radius": null,
    "range": 3.5,
@@ -5133,7 +5139,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Lava Hound",
+    "projectile.speed": "gd:debfe1e2",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -5165,7 +5171,7 @@
      "name": "LavaPups",
      "projectile": {
       "count": 1,
-      "speed": 8.333
+      "speed": 10.0
      },
      "radius": 0.45,
      "range": 1.6,
@@ -5258,7 +5264,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 13.333
+    "speed": 16.0
    },
    "radius": null,
    "range": 5.5,
@@ -5303,7 +5309,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Little Prince",
+    "projectile.speed": "gd:debfe1e2",
     "skills.ability.cooldown": "patch:2026-09-01",
     "skills.ability.skills.spawn.damage[]": "derived:levelMult",
     "skills.charge": "patch:2026-08-26",
@@ -5501,7 +5507,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": 0.3,
    "range": 7.0,
@@ -5524,7 +5530,7 @@
     "hero.ability.skills.spawn.hitpoints[]": "derived:levelMult",
     "hero.ability.skills.teleport.distance": "legacy:hero.ability.dash_distance_tiles",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Magic Archer",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -5612,7 +5618,7 @@
      "maxRange": 5,
      "minRange": 3.5,
      "radius": 2.2,
-     "speed": 12.5,
+     "speed": 5.0,
      "targetType": null
     },
     "jump": {
@@ -5640,7 +5646,7 @@
     "skills.areaDamageOnSpawn.radius": "patch:2026-09-03",
     "skills.dash.damage[]": "derived:levelMult",
     "skills.dash.radius": "patch:2026-09-03",
-    "skills.dash.speed": "legacy:mechanics.jump",
+    "skills.dash.speed": "gd:debfe1e2",
     "skills.jump.duration": "patch:2026-09-01",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -5695,7 +5701,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 1.6,
@@ -5708,7 +5714,7 @@
     "hero.ability.skills.warp.damage[]": "derived:levelMult",
     "hero.ability.uses": "legacy:hero.ability.uses_per_deploy",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Mega Minion",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -6009,7 +6015,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 2.5,
@@ -6023,7 +6029,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Minion Horde",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -6064,7 +6070,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 2.5,
@@ -6075,7 +6081,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Minions",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -6254,7 +6260,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 5.0
+    "speed": 6.0
    },
    "radius": 2.0,
    "range": 11.5,
@@ -6269,7 +6275,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "loadTime": "patch:2026-09-03",
     "minRange": "wiki:Mortar",
-    "projectile.speed": "wiki:Mortar",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -6315,7 +6321,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 10.0
+    "speed": 12.0
    },
    "radius": null,
    "range": 5.5,
@@ -6346,7 +6352,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Mother Witch",
+    "projectile.speed": "gd:debfe1e2",
     "skills.spawnOnKill.damage[]": "derived:levelMult",
     "skills.spawnOnKill.hitpoints[15]": "derived:levelMult (source level16 1006 is off the level curve)",
     "skills.spawnOnKill.hitpoints[]": "derived:levelMult",
@@ -6450,7 +6456,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 6.0,
@@ -6466,7 +6472,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "hero.ability.cooldown": "patch:2026-09-01",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Musketeer",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -6902,7 +6908,7 @@
    "placement": "own",
    "projectile": {
     "count": 5,
-    "speed": 10.0
+    "speed": 12.0
    },
    "radius": 2.5,
    "range": 9.0,
@@ -6919,7 +6925,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Princess",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -7086,7 +7092,7 @@
      "name": "RamRider",
      "projectile": {
       "count": 1,
-      "speed": 10.0
+      "speed": 12.0
      },
      "range": 5.5,
      "sightRange": 5.5,
@@ -7181,7 +7187,7 @@
      "name": "RascalGirl",
      "projectile": {
       "count": 1,
-      "speed": 13.333
+      "speed": 16.0
      },
      "range": 5.0,
      "sightRange": 5.5,
@@ -7213,7 +7219,7 @@
    "placement": "any",
    "projectile": {
     "count": 1,
-    "speed": 5.833
+    "speed": 7.0
    },
    "radius": 2.0,
    "range": null,
@@ -7501,7 +7507,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 5.0,
@@ -7517,7 +7523,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Royal Giant",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -7962,7 +7968,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 8.333
+    "speed": 10.0
    },
    "radius": 1.5,
    "range": 3.5,
@@ -7973,7 +7979,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Skeleton Dragons",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -8178,7 +8184,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 23.333
+    "speed": 28.0
    },
    "radius": 1.8,
    "range": 5.0,
@@ -8193,7 +8199,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Sparky",
+    "projectile.speed": "gd:debfe1e2",
     "skills.charging": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -8233,7 +8239,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 8.333
+    "speed": 10.0
    },
    "radius": null,
    "range": 5.0,
@@ -8244,7 +8250,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Spear Goblins",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -8529,7 +8535,7 @@
      "bounces": null,
      "radius": null,
      "range": 10.1,
-     "speed": 3.333
+     "speed": 4.0
     },
     "pushback": {
      "damage": null,
@@ -8579,7 +8585,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 6.0,
@@ -9071,7 +9077,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 20.0
    },
    "radius": 1.5,
    "range": 0.5,
@@ -9087,6 +9093,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -9163,7 +9170,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 10.0
+    "speed": 12.0
    },
    "radius": 1.5,
    "range": 5.5,
@@ -9186,7 +9193,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Witch",
+    "projectile.speed": "gd:debfe1e2",
     "skills.periodicSpawn.firstDelay": "legacy:spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9282,7 +9289,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": 10.0
+    "speed": 12.0
    },
    "radius": 1.5,
    "range": 5.5,
@@ -9299,7 +9306,7 @@
     "hero.ability.cooldown": "patch:2026-09-01",
     "hero.ability.skills.boost.flying": "legacy:hero.ability.flight_duration_sec",
     "mass": "legacy:hidden_stats.mass",
-    "projectile.speed": "wiki:Wizard",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9338,7 +9345,7 @@
    "placement": "own",
    "projectile": {
     "count": 1,
-    "speed": null
+    "speed": 32.0
    },
    "radius": null,
    "range": 11.5,
@@ -9348,6 +9355,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9498,14 +9506,14 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-03",
+  "built": "2026-09-04",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
   },
   "legacySkills": {
    "areaDamageOnSpawn": "damage and radius dealt where the unit appears",
-   "burrow": "underground travel from the own King Tower at speed (tiles/min) for at least the deploy time; resurfacePercent/resurfaceCount for the evo drill",
+   "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; resurfacePercent/resurfaceCount for the evo drill",
    "charging": "loadFirstHit: the unit comes in unloaded and charges the whole hit speed before its first hit, a stun empties the charge (Sparky); every other unit deploys loaded and loads while walking, so its first hit takes hit speed less load time",
    "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, leader names its unit overrides",
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
@@ -9538,7 +9546,7 @@
     "version": "2.4.0"
    },
    {
-    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay"],
+    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed"],
     "fingerprint": "debfe1e2c24562a36ef753ebca3a0f239e12b4c0",
     "name": "statsroyale game data dump (ClashStrategic's upstream)",
     "tag": "gd:debfe1e2",
@@ -9587,7 +9595,7 @@
   "towerMult": [1.0, 1.08, 1.16, 1.25, 1.35, 1.45, 1.56, 1.68, 1.81, 1.99, 2.18, 2.39, 2.62, 2.88, 3.16, 3.47],
   "units": {
    "multipliers": "percent",
-   "projectile.speed": "tiles per second (game speed / 60)",
+   "projectile.speed": "tiles per second (game speed / 50, the same units per tick as the walking speed)",
    "range": "tiles",
    "speed": "game units per tick (20 ticks/s, 1000 units per tile): tiles/s = speed / 50, slow 45 = 0.9, medium 60 = 1.2, fast 90 = 1.8, very fast 120 = 2.4 (vid/)",
    "summonDeployDelay": "seconds between consecutive summons (null: all at once)",
@@ -9619,7 +9627,7 @@
    "placement": null,
    "projectile": {
     "count": null,
-    "speed": null
+    "speed": 20.0
    },
    "radius": null,
    "range": 7.5,
@@ -9630,6 +9638,7 @@
    "src": {
     "*": "cs2.4.0",
     "loadTime": "legacy:attack.first_hit_speed_sec",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage": "gd:debfe1e2 (cs anchor 273 rounded off the curve)",
     "stats.damage[]": "derived:towerMult",
     "stats.hitpoints[]": "derived:towerMult"
@@ -9668,7 +9677,7 @@
    "placement": null,
    "projectile": {
     "count": null,
-    "speed": 16.667
+    "speed": 20.0
    },
    "radius": null,
    "range": 7.5,
@@ -9683,7 +9692,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "projectile.speed": "wiki:Dagger Duchess",
+    "projectile.speed": "gd:debfe1e2",
     "skills.volley.projectileCount": "legacy:attack.mechanics.dagger_burst",
     "skills.volley.reloadTime": "legacy:attack.mechanics.dagger_burst",
     "stats.damage": "gd:debfe1e2 (cs anchor 92 rounded off the curve)",
@@ -9771,7 +9780,7 @@
    "placement": null,
    "projectile": {
     "count": null,
-    "speed": null
+    "speed": 12.0
    },
    "radius": null,
    "range": 7.5,
@@ -9791,6 +9800,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "projectile.speed": "gd:debfe1e2",
     "skills.stack.firstDelay": "patch:2026-09-01",
     "skills.stack.maxInterval": "patch:2026-09-01",
     "stats.damage[]": "derived:towerMult",
@@ -9830,7 +9840,7 @@
    "placement": null,
    "projectile": {
     "count": null,
-    "speed": null
+    "speed": 12.0
    },
    "radius": null,
    "range": 7.5,
@@ -9840,6 +9850,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:towerMult",
     "stats.hitpoints[]": "derived:towerMult"
    },
