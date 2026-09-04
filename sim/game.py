@@ -411,6 +411,13 @@ class Game:
         if spd<=0:hit(self,None);return
         tx,ty=self._pos(tgt)
         self.projs.append(Projectile(team,x,y,spd,tgt,tx,ty,hit,True))
+    def _tower_hit(self,tw,tgt,dmg):
+        # a tower shot passes the target's damage hooks like a troop's hit (the Electro Giant reflects it onto the tower)
+        for c in getattr(tgt,'components',[]):
+            if hasattr(c,'pre_damage'):dmg=c.pre_damage(tgt,tw,dmg,self)
+        tgt.take_damage(dmg)
+        for c in getattr(tgt,'components',[]):
+            if hasattr(c,'on_take_damage'):c.on_take_damage(tgt,tw,self)
     def _cast(self,team,sp,x,y):
         def hit(g,pr):sp.apply(g);g.spells.append(sp)
         v=getattr(sp,'proj_spd',0)
@@ -436,7 +443,7 @@ class Game:
                 for ev in evts:
                     if ev[0]=='atk':
                         tgt,dmg=ev[1],ev[2]
-                        self._shoot(t.team,t.cx,t.cy,getattr(tt,'proj_spd',0),tgt,lambda g,pr,tgt=tgt,dmg=dmg:tgt.take_damage(dmg))
+                        self._shoot(t.team,t.cx,t.cy,getattr(tt,'proj_spd',0),tgt,lambda g,pr,tgt=tgt,dmg=dmg,t=t:g._tower_hit(t,tgt,dmg))
                     elif ev[0]=='pancake':
                         for _ in range(ev[2]):ev[1].level_up()
                         self.log.append(f"[{self.t:.1f}] Chef boost -> lvl {ev[1].lvl}")
@@ -445,7 +452,7 @@ class Game:
                 if t.cd<=0:
                     b=tower_lock(t,t,en,t.rng)
                     if b and t.cd<=0:
-                        self._shoot(t.team,t.cx,t.cy,t.proj_spd,b,lambda g,pr,b=b,dmg=t.dmg:b.take_damage(dmg));t.cd=t.spd
+                        self._shoot(t.team,t.cx,t.cy,t.proj_spd,b,lambda g,pr,b=b,dmg=t.dmg,t=t:g._tower_hit(t,b,dmg));t.cd=t.spd
     def _waypoint(self,tr,tx,ty):
         if getattr(tr,'transport','Ground')=='Air' or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[])):return tx,ty
         a=self.arena;y0=a.RIVER[0];y1=a.RIVER[-1]+1;mid=(y0+y1)/2

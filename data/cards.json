@@ -1884,7 +1884,9 @@
    "skills": {
     "reflect": {
      "damage": [null, null, null, null, null, 120, 132, 144, 159, 174, 192, 210, 231, 254, 279, 306],
-     "radius": 2.5
+     "duration": 0.5,
+     "radius": 2.0,
+     "towerDamage": [null, null, null, null, null, 60, 66, 73, 80, 88, 97, 106, 117, 128, 141, 155]
     },
     "stun": {
      "delayBetweenStrikes": null,
@@ -1900,8 +1902,10 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
-    "skills.reflect.damage": "legacy:zap_damage",
-    "skills.reflect.radius": "legacy:mechanics.zap_pack",
+    "skills.reflect.damage": "gd:debfe1e2",
+    "skills.reflect.duration": "gd:debfe1e2",
+    "skills.reflect.radius": "gd:debfe1e2",
+    "skills.reflect.towerDamage": "gd:debfe1e2",
     "skills.stun.duration": "legacy:mechanics.zap_pack",
     "stats.damage": "patch:2026-08-26",
     "stats.damage[]": "derived:levelMult",

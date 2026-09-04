@@ -337,14 +337,13 @@ class HealBurst(Component):
             if d<=self.radius:
                 ally.hp=min(ally.max_hp,ally.hp+self.heal)
 class ZapPack(Component):
-    def __init__(self,dmg,rng,stun):
-        self.dmg=dmg;self.rng=rng;self.stun=stun
+    # every attacker within the radius, a tower included, takes the reflected zap (reflectAttackCrownTowerDamage on towers) and its stun
+    def __init__(self,dmg,rng,stun,ct=None):
+        self.dmg=dmg;self.rng=rng;self.stun=stun;self.ct=dmg if ct is None else ct
     def on_take_damage(self,tr,attacker,g):
-        if not tr.alive or not hasattr(attacker,'alive'):return
-        if not attacker.alive:return
-        dist=math.sqrt((attacker.x-tr.x)**2+(attacker.y-tr.y)**2)
-        if dist<=self.rng:
-            attacker.take_damage(self.dmg)
+        if not tr.alive or not getattr(attacker,'alive',False):return
+        if tdist(attacker,tr.x,tr.y)<=self.rng:
+            hurt(attacker,self.ct if hasattr(attacker,'ttype') else self.dmg,g)
             if self.stun>0 and hasattr(attacker,'statuses'):
                 attacker.statuses.append(Status('stun',self.stun))
 class HealPulse(Component):

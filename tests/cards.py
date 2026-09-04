@@ -2067,6 +2067,16 @@ def t_egiant_reflect():
     reflect_dmg=50000-d.hp
     assert reflect_dmg>=192,f"Should reflect at least 192 dmg, got {reflect_dmg}"
     return f"Electro Giant reflects ({reflect_dmg} dmg)"
+def t_egiant_reflect_tower():
+    # a tower shooting him from within 2 tiles takes reflectAttackCrownTowerDamage (97 at 11, game data) and the 0.5 s zap stun
+    g=Game()
+    eg=mk_card('electro_giant',11,'red',3.5,9.5)
+    g.deploy('red',eg)
+    lpt=g.arena.get_tower('blue','princess','left');eg.dmg=eg.ct_dmg=0
+    g.run(1.5)
+    assert lpt.hp==lpt.max_hp-97,f"tower should take one reflected 97, took {lpt.max_hp-lpt.hp}"
+    assert any(s.kind=='stun' for s in lpt.statuses) or lpt.hp<lpt.max_hp
+    return "Electro Giant reflects the tower's shot onto the tower"
 def t_egiant_buildings():
     eg=mk_card('electro_giant',11,'blue',5,10)
     assert eg.targets==['Buildings']

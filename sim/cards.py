@@ -156,7 +156,8 @@ def attach(cfg,c,sk,lvl,chain=None):
             cs.append(fx.DualTarget());cfg['stun_dur']=st['duration']
         else:cfg['stun_dur']=st['duration']
     rf=sk.get('reflect',{})
-    if not empty(rf.get('damage')):cs.append(fx.ZapPack(at(rf['damage'],lvl),rf.get('radius') or 0,st.get('duration') or 0))
+    if not empty(rf.get('damage')):
+        cs.append(fx.ZapPack(at(rf['damage'],lvl),rf.get('radius') or 0,rf.get('duration') or st.get('duration') or 0,at(rf.get('towerDamage'),lvl)))
     elif rf.get('damageMultiplier'):cs.append(fx.Parry(mult(rf['damageMultiplier']),rf.get('cooldown') or 0))
     rd=sk.get('rampingDamage',{})
     if rd.get('damageTiers'):

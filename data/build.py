@@ -291,6 +291,12 @@ def gd_crown(rec, spell, lo, pct, tag):
     sa = rec["skills"].get("secondaryAttack")
     if sa is not None and pj.get("crownTowerDamagePercent") is not None and pj.get("damage"):
         sa["towerDamage"], rec["src"]["skills.secondaryAttack.towerDamage"] = curve(pj["damage"] * (100 + pj["crownTowerDamagePercent"]) // 100, lo, pct), tag
+    rf = rec["skills"].get("reflect")
+    if rf is not None and ch.get("reflectedAttackDamage"):
+        # the Electro Giant's reflected zap: damage, its crown tower damage, radius and stun (reflectedAttackBuffDuration, ZapFreeze)
+        rf.update({"damage": curve(ch["reflectedAttackDamage"], lo, pct), "towerDamage": curve(ch["reflectAttackCrownTowerDamage"], lo, pct),
+                   "radius": ch["reflectedAttackRadius"] / 1000, "duration": ch["reflectedAttackBuffDuration"] / 1000})
+        rec["src"].update({f"skills.reflect.{f}": tag for f in ("damage", "towerDamage", "radius", "duration")})
     if "crownTowerDamagePercent" not in json.dumps(spell):
         for path, st in (("stats", rec["stats"]), ("evo.stats", (rec["evo"] or {}).get("stats") or {})):
             if st.get("towerDamage") and st.get("damage") and st["towerDamage"] != st["damage"]:
