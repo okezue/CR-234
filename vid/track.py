@@ -1,7 +1,8 @@
 import json
 import os
 import sys
-from multiprocessing import Pool
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures.process import BrokenProcessPool
 import cv2
 import numpy as np
 import pandas as pd
@@ -16,6 +17,7 @@ _G = {}
 
 
 def _init(video, cal, tpl, names):
+    cv2.setNumThreads(1)  # shared machine: one core per worker process
     _G.update(video=video, cal=cal, dg=ocr.Digits(tpl), names=ocr.Names(*names))
 
 
@@ -29,19 +31,22 @@ def _chunk(rng):
         ok, fr = cap.read()
         if not ok:
             break
-        m = masks(fr)
-        ds = bars.detect(fr, cal, m)
-        for d in ds:
-            d['level'] = ocr.level(fr, d['badge'], d['team'], dg, m)
-        out.append({'f': f, 'clock': ocr.clock(fr, cal, dg, m), 'towers': ocr.towers(fr, cal, dg, m),
-                    'dets': [(d['team'], d['u'], d['v'], d['x'], d['y'], d['hp'], d['level']) for d in ds],
-                    'banners': [(b['card'], b['level'], b['err'], b['u'], b['v'], b['err2'], b['drop']) for b in ocr.banner(fr, cal, dg, names, m)
-                                if b['err'] <= 1.0]})
+        try:
+            m = masks(fr, cal.get('gain', 1.0))
+            ds = bars.detect(fr, cal, m)
+            for d in ds:
+                d['level'] = ocr.level(fr, d['badge'], d['team'], dg, m, cal.get('s'))
+            out.append({'f': f, 'clock': ocr.clock(fr, cal, dg, m), 'towers': ocr.towers(fr, cal, dg, m),
+                        'dets': [(d['team'], d['u'], d['v'], d['x'], d['y'], d['hp'], d['level']) for d in ds],
+                        'banners': [(b['card'], b['level'], b['err'], b['u'], b['v'], b['err2'], b['drop']) for b in ocr.banner(fr, cal, dg, names, m)
+                                    if b['err'] <= 1.0]})
+        except Exception as e:  # one odd frame must not sink a chunk
+            out.append({'f': f, 'clock': None, 'towers': {}, 'dets': [], 'banners': [], 'error': repr(e)})
     cap.release()
     return out
 
 
-def scan(video, cal, procs=8, chunk=1500, limit=None):
+def scan(video, cal, procs=3, chunk=1500, limit=None):
     stem = os.path.splitext(os.path.basename(video))[0]
     path = os.path.join(CACHE, stem + '.scan.pkl')
     if os.path.exists(path):
@@ -52,12 +57,25 @@ def scan(video, cal, procs=8, chunk=1500, limit=None):
     cards = json.load(open('data/cards.json'))['cards']
     names = ([v['name'] for v in cards.values()], {v['name']: v['cost'] for v in cards.values()})
     rngs = [(a, min(a + chunk, n)) for a in range(0, n, chunk)]
-    rows = []
-    with Pool(procs, _init, (video, cal, tpl, names)) as p:
-        for i, r in enumerate(p.imap(_chunk, rngs)):
-            rows += r
-            print(f'\r{i + 1}/{len(rngs)}', end='', file=sys.stderr)
+    # chunks are cached one by one and the pool is rebuilt when the shared machine kills a worker, so a crash costs one chunk
+    part = os.path.join(CACHE, stem + '.scan')
+    os.makedirs(part, exist_ok=True)
+    todo = [r for r in rngs if not os.path.exists(os.path.join(part, f'{r[0]}.pkl'))]
+    for _ in range(5):
+        if not todo:
+            break
+        try:
+            with ProcessPoolExecutor(procs, initializer=_init, initargs=(video, cal, tpl, names)) as p:
+                for r, out in zip(todo, p.map(_chunk, todo)):
+                    pd.to_pickle(out, os.path.join(part, f'{r[0]}.pkl'))
+                    print(f'\r{len(rngs) - len(todo) + todo.index(r) + 1}/{len(rngs)}', end='', file=sys.stderr)
+        except BrokenProcessPool:
+            print(' worker lost, retrying', file=sys.stderr)
+        todo = [r for r in rngs if not os.path.exists(os.path.join(part, f'{r[0]}.pkl'))]
+    if todo:
+        raise RuntimeError(f'chunks failed repeatedly: {todo}')
     print(file=sys.stderr)
+    rows = [row for r in rngs for row in pd.read_pickle(os.path.join(part, f'{r[0]}.pkl'))]
     pd.to_pickle(rows, path)
     return rows
 
@@ -165,7 +183,7 @@ def banners(rows, tfun, cal, fps, cards):
     return bn
 
 
-def run(video, procs=8, limit=None):
+def run(video, procs=3, limit=None):
     cal = calibrate(video)
     fps = cal['fps']
     rows = scan(video, cal, procs, limit=limit)
@@ -174,9 +192,15 @@ def run(video, procs=8, limit=None):
     cards = json.load(open('data/cards.json'))['cards']
     stem = os.path.splitext(os.path.basename(video))[0]
     out = []
-    for gi, g in enumerate(games(rows, fps)):
+    gs = games(rows, fps)
+    # without a readable clock the whole video is one segment on video time: speeds still hold, game time and banners do not
+    whole = not gs
+    if whole:
+        print('no clock: one segment on video time', file=sys.stderr)
+        gs = [[(rows[0]['f'], REG), (rows[-1]['f'], REG)]]
+    for gi, g in enumerate(gs):
         f0, f1 = g[0][0], g[-1][0]
-        tfun = clock_time(g, fps)
+        tfun = (lambda f: np.asarray(f, float) / fps) if whole else clock_time(g, fps)
         sub = [byf[f] for f in range(f0, f1 + 1) if f in byf]
         dets = [(r['f'], [d for d in r['dets'] if not isbad(d)]) for r in sub]
         tr = link(dets, fps)

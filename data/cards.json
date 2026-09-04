@@ -9589,7 +9589,7 @@
    "multipliers": "percent",
    "projectile.speed": "tiles per second (game speed / 60)",
    "range": "tiles",
-   "speed": "tiles per minute (slow 45, medium 60, fast 90, very fast 120)",
+   "speed": "game units per tick (20 ticks/s, 1000 units per tile): tiles/s = speed / 50, slow 45 = 0.9, medium 60 = 1.2, fast 90 = 1.8, very fast 120 = 2.4 (vid/)",
    "summonDeployDelay": "seconds between consecutive summons (null: all at once)",
    "summonRadius": "tiles from the deploy point to each summon of a multi-unit card (null: they appear touching)",
    "time": "seconds"

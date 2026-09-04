@@ -2,7 +2,7 @@ import json
 import os
 import cv2
 import numpy as np
-from vid.cal import CACHE, bars, comps, masks
+from vid.cal import CACHE, bars, clock_box, comps, masks
 
 GW, GH = 12, 18
 
@@ -67,10 +67,14 @@ class Digits:
 
 
 def clock_glyphs(fr, cal, m=None):
-    x, y, w, h = cal['clock']
+    # the clock box shifts with the top banners between games, so its digit row is located per frame
     m = m or masks(fr)
+    s = cal.get('s', fr.shape[1] / 864)
+    box = clock_box(fr, cal['fwd'], m, s)
+    if box is None:
+        return None, []
+    x, y, w, h = box
     wm = m['white'][y:y + h, x:x + w]
-    s = fr.shape[1] / 864
     return wm, glyphs(wm, 18 * s, 44 * s)
 
 
@@ -95,7 +99,7 @@ def learn(video, cal, start=0.0, span=13.0, step=0.1):
         ok, fr = cap.read()
         if not ok:
             break
-        wm, cs = clock_glyphs(fr, cal)
+        wm, cs = clock_glyphs(fr, cal, masks(fr, cal.get('gain', 1.0)))
         if len(cs) != 3:
             continue
         seq.append((norm(wm, cs[1]), norm(wm, cs[2])))
@@ -149,9 +153,9 @@ def towers(fr, cal, dg, m=None):
     m = m or masks(fr)
     wm = m['bright']
     H, W = fr.shape[:2]
-    s = W / 864
+    s = cal.get('s', W / 864)
     out = {}
-    for k, (x, y, w, h) in bars(m, W, H, cal['anchors']).items():
+    for k, (x, y, w, h) in bars(m, W, H, cal['anchors'], s).items():
         if k[0] == 'r':
             y0, y1, x0, x1 = int(y - 30 * s), y, int(x - 4 * s), int(x + w + 8 * s)
         else:
@@ -161,11 +165,11 @@ def towers(fr, cal, dg, m=None):
     return out
 
 
-def level(fr, badge, team, dg, m=None):
+def level(fr, badge, team, dg, m=None, s=None):
     x, y, w, h = badge
     m = m or masks(fr)
     mk = (m['white'] if team == 'b' else m['gold'])[y:y + h, x:x + w]
-    s = fr.shape[1] / 864
+    s = s or fr.shape[1] / 864
     v, sc = dg.number(mk, 8 * s, 22 * s)
     return v if v is not None and 1 <= v <= 16 and sc >= 0.55 else None
 
@@ -285,7 +289,7 @@ def banner(fr, cal, dg, names, m=None):
     m = m or masks(fr)
     wm = m['bright']
     H, W = fr.shape[:2]
-    s = W / 864
+    s = cal.get('s', W / 864)
     fwd = np.asarray(cal['fwd'])
     lo, hi = int((fwd @ [0, 33, 1])[1]), int((fwd @ [0, 0, 1])[1])
     sub = wm[lo:hi]

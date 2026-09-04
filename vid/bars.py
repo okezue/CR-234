@@ -26,7 +26,7 @@ def marker(m, mk, team, c, s):
 def detect(fr, cal, m=None):
     m = m or masks(fr)
     H, W = fr.shape[:2]
-    s = W / 864
+    s = cal.get('s', W / 864)
     fwd = np.asarray(cal['fwd'])
     vmin, vmax = (fwd @ [0, 33, 1])[1], (fwd @ [0, 1, 1])[1]
     # enemy tower labels move with the opponent's tower skin, so their exclusion zone is taller

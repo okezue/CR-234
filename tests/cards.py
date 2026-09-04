@@ -10,7 +10,7 @@ def t_knight_load():
     tr=mk_card('knight',11,'blue',5,10)
     assert tr.hp==1766 and tr.dmg==202
     assert abs(tr.hspd-1.2)<0.01 and abs(tr.fhspd-0.5)<0.01
-    assert abs(tr.rng-1.2)<0.01 and abs(tr.spd-1.0)<0.01
+    assert abs(tr.rng-1.2)<0.01 and abs(tr.spd-1.2)<0.01
     assert tr.targets==['Ground']
     return f"Knight load (hp={tr.hp} dmg={tr.dmg})"
 def t_knight_v_troop():
@@ -178,7 +178,7 @@ def t_mpekka_load():
     mp=mk_card('mini_pekka',11,'blue',5,10)
     assert mp.hp==1390 and mp.dmg==755
     assert abs(mp.hspd-1.6)<0.01 and abs(mp.fhspd-0.5)<0.01
-    assert abs(mp.rng-0.8)<0.01 and abs(mp.spd-1.5)<0.01
+    assert abs(mp.rng-0.8)<0.01 and abs(mp.spd-1.8)<0.01
     return f"Mini PEKKA load (hp={mp.hp} dmg={mp.dmg})"
 def t_mpekka_kills_knight():
     g=quiet(Game())
@@ -462,7 +462,7 @@ def t_idrag_reset():
     return "Inferno Dragon resets on retarget"
 def t_lumberjack_speed():
     lj=mk_card('lumberjack',11,'blue',9,10)
-    assert abs(lj.spd-2.0)<0.01
+    assert abs(lj.spd-2.4)<0.01
     return f"Lumberjack speed={lj.spd}"
 def t_lumberjack_rage():
     g=Game()
@@ -537,7 +537,7 @@ def t_pekka_load():
     p=mk_card('pekka',11,'blue',5,10)
     assert p.hp==3760 and p.dmg==842
     assert abs(p.hspd-1.8)<0.01 and abs(p.fhspd-0.5)<0.01
-    assert abs(p.spd-0.75)<0.01 and abs(p.rng-1.2)<0.01
+    assert abs(p.spd-0.9)<0.01 and abs(p.rng-1.2)<0.01
     assert p.targets==['Ground']
     return f"PEKKA load (hp={p.hp} dmg={p.dmg} spd={p.spd})"
 def t_pekka_kills_knight():
@@ -981,7 +981,7 @@ def t_skeletons_spawn():
     return f"Skeletons spawn 3 (hp={r[0].hp} dmg={r[0].dmg})"
 def t_skeletons_speed():
     r=mk_card('skeletons',11,'blue',9,10)
-    assert abs(r[0].spd-1.5)<0.01
+    assert abs(r[0].spd-1.8)<0.01
     assert r[0].targets==['Ground']
     return f"Skeletons fast (spd={r[0].spd})"
 def t_skeletons_die_fast():
@@ -1003,7 +1003,7 @@ def t_goblins_spawn():
     return f"Goblins spawn 4 (hp={r[0].hp} dmg={r[0].dmg})"
 def t_goblins_speed():
     r=mk_card('goblins',11,'blue',9,10)
-    assert abs(r[0].spd-2.0)<0.01
+    assert abs(r[0].spd-2.4)<0.01
     assert abs(r[0].fhspd-0.6)<0.01
     return f"Goblins very fast (spd={r[0].spd} fhspd={r[0].fhspd})"
 def t_goblins_dps():
@@ -1115,7 +1115,7 @@ def t_icegolem_load():
     ig=mk_card('ice_golem',11,'blue',5,10)
     assert ig.hp==1315 and ig.dmg==84
     assert ig.targets==['Buildings']
-    assert abs(ig.spd-0.75)<0.01
+    assert abs(ig.spd-0.9)<0.01
     return f"Ice Golem load (hp={ig.hp} dmg={ig.dmg} spd={ig.spd})"
 def t_icegolem_targets_buildings():
     g=Game()
@@ -1164,7 +1164,7 @@ def t_wb_suicide():
     return "Wall Breakers suicide+building target"
 def t_wb_speed():
     r=mk_card('wall_breakers',11,'blue',9,10)
-    assert abs(r[0].spd-2.0)<0.01,"Should be very fast"
+    assert abs(r[0].spd-2.4)<0.01,"Should be very fast"
     return f"Wall Breakers very fast (spd={r[0].spd})"
 def t_wb_v_tower():
     g=Game()
@@ -1182,7 +1182,7 @@ def t_gskel_load():
     gs=mk_card('giant_skeleton',11,'blue',5,10)
     assert gs.hp==3361 and gs.dmg==276
     assert abs(gs.hspd-1.3)<0.01 and abs(gs.fhspd-0.3)<0.01
-    assert abs(gs.spd-1.0)<0.01
+    assert abs(gs.spd-1.2)<0.01
     return f"Giant Skeleton load (hp={gs.hp} dmg={gs.dmg})"
 def t_gskel_death_dmg():
     g=quiet(Game())
@@ -1230,7 +1230,7 @@ def t_barbs_spawn():
     return f"Barbarians spawn 5 (hp={r[0].hp} dmg={r[0].dmg})"
 def t_barbs_stats():
     r=mk_card('barbarians',11,'blue',9,10)
-    assert abs(r[0].spd-1.0)<0.01
+    assert abs(r[0].spd-1.2)<0.01
     assert abs(r[0].hspd-1.4)<0.01
     assert abs(r[0].fhspd-0.4)<0.01
     assert abs(r[0].rng-0.7)<0.01
@@ -1256,7 +1256,7 @@ def t_ebarbs_spawn():
     return f"Elite Barbarians spawn 2 (hp={r[0].hp} dmg={r[0].dmg})"
 def t_ebarbs_fast():
     r=mk_card('elite_barbarians',11,'blue',9,10)
-    assert abs(r[0].spd-1.5)<0.01,"E-barbs should be Fast (90)"
+    assert abs(r[0].spd-1.8)<0.01,"E-barbs should be Fast (90)"
     return f"Elite Barbarians fast (spd={r[0].spd})"
 def t_ebarbs_v_knight():
     g=quiet(Game())
@@ -1382,7 +1382,7 @@ def t_dgob_load():
     assert abs(dg.rng-6.5)<0.01
     assert abs(dg.hspd-0.8)<0.01
     assert abs(dg.fhspd-0.35)<0.01
-    assert abs(dg.spd-2.0)<0.01
+    assert abs(dg.spd-2.4)<0.01
     return f"Dart Goblin load (hp={dg.hp} dmg={dg.dmg} rng={dg.rng} spd={dg.spd})"
 def t_dgob_air():
     dg=mk_card('dart_goblin',11,'blue',5,10)
@@ -1403,7 +1403,7 @@ def t_rg_load():
     rg=mk_card('royal_giant',11,'blue',5,10)
     assert rg.hp==3164 and rg.dmg==307
     assert abs(rg.rng-5.0)<0.01
-    assert abs(rg.spd-0.75)<0.01
+    assert abs(rg.spd-0.9)<0.01
     assert rg.targets==['Buildings']
     return f"Royal Giant load (hp={rg.hp} dmg={rg.dmg} rng={rg.rng})"
 def t_rg_ignores_troops():
@@ -1731,7 +1731,7 @@ def t_eq_ct():
 def t_bowler_load():
     b=mk_card('bowler',11,'blue',5,10)
     assert b.hp==2081 and b.dmg==289
-    assert abs(b.spd-0.75)<0.01
+    assert abs(b.spd-0.9)<0.01
     assert abs(b.hspd-2.5)<0.01 and abs(b.fhspd-0.5)<0.01
     assert abs(b.rng-4.0)<0.01
     return f"Bowler load (hp={b.hp} dmg={b.dmg} rng={b.rng})"
@@ -1995,7 +1995,7 @@ def t_rghost_load():
     rg=mk_card('royal_ghost',11,'blue',5,10)
     assert rg.hp==1210 and rg.dmg==261
     assert abs(rg.splash_r-1.0)<0.01
-    assert abs(rg.spd-1.5)<0.01
+    assert abs(rg.spd-1.8)<0.01
     return f"Royal Ghost load (hp={rg.hp} dmg={rg.dmg} splash={rg.splash_r})"
 def t_rghost_splash():
     g=Game()
@@ -2010,7 +2010,7 @@ def t_rghost_splash():
 def t_bandit_load():
     b=mk_card('bandit',11,'blue',5,10)
     assert b.hp==906 and b.dmg==194
-    assert abs(b.spd-1.5)<0.01
+    assert abs(b.spd-1.8)<0.01
     assert abs(b.hspd-1.0)<0.01
     return f"Bandit load (hp={b.hp} dmg={b.dmg} spd={b.spd})"
 def t_bandit_v_knight():
@@ -2035,7 +2035,7 @@ def t_berserker_load():
     b=mk_card('berserker',11,'blue',5,10)
     assert b.hp==896 and b.dmg==102
     assert abs(b.hspd-0.6)<0.01 and abs(b.fhspd-0.2)<0.01
-    assert abs(b.spd-1.5)<0.01
+    assert abs(b.spd-1.8)<0.01
     return f"Berserker load (hp={b.hp} dmg={b.dmg} hspd={b.hspd})"
 def t_berserker_fast_atk():
     g=Game()
@@ -2167,7 +2167,7 @@ def t_void_ct():
 def t_bbandit_load():
     bb=mk_card('boss_bandit',11,'blue',5,10)
     assert bb.hp==2624 and bb.dmg==245
-    assert abs(bb.spd-1.5)<0.01,f"Expected Fast speed 1.5, got {bb.spd}"
+    assert abs(bb.spd-1.8)<0.01,f"Expected Fast speed 1.8, got {bb.spd}"
     return f"Boss Bandit load (hp={bb.hp} dmg={bb.dmg} spd={bb.spd})"
 def t_bbandit_v_tower():
     g=Game()
@@ -4549,7 +4549,7 @@ def t_bb_dash():
     return f"Boss Bandit dash ({dmg} dmg in 3s)"
 def t_bb_speed():
     bb=mk_card('boss_bandit',11,'blue',5,10)
-    assert abs(bb.spd-1.5)<0.01,f"BB should be Fast (1.5), got {bb.spd}"
+    assert abs(bb.spd-1.8)<0.01,f"BB should be Fast (1.8), got {bb.spd}"
     return f"Boss Bandit speed = {bb.spd} (Fast)"
 def t_bb_grenade():
     g=Game()

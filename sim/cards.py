@@ -12,6 +12,10 @@ DATA=Path(__file__).resolve().parents[1]/'data'
 TGT={'air':'Air','ground':'Ground','buildings':'Buildings'}
 _DB={}
 
+# the game's speed value is in units per tick (20 ticks/s, 1000 units per tile), not tiles per minute: medium 60 walks 1.2 tiles/s,
+# measured on four recordings (vid/), so tiles per second = speed / 50
+SPD=50.0
+
 def load():
     if not _DB:
         _DB.update(json.loads((DATA/'cards.json').read_text()))
@@ -67,7 +71,7 @@ def base(chain,lvl,name,parent=None):
     # a spread of small projectiles (Hunter, Firecracker) lists the damage per pellet
     shots=pj.get('count') or 1 if p('kind')!='spell' and (p('radius') or 0)<=0.5 else 1
     return {'hp':at(p('hitpoints'),lvl) or 0,'dmg':(at(p('damage'),lvl) or 0)*shots,'hspd':hs,'fhspd':first(hs,p('loadTime')),
-            'spd':(p('speed') or 0)/60.0,'rng':rng,'min_rng':p('minRange') or 0,'targets':tg,
+            'spd':(p('speed') or 0)/SPD,'rng':rng,'min_rng':p('minRange') or 0,'targets':tg,
             'transport':'Air' if p('flying') else 'Ground','atk_type':'area' if splash else 'single_target','splash_r':p('radius') if splash else 0,
             'ct_dmg':(at(p('towerDamage'),lvl) or 0)*shots,'components':[],'lvl':lvl,'name':name,'mass':p('mass') or 4,'sight_r':p('sightRange') or 5.5,
             'collision_r':p('collisionRadius') or 0.5,'projSpeed':pj.get('speed') or 0,'deploy':p('deployTime') or 0,
@@ -129,10 +133,10 @@ def attach(cfg,c,sk,lvl,chain=None):
         cs.append(fx.SpawnZap(kb if 'dash' in sk else 0));cfg['spawn_zap_dmg']=at(az['damage'],lvl);cfg['spawn_zap_r']=az.get('radius') or 0
         cfg['spawn_zap_ct']=at(az.get('towerDamage'),lvl)
     bu=sk.get('burrow')
-    if bu is not None:cs.append(fx.Burrow((bu.get('speed') or 0)/60.0,c['deployTime'] or 1.0))
+    if bu is not None:cs.append(fx.Burrow((bu.get('speed') or 0)/SPD,c['deployTime'] or 1.0))
     tf=sk.get('transform',{})
     if tf.get('hpPercent') and tf.get('building'):cs.append(fx.Breakdown(tf['hpPercent']/100,tf.get('lifetime') or 0))
-    elif tf.get('hpPercent'):cs.append(fx.RocketRide(tf['hpPercent']/100,(tf.get('speed') or 0)/60.0,tf.get('range') or 0.5,tf.get('lifetime') or 0))
+    elif tf.get('hpPercent'):cs.append(fx.RocketRide(tf['hpPercent']/100,(tf.get('speed') or 0)/SPD,tf.get('range') or 0.5,tf.get('lifetime') or 0))
     sok=sk.get('spawnOnKill',{})
     if sok.get('character'):cs.append(fx.CurseOnHit(unit(c,sok,lvl),sok.get('markDuration') or 0))
     st=sk.get('stun',{});pi=sk.get('pierce',{})

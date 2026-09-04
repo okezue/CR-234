@@ -188,6 +188,46 @@ def sim_deploy_to_hit(card, lvl, team, x, y, horizon=60):
     return None
 
 
+def spawn_hits(games, card, lvl=15, tol=0.08):
+    # enemy units carry their badge from the card drop, so badge appearance to the first tower step of this card's damage
+    # measures deploy time plus approach; the sim places the unit at the observed tile without the deploy time
+    from vid.cal import TOWERS
+    d0 = dmg(card, lvl)
+    rows = []
+    for gi, (tr, tw, bn) in enumerate(games):
+        twc, _ = clean(tw)
+        for k in ('bl', 'br', 'bk'):
+            s = twc[['t', k]].dropna()
+            d = -s[k].diff()
+            ts = s.t[(d > (1 - tol) * d0) & (d < (1 + tol) * d0)].to_numpy()
+            starts = [t for i, t in enumerate(ts) if i == 0 or t - ts[i - 1] > 5]
+            for t0 in starts:
+                near = tr[(tr.team == 'r') & (abs(tr.t - t0) < 0.5)]
+                near = near[np.hypot(near.x - TOWERS[k][0], near.y - TOWERS[k][1]) < 6]
+                for i in near.track.unique():
+                    g = tr[tr.track == i].sort_values('t')
+                    if not 1 < t0 - g.t.iloc[0] < 12 or g.y.iloc[0] < 16:
+                        continue
+                    sim = sim_deploy_to_hit(card, lvl, 'red', g.x.iloc[0], g.y.iloc[0])
+                    rows.append({'game': gi, 'tower': k, 'track': i, 'x0': g.x.iloc[0], 'y0': g.y.iloc[0], 't_spawn': g.t.iloc[0], 'dt': t0 - g.t.iloc[0],
+                                 'deploy': CARDS[BYNAME[card]]['deployTime'] or 1.0, 'sim_dt': sim[0] if sim else np.nan})
+    return pd.DataFrame(rows)
+
+
+def intervals(games, card, lvl=15, tol=0.02):
+    # consecutive tower steps of one card's exact damage are that unit's hit cadence: a clock check independent of any pixel scale
+    d0 = dmg(card, lvl)
+    out = []
+    for gi, (tr, tw, bn) in enumerate(games):
+        twc, _ = clean(tw)
+        for k in ('rk', 'rl', 'rr', 'bk', 'bl', 'br'):
+            s = twc[['t', k]].dropna()
+            d = -s[k].diff()
+            ts = s.t[(d > (1 - tol) * d0) & (d < (1 + tol) * d0)].to_numpy()
+            out += [b - a for a, b in zip(ts[:-1], ts[1:]) if b - a < 2 * CARDS[BYNAME[card]]['hitSpeed']]
+    return np.array(out)
+
+
 def hits(games):
     # tower HP steps while exactly one attributed enemy track stands within 6 tiles of that tower
     from vid.cal import TOWERS
@@ -255,7 +295,7 @@ def classes(sp, width=0.1):
         k = int(np.abs(cl - np.median(v[m])).argmin())
         rows.append({'peak': float(np.median(v[m])), 'n': int(m.sum()), 'q1': float(np.quantile(v[m], 0.25)), 'q3': float(np.quantile(v[m], 0.75)),
                      'class': list(CLASSES)[k], 'data': float(cl[k]), 'ratio': float(np.median(v[m]) / cl[k])})
-    return pd.DataFrame(rows).sort_values('peak')
+    return pd.DataFrame(rows, columns=['peak', 'n', 'q1', 'q3', 'class', 'data', 'ratio']).sort_values('peak')
 
 
 def figure(sp, cl, all_speeds, path='docs/fig/vidSpeeds.png'):
@@ -334,7 +374,7 @@ def report(stem):
     print('(b) deploy banner to first tower HP drop, s'), print(dht.round(2).to_string(index=False) if len(dht) else '  none')
     ht = hits(games)
     rows = []
-    for card, g in ht.groupby('card'):
+    for card, g in (ht.groupby('card') if len(ht) else []):
         d = dmg(card, 15)
         rows.append({'card': card, 'n': len(g), 'loss_median': g.loss.median(), 'loss_mode': g.loss.mode().iloc[0], 'data_dmg': d,
                      'frac_within_10pct': float((abs(g.loss - d) <= 0.1 * d).mean()) if d else np.nan})
@@ -342,7 +382,7 @@ def report(stem):
     print(pd.DataFrame(rows).round(2).to_string(index=False) if rows else '  none')
     lt = lifetimes(games)
     rows = []
-    for (card, team), g in lt.groupby(['card', 'team']):
+    for (card, team), g in (lt.groupby(['card', 'team']) if len(lt) else []):
         k = BYNAME.get(card)
         if k is None or CARDS[k]['kind'] == 'spell':
             continue
@@ -355,5 +395,19 @@ def report(stem):
     return spt, dht, ht, lt
 
 
+def peaks(stems):
+    rows = []
+    for st in stems:
+        games = load(st)
+        sp = speeds(games)
+        cl = classes(sp)
+        cl = cl[cl.peak > 0.7]
+        rows.append({'video': st, 'games': len(games), 'steady': len(sp), **{f'peak{i}': f'{r.peak:.2f} (n={r.n})' for i, r in enumerate(cl.itertuples())}})
+    print(pd.DataFrame(rows).to_string(index=False))
+
+
 if __name__ == '__main__':
-    report(sys.argv[1] if len(sys.argv) > 1 else 'golem1080')
+    if len(sys.argv) > 2:
+        peaks(sys.argv[1:])
+    else:
+        report(sys.argv[1] if len(sys.argv) > 1 else 'golem1080')

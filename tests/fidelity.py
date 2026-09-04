@@ -54,7 +54,7 @@ def t_hog_bridge_first_hit_timing():
     g=Game();c=card('hog_rider');x,y=3.5,14.5
     hog=mk_card('hog_rider',11,'blue',x,y);g.deploy('blue',hog)
     tw=g.arena.get_tower('red','princess','left');ini=tw.hp
-    exp=(tw.dist(x,y)-c['range'])/(c['speed']/60)+c['hitSpeed']-c['loadTime']
+    exp=(tw.dist(x,y)-c['range'])/(c['speed']/50)+c['hitSpeed']-c['loadTime']
     while g.t<exp+2 and tw.hp==ini:g.tick()
     assert tw.hp<ini,"Hog never reached the tower"
     assert abs(g.t-exp)<=0.5,f"first hit at {g.t:.2f}s, expected {exp:.2f}s"

@@ -46,7 +46,8 @@ def speed(v):
 
 
 def tps(v):
-    # game speed units are tiles per minute
+    # dash and jump speeds kept at the tiles-per-minute reading; walking speed is units per tick (/50, sim/cards.py) and these
+    # probably share the unit, but no recording has measured a dash yet
     return round(v / 60, 3) if isinstance(v, (int, float)) else None
 
 

@@ -472,7 +472,9 @@ def main():
         "levelRule": "stat[L] = floor(base * levelMult[L-1]); base is the integer level 1 value of the game data (rarities.powerLevelMultiplier, the same "
         "table for every rarity, indexed by absolute level); rarity only sets minLevel, levels below it are null; towers use towerMult (supportPowerLevel)",
         "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
-        "units": {"speed": "tiles per minute (slow 45, medium 60, fast 90, very fast 120)", "projectile.speed": "tiles per second (game speed / 60)",
+        "units": {"speed": "game units per tick (20 ticks/s, 1000 units per tile): tiles/s = speed / 50, "
+                           "slow 45 = 0.9, medium 60 = 1.2, fast 90 = 1.8, very fast 120 = 2.4 (vid/)",
+                  "projectile.speed": "tiles per second (game speed / 60)",
                   "range": "tiles", "time": "seconds", "multipliers": "percent",
                   "summonRadius": "tiles from the deploy point to each summon of a multi-unit card (null: they appear touching)",
                   "summonDeployDelay": "seconds between consecutive summons (null: all at once)"},

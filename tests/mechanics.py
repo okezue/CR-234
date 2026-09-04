@@ -81,7 +81,7 @@ def t_goblin_demolisher_rocket_ride():
     g=_game();gd=mk_card('goblin_demolisher',11,'blue',9,17);g.deploy('blue',gd)
     b=mk_card('cannon',11,'red',9,20);g.deploy('red',b);d,=_dummies(g,(10.5,19),hp=5000)
     gd.hp=int(gd.max_hp*0.4);g.run(0.1)
-    assert gd.targets==['Buildings'] and abs(gd.spd-2.0)<0.01 and gd.is_suicide
+    assert gd.targets==['Buildings'] and abs(gd.spd-2.4)<0.01 and gd.is_suicide
     g.run(6)
     assert not gd.alive and not b.alive and 5000-d.hp==847 and d.x>10.5,f"{b.hp} {d.hp} {d.x}"
     return f"Goblin Demolisher below 50% rides the rocket to the cannon and explodes for 847 in 2.5 tiles with knockback (dummy x {d.x:.1f})"
@@ -113,7 +113,7 @@ def t_miner_burrows_untargetable():
     while g.t<4 and ts is None:
         g.tick()
         if not has(mn,'burrowed'):ts=g.t
-    exp=max(1.0,22.0/(650/60))
+    exp=max(1.0,22.0/(650/50))
     assert abs(ts-exp)<=0.1 and mn.hp==mn.max_hp and abs(mn.x-9)<0.1 and abs(mn.y-25)<0.1,f"{ts} {mn.hp} {mn.x},{mn.y}"
     g.run(1);assert mn.hp<mn.max_hp
     return f"Miner travels underground from the King Tower at 650 and surfaces at {ts:.2f} s (expected {exp:.2f}) untouched by the towers"
@@ -247,9 +247,9 @@ def t_evo_skeleton_army_general_gerry():
     for t in sa:g.deploy('blue',t)
     gerry=[t for t in sa if t.name=='General Gerry'];sk=[t for t in sa if t.name!='General Gerry']
     assert len(gerry)==1 and len(sk)==15
-    gy=gerry[0];assert gy.hp==81 and gy.shield_hp==81 and gy.dmg==81 and gy.hspd==1.0 and gy.rng==1.6 and abs(gy.spd-1.5)<0.01
+    gy=gerry[0];assert gy.hp==81 and gy.shield_hp==81 and gy.dmg==81 and gy.hspd==1.0 and gy.rng==1.6 and abs(gy.spd-1.8)<0.01
     sk[0].alive=False;g.run(0.1);sh=_named(g,'blue','Shadow Skeleton')
-    assert len(sh)==1 and has(sh[0],'invisible') and has(sh[0],'invincible') and abs(sh[0].spd-1.0)<0.01
+    assert len(sh)==1 and has(sh[0],'invisible') and has(sh[0],'invincible') and abs(sh[0].spd-1.2)<0.01
     sh[0].take_damage(1000);assert sh[0].alive
     gy.alive=False;g.run(0.1);assert not sh[0].alive
     return "Evo Skeleton Army: 15 Skeletons plus General Gerry (81/81 shield/81); fallen skeletons rise as indestructible shadows that fall with him"
@@ -271,7 +271,7 @@ def t_hero_balloon_coffin_cadets():
 def t_hero_berserker_savage_survival():
     g=_game();be=mk_card('berserker',11,'blue',9,10,hero=True);g.deploy('blue',be);d,=_dummies(g,(9,11))
     _act(g,be);g.run(1.3)
-    assert be.dmg==167 and be.ct_dmg==42 and abs(be.hspd-0.2)<0.01 and abs(be.spd-2.25)<0.01 and be.hp_floor==1
+    assert be.dmg==167 and be.ct_dmg==42 and abs(be.hspd-0.2)<0.01 and abs(be.spd-2.7)<0.01 and be.hp_floor==1
     be.take_damage(5000);assert be.alive and be.hp==1
     g.run(3.5);assert be.dmg==102 and abs(be.hspd-0.6)<0.01 and be.hp_floor==0
     return "Savage Survival: 167 damage bear swings every 0.2 s at Ultra Fast speed, hp floored at 1 for 3.5 s"
@@ -319,7 +319,7 @@ def t_hero_valkyrie_wild_whirlwind():
     g=_game();vk=mk_card('valkyrie',11,'blue',9,10,hero=True);g.deploy('blue',vk);d,=_dummies(g,(9,14))
     assert isinstance(vk.ability,fx.WildWhirlwind)
     _act(g,vk);g.run(1.3)
-    assert vk.hspd==0.25 and vk.dmg==97 and vk.ct_dmg==48 and vk.splash_r==2.5 and abs(vk.spd-2.0)<0.01 and vk._dmg_reduction==0.15 and vk.y>11
+    assert vk.hspd==0.25 and vk.dmg==97 and vk.ct_dmg==48 and vk.splash_r==2.5 and abs(vk.spd-2.4)<0.01 and vk._dmg_reduction==0.15 and vk.y>11
     g.run(3.5);assert vk.hspd==1.5 and vk.dmg==266 and vk._dmg_reduction==0 and d.hp<50000
     return "Wild Whirlwind: dash to the nearest troop, 97 damage spins every 0.25 s in 2.5 tiles, double speed and 15% damage reduction for 3.5 s"
 def t_abilities_single_use_except_boss_bandit():
@@ -346,5 +346,5 @@ def t_minion_giant_flying_building_tank():
     g=quiet(Game());mg=mk_card('minion_giant',11,'blue',9,14);g.deploy('blue',mg);d,=_dummies(g,(9,15))
     assert mg.hp==1817 and mg.dmg==189 and mg.transport=='Air' and mg.targets==['Buildings'] and mg.rng==4.0 and mg.hspd==1.5 and mg.mass==15
     tw=g.arena.get_tower('red','princess','left');ini=tw.hp;g.run(15)
-    assert d.hp==50000 and ini-tw.hp==5*189
+    assert d.hp==50000 and ini-tw.hp==6*189
     return "Minion Giant flies past troops and hits the tower for 189 every 1.5 s from 4 tiles"
