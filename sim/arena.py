@@ -19,7 +19,7 @@ class Tower:
         self.active=ttype!='king'
         self.cd=0
         self.proj_spd=0
-        self.troop=None
+        self.troop=None;self.collision_r=1.4 if ttype=='king' else 1.0
     def activate(self):
         if self.active:return False
         self.active=True;self.cd=self.ACT
@@ -29,9 +29,8 @@ class Tower:
         y0=int(self.cy-self.h/2)
         return [(x,y) for y in range(y0,y0+self.h) for x in range(x0,x0+self.w)]
     def dist(self,x,y):
-        dx=max(abs(x-self.cx)-self.w/2,0.0)
-        dy=max(abs(y-self.cy)-self.h/2,0.0)
-        return math.hypot(dx,dy)
+        # combat geometry is the game's collision circle (buildings.csv PrincessTower 1000, KingTower 1400), the tile footprint only blocks walking
+        return max(0.0,math.hypot(x-self.cx,y-self.cy)-self.collision_r)
     def take_damage(self,amt):
         if not self.alive:
             return

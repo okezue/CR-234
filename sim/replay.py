@@ -103,6 +103,10 @@ def _ability_troop(g,tm,base):
 
 AIMED={'fireball','arrows','zap','giant_snowball','lightning','poison','rocket'}
 
+def _near_tower(t,x,y,r=3.0):
+    # the aim oracle keeps its original population: casts within 3 tiles of a tower's tile footprint are aimed at the tower
+    return math.hypot(max(abs(x-t.cx)-t.w/2,0.0),max(abs(y-t.cy)-t.h/2,0.0))<=r
+
 def _open_pocket(g,tm,x,y):
     if tm=='red' and y<15:
         side='left' if x<=8 else 'right'
@@ -450,7 +454,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
             n=n_played[tm].get(base,0)+1;n_played[tm][base]=n
             evo=n%((card(base)['evo'].get('cycles') or 1)+1)==0
         ci=card_info(base)
-        if base in AIMED and not any(t.alive and t.dist(tx,ty)<=3.0 for t in g.arena.towers if t.team!=tm):
+        if base in AIMED and not any(t.alive and _near_tower(t,tx,ty) for t in g.arena.towers if t.team!=tm):
             # a real player aimed this spell at units that were there: a position oracle for the simulated state
             aim[0]+=1;aim[1]+=any(u.alive and math.hypot(u.x-tx,u.y-ty)<=2.5 for u in g.players[g._opp(tm)].troops)
             if probe:probes.append({'spell':base,'team':tm,'t':ts,'x':tx,'y':ty,**_probe(g,tm,tx,ty,ts,plays,deaths)})

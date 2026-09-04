@@ -954,7 +954,8 @@ def t_arena_footprints():
     assert set(rk.tiles())=={(x,y) for x in range(7,11) for y in range(27,31)}
     assert set(bl.tiles())=={(x,y) for x in range(2,5) for y in range(5,8)}
     assert set(rr.tiles())=={(x,y) for x in range(13,16) for y in range(24,27)}
-    assert bl.dist(3.5,6.5)==0 and bl.dist(3.5,9.0)==1.0 and abs(bl.dist(6.0,9.0)-math.hypot(1,1))<1e-9
+    # combat distances run from the collision circle (princess 1.0, king 1.4), the footprint only blocks walking
+    assert bl.dist(3.5,6.5)==0 and bl.dist(3.5,9.0)==1.5 and abs(bl.dist(6.0,9.0)-(math.hypot(2.5,2.5)-1.0))<1e-9 and bk.dist(9.0,6.0)==1.6
     return "Tower centres 3.5/14.5 x 6.5/25.5 and 9.0 x 3.0/29.0 with 3x3 and 4x4 tile footprints"
 def t_arena_river_bridges():
     a=Arena()
