@@ -430,14 +430,32 @@ def apply_patches(cards, kinds):
     return applied
 
 
-def finish(card, pct, tower, gd_spell, gd_tag):
+def card_curve_damage(card, spell, pct):
+    # a tower troop's shot scales on the card curve unless its projectile is flagged damageScalingMode PrincessTower (Royal Chef) or it is
+    # the Tower Princess herself: Cannoneer 125 -> 320 at level 11 and Dagger Duchess 42 -> 107 (wiki tables), ClashStrategic's 273 and 92 are
+    # on the tower curve; hitpoints stay on the tower curve
+    ch = spell.get("statCharacterData") or {}
+    if (ch.get("projectileData") or {}).get("damageScalingMode") == "PrincessTower" or ch.get("name") == "PrincessTower":
+        return False
+    b = (ch.get("projectileData") or {}).get("damage")
+    if not isinstance(b, int):
+        return False
+    old = card["stats"]["damage"].get("level11")
+    card["stats"]["damage"] = {"level11": b * pct[10] // 100, "level16": b * pct[15] // 100}
+    card["src"]["stats.damage"] = f"gd projectile damage {b} on the card curve (no damageScalingMode PrincessTower; cs anchor {old} is on the tower curve)"
+    return True
+
+
+def finish(card, pct, tower, gd_spell, gd_tag, card_pct=None):
     lo = MIN[card["rarity"]]
     src = card["src"]
 
     def fn(lv, path):
-        arr, dropped = expand(lv, lo, pct, keep16=not tower)
+        # card_pct: the tower troop's damage runs on the card curve, the rest of its stats on the tower curve
+        on_card = card_pct is not None and path == "stats.damage"
+        arr, dropped = expand(lv, lo, card_pct if on_card else pct, keep16=not tower or on_card)
         if arr is not None:
-            src[f"{path}[]"] = "derived:towerMult" if tower else "derived:levelMult"
+            src[f"{path}[]"] = "derived:towerMult" if tower and not on_card else "derived:levelMult"
         if dropped is not None:
             src[f"{path}[15]"] = f"derived:levelMult (source level16 {dropped} is off the level curve)"
         return arr
@@ -486,7 +504,7 @@ def main():
         wiki_fill(c)
         tower = kinds[k] == "tower"
         p = tower_pct if tower else pct
-        rec = finish(c, p, tower, sp, gd_tag)
+        rec = finish(c, p, tower, sp, gd_tag, pct if tower and sp and card_curve_damage(c, sp, pct) else None)
         if sp:
             gd_area(rec, sp, MIN[c["rarity"]], p, gd_tag)
         # legacy mechanics fill only what is still null; level-11 legacy anchors are expanded through the same curve

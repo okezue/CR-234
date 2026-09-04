@@ -9651,12 +9651,12 @@
     "*": "cs2.4.0",
     "loadTime": "legacy:attack.first_hit_speed_sec",
     "projectile.speed": "gd:debfe1e2",
-    "stats.damage": "gd:debfe1e2 (cs anchor 273 rounded off the curve)",
-    "stats.damage[]": "derived:towerMult",
+    "stats.damage": "gd projectile damage 125 on the card curve (no damageScalingMode PrincessTower; cs anchor 272 is on the tower curve)",
+    "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:towerMult"
    },
    "stats": {
-    "damage": [null, null, null, null, null, 181, 195, 210, 226, 248, 272, 298, 327, 360, 395, 433],
+    "damage": [null, null, null, null, null, 200, 220, 241, 265, 291, 320, 351, 386, 423, 465, 511],
     "hitpoints": [null, null, null, null, null, 1740, 1872, 2016, 2172, 2388, 2616, 2868, 3144, 3456, 3792, 4164],
     "towerDamage": null
    },
@@ -9707,13 +9707,13 @@
     "projectile.speed": "gd:debfe1e2",
     "skills.volley.projectileCount": "legacy:attack.mechanics.dagger_burst",
     "skills.volley.reloadTime": "legacy:attack.mechanics.dagger_burst",
-    "stats.damage": "gd:debfe1e2 (cs anchor 92 rounded off the curve)",
-    "stats.damage[]": "derived:towerMult",
+    "stats.damage": "gd projectile damage 42 on the card curve (no damageScalingMode PrincessTower; cs anchor 91 is on the tower curve)",
+    "stats.damage[]": "derived:levelMult",
     "stats.hitpoints": "gd:debfe1e2 (cs anchor 2769 rounded off the curve)",
     "stats.hitpoints[]": "derived:towerMult"
    },
    "stats": {
-    "damage": [null, null, null, null, null, null, null, null, 76, 83, 91, 100, 110, 120, 132, 145],
+    "damage": [null, null, null, null, null, null, null, null, 89, 97, 107, 118, 129, 142, 156, 171],
     "hitpoints": [null, null, null, null, null, null, null, null, 2298, 2527, 2768, 3035, 3327, 3657, 4013, 4406],
     "towerDamage": null
    },
