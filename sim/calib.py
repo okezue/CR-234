@@ -84,10 +84,10 @@ def refine(ev,name,best_ov):
     out=[{k:v} for v in [b]+mids if knobs.B[k][0]<=v<=knobs.B[k][1]]
     return [{'kite_drop':1,**o} for o in out]+[{'kite_drop':0,'kite_slack':0.0}] if name=='kite' else out
 
-def search(ev,budget,eps):
-    base=ev({});x={};gain={}
+def search(ev,budget,eps,fixed=()):
+    base=ev({});x={};gain={};grid=[(n,c) for n,c in GRID if n not in fixed]
     print(f"base train {fmt(base['train'])} | holdout {fmt(base['holdout'])}",flush=True)
-    for name,cands in GRID:
+    for name,cands in grid:
         rs=[(ev(o),o) for o in cands]
         r,o=min(rs,key=lambda p:p[0]['train']['obj']);gain[name]=(base['train']['obj']-r['train']['obj'],o)
     order=sorted(gain,key=lambda n:-gain[n][0])
@@ -106,27 +106,37 @@ def search(ev,budget,eps):
         if not moved:break
     return cur
 
+def accept(h,bh):
+    # holdout better on two of crown exact, tower HP error and aim agreement by more than the spread the inert knobs (knockback scale, death stagger,
+    # detour lookahead) produce (1 point, 0.002, 0.5 points), winner agreement not worse
+    return h['winner']>=bh['winner'] and (h['crown']>bh['crown']+0.01)+(h['hp']<bh['hp']-0.002)+(h['aim']>bh['aim']+0.005)>=2
+
+def line(r,bt,bh):
+    h=r['holdout'];t=r['train']
+    return (f"{json.dumps(r['params']):58s} train obj {t['obj']-bt['obj']:+.4f} | holdout winner {100*(h['winner']-bh['winner']):+.1f}"
+            f" crown {100*(h['crown']-bh['crown']):+.1f} hp {h['hp']-bh['hp']:+.4f} aim {100*(h['aim']-bh['aim']):+.1f}"
+            f" premature {100*(h['premature']-bh['premature']):+.1f} obj {h['obj']-bh['obj']:+.4f} {'ACCEPT' if accept(h,bh) else 'reject'}")
+
 def report(log=LOG):
-    rows=[json.loads(l) for l in open(log)];base=next(r for r in rows if not r['params']);bh=base['holdout'];bt=base['train']
-    print(f"base: train {fmt(bt)} | holdout {fmt(bh)}")
+    with open(log) as f:rows=[json.loads(l) for l in f]
+    base=next(r for r in rows if not r['params']);bh=base['holdout'];bt=base['train']
+    print(f"{len(rows)} evaluations; base: train {fmt(bt)} | holdout {fmt(bh)}\n\none knob at a time:")
     for name,cands in GRID:
         ks=COORD[name];one=[r for r in rows if set(r['params'])<=set(ks) and r['params']]
-        if not one:continue
-        print(f"{name}:")
-        for r in sorted(one,key=lambda r:[r['params'].get(k,0) for k in ks]):
-            h=r['holdout'];t=r['train']
-            print(f"  {json.dumps(r['params']):40s} train obj {t['obj']-bt['obj']:+.4f} | holdout winner {100*(h['winner']-bh['winner']):+.1f}"
-                  f" crown {100*(h['crown']-bh['crown']):+.1f} hp {h['hp']-bh['hp']:+.4f} aim {100*(h['aim']-bh['aim']):+.1f} obj {h['obj']-bh['obj']:+.4f}")
+        for r in sorted(one,key=lambda r:[r['params'].get(k,0) for k in ks]):print('  '+line(r,bt,bh))
+    print("\nbest train objective, combined:")
+    for r in sorted((r for r in rows if len(r['params'])>1),key=lambda r:r['train']['obj'])[:8]:print('  '+line(r,bt,bh))
 
 def main():
     ap=argparse.ArgumentParser(description='fit the unsourced engine constants on a training half of the eval set')
     ap.add_argument('--jobs',type=int,default=16);ap.add_argument('--budget',type=int,default=200);ap.add_argument('--eps',type=float,default=0.003)
     ap.add_argument('--eval',type=str,default=None,help='JSON overrides to evaluate once');ap.add_argument('--report',action='store_true')
+    ap.add_argument('--fixed',type=str,default='',help='comma separated knobs held at their default (those with a sourced value)')
     a=ap.parse_args()
     if a.report:report();return
     ev=Evaluator(a.jobs)
     if a.eval is not None:r=ev(json.loads(a.eval));print(f"train {fmt(r['train'])} | holdout {fmt(r['holdout'])}");return
-    search(ev,a.budget,a.eps)
+    search(ev,a.budget,a.eps,set(filter(None,a.fixed.split(','))))
 
 if __name__=='__main__':
     main()
