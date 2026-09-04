@@ -274,6 +274,30 @@ def gd_area(card, spell, lo, pct, tag):
         card["src"]["skills.multiTarget"] = f"{tag} ActionLaserBall"
 
 
+def gd_crown(rec, spell, lo, pct, tag):
+    # crownTowerDamagePercent is the game's only tower reduction: a troop or building without one hits towers for its full damage
+    # (ClashStrategic's Baby Dragon 161 and P.E.K.K.A 816 tower anchors are stale), a spawn effect at -100 spares towers (Electro
+    # Wizard, Ice Wizard), the Goblin Machine's rocket is halved
+    if rec["kind"] == "spell":
+        return
+    ch = spell.get("summonCharacterData") or {}
+    ae = spell.get("areaEffectObjectData") or {}
+    az = rec["skills"].get("areaDamageOnSpawn")
+    if az is not None and ae.get("crownTowerDamagePercent") is not None and not rec["src"].get("skills.areaDamageOnSpawn.towerDamage", "").startswith("patch:"):
+        az["towerDamage"], rec["src"]["skills.areaDamageOnSpawn.towerDamage"] = curve(ae["damage"] * (100 + ae["crownTowerDamagePercent"]) // 100, lo, pct), tag
+        if ae.get("damage") and not rec["src"].get("skills.areaDamageOnSpawn.damage", "").startswith("patch:"):
+            az["damage"], rec["src"]["skills.areaDamageOnSpawn.damage"] = curve(ae["damage"], lo, pct), tag
+    pj = (ch.get("onStartingActionData") or {}).get("projectileData") or {}
+    sa = rec["skills"].get("secondaryAttack")
+    if sa is not None and pj.get("crownTowerDamagePercent") is not None and pj.get("damage"):
+        sa["towerDamage"], rec["src"]["skills.secondaryAttack.towerDamage"] = curve(pj["damage"] * (100 + pj["crownTowerDamagePercent"]) // 100, lo, pct), tag
+    if "crownTowerDamagePercent" not in json.dumps(spell):
+        for path, st in (("stats", rec["stats"]), ("evo.stats", (rec["evo"] or {}).get("stats") or {})):
+            if st.get("towerDamage") and st.get("damage") and st["towerDamage"] != st["damage"]:
+                rec["src"][f"{path}.towerDamage"] = f"{tag} (no crownTowerDamagePercent, cs anchor {st['towerDamage'][10]} is stale)"
+                st["towerDamage"] = list(st["damage"])
+
+
 def gd_bases(spell):
     ch = spell.get("summonCharacterData") or spell.get("statCharacterData") or {}
     pj = spell.get("projectileData") or ch.get("projectileData") or {}
@@ -461,6 +485,8 @@ def main():
             gd_area(rec, sp, MIN[c["rarity"]], p, gd_tag)
         # legacy mechanics fill only what is still null; level-11 legacy anchors are expanded through the same curve
         overlay.apply(rec, k, lambda v, lo=MIN[c["rarity"]], p=p: curve(fit(v, None, p), lo, p))
+        if sp:
+            gd_crown(rec, sp, MIN[c["rarity"]], p, gd_tag)
         rec["src"] = dict(sorted(rec["src"].items()))
         out["towers" if tower else "cards"][k] = rec
     out["meta"] = {

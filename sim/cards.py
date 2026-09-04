@@ -175,7 +175,8 @@ def attach(cfg,c,sk,lvl,chain=None):
             # the card lists the union of both attackers; the mount itself only hits buildings
             cfg['targets']=['Buildings'];cs.append(fx.BuildingTarget())
         if p('minRange') is not None:
-            cs.append(fx.RocketLauncher(at(p('damage'),lvl),p('hitSpeed'),first(p('hitSpeed'),p('loadTime')),p('minRange'),p('range'),p('radius') or 0))
+            cs.append(fx.RocketLauncher(at(p('damage'),lvl),p('hitSpeed'),first(p('hitSpeed'),p('loadTime')),p('minRange'),p('range'),p('radius') or 0,
+                                        at(p('towerDamage'),lvl)))
         else:
             sl=sk.get('slow',{})
             cs.append(fx.RiderAttack(at(p('damage'),lvl),p('hitSpeed'),p('range'),1-mult(sl.get('speedMultiplier') or 0) if sl.get('duration') else 0,

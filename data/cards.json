@@ -233,7 +233,7 @@
     "stats": {
      "damage": [null, null, null, null, null, 105, 116, 127, 139, 153, 168, 185, 203, 223, 245, 269],
      "hitpoints": [null, null, null, null, null, 720, 792, 868, 954, 1048, 1152, 1264, 1390, 1525, 1674, 1840],
-     "towerDamage": [null, null, null, null, null, 100, 110, 121, 133, 146, 161, 177, 194, 213, 234, 257]
+     "towerDamage": [null, null, null, null, null, 105, 116, 127, 139, 153, 168, 185, 203, 223, 245, 269]
     }
    },
    "flying": true,
@@ -263,17 +263,19 @@
     "*": "cs2.4.0",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
+    "evo.stats.towerDamage": "gd:debfe1e2 (no crownTowerDamagePercent, cs anchor 161 is stale)",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
+    "stats.towerDamage": "gd:debfe1e2 (no crownTowerDamagePercent, cs anchor 161 is stale)",
     "stats.towerDamage[]": "derived:levelMult"
    },
    "stats": {
     "damage": [null, null, null, null, null, 105, 116, 127, 139, 153, 168, 185, 203, 223, 245, 269],
     "hitpoints": [null, null, null, null, null, 720, 792, 868, 954, 1048, 1152, 1264, 1390, 1525, 1674, 1840],
-    "towerDamage": [null, null, null, null, null, 100, 110, 121, 133, 146, 161, 177, 194, 213, 234, 257]
+    "towerDamage": [null, null, null, null, null, 105, 116, 127, 139, 153, 168, 185, 203, 223, 245, 269]
    },
    "summonDeployDelay": null,
    "summonRadius": null,
@@ -2016,7 +2018,8 @@
    "skills": {
     "areaDamageOnSpawn": {
      "damage": [null, null, null, null, null, null, null, null, 159, 174, 192, 210, 231, 254, 279, 306],
-     "radius": 3.0
+     "radius": 3.0,
+     "towerDamage": [null, null, null, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0]
     },
     "stun": {
      "delayBetweenStrikes": null,
@@ -2036,8 +2039,9 @@
     "loadTime": "legacy:attack.first_hit_speed_sec",
     "mass": "legacy:hidden_stats.mass",
     "sightRange": "legacy:hidden_stats.sight_range_tiles",
-    "skills.areaDamageOnSpawn.damage": "legacy:spawn_damage",
+    "skills.areaDamageOnSpawn.damage": "gd:debfe1e2",
     "skills.areaDamageOnSpawn.radius": "legacy:spawn_damage",
+    "skills.areaDamageOnSpawn.towerDamage": "gd:debfe1e2",
     "skills.stun.targets": "legacy:attack.stun_duration_sec",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -3859,7 +3863,7 @@
      "radius": 1.5,
      "range": 5.0,
      "targets": ["air", "ground"],
-     "towerDamage": [null, null, null, null, null, null, null, null, 252, 277, 304, 334, 367, 403, 442, 486]
+     "towerDamage": [null, null, null, null, null, null, null, null, 125, 137, 151, 165, 182, 200, 219, 241]
     }
    },
    "speed": 60,
@@ -3874,7 +3878,7 @@
     "skills.secondaryAttack.radius": "legacy:components.rocket_launcher",
     "skills.secondaryAttack.range": "legacy:components.rocket_launcher",
     "skills.secondaryAttack.targets": "legacy:components.rocket_launcher",
-    "skills.secondaryAttack.towerDamage": "legacy:components.rocket_launcher",
+    "skills.secondaryAttack.towerDamage": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -4818,8 +4822,9 @@
    "sightRange": 5.5,
    "skills": {
     "areaDamageOnSpawn": {
-     "damage": [null, null, null, null, null, null, null, null, 74, 81, 89, 98, 108, 118, 130, 143],
-     "radius": 3.0
+     "damage": [null, null, null, null, null, null, null, null, 69, 76, 84, 92, 101, 111, 122, 134],
+     "radius": 3.0,
+     "towerDamage": [null, null, null, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0]
     },
     "slow": {
      "duration": 2.5,
@@ -4841,8 +4846,9 @@
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "wiki:Ice Wizard",
     "sightRange": "legacy:hidden_stats.sight_range_tiles",
-    "skills.areaDamageOnSpawn.damage": "legacy:spawn_damage",
+    "skills.areaDamageOnSpawn.damage": "gd:debfe1e2",
     "skills.areaDamageOnSpawn.radius": "legacy:spawn_damage",
+    "skills.areaDamageOnSpawn.towerDamage": "gd:debfe1e2",
     "stats.damage": "patch:2026-08-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints": "patch:2026-08-05",
@@ -6611,7 +6617,7 @@
     "stats": {
      "damage": [null, null, null, null, null, 526, 579, 634, 697, 766, 842, 924, 1016, 1115, 1223, 1345],
      "hitpoints": [null, null, null, null, null, 2350, 2585, 2835, 3114, 3422, 3760, 4127, 4539, 4979, 5464, 6008],
-     "towerDamage": [null, null, null, null, null, 510, 561, 615, 676, 743, 816, 896, 985, 1081, 1186, 1304]
+     "towerDamage": [null, null, null, null, null, 526, 579, 634, 697, 766, 842, 924, 1016, 1115, 1223, 1345]
     }
    },
    "flying": false,
@@ -6641,16 +6647,18 @@
     "evo.skills.heal.perKillTiers": "legacy:evolution.stats_by_level.heal_per_kill_stage",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
+    "evo.stats.towerDamage": "gd:debfe1e2 (no crownTowerDamagePercent, cs anchor 816 is stale)",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
+    "stats.towerDamage": "gd:debfe1e2 (no crownTowerDamagePercent, cs anchor 816 is stale)",
     "stats.towerDamage[]": "derived:levelMult"
    },
    "stats": {
     "damage": [null, null, null, null, null, 526, 579, 634, 697, 766, 842, 924, 1016, 1115, 1223, 1345],
     "hitpoints": [null, null, null, null, null, 2350, 2585, 2835, 3114, 3422, 3760, 4127, 4539, 4979, 5464, 6008],
-    "towerDamage": [null, null, null, null, null, 510, 561, 615, 676, 743, 816, 896, 985, 1081, 1186, 1304]
+    "towerDamage": [null, null, null, null, null, 526, 579, 634, 697, 766, 842, 924, 1016, 1115, 1223, 1345]
    },
    "summonDeployDelay": null,
    "summonRadius": null,

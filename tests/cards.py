@@ -625,7 +625,8 @@ def t_icewiz_spawn_dmg():
     iw=mk_card('ice_wizard',11,'blue',9,14)
     g.deploy('blue',iw)
     g.run(0.1)
-    assert d.hp==5000-89,f"Expected 89 spawn dmg, got {5000-d.hp}"
+    # game data IceWizardCold 33 at level 1, the wiki's spawn_11 84 (the legacy 89 was the shot damage)
+    assert d.hp==5000-84,f"Expected 84 spawn dmg, got {5000-d.hp}"
     return f"Ice Wizard spawn damage ({5000-d.hp})"
 def t_espirit_chain():
     g=Game()

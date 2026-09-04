@@ -358,8 +358,8 @@ class HealPulse(Component):
                 if d<=self.radius:
                     ally.hp=min(ally.max_hp,ally.hp+self.heal)
 class RocketLauncher(Component):
-    def __init__(self,dmg,hspd,fhspd,rng_min,rng_max,splash_r):
-        self.dmg=dmg;self.hspd=hspd;self.fhspd=fhspd
+    def __init__(self,dmg,hspd,fhspd,rng_min,rng_max,splash_r,ct=None):
+        self.dmg=dmg;self.hspd=hspd;self.fhspd=fhspd;self.ct=dmg if ct is None else ct
         self.rng_min=rng_min;self.rng_max=rng_max;self.splash_r=splash_r
         self.cd=fhspd
     def on_tick(self,tr,g):
@@ -378,7 +378,7 @@ class RocketLauncher(Component):
         self.cd-=g.DT
         if self.cd>0:return
         tx,ty=(best.cx,best.cy) if hasattr(best,'cx') else (best.x,best.y)
-        best.take_damage(self.dmg)
+        best.take_damage(self.ct if hasattr(best,'ttype') else self.dmg)
         if hasattr(best,'ttype') and not best.alive:g._tower_down(best)
         for e in g.players[opp].troops:
             if not e.alive or e is best:continue
@@ -388,7 +388,7 @@ class RocketLauncher(Component):
             if tw.team!=opp or not tw.alive or tw is best:continue
             d=tw.dist(tx,ty)
             if d<=self.splash_r:
-                tw.take_damage(self.dmg)
+                tw.take_damage(self.ct)
                 if not tw.alive:g._tower_down(tw)
         self.cd=self.hspd
 class FormTransform(Component):
