@@ -7921,7 +7921,7 @@
     "skills": {
      "spawnOnDeath": {
       "character": "Skeleton",
-      "count": 2,
+      "count": 7,
       "damage": [75, 82, 90, 99, 109, 120, 132, 144, 159, 174, 192, 210, 231, 254, 279, 307],
       "deployTime": 0.6,
       "hpPercent": 75,
@@ -7965,6 +7965,7 @@
    "speed": 90,
    "src": {
     "*": "cs2.4.0",
+    "evo.skills.spawnOnDeath.count": "patch:2026-09-05",
     "evo.skills.spawnOnDeath.damage[]": "derived:levelMult",
     "evo.skills.spawnOnDeath.hpPercent": "legacy:evolution.changes.drops_at_75_percent_hp",
     "evo.stats.damage[]": "derived:levelMult",
@@ -7995,7 +7996,7 @@
    "units": {
     "skeleton": {
      "card": "skeletons",
-     "count": 2,
+     "count": 7,
      "deployTime": 0.6,
      "from": ["evo.skills.spawnOnDeath", "legacy:sub_units.Skeleton"],
      "hitSpeed": 1.1,

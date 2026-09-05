@@ -70,10 +70,18 @@ def base(chain,lvl,name,parent=None):
     rng=0 if p('kind')=='building' and (hs>=10 or not tg) else p('range') or 0 if p('kind')=='building' else max(p('range') or 0,0.5)
     # a spread of small projectiles (Hunter, Firecracker) lists the damage per pellet
     shots=pj.get('count') or 1 if p('kind')!='spell' and (p('radius') or 0)<=0.5 else 1
-    return {'hp':at(p('hitpoints'),lvl) or 0,'dmg':(at(p('damage'),lvl) or 0)*shots,'hspd':hs,'fhspd':first(hs,p('loadTime')),
+    sub=[o for o in chain if o is not parent] if parent else None
+    if sub:
+        # a spawned character's damage is its own record's; a spawn skill's lone damage is a death blast (Golem, Skeleton Barrel) unless the skill
+        # also gives the character's hitpoints (decoy goblins); it hits towers with that damage unless its own records say otherwise (the
+        # parent's towerDamage sent Golemites in at 498 for 134 and Elixir Blobs at 404 for 102)
+        ds=sub if not empty(sub[0].get('damage')) and not empty(sub[0].get('hitpoints')) else sub[1:]+sub[:1]
+        dmg=pick(ds,'damage') or p('damage');ct=pick(sub,'towerDamage')
+    else:dmg=p('damage');ct=p('towerDamage')
+    return {'hp':at(p('hitpoints'),lvl) or 0,'dmg':(at(dmg,lvl) or 0)*shots,'hspd':hs,'fhspd':first(hs,p('loadTime')),
             'spd':(p('speed') or 0)/SPD,'rng':rng,'min_rng':p('minRange') or 0,'targets':tg,
             'transport':'Air' if p('flying') else 'Ground','atk_type':'area' if splash else 'single_target','splash_r':p('radius') if splash else 0,
-            'ct_dmg':(at(p('towerDamage'),lvl) or 0)*shots,'components':[],'lvl':lvl,'name':name,'mass':p('mass') or 4,'sight_r':p('sightRange') or 5.5,
+            'ct_dmg':(at(ct,lvl) or 0)*shots,'components':[],'lvl':lvl,'name':name,'mass':p('mass') or 4,'sight_r':p('sightRange') or 5.5,
             'collision_r':p('collisionRadius') or 0.5,'projSpeed':pj.get('speed') or 0,'deploy':p('deployTime') or 0,
             'is_suicide':bool(pick([o for o in chain if o is not parent],'kamikaze')),'card':chain[-1].get('name','')}
 
@@ -348,7 +356,8 @@ def evolve(c,k,s,lvl,tr):
     tr.evolved=True
 
 def troop(c,k,lvl,team,x,y,evolved,is_hero,ev,chain,sk,name):
-    cfg=attach(base(chain,lvl,name),c,sk,lvl,chain)
+    # a group character (chain led by a units record) is a spawned character of the card, the card's own unit is not
+    cfg=attach(base(chain,lvl,name,parent=c if chain[0] in c['units'].values() else None),c,sk,lvl,chain)
     if c['kind']=='building':
         cfg['lifetime']=c['lifetime'] or 0
         tr=Building(team,x,y,cfg)

@@ -51,5 +51,7 @@
  {"card": "mighty_miner", "path": "skills.immunity.knockback", "value": true,
   "note": "RoyaleAPI cr-api-data characters MightyMiner ignore_pushback true; wiki Mighty Miner: on 8/4/2022 a maintenance break gave the Mighty Miner knockback immunity. https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json https://clashroyale.fandom.com/wiki/Mighty_Miner"},
  {"card": "elixir_golem", "path": "skills.immunity.knockback", "value": true,
-  "note": "RoyaleAPI cr-api-data characters ElixirGolem1 ignore_pushback true (the large form only; the Golemites and Blobs carry no flag and are pushed). https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json"}
+  "note": "RoyaleAPI cr-api-data characters ElixirGolem1 ignore_pushback true (the large form only; the Golemites and Blobs carry no flag and are pushed). https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json"},
+ {"card": "skeleton_barrel", "path": "evo.skills.spawnOnDeath.count", "value": 7,
+  "note": "Wiki Skeleton Barrel/Evolution: it spawns with 2 barrels, each with 7 Skeletons, one dropped when it reaches 75 percent hitpoints and another dropped when it is defeated; the legacy count 2 was the number of barrels and gave 2 skeletons per drop (game data SkeletonBalloon_EV1 pops a balloon at healthPercentages 75 and on death, each a SkeletonContainerNew like the base barrel's 7). https://clashroyale.fandom.com/wiki/Skeleton_Barrel/Evolution https://cache.statsroyale.com/gamedata-v5.json"}
 ]
