@@ -1279,7 +1279,7 @@ class LineAttack(Component):
             a0=math.atan2(dy,dx)
             for i in range(self.sparks):
                 a=a0+math.radians(-30+60*i/(self.sparks-1)) if self.sparks>1 else a0
-                for e in strip(g,tr.team,tx,ty,tx+math.cos(a)*self.rng,ty+math.sin(a)*self.rng,self.hw,air,skip=(tgt,)):hurt(e,tr.dmg,g)
+                for e in strip(g,tr.team,tx,ty,tx+math.cos(a)*self.rng,ty+math.sin(a)*self.rng,self.hw,air,skip=(tgt,)):hurt(e,tr.dmg//self.sparks,g)
             return
         x1=tr.x+dx/d*self.rng;y1=tr.y+dy/d*self.rng;x0,y0=tr.x,tr.y
         def sweep(g,skip):

@@ -44,11 +44,11 @@ def t_firecracker_sparks_and_tower_volley():
     g=_game();fc=mk_card('firecracker',11,'blue',9,10);g.deploy('blue',fc)
     a,b=_dummies(g,(9,14),(9,16))
     g.run(3.5)
-    assert 50000-a.hp==64 and 50000-b.hp>=64 and fc.dmg==64 and fc.ct_dmg==320,f"{50000-a.hp} {50000-b.hp}"
+    assert 50000-a.hp==320 and 64<=50000-b.hp<320 and fc.dmg==320 and fc.ct_dmg==320,f"{50000-a.hp} {50000-b.hp}"
     g=quiet(Game());fc=mk_card('firecracker',11,'blue',9,20);g.deploy('blue',fc);tw=g.arena.get_tower('red','princess','left');ini=tw.hp
     g.run(3.5)
     assert ini-tw.hp==320
-    return f"Firecracker: one pellet on the target, {50000-b.hp} from sparks behind it, the full 5 pellet volley (320) on a tower"
+    return f"Firecracker: the 5 shrapnel volley (320) on the target and on a tower, {50000-b.hp} from the pieces running on behind"
 def t_the_log_shares_the_strip():
     g=Game();random.seed(1);sk=mk_card('skeleton_army',11,'red',9,22)
     for s in sk:g._place('red',s,1.0)

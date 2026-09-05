@@ -141,9 +141,9 @@ def attach(cfg,c,sk,lvl,chain=None):
     if sok.get('character'):cs.append(fx.CurseOnHit(unit(c,sok,lvl),sok.get('markDuration') or 0))
     st=sk.get('stun',{});pi=sk.get('pierce',{})
     if pi.get('range') and not pi.get('bounces') and cfg['rng']>0:
-        # a line shot: the spread cards list damage per pellet, the target takes one pellet and towers the whole volley
+        # a line shot; a spread card's shrapnel all spawn clumped at the impact, so the target takes the whole volley (wiki Firecracker: 4 pieces
+        # break a Dark Prince's shield and the fifth damages him) and each piece then runs on behind it for its own pellet damage
         n=(c['projectile'] or {}).get('count') or 1
-        if n>1:cfg['dmg']//=n
         cfg['atk_type']='single_target';cfg['splash_r']=0;cfg['components']=[x for x in cs if not isinstance(x,fx.SplashAttack)];cs=cfg['components']
         ret=pi.get('returnTime') or 0
         cs.append(fx.LineAttack(pi['range'],pi.get('radius') or cfg['collision_r'],kb,2 if ret else 1,ret,n if n>1 else 0))

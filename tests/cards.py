@@ -1566,8 +1566,8 @@ def t_hunter_v_air():
     return f"Hunter hits air ({ini}->{bd.hp})"
 def t_firecracker_load():
     fc=mk_card('firecracker',11,'blue',5,10)
-    # 64 per pellet on the target, the 5 pellet volley on towers
-    assert fc.hp==304 and fc.dmg==64 and fc.ct_dmg==320
+    # 64 per shrapnel piece, all five spawn clumped at the impact: the target takes the 320 volley, so does a tower
+    assert fc.hp==304 and fc.dmg==320 and fc.ct_dmg==320
     assert abs(fc.rng-6.0)<0.01
     assert abs(fc.hspd-3.0)<0.01
     assert 'Air' in fc.targets
