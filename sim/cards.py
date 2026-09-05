@@ -181,7 +181,7 @@ def attach(cfg,c,sk,lvl,chain=None):
         else:
             sl=sk.get('slow',{})
             cs.append(fx.RiderAttack(at(p('damage'),lvl),p('hitSpeed'),p('range'),1-mult(sl.get('speedMultiplier') or 0) if sl.get('duration') else 0,
-                sl.get('duration') or 0,first(p('hitSpeed'),p('loadTime')),count(p('count'))))
+                sl.get('duration') or 0,first(p('hitSpeed'),p('loadTime')),count(p('count')),not sa.get('troopsOnly')))
     pe=sk.get('produceElixir',{})
     if pe.get('interval'):cs.append(fx.ElixirProd(pe['interval'],pe.get('amount') or 1))
     if kb and 'areaDamageOnDeath' not in sk and 'dash' not in sk and 'pierce' not in sk and cfg['atk_type']!='area':

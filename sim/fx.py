@@ -1,6 +1,6 @@
 import math
 import random
-from sim.units import Status,Troop,Building,has
+from sim.units import Status,Troop,Building,has,hidden
 from sim.arena import Arena
 from sim.knobs import K
 class Component:
@@ -99,16 +99,20 @@ class BuildingTarget(Component):
     def modify_target(self,tr,c,g):
         return [(d,t) for d,t in c if hasattr(t,'ttype') or getattr(t,'is_building',False)]
 class RiderAttack(Component):
-    def __init__(self,dmg,hspd,rng,slow_pct=0,slow_dur=0,fhspd=None,count=1):
-        self.dmg=dmg;self.hspd=hspd;self.rng=rng;self.count=count
+    def __init__(self,dmg,hspd,rng,slow_pct=0,slow_dur=0,fhspd=None,count=1,bldgs=True):
+        self.dmg=dmg;self.hspd=hspd;self.rng=rng;self.count=count;self.bldgs=bldgs;self.tgt=None
         self.slow_pct=slow_pct;self.slow_dur=slow_dur;self.fhspd=fhspd if fhspd is not None else hspd;self.cd=self.fhspd
     def on_tick(self,tr,g):
-        opp=g._opp(tr.team)
-        best=None;bd=999
-        for e in g.players[opp].troops:
-            if not e.alive:continue
-            d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
-            if d<=self.rng and d<bd:bd=d;best=e
+        # the rider aims like any ranged unit, a lock on the nearest held while it lives in range; the Ram Rider's bola takes troops only and
+        # prefers one not yet snared (game data target_only_troops, deprioritize_targets_with_buff BolaSnare; wiki Ram Rider)
+        opp=g._opp(tr.team);t=self.tgt
+        dist=lambda e:math.hypot(tr.x-e.x,tr.y-e.y)
+        if t is not None and not (t.alive and not hidden(t) and dist(t)<=self.rng):t=None
+        if t is None:
+            c=[e for e in g.players[opp].troops if e.alive and not hidden(e) and (self.bldgs or not getattr(e,'is_building',False)) and dist(e)<=self.rng]
+            if self.slow_pct>0:c=[e for e in c if not has(e,'slow')] or c
+            t=min(c,key=dist) if c else None
+        self.tgt=best=t
         if not best:self.cd=max(self.fhspd,self.cd-g.DT);return
         self.cd=max(0,self.cd-g.DT)
         if self.cd>0:return

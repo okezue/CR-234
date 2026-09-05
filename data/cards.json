@@ -7057,7 +7057,8 @@
      "damage": [null, null, null, null, null, null, null, null, 86, 95, 104, 115, 126, 138, 152, 167],
      "hitSpeed": 1.1,
      "range": 5.5,
-     "targets": ["air", "ground"]
+     "targets": ["air", "ground"],
+     "troopsOnly": true
     },
     "slow": {
      "duration": 2.0,
@@ -7076,6 +7077,7 @@
     "skills.secondaryAttack.hitSpeed": "legacy:composite_attack.rider",
     "skills.secondaryAttack.range": "legacy:composite_attack.rider",
     "skills.secondaryAttack.targets": "legacy:composite_attack.rider",
+    "skills.secondaryAttack.troopsOnly": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
