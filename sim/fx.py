@@ -739,7 +739,7 @@ class EvoSkeletons(Component):
         cfg={'hp':tr.max_hp,'dmg':tr.dmg,'hspd':tr.hspd,'fhspd':tr.fhspd,
              'spd':tr.spd,'rng':tr.rng,'targets':tr.targets,'transport':tr.transport,
              'atk_type':tr.atk_type,'splash_r':tr.splash_r,'ct_dmg':tr.ct_dmg,
-             'components':[],'lvl':tr.lvl,'name':tr.name}
+             'components':[],'lvl':tr.lvl,'name':tr.name,'card':tr.card}
         ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5)
         g.players[tr.team].troops.append(Troop(tr.team,tr.x+ox,tr.y+oy,cfg))
 class EvoBarbarians(Component):
@@ -1238,7 +1238,7 @@ class EvoLumberjack(Component):
         cfg={'hp':1,'dmg':tr.dmg,'hspd':tr.hspd,'fhspd':tr.fhspd,
              'spd':tr.spd,'rng':tr.rng,'targets':tr.targets,'transport':'Ground',
              'atk_type':'single_target','splash_r':0,'ct_dmg':0,
-             'components':[],'lvl':tr.lvl,'name':'Lumberjack Ghost'}
+             'components':[],'lvl':tr.lvl,'name':'Lumberjack Ghost','card':tr.card}
         ghost=Troop(tr.team,tr.x,tr.y,cfg)
         ghost.max_hp=1;ghost.hp=1
         ghost.statuses.append(Status('invisible',self.ghost_dur))
@@ -1448,7 +1448,7 @@ class EvoSkelArmy(Component):
         gen=next((a for a in g.players[tr.team].troops if a.alive and a.name=='General Gerry' and math.hypot(a.x-tr.x,a.y-tr.y)<=self.r),None)
         if not gen:return
         cfg={'hp':tr.max_hp,'dmg':tr.dmg,'hspd':tr.hspd,'fhspd':tr.fhspd,'spd':self.spd,'rng':tr.rng,'targets':tr.targets,'transport':'Ground',
-             'atk_type':'single_target','splash_r':0,'ct_dmg':tr.ct_dmg,'components':[Shadow(gen)],'lvl':tr.lvl,'name':'Shadow Skeleton'}
+             'atk_type':'single_target','splash_r':0,'ct_dmg':tr.ct_dmg,'components':[Shadow(gen)],'lvl':tr.lvl,'name':'Shadow Skeleton','card':tr.card}
         sh=Troop(tr.team,tr.x,tr.y,cfg);sh.statuses+=[Status('invincible',1e9),Status('invisible',1e9)]
         g.players[tr.team].troops.append(sh)
 class EvoTesla(Component):

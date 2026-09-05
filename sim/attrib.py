@@ -18,11 +18,12 @@ def _cards():
     return _NAME
 
 def _source():
-    # the attacker is the troop or spell nearest on the call stack: troops carry the swing, spells and death bombs their own name
+    # the attacker is the troop or spell nearest on the call stack: a troop is credited to the card that spawned it (a Goblin Gang's goblin
+    # is not the Goblin Barrel's), spells and death bombs carry their own name
     f=sys._getframe(2)
     while f is not None:
         l=f.f_locals;s=l.get('self');tr=l.get('tr')
-        if isinstance(tr,(Troop,Building)):return tr.name
+        if isinstance(tr,(Troop,Building)):return tr.card or tr.name
         if s is not None and s.__class__.__module__ in ('sim.spells','sim.fx') and getattr(s,'name',None):return s.name
         f=f.f_back
     return '?'
