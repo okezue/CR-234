@@ -307,7 +307,7 @@ def evolve(c,k,s,lvl,tr):
        'bomber':lambda:fx.EvoBomber(pi['bounces'],pi['bounceDistance']),
        'barbarians':lambda:fx.EvoBarbarians(mult(b['hitSpeedMultiplier'])-1,mult(b['speedMultiplier'])-1,b['duration']),
        'bats':lambda:fx.EvoBats(at(hl['perAttack'],lvl),at(hl['overHeal'],lvl)),
-       'royal_recruits':lambda:fx.EvoRoyalRecruits(at(s['charge']['damage'],lvl),s['charge']['range']),
+       'royal_recruits':lambda:fx.EvoRoyalRecruits(s['charge']['range']),
        'royal_giant':lambda:fx.EvoRoyalGiant(pb['radius'],pb['distance'],at(pb['damage'],lvl)),
        'ice_spirit':lambda:fx.EvoIceSpirit(po['tickInterval'],po['radius'],po['tickStunDuration'],at(po['damage'],lvl)),
        'skeleton_barrel':lambda:fx.EvoSkelBarrel(sd['hpPercent']/100),
@@ -332,6 +332,9 @@ def evolve(c,k,s,lvl,tr):
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
        'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
     if k in E:tr.components.append(E[k]())
+    # the recruits' charge is the shield-gated one; attach() had built the generic charge from the same skills.charge record, so a charged
+    # swing dealt the bonus twice
+    if k=='royal_recruits':tr.components=[x for x in tr.components if type(x) is not fx.Charge]
     # the evolved bolt stuns and deals full damage on the base card's three targets; the bounces after them are the evolution
     if k=='electro_dragon':tr.chain_count=c['skills']['pierce']['bounces']+1
     if k=='skeleton_barrel':tr.death_dmg=at(sd['damage'],lvl)

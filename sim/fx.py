@@ -753,24 +753,12 @@ class EvoBats(Component):
     def on_attack(self,tr,tgt,g):
         tr.hp=min(self.cap,tr.hp+self.heal)
         if tr.max_hp<self.cap:tr.max_hp=self.cap
-class EvoRoyalRecruits(Component):
-    def __init__(self,cdmg,dist):
-        self.cdmg=cdmg;self.dist=dist;self.charged=False;self.moved=0
-        self.px=None;self.py=None;self.osp=None
+class EvoRoyalRecruits(Charge):
+    # the Prince's charge unlocked by the broken shield (wiki Royal Recruits/Evolution: after their shield is destroyed they charge after
+    # travelling 2 tiles for 2x damage); a shielded recruit walks without building one
     def on_tick(self,tr,g):
-        if tr.shield_hp<=0 and not self.charged and getattr(tr,'max_shield_hp',0)>0:
-            self.charged=True;self.moved=0;self.osp=tr.spd;tr.spd*=2
-        if self.charged:
-            if self.px is not None:
-                dx=tr.x-self.px;dy=tr.y-self.py
-                self.moved+=math.sqrt(dx*dx+dy*dy)
-            self.px=tr.x;self.py=tr.y
-    def on_attack(self,tr,tgt,g):
-        if not self.charged:return
-        extra=self.cdmg-tr.dmg
-        if extra>0:tgt.take_damage(extra)
-        if self.osp is not None:tr.spd=self.osp
-        self.charged=False
+        if tr.shield_hp>0:self.px,self.py=tr.x,tr.y;self.moved=0;return
+        super().on_tick(tr,g)
 class EvoRoyalGiant(Component):
     def __init__(self,radius,kb,dmg):self.radius=radius;self.kb=kb;self.dmg=dmg
     def on_attack(self,tr,tgt,g):

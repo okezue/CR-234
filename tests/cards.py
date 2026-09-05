@@ -5247,12 +5247,20 @@ def t_int_evo_recruits_shield_charge():
         for r in rr:g.deploy('blue',r)
         r0=rr[0]
     else:g.deploy('blue',rr);r0=rr
-    from sim.fx import EvoRoyalRecruits
-    erc=[c for c in r0.components if isinstance(c,EvoRoyalRecruits)]
-    assert len(erc)==1
+    from sim.fx import Charge,EvoRoyalRecruits
+    erc=[c for c in r0.components if isinstance(c,Charge)]
+    assert len(erc)==1 and isinstance(erc[0],EvoRoyalRecruits),"one charge, the shield-gated one"
+    quiet(g);g.run(3)
+    assert not erc[0].charged,"a shielded recruit builds no charge"
     r0.shield_hp=0
-    g.run(0.2)
-    assert erc[0].charged,"Should charge after shield break"
+    g.run(0.5)
+    assert not erc[0].charged,"the charge needs 2.5 tiles of walking after the shield breaks"
+    g.run(2.5)
+    assert erc[0].charged,"Should charge after walking with the shield gone"
+    d=Dummy('red',r0.x,r0.y+1.0,hp=50000,dmg=0);g.deploy('red',d)
+    g.run(1.0)
+    assert d.hp==50000-2*r0.dmg,f"one charged hit deals 2x, got {50000-d.hp} for dmg {r0.dmg}"
+    assert not erc[0].charged,"the charge is spent by the hit"
     return "Evo Recruit charges after shield break"
 def t_int_monk_protect_v_archers():
     g=Game()
