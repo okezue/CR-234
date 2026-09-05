@@ -19,7 +19,7 @@ class Tower:
         self.active=ttype!='king'
         self.cd=0
         self.proj_spd=0
-        self.troop=None;self.collision_r=1.4 if ttype=='king' else 1.0
+        self.troop=None;self.collision_r=1.4 if ttype=='king' else 1.0;self.on_down=None
     def activate(self):
         if self.active:return False
         self.active=True;self.cd=self.ACT
@@ -39,6 +39,8 @@ class Tower:
         if self.hp<=0:
             self.hp=0
             self.alive=False
+            # the fall is handled here too, so a damage path that forgets the game's handler cannot kill a tower silently
+            if self.on_down:self.on_down(self)
 
 class Arena:
     W,H=18,32

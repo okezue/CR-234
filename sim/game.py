@@ -234,6 +234,7 @@ class Game:
             p=self.players[tm]
             for t in self.arena.towers:
                 if t.team!=tm:continue
+                t.on_down=self._tower_down
                 if t.ttype=='princess':
                     tt=mk_tt(p.tt_name,p.tt_lvl)
                     t.hp=tt.hp;t.max_hp=tt.hp;t.troop=tt;t.rng=tt.RNG;t.spd=tt.spd
