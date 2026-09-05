@@ -277,6 +277,77 @@ def dmg(card, lvl):
     return v
 
 
+def quanta():
+    # tower damage value -> (card, level, hit speed, load time, tiles/s) for levels 9 and up, so an exact tower step names its attacker
+    out = {}
+    for k, c in CARDS.items():
+        if c['kind'] == 'spell':
+            continue
+        st = c['stats']
+        for i, v in enumerate(st.get('towerDamage') or st.get('damage') or []):
+            if v and i >= 8:
+                out.setdefault(int(v), []).append((k, i + 1, c['hitSpeed'], c['loadTime'], (c['speed'] or 0) / 50))
+    return out
+
+
+def arrivals(games, own='b'):
+    # enemy melee attackers at the own towers: the unit stops in reach, the tower's next exact step is its first hit; the step time is
+    # bracketed by the previous OCR reading; the attacker is named by the step's damage value and its approach speed class
+    from vid.cal import TOWERS
+    q = quanta()
+    rows = []
+    for gi, (tr, tw, bn) in enumerate(games):
+        twc, _ = clean(tw)
+        en = tr[tr.team != own]
+        for k in TOWERS:
+            if k[0] != own:
+                continue
+            tx, ty = TOWERS[k]
+            s = twc[['t', k]].dropna()
+            hp, ts = s[k].to_numpy(), s.t.to_numpy()
+            e = en.assign(d=np.hypot(en.x - tx, en.y - ty))
+            for i in e[e.d < 3.3].track.unique():
+                g = e[e.track == i].sort_values('t')
+                t, x, y, d = (g[c].to_numpy() for c in ('t', 'x', 'y', 'd'))
+                stop = next((j for j in range(len(t)) if d[j] < 3.3 and ((t > t[j]) & (t <= t[j] + 0.6)).sum() >= 5
+                             and np.hypot(x[(t > t[j]) & (t <= t[j] + 0.6)] - x[j], y[(t > t[j]) & (t <= t[j] + 0.6)] - y[j]).max() < 0.2), None)
+                if stop is None:
+                    continue
+                mb = (t >= t[stop] - 1.0) & (t < t[stop])
+                if mb.sum() < 5 or np.hypot(x[mb][0] - x[stop], y[mb][0] - y[stop]) < 0.5:
+                    continue
+                spd = np.hypot(x[mb][0] - x[stop], y[mb][0] - y[stop]) / (t[stop] - t[mb][0])
+                a = next((a for a in np.where(ts > t[stop] - 0.3)[0][1:] if hp[a] < hp[a - 1]), None)
+                if a is None or ts[a] - t[stop] > 4:
+                    continue
+                loss = int(hp[a - 1] - hp[a])
+                cands = [c for c in q.get(loss, []) if abs(c[4] - spd) < 0.45] or q.get(loss, [])
+                others = e[(e.track != i) & (e.t > t[stop] - 1.5) & (e.t < t[stop] + 2) & (e.d < 4)].track.nunique()
+                nxt = [ts[b] - ts[a] for b in range(a + 1, len(ts)) if hp[b - 1] - hp[b] == loss and ts[b] < ts[a] + 8]
+                rows.append({'game': gi, 'tower': k, 'track': i, 't_stop': t[stop], 'd_stop': d[stop], 'speed': spd, 'dt_lo': ts[a - 1] - t[stop],
+                             'dt_hi': ts[a] - t[stop], 'loss': loss, 'others': others, 'cands': ';'.join(f'{c[0]}@{c[1]}' for c in cands[:3]),
+                             'next': [round(v, 2) for v in nxt[:3]]})
+    return pd.DataFrame(rows)
+
+
+def sim_arrival(card, lvl, horizon=20):
+    # the same scenario in the engine: a lone unit walks from the bridge to the princess tower; time from its last step to the first tower hit
+    g = Game(p1={'king_lvl': 15}, p2={'king_lvl': 15})
+    us = create(key(BYNAME.get(card, card)), lvl, 'red', 14.5, 12.5)
+    u = us[0] if isinstance(us, list) else us
+    g.deploy('red', u)
+    tw = g.arena.get_tower('blue', 'princess', 'right')
+    hp0, last, t_stop, hits = tw.hp, (u.x, u.y), None, []
+    while g.t < horizon and u.alive and len(hits) < 3:
+        g.tick()
+        t_stop = (g.t - g.DT if t_stop is None else t_stop) if (u.x, u.y) == last else None
+        last = (u.x, u.y)
+        if tw.hp < hp0:
+            hits.append(g.t)
+            hp0 = tw.hp
+    return (hits[0] - t_stop if hits and t_stop is not None else None), [round(b - a, 2) for a, b in zip(hits, hits[1:])]
+
+
 CLASSES = {'slow': 0.75, 'medium': 1.0, 'fast': 1.5, 'very fast': 2.0}
 
 
