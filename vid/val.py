@@ -531,6 +531,10 @@ def report(stem):
                      'life_died_median': g[g.died].life.median(), 'sim_alone': np.median(sl) if sl else np.nan})
     print('(d) track lifetime, s (own units carry no badge until hit, so team b tracks start at the first damage; sim: unit alone against towers)')
     print(pd.DataFrame(rows).sort_values('n', ascending=False).round(1).to_string(index=False) if rows else '  none')
+    ts = tower_shots(games)
+    cl = ts[ts.own_near == 0]
+    print(f'(e) tower shots: {len(ts)} arrivals, {ts["first"].notna().sum()} with a witnessed reach entry and first bar drop, {len(cl)} with no own '
+          f'unit or banner near; clean first drops {cl["first"].dropna().round(2).tolist()}, clean standing intervals {sum(cl.ivals.tolist(), [])}')
     return spt, dht, ht, lt
 
 
