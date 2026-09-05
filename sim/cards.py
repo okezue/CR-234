@@ -324,7 +324,6 @@ def evolve(c,k,s,lvl,tr):
        'goblin_giant':lambda:fx.EvoGoblinGiant(ps['hpPercent']/100,ps['pauseTime'],unit(c,ps,lvl)),
        'hunter':lambda:fx.EvoHunter(st['duration'],st['delayBetweenStrikes']),
        'electro_dragon':lambda:fx.EvoElectroDragon(pi['bounceDamagePercent']/100,pi['bounceDistance'],pi['bounceDelay']/mult(pi['speedMultiplier'])),
-       'wall_breakers':lambda:fx.EvoWallBreakers(unit(c,sd,lvl),count(sd.get('count'))),
        'executioner':lambda:fx.EvoExecutioner(sn['range'],mult(sn['damageMultiplier']),sn['pushbackDistance']),
        'goblin_drill':lambda:fx.Resurface([p/100 for p in bu['resurfacePercent']],bu.get('resurfaceCount') or [count(sd.get('count'))],unit(c,sd,lvl)),
        'mega_knight':lambda:fx.EvoMegaKnight(pb['strength']),
@@ -332,9 +331,11 @@ def evolve(c,k,s,lvl,tr):
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
        'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
     if k in E:tr.components.append(E[k]())
-    # the recruits' charge is the shield-gated one; attach() had built the generic charge from the same skills.charge record, so a charged
-    # swing dealt the bonus twice
-    if k=='royal_recruits':tr.components=[x for x in tr.components if type(x) is not fx.Charge]
+    # attach() also maps these evolutions' skills generically, so the effect came twice: the recruits' charge bonus (the shield-gated one
+    # stays), the bats' heal per attack (perAttack is the sum of the two pulses) and the lumberjack's ghost, whose death spawn record names
+    # its base character Barbarian and put a full Barbarian beside the ghost
+    DUP={'royal_recruits':fx.Charge,'bats':fx.HealPulse,'lumberjack':fx.DeathSpawn}
+    if k in DUP:tr.components=[x for x in tr.components if type(x) is not DUP[k]]
     # the evolved bolt stuns and deals full damage on the base card's three targets; the bounces after them are the evolution
     if k=='electro_dragon':tr.chain_count=c['skills']['pierce']['bounces']+1
     if k=='skeleton_barrel':tr.death_dmg=at(sd['damage'],lvl)

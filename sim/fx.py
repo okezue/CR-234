@@ -1084,15 +1084,6 @@ class EvoElectroDragon(Component):
     def on_attack(self,tr,tgt,g):
         hit=getattr(tr,'chain_hit',[tgt])
         if len(hit)>1:g.spells.append(Bolt(tr.team,hit[-1],int(tr.dmg*self.pct),self.br,self.period,tr.name))
-class EvoWallBreakers(Component):
-    def __init__(self,runner_cfg,cnt):
-        self.runner_cfg=runner_cfg;self.cnt=cnt
-    def on_death(self,tr,g):
-        if not self.runner_cfg:return
-        for _ in range(self.cnt):
-            ox=random.uniform(-0.5,0.5)
-            t=Troop(tr.team,tr.x+ox,tr.y,dict(self.runner_cfg,components=[]))
-            g.players[tr.team].troops.append(t)
 class EvoExecutioner(Component):
     def __init__(self,close_rng,dmg_m,kb):
         self.close_rng=close_rng;self.dmg_m=dmg_m;self.kb=kb
