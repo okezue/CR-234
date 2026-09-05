@@ -435,6 +435,43 @@ class BanditDash(Component):
             self.timer-=g.DT
             if self.timer<=0:
                 self.charging=False;self.dashing=True;self.to=pos(self.dtgt);tr.statuses.append(Status('invincible',2.0))
+class Hook(Component):
+    # the Fisherman's special attack (game data special_min_range 3.5, special_range 7, special_load_time 1.3, damage_special 0; FishermanProjectile
+    # speed 800, drag_back_speed 850, drag_self_speed 450, target buff IceWizardSlowDown): a ground target in the band stops him for the load, then
+    # the hook drags a troop into his reach or him to a building; the dragged troop is helpless for the drag and its charge is reset
+    def __init__(self,mn,mx,load,spd,drag,sdrag,sdur,sval):
+        self.mn=mn;self.mx=mx;self.load=load;self.spd=spd;self.drag=drag;self.sdrag=sdrag;self.sdur=sdur;self.sval=sval
+        self.charging=self.flying=False;self.timer=0;self.osp=None;self.htgt=None;self.pull=None
+    def _end(self,tr):
+        if self.osp is not None:tr.spd=self.osp;self.osp=None
+        self.charging=False;self.htgt=None
+    def _hit(self,tr,t,g):
+        self.flying=False
+        if not t.alive or not tr.alive:return
+        if hasattr(t,'statuses'):t.statuses.append(Status('slow',self.sdur,self.sval))
+        mine=hasattr(t,'ttype') or getattr(t,'is_building',False)
+        if not mine:
+            tx,ty=pos(t);t.statuses.append(Status('knockback',0.05));t.statuses.append(Status('stun',math.hypot(tx-tr.x,ty-tr.y)/self.drag))
+        self.pull=(t,mine)
+    def on_tick(self,tr,g):
+        if self.pull is not None:
+            t,mine=self.pull
+            if not t.alive or g._dist(tr,t)<=tr.rng:self.pull=None;return
+            a=tr if mine else t;bx,by=pos(tr if not mine else t);dx=bx-a.x;dy=by-a.y;d=math.hypot(dx,dy)
+            if d>0:st=min(d,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
+            return
+        if self.flying:return
+        if self.charging:
+            t=self.htgt
+            if not getattr(t,'alive',True) or hidden(t):self._end(tr);return
+            if has(tr,'stun','freeze'):return
+            self.timer-=g.DT
+            if self.timer<=0:
+                self.flying=True;g._shoot(tr.team,tr.x,tr.y,self.spd,t,lambda g_,pr,t=t:self._hit(tr,t,g_));self._end(tr)
+            return
+        t=getattr(tr,'tgt',None)
+        if t is not None and getattr(t,'transport','Ground')!='Air' and not hidden(t) and self.mn<=g._dist(tr,t)<=self.mx:
+            self.charging=True;self.timer=self.load;self.osp=tr.spd;tr.spd=0;self.htgt=t
 class SoulCollect(Component):
     def __init__(self,cap):
         self.cap=cap;self.souls=0;self._prev=set()

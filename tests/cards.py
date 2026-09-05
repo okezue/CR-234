@@ -2096,6 +2096,21 @@ def t_fisherman_v_knight():
     g.run(15)
     assert k.hp<1690,"Fisherman should fight Knight"
     return f"Fisherman vs Knight (knight_hp={k.hp})"
+def t_fisherman_hook():
+    # a ground troop 4.5 tiles away is hooked after the 1.3 s load and dragged into his reach, slowed; a building in the band drags him to it
+    g=quiet(Game())
+    f=mk_card('fisherman',11,'blue',9,10);g.deploy('blue',f)
+    k=mk_card('knight',11,'red',9,15.5);g.deploy('red',k);k.spd=0
+    g.run(1.2)
+    assert f.spd==0 and k.y>15,"he stands and charges while the knight is in the 3.5-7 band"
+    g.run(1.0)
+    assert g._dist(f,k)<=f.rng and k.y<13 and any(s.kind=='slow' for s in k.statuses),f"the knight is dragged to him and slowed (d={g._dist(f,k):.2f})"
+    assert f.spd>0 and not any(s.kind=='slow' for s in f.statuses)
+    g2=quiet(Game())
+    f2=mk_card('fisherman',11,'blue',14.5,17.5);g2.deploy('blue',f2)
+    tw=g2.arena.get_tower('red','princess','right');g2.run(3.0)
+    assert g2._dist(f2,tw)<=f2.rng and tw.hp<tw.max_hp,f"he drags himself to the tower and hits it (d={g2._dist(f2,tw):.2f})"
+    return "Fisherman hooks a troop to himself and himself to a building"
 def t_bhealer_load():
     bh=mk_card('battle_healer',11,'blue',5,10)
     assert bh.hp==1920 and bh.dmg==268

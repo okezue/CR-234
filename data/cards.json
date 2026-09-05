@@ -2617,11 +2617,26 @@
    "range": 1.2,
    "rarity": "legendary",
    "sightRange": 7.5,
-   "skills": {},
+   "skills": {
+    "hook": {
+     "dragSpeed": 17.0,
+     "loadTime": 1.3,
+     "maxRange": 7.0,
+     "minRange": 3.5,
+     "selfDragSpeed": 9.0,
+     "slow": {
+      "duration": 2.5,
+      "hitSpeedMultiplier": -35,
+      "speedMultiplier": -35
+     },
+     "speed": 16.0
+    }
+   },
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
+    "skills.hook": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9553,6 +9568,7 @@
    "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; resurfacePercent/resurfaceCount for the evo drill",
    "charging": "loadFirstHit: the unit comes in unloaded and charges the whole hit speed before its first hit, a stun empties the charge (Sparky); every other unit deploys loaded and loads while walking, so its first hit takes hit speed less load time",
    "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, leader names its unit overrides",
+   "hook": "special attack on a ground target between minRange and maxRange: the unit stands for loadTime, the hook flies at speed and drags a troop to the unit's reach at dragSpeed or the unit to a building at selfDragSpeed, slowing the target (Fisherman)",
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
    "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
    "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",

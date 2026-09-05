@@ -105,6 +105,10 @@ def attach(cfg,c,sk,lvl,chain=None):
         cfg['jump_dmg']=at(da.get('damage'),lvl) or d
     elif da.get('minRange') is not None:
         cs.append(fx.BanditDash(da['minRange'],da['maxRange'],da.get('chargeTime') or 0,da.get('speed') or 8.333));cfg['dash_dmg']=at(da.get('damage'),lvl) or d
+    hk=sk.get('hook',{})
+    if hk.get('maxRange'):
+        hs=hk.get('slow',{});cs.append(fx.Hook(hk['minRange'],hk['maxRange'],hk['loadTime'],hk['speed'],hk['dragSpeed'],hk['selfDragSpeed'],
+                                                hs.get('duration') or 0,mult(hs.get('speedMultiplier') or 0)))
     sd=sk.get('spawnOnDeath',{});ps=sk.get('periodicSpawn',{})
     egg=ps.get('character') and ps.get('pauseTime') and snake(ps['character']).startswith(snake(c['name']))
     if egg:
