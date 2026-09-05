@@ -9150,9 +9150,10 @@
     "cycles": 1,
     "skills": {
      "heal": {
+      "count": 4,
       "frequency": null,
       "onSpawn": [null, null, null, null, null, 96, 105, 115, 127, 139, 153, 168, 185, 203, 223, 245],
-      "overHeal": [null, null, null, null, null, 1124, 1236, 1356, 1490, 1638, 1799, 1975, 2172, 2383, 2615, 2875],
+      "overHeal": [null, null, null, null, null, 907, 997, 1094, 1202, 1321, 1451, 1593, 1752, 1922, 2109, 2319],
       "perAttack": null
      },
      "periodicSpawn": {
@@ -9163,7 +9164,7 @@
     },
     "stats": {
      "damage": [null, null, null, null, null, 84, 93, 102, 112, 123, 135, 148, 163, 179, 197, 216],
-     "hitpoints": [null, null, null, null, null, 907, 997, 1094, 1202, 1321, 1451, 1593, 1752, 1922, 2109, 2319],
+     "hitpoints": [null, null, null, null, null, 524, 577, 633, 695, 764, 839, 921, 1013, 1111, 1220, 1341],
      "towerDamage": [null, null, null, null, null, 84, 93, 102, 112, 123, 135, 148, 163, 179, 197, 216]
     }
    },
@@ -9199,9 +9200,12 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
+    "evo.skills.heal.count": "patch:2026-09-04",
     "evo.skills.heal.onSpawn[]": "derived:levelMult",
-    "evo.skills.heal.overHeal": "legacy:evolution.changes.heal_on_skeleton_death.overheal_cap_multiplier",
+    "evo.skills.heal.overHeal": "patch:2026-09-04",
+    "evo.skills.heal.overHeal[]": "derived:levelMult",
     "evo.stats.damage[]": "derived:levelMult",
+    "evo.stats.hitpoints": "patch:2026-09-04",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
@@ -9597,6 +9601,10 @@
    {
     "name": "data/patches/2026-09-03.json",
     "tag": "patch:2026-09-03"
+   },
+   {
+    "name": "data/patches/2026-09-04.json",
+    "tag": "patch:2026-09-04"
    },
    {
     "name": "data/patches/2026-09-05.json",

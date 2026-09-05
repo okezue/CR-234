@@ -1,0 +1,8 @@
+[
+ {"card": "witch", "path": "evo.stats.hitpoints[10]", "value": 839,
+  "note": "The Evolved Witch spawns with the Witch's own hitpoints (839 at level 11) and overheals from her Skeletons; ClashStrategic's 1451 is the overheal cap (839 x 1.73, the ratio of the 4/8/2026 balance update), which the sim used as her spawn hitpoints and then overhealed a further 24% above. https://clashroyale.fandom.com/wiki/Witch/Evolution"},
+ {"card": "witch", "path": "evo.skills.heal.overHeal", "value": {"level11": 1451},
+  "note": "Overheal cap x1.73 of the Witch's hitpoints since the 4/8/2026 balance update (from x1.24): 839 + 4 x 153 = 1451 at level 11, exactly the four heals. https://clashroyale.fandom.com/wiki/Witch/Evolution"},
+ {"card": "witch", "path": "evo.skills.heal.count", "value": 4,
+  "note": "Since the 4/8/2026 balance update only the first 4 Skeletons she spawns heal her when defeated (153 each at level 11); before, every own Skeleton healed her. https://clashroyale.fandom.com/wiki/Witch/Evolution"}
+]

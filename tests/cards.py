@@ -5718,6 +5718,26 @@ def t_evo_witch_heal():
     from sim.fx import EvoWitch
     assert any(isinstance(c,EvoWitch) for c in w.components)
     return f"Evo Witch has heal component (hp={w.hp})"
+def t_evo_witch_first_wave_heals():
+    # wiki Witch/Evolution (4/8/2026): she spawns with the Witch's 839, only her first 4 Skeletons heal her (153 each) up to 839 x 1.73 = 1451
+    g=Game()
+    w=mk_card('witch',11,'blue',9,10,evolved=True)
+    g.deploy('blue',w);w.spd=0
+    assert w.hp==839,w.hp
+    g.run(1.5)
+    sk=[t for t in g.players['blue'].troops if t.name=='Skeleton']
+    assert len(sk)==4
+    for s in sk:s.take_damage(9999)
+    g.run(0.2)
+    assert w.hp==1451,w.hp
+    w.hp=500
+    g.run(7.0)
+    sk=[t for t in g.players['blue'].troops if t.name=='Skeleton' and t.alive]
+    assert len(sk)==4
+    for s in sk:s.take_damage(9999)
+    g.run(0.2)
+    assert w.hp==500,w.hp
+    return "Evo Witch: first wave heals to 1451, later waves do not"
 def t_evo_pekka_heal():
     g=Game()
     pk=mk_card('pekka',11,'blue',9,14,evolved=True)

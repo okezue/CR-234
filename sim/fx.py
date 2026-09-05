@@ -182,7 +182,7 @@ class SpawnTimer(Component):
             def one(g):
                 if not tr.alive:return
                 t=Troop(team,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),dict(self.cfg,components=list(self.cfg.get('components',[]))))
-                t._spawner=tr;g._place(team,t,self.cfg.get('deploy',0))
+                t._spawner=tr;tr._spawned=t._spawn_no=getattr(tr,'_spawned',0)+1;g._place(team,t,self.cfg.get('deploy',0))
             for i in range(self.count):
                 if i and self.stagger:g.spells.append(Timer(i*self.stagger,one,x,y,team))
                 else:one(g)
@@ -1027,10 +1027,12 @@ class EvoBabyDragon(Component):
                 if not any(s.kind=='slow' for s in e.statuses):
                     e.statuses.append(Status('slow',0.2,1.0-self.es))
 class EvoWitch(Component):
-    def __init__(self,heal,cap):self.heal=heal;self.cap=cap
+    # only her first count Skeletons heal her when they fall (wiki Witch/Evolution, 4/8/2026 balance)
+    def __init__(self,heal,cap,count=None):self.heal=heal;self.cap=cap;self.count=count or 10**9
     def on_tick(self,tr,g):
         cap=self.cap
-        dead=[t for t in g.players[tr.team].troops if not t.alive and 'keleton' in getattr(t,'name','') and getattr(t,'_spawner',None) is tr]
+        dead=[t for t in g.players[tr.team].troops if not t.alive and 'keleton' in getattr(t,'name','') and getattr(t,'_spawner',None) is tr
+              and getattr(t,'_spawn_no',0)<=self.count]
         for d in dead:
             if tr.hp<cap:tr.hp=min(cap,tr.hp+self.heal)
 class EvoPekka(Component):
