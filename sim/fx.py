@@ -1287,6 +1287,19 @@ class LineAttack(Component):
                 hurt(e,tr.ct_dmg if hasattr(e,'ttype') and tr.ct_dmg else tr.dmg,g);push(e,x0,y0,self.kb)
         sweep(g,(tgt,));push(tgt,x0,y0,self.kb)
         for i in range(1,self.passes):g.spells.append(Timer(self.ret*i,lambda g:sweep(g,()),x1,y1,tr.team))
+class Scatter(Component):
+    # a shotgun volley: the aimed pellet is the base hit, the other n-1 leave step degrees apart on both sides of it (one side gets the odd pellet)
+    # and each flies rng tiles until it meets the first enemy body, whose collision circle it widens by its own radius; a pellet that meets none is lost
+    def __init__(self,n,step,r,rng):self.n=n;self.step=step;self.r=r;self.rng=rng
+    def on_attack(self,tr,tgt,g):
+        tx,ty=pos(tgt);a0=math.atan2(ty-tr.y,tx-tr.x);air='Air' in getattr(tr,'targets',['Ground'])
+        for k in range(-((self.n-1)//2),self.n//2+1):
+            if k==0:continue
+            a=a0+math.radians(k*self.step);cx,cy=math.cos(a),math.sin(a);best=None
+            for e in enemies(g,tr.team,air):
+                ex,ey=pos(e);t=(ex-tr.x)*cx+(ey-tr.y)*cy;r=getattr(e,'collision_r',0.5)+self.r
+                if -r<=t<=self.rng+r and abs((ex-tr.x)*cy-(ey-tr.y)*cx)<=r and (best is None or t<best[0]):best=(t,e)
+            if best:hurt(best[1],tr.ct_dmg if hasattr(best[1],'ttype') and tr.ct_dmg else tr.dmg,g)
 class Burrow(Component):
     # underground from the own king tower to the deploy spot at spd tiles/s; surfaces after the deploy time or the travel, whichever is longer
     def __init__(self,spd,deploy):self.spd=spd;self.deploy=deploy;self.t=None

@@ -4568,7 +4568,13 @@
    "range": 4.0,
    "rarity": "epic",
    "sightRange": 5.5,
-   "skills": {},
+   "skills": {
+    "scatter": {
+     "angle": 5.0,
+     "radius": 0.3,
+     "range": 6.5
+    }
+   },
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
@@ -4578,6 +4584,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.scatter": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9553,6 +9560,7 @@
    "produceElixir": "interval and amount",
    "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still",
    "recoil": "self knockback per shot",
+   "scatter": "shotgun volley of projectile.count pellets: angle between neighbouring pellets in degrees, radius and range of each pellet; the aimed pellet is the base hit and every other pellet hits the first body on its line (Hunter)",
    "secondaryAttack": "independent attached attacker (rocket launcher, rider, backpack goblins); character names the unit",
    "spawn.minRadius": "a periodic spell spawn rises between this distance and the spell radius from the centre (Graveyard)",
    "teleport": "distance moved backwards on cast",

@@ -1539,21 +1539,20 @@ def t_skeldrags_air():
     return "Skeleton Dragons target Air+Ground"
 def t_hunter_load():
     h=mk_card('hunter',11,'blue',5,10)
-    assert h.hp==885 and h.dmg==840
+    assert h.hp==885 and h.dmg==84
     assert abs(h.hspd-2.2)<0.01 and abs(h.fhspd-0.7)<0.01
     assert abs(h.rng-4.0)<0.01
     assert 'Air' in h.targets
-    return f"Hunter load (hp={h.hp} dmg={h.dmg} rng={h.rng})"
+    return f"Hunter load (hp={h.hp} dmg={h.dmg} per pellet rng={h.rng})"
 def t_hunter_v_tank():
-    g=Game()
-    h=mk_card('hunter',11,'blue',9,10)
-    g.deploy('blue',h)
-    d=Dummy('red',9,13,hp=50000,spd=0)
-    g.deploy('red',d)
-    g.run(5)
-    dmg=50000-d.hp
-    assert dmg>=840,f"Hunter should deal heavy dmg at close range, got {dmg}"
-    return f"Hunter high DPS ({dmg} in 5s)"
+    # the fan lands every pellet on a body a tile away and half of them at his 4 tile range (wiki Hunter: more damage the closer he is)
+    out=[]
+    for dy in (1,4):
+        g=Game();h=mk_card('hunter',11,'blue',9,14);g.deploy('blue',h)
+        d=Dummy('red',9,14+dy,hp=50000,spd=0);g.deploy('red',d)
+        g.run(1.5);out.append((50000-d.hp)//84)
+    assert out==[10,5],f"pellets on a body at 1 and 4 tiles: {out}"
+    return f"Hunter pellets landing at 1 and 4 tiles: {out} of 10"
 def t_hunter_v_air():
     g=Game()
     h=mk_card('hunter',11,'blue',9,10)

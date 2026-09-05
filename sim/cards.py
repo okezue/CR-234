@@ -147,6 +147,11 @@ def attach(cfg,c,sk,lvl,chain=None):
         cfg['atk_type']='single_target';cfg['splash_r']=0;cfg['components']=[x for x in cs if not isinstance(x,fx.SplashAttack)];cs=cfg['components']
         ret=pi.get('returnTime') or 0
         cs.append(fx.LineAttack(pi['range'],pi.get('radius') or cfg['collision_r'],kb,2 if ret else 1,ret,n if n>1 else 0))
+    sc=sk.get('scatter',{});n=(c['projectile'] or {}).get('count') or 1
+    if sc.get('angle') and n>1:
+        # the shotgun's pellets are individual hits fanned out from the shooter, so the base hit is one pellet and the fan carries the rest
+        cfg['dmg']//=n;cfg['ct_dmg']//=n;cfg['atk_type']='single_target';cfg['splash_r']=0
+        cfg['components']=cs=[x for x in cs if not isinstance(x,fx.SplashAttack)]+[fx.Scatter(n,sc['angle'],sc.get('radius') or 0,sc.get('range') or 0)]
     if st.get('duration') and 'reflect' not in sk:
         if pi.get('bounces'):
             cs.append(fx.SuicideChain() if cfg['is_suicide'] else fx.ChainAttack())

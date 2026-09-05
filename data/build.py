@@ -561,6 +561,8 @@ def main():
             "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
             "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
             "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
+            "scatter": "shotgun volley of projectile.count pellets: angle between neighbouring pellets in degrees, radius and range of each pellet; the "
+                       "aimed pellet is the base hit and every other pellet hits the first body on its line (Hunter)",
             "spawn.minRadius": "a periodic spell spawn rises between this distance and the spell radius from the centre (Graveyard)",
             "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill",
