@@ -466,7 +466,8 @@ class LPRamp(Component):
         if self.hits>=self.per and self.si<len(self.stages)-1:
             self.si+=1;self.hits=0;tr.hspd=self.stages[self.si]
 class Stealth(Component):
-    def __init__(self,after):self.after=after;self.idle=0
+    # spawns invisible (wiki Royal Ghost: visible only once he attacks) and hides again after the idle time
+    def __init__(self,after):self.after=after;self.idle=after
     def on_tick(self,tr,g):
         self.idle+=g.DT
         if self.idle>=self.after and not any(s.kind=='invisible' for s in tr.statuses):tr.statuses.append(Status('invisible',g.DT*2))
@@ -475,6 +476,13 @@ class Stealth(Component):
                 if s.kind=='invisible':s.dur=g.DT*2
     def on_attack(self,tr,tgt,g):
         self.idle=0;tr.statuses=[s for s in tr.statuses if s.kind!='invisible']
+class Fade(Component):
+    # a summoned spirit (Souldier) is gone after resting this long without an attack, the way its leader turns invisible
+    def __init__(self,after):self.after=after;self.idle=0
+    def on_tick(self,tr,g):
+        self.idle+=g.DT
+        if self.idle>=self.after:tr.hp=0;tr.alive=False
+    def on_attack(self,tr,tgt,g):self.idle=0
 class Knockback(Component):
     def __init__(self,dist):self.dist=dist
     def on_attack(self,tr,tgt,g):
@@ -1203,8 +1211,9 @@ class EvoInfernoDragon(Component):
     def on_attack(self,tr,tgt,g):
         pass
 class EvoRoyalGhost(Component):
-    def __init__(self,soul_cnt,scfg):
-        self.cnt=soul_cnt;self.scfg=scfg;self.sr=scfg['rng']
+    # each time he turns visible two Souldiers appear beside him with their spawn damage; mk builds a fresh unit so each carries its own Fade
+    def __init__(self,soul_cnt,mk):
+        self.cnt=soul_cnt;self.mk=mk;self.scfg=mk();self.sr=self.scfg['rng']
         self.was_invis=True
     def on_tick(self,tr,g):
         is_invis=any(s.kind=='invisible' for s in getattr(tr,'statuses',[]))
@@ -1215,8 +1224,8 @@ class EvoRoyalGhost(Component):
                 d=math.sqrt((e.x-tr.x)**2+(e.y-tr.y)**2)
                 if d<=self.sr:e.take_damage(self.scfg['dmg'])
             for _ in range(self.cnt):
-                ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5)
-                g.players[tr.team].troops.append(Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.scfg,components=[])))
+                ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5);cfg=self.mk()
+                g._place(tr.team,Troop(tr.team,tr.x+ox,tr.y+oy,cfg),cfg.get('deploy',0))
         self.was_invis=is_invis
 class EvoLumberjack(Component):
     def __init__(self,ghost_dur):

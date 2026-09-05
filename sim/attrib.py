@@ -62,7 +62,7 @@ def main():
     if a.limit:bids=bids[:a.limit]
     with Pool(a.jobs) as p:res=p.map(_run,[(b,placements[b],outcomes[b],pids.get(b)) for b in bids],chunksize=4)
     if a.zero:
-        early=[(b,k,i) for b,_,k,i in res if k and k[0]<180]
+        early=[(b,k,i) for b,_,k,i in res if k and k[0] is not None and k[0]<180]
         by={};share={}
         for b,(first,(team,tt,card,dmg)),i in early:
             by[card]=by.get(card,0)+1
@@ -72,7 +72,7 @@ def main():
               f'ends before the last play in {sum(i["premature"] for _,_,_,i in res)}')
         print('first sim tower kill in regulation: finishing card (count) and damage share on that tower (sum over games)')
         for c,n in sorted(by.items(),key=lambda kv:-kv[1])[:25]:print(f'  {c:24s} {n:4d} {share.get(c,0):7.1f}')
-        ts=sorted(k[0] for _,_,k,_ in res if k)
+        ts=sorted(k[0] for _,_,k,_ in res if k and k[0] is not None)
         print('sim first tower kill time quartiles:',[ts[len(ts)*q//4] for q in (1,2,3)] if ts else None)
         return
     err={};n={};sim={};real={};tot=[0,0]

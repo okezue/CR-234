@@ -7456,10 +7456,13 @@
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
-    "units.souldier": "legacy:evolution.changes.souldiers",
     "units.souldier.count": "legacy:evolution.changes.souldiers",
-    "units.souldier.damage": "legacy:evolution.changes.souldiers",
-    "units.souldier.hitpoints": "legacy:evolution.changes.souldiers"
+    "units.souldier.damage": "patch:2026-09-04",
+    "units.souldier.damage[]": "derived:levelMult",
+    "units.souldier.deployTime": "patch:2026-09-04",
+    "units.souldier.hitpoints": "patch:2026-09-04",
+    "units.souldier.hitpoints[]": "derived:levelMult",
+    "units.souldier.skills": "patch:2026-09-04"
    },
    "stats": {
     "damage": [null, null, null, null, null, null, null, null, 216, 237, 261, 286, 315, 345, 379, 417],
@@ -7472,12 +7475,16 @@
    "tribe": null,
    "units": {
     "souldier": {
-     "card": null,
      "count": 2,
-     "damage": [null, null, null, null, null, null, null, null, 82, 90, 99, 109, 120, 132, 145, 159],
+     "damage": [null, null, null, null, null, null, null, null, 67, 74, 81, 89, 98, 108, 119, 130],
+     "deployTime": 0.2,
      "from": ["legacy:evolution.changes.souldiers"],
-     "hitpoints": [null, null, null, null, null, null, null, null, 165, 181, 199, 219, 241, 264, 290, 319],
-     "name": "Souldier"
+     "hitpoints": [null, null, null, null, null, null, null, null, 67, 74, 81, 89, 98, 108, 119, 130],
+     "skills": {
+      "fade": {
+       "whenNotAttackingTime": 2.0
+      }
+     }
     }
    }
   },

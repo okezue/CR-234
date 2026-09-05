@@ -194,6 +194,7 @@ def attach(cfg,c,sk,lvl,chain=None):
     iv=sk.get('invisibility',{})
     # a null idle time means invisible from deployment until the first attack (Suspicious Bush)
     if 'whenNotAttackingTime' in iv:cs.append(fx.Stealth(iv['whenNotAttackingTime'] or 0))
+    if sk.get('fade',{}).get('whenNotAttackingTime'):cs.append(fx.Fade(sk['fade']['whenNotAttackingTime']))
     if sk.get('multiply',{}).get('maxUnits'):cs.append(fx.EvoSkeletons(sk['multiply']['maxUnits']))
     return cfg
 
@@ -323,7 +324,7 @@ def evolve(c,k,s,lvl,tr):
        'goblin_drill':lambda:fx.Resurface([p/100 for p in bu['resurfacePercent']],bu.get('resurfaceCount') or [count(sd.get('count'))],unit(c,sd,lvl)),
        'mega_knight':lambda:fx.EvoMegaKnight(pb['strength']),
        'inferno_dragon':lambda:fx.EvoInfernoDragon(at(rd['damageTiers'][-1],lvl),rd.get('retainTime') or 0,rd.get('finalStageTime') or 0),
-       'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),unit(c,sp,lvl)),
+       'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
        'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
     if k in E:tr.components.append(E[k]())
     # the evolved bolt stuns and deals full damage on the base card's three targets; the bounces after them are the evolution

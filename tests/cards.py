@@ -5910,6 +5910,23 @@ def t_evo_rghost_souldiers():
     souldiers=[t for t in g.players['blue'].troops if t.name=='Souldier']
     assert len(souldiers)>=1,f"Should spawn souldiers: {len(souldiers)}"
     return f"Evo Royal Ghost souldiers ({len(souldiers)})"
+def t_evo_rghost_souldiers_fade():
+    # wiki Royal Ghost/Evolution: he spawns invisible, the two Souldiers (81 hp, 81 damage at 11) appear when he turns visible and are gone
+    # after 2 s without an attack
+    g=Game()
+    rg=mk_card('royal_ghost',11,'blue',9,10,evolved=True)
+    g.deploy('blue',rg)
+    g.run(0.1)
+    assert any(s.kind=='invisible' for s in rg.statuses) and not [t for t in g.players['blue'].troops if t.name=='Souldier']
+    d=Dummy('red',9,12,hp=50000,spd=0)
+    g.deploy('red',d)
+    g.run(3)
+    sd=[t for t in g.players['blue'].troops if t.name=='Souldier']
+    assert len(sd)==2 and sd[0].max_hp==81 and sd[0].dmg==81,[(t.max_hp,t.dmg) for t in sd]
+    d.alive=False
+    g.run(2.5)
+    assert not [t for t in g.players['blue'].troops if t.name=='Souldier' and t.alive]
+    return "Souldiers 81/81 appear with the ghost and fade after 2 idle seconds"
 def t_evo_bandit():
     # no Bandit evolution exists in the current game data; the evolved flag yields the base card
     b=mk_card('bandit',11,'blue',5,10,evolved=True)
