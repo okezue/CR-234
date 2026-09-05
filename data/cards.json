@@ -2809,7 +2809,7 @@
     "periodicSpawn": {
      "character": "Fire Spirit",
      "count": 1,
-     "pauseTime": 7
+     "pauseTime": 5
     }
    },
    "speed": 60,
@@ -2819,7 +2819,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "projectile.speed": "gd:debfe1e2",
-    "skills.periodicSpawn.pauseTime": "patch:2026-09-03",
+    "skills.periodicSpawn.pauseTime": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",

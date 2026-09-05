@@ -216,8 +216,8 @@ def t_evo_cannon_barrage():
 def t_evo_furnace_hot_spawns():
     g=_game();fu=mk_card('furnace',11,'blue',9,10,evolved=True);g.deploy('blue',fu);st=[c for c in fu.components if isinstance(c,fx.SpawnTimer)][0]
     g.run(0.2);cold=st.interval;_dummies(g,(9,13));g.run(0.2);hot=st.interval
-    assert cold==7 and abs(hot-7/2.91)<0.01,f"{cold} {hot}"
-    return f"Evo Furnace spawns every {hot:.2f} s while attacking instead of every 7 s"
+    assert cold==5 and abs(hot-5/2.91)<0.01,f"{cold} {hot}"
+    return f"Evo Furnace spawns every {hot:.2f} s while attacking instead of every 5 s"
 def t_evo_goblin_barrel_decoys():
     g=_game();gb=mk_card('goblin_barrel',11,'blue',3.5,25,evolved=True);gb.apply(g)
     real=_named(g,'blue','Goblin');dec=_named(g,'blue','Decoy Goblin')

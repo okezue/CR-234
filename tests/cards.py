@@ -2725,11 +2725,12 @@ def t_bld_furnace():
     st=[c for c in fn.components if isinstance(c,SpawnTimer)]
     assert len(st)==1
     assert st[0].cfg['name']=='Fire Spirit'
-    assert abs(st[0].interval-7)<0.01
-    g=Game();g.deploy('blue',fn);g.run(7.5)
+    # game data Furnace_rework_continuous_spawn interval 5000 (wiki: 5 s since the 4/8/2026 balance update)
+    assert abs(st[0].interval-5)<0.01
+    g=Game();g.deploy('blue',fn);g.run(5.5)
     spawned=[tr for tr in g.players['blue'].troops if tr is not fn]
     assert len(spawned)>=1
-    return f"Furnace troop (hp={fn.hp} dmg={fn.dmg} spawned={len(spawned)} in 7.5 s: a Fire Spirit every 7 s since 7/8/2025)"
+    return f"Furnace troop (hp={fn.hp} dmg={fn.dmg} spawned={len(spawned)} in 5.5 s: a Fire Spirit every 5 s since 4/8/2026)"
 def t_bld_elixcoll():
     from sim.units import Building
     ec=mk_card('elixir_collector',11,'blue',5,10)
