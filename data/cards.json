@@ -1292,6 +1292,9 @@
    "rarity": "epic",
    "sightRange": 5.5,
    "skills": {
+    "immunity": {
+     "knockback": true
+    },
     "pierce": {
      "bounceDelay": null,
      "bounceDistance": null,
@@ -1314,6 +1317,7 @@
     "hero.ability.skills.snipe.towerDamagePercent": "patch:2026-09-01",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.immunity.knockback": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1430,6 +1434,9 @@
    "rarity": "epic",
    "sightRange": 6.0,
    "skills": {
+    "immunity": {
+     "knockback": true
+    },
     "transform": {
      "building": true,
      "hpPercent": 50,
@@ -1442,6 +1449,7 @@
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.immunity.knockback": "patch:2026-09-05",
     "skills.transform": "patch:2026-09-03",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -2240,6 +2248,9 @@
    "rarity": "rare",
    "sightRange": 7.5,
    "skills": {
+    "immunity": {
+     "knockback": true
+    },
     "spawnOnDeath": {
      "character": "ElixirGolem2",
      "count": 2,
@@ -2252,6 +2263,7 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
+    "skills.immunity.knockback": "patch:2026-09-05",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -5817,6 +5829,9 @@
        "rampInterval": 1.5
       }
      }
+    },
+    "immunity": {
+     "knockback": true
     }
    },
    "speed": 60,
@@ -5829,6 +5844,7 @@
     "skills.ability.skills.rampingDamage.damageTiers[0][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
+    "skills.immunity.knockback": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -8239,6 +8255,9 @@
    "skills": {
     "charging": {
      "loadFirstHit": true
+    },
+    "immunity": {
+     "knockback": true
     }
    },
    "speed": 45,
@@ -8247,6 +8266,7 @@
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
     "skills.charging": "patch:2026-09-03",
+    "skills.immunity.knockback": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
