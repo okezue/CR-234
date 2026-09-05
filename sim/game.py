@@ -518,7 +518,7 @@ class Game:
         if getattr(tr,'retarget_cd',0)>0:
             return self._default_target(tr)
         ag=getattr(tr,'aggro_tgt',None)
-        sr=max(getattr(tr,'sight_r',5.5),tr.rng+0.5)+K['sight_slack']
+        sr=max(getattr(tr,'sight_r',5.5),tr.rng)+K['sight_slack']
         if ag and getattr(ag,'alive',False):
             is_tower=hasattr(ag,'ttype')
             is_bldg_troop=getattr(tr,'targets',['Ground'])==['Buildings']
