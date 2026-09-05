@@ -13,8 +13,6 @@ META=os.path.join(_BASE,'data','raw','eval','battles.csv');WORK=os.path.join(_BA
 LOG=os.path.join(_BASE,'data','raw','calib.jsonl');CACHE=os.path.join(_BASE,'data','raw','eval','parsed.pkl')
 # one coordinate per knob (kiting is one coordinate: the drop flag with its slack); the sweep values bracket the engine's value
 GRID=[('sight_slack',[{'sight_slack':v} for v in (-1.0,-0.5,0.5,1.0,2.0)]),
-      ('tower_acq',[{'tower_acq':v} for v in (0.1,0.2,0.4,0.8)]),
-      ('tower_first',[{'tower_first':v} for v in (0.1,0.2,0.4,0.8)]),
       ('load_carry',[{'load_carry':v} for v in (0.0,0.25,0.5,0.75)]),
       ('sep_strength',[{'sep_strength':v} for v in (0.0,0.25,0.5,0.75)]),
       ('sep_iters',[{'sep_iters':v} for v in (2,3)]),

@@ -34,6 +34,8 @@ GD_UNIT = {"Goblinstein_doctor": "doctor"}
 TOWER16 = 347
 # the official battle log reports 7728 king tower hitpoints at level 16 (1,671 untouched towers in data/raw/eval/battles.csv); the wiki table says 7704
 KING16 = 7728
+# buildings.csv KingTower LoadTime 500 (RoyaleAPI cr-api-data): the statsroyale dump has no king record
+KING_LOAD = 0.5
 
 
 def fetch(url, name):
@@ -220,6 +222,9 @@ def gd_proj(card, spell, tag):
     elif card["projectile"] and card["projectile"]["speed"] is None and (ch.get("projectileData") or {}).get("speed"):
         # a shooter's own projectile (troops, the tower troops' arrows, cannonballs and spatulas)
         card["projectile"]["speed"], card["src"]["projectile.speed"] = round(ch["projectileData"]["speed"] / GD_TPS, 3), tag
+    if card["loadTime"] is None and ch.get("loadTime"):
+        # ClashStrategic lacks the Royal Chef's load time (200 ms): his first spatula comes 0.8 s after a target appears, like the Princess'
+        card["loadTime"], card["src"]["loadTime"] = ch["loadTime"] / 1000, tag
     da = card["skills"].get("dash")
     if da is not None and ch.get("jumpSpeed") and not card["src"].get("skills.dash.speed", "").startswith("patch:"):
         # the Bandit's dash and the Mega Knight's jump travel at the character's JumpSpeed
@@ -385,10 +390,10 @@ def king():
         "name": "King's Tower", "id": None, "rarity": None, "kind": "tower", "cost": None, "count": 1, "deployTime": None, "placement": None,
         "flying": False, "targets": ["air", "ground"], "speed": None, "range": wiki.num(a.get("Range")), "minRange": None, "sightRange": None,
         "collisionRadius": None, "mass": None, "summonRadius": None, "summonDeployDelay": None, "hitSpeed": wiki.num(a.get("Hit Speed")),
-        "loadTime": None, "hitType": "single", "radius": None,
+        "loadTime": KING_LOAD, "hitType": "single", "radius": None,
         "duration": None, "lifetime": None, "projectile": {"speed": None, "count": 1}, "kamikaze": False, "arena": None, "tribe": None,
         "stats": {"hitpoints": hp, "damage": dmg, "towerDamage": None}, "skills": {}, "evo": None, "hero": None, "units": {},
-        "src": {"*": "wiki:King's Tower", "stats.hitpoints[15]": "royaleapi battle log (KING16)"},
+        "src": {"*": "wiki:King's Tower", "stats.hitpoints[15]": "royaleapi battle log (KING16)", "loadTime": "royaleapi cr-api-data KingTower LoadTime"},
     }
 
 

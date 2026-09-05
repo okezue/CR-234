@@ -9664,7 +9664,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "loadTime": "legacy:attack.first_hit_speed_sec",
+    "loadTime": "gd:debfe1e2",
     "projectile.speed": "gd:debfe1e2",
     "stats.damage": "gd projectile damage 125 on the card curve (no damageScalingMode PrincessTower; cs anchor 272 is on the tower curve)",
     "stats.damage[]": "derived:levelMult",
@@ -9754,7 +9754,7 @@
    "kamikaze": false,
    "kind": "tower",
    "lifetime": null,
-   "loadTime": null,
+   "loadTime": 0.5,
    "mass": null,
    "minRange": null,
    "name": "King's Tower",
@@ -9771,6 +9771,7 @@
    "speed": null,
    "src": {
     "*": "wiki:King's Tower",
+    "loadTime": "royaleapi cr-api-data KingTower LoadTime",
     "stats.hitpoints[15]": "royaleapi battle log (KING16)"
    },
    "stats": {
@@ -9800,7 +9801,7 @@
    "kamikaze": false,
    "kind": "tower",
    "lifetime": null,
-   "loadTime": null,
+   "loadTime": 0.2,
    "mass": null,
    "minRange": null,
    "name": "Royal Chef",
@@ -9827,6 +9828,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "loadTime": "gd:debfe1e2",
     "projectile.speed": "gd:debfe1e2",
     "skills.stack.firstDelay": "patch:2026-09-01",
     "skills.stack.maxInterval": "patch:2026-09-01",

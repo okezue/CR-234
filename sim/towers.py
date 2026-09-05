@@ -1,7 +1,6 @@
 import random
 from sim.cards import card,at,first
 from sim.units import hidden
-from sim.knobs import K
 
 def king(lvl):
     k=card('king_tower')
@@ -16,7 +15,8 @@ def lock(o,tw,en,rng):
         if not e.alive or hidden(e):continue
         d=tw.dist(e.x,e.y)-getattr(e,'collision_r',0)
         if d<=rng and d<bd:bd=d;b=e
-    if b is not None and b is not l:o.cd=max(o.cd,K['tower_acq']+(K['tower_first'] if l is None else 0))
+    # the tower shoots on the tick it acquires: the documented 0.8 s first attack period (wiki Tower Princess, hit speed 800 with no load
+    # time in the game data) judged 61.5/37.5/77.0/52.6 -> 60.2/35.8/72.1/57.6 and is not applied
     o.lock=b
     return b
 
@@ -30,16 +30,15 @@ class TT:
     def _tgt(self,tw,en):
         # the tower holds its target until it dies, hides or leaves range (a stun resets it); a tank keeps the fire off what follows
         return lock(self,tw,en,self.RNG)
-    def tick(self,dt,tw,en,al,**kw):return []
-
-class TPrincess(TT):
-    def __init__(self,lvl):super().__init__('tower_princess',lvl)
     def tick(self,dt,tw,en,al,**kw):
         r=[];self.cd=max(0,self.cd-dt)
         t=self._tgt(tw,en)
         if t and self.cd<=0:
             r.append(('atk',t,self.dmg));self.cd=self.spd
         return r
+
+class TPrincess(TT):
+    def __init__(self,lvl):super().__init__('tower_princess',lvl)
 
 class Cannoneer(TT):
     def __init__(self,lvl):
@@ -84,11 +83,8 @@ class RoyalChef(TT):
         self.prdy=False;self.bst=set()
         self.ckmin=k['interval'];self.ckmax=k['maxInterval']
     def tick(self,dt,tw,en,al,pt_dead=0,**kw):
-        r=[];self.cd=max(0,self.cd-dt)
-        t=self._tgt(tw,en)
-        attacking=t is not None
-        if t and self.cd<=0:
-            r.append(('atk',t,self.dmg));self.cd=self.spd
+        r=super().tick(dt,tw,en,al)
+        attacking=self.lock is not None
         if self.ckdel>0:
             self.ckdel-=dt;return r
         if not self.prdy:

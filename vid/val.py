@@ -330,6 +330,74 @@ def arrivals(games, own='b'):
     return pd.DataFrame(rows)
 
 
+def chain(tr, track, team='r', maxgap=0.6, rad=1.2):
+    # follow a unit backwards through the tracker's fragments: the same-team fragment that ended nearest before this one began; the badge
+    # jumps up to 3 tiles in one frame on the bridge, so the gate widens over the river band; ambiguous joins (two candidates) are counted
+    r = tr[tr.team == team]
+    parts, cur, seen, amb = [], track, set(), 0
+    while cur is not None and cur not in seen:
+        seen.add(cur)
+        g = r[r.track == cur].sort_values('t')
+        parts.append(g)
+        t0, x0, y0 = g.t.iloc[0], g.x.iloc[0], g.y.iloc[0]
+        c = r[(r.t < t0) & (r.t > t0 - maxgap) & ~r.track.isin(seen)]
+        c = c.assign(dd=np.hypot(c.x - x0, c.y - y0))
+        c = c[c.dd < (3.5 if 12.5 < y0 < 18.5 else rad)]
+        if len(c) == 0:
+            break
+        ends = c.groupby('track').agg(te=('t', 'max'), dd=('dd', 'min')).sort_values(['te', 'dd'], ascending=[False, True])
+        amb += int(len(ends) > 1 and t0 - ends.te.iloc[1] < 0.3)
+        cur = ends.index[0]
+    return pd.concat(parts).sort_values('t'), amb
+
+
+def bar_steps(t, hp, thr=0.02, hold=3):
+    # the bar fill flickers between 0 and 1 for single frames: a step is a drop of the 5-frame median that holds for 3 frames above empty
+    m = pd.Series(hp).rolling(5, center=True, min_periods=1).median().to_numpy()
+    out, cur, last = [], m[0], t[0]
+    for a in range(1, len(t) - hold):
+        if (m[a:a + hold] < cur - thr).all() and (m[a:a + hold] > 0.02).all() and t[a] - last > 0.25:
+            out.append((float(t[a]), float(cur - np.median(m[a:a + hold]))))
+            cur, last = float(np.median(m[a:a + hold])), t[a]
+    return out
+
+
+def tower_shots(games, own='b', reach=9.0):
+    # the tower's own shots, anchored on the arrivals (a tower HP step names the attacker standing in reach): the attacker's chain of
+    # fragments gives the moment its badge crossed the tower's reach (7.5 + 1 collision + 0.5) and the first frame its bar appeared; the
+    # bar steps while it stands give the shot cadence; own tracks and own banners near the unit mark shots that may be a defender's
+    from vid.cal import TOWERS
+    rows = []
+    for gi, (tr, tw, bn) in enumerate(games):
+        for _, a in arrivals([(tr, tw, bn)], own).iterrows():
+            tx, ty = TOWERS[a.tower]
+            g, amb = chain(tr, a.track, 'r' if own == 'b' else 'b')
+            g = g.assign(d=np.hypot(g.x - tx, g.y - ty))
+            t, d, hp = g.t.to_numpy(), g.d.to_numpy(), g.hp.to_numpy()
+            inn, out = np.where(d < reach)[0], np.where(d >= reach)[0]
+            ent = first = None
+            if len(out) and len(inn) and out[0] < inn[-1]:
+                i = out[out < inn[-1]][-1]
+                j = inn[inn > i][0]
+                ent = t[i] + (t[j] - t[i]) * (d[i] - reach) / max(d[i] - d[j], 1e-6)
+                lv = float(np.median(hp[max(0, i - 20):i + 1]))
+                mm = pd.Series(hp).rolling(3, center=True, min_periods=1).median().to_numpy()
+                f = next((q for q in range(j, len(t) - 2) if (mm[q:q + 3] < lv - 0.015).all()), None)
+                first = t[f] - ent if f is not None and lv > 0.99 else None
+            p = g.iloc[-1]
+            st = tr[(tr.team == g.team.iloc[0]) & (tr.t >= a.t_stop) & (tr.t < a.t_stop + 8)]
+            st = st[np.hypot(st.x - p.x, st.y - p.y) < 0.7].sort_values('t')
+            steps = bar_steps(st.t.to_numpy(), st.hp.to_numpy()) if len(st) > 20 else []
+            t0 = ent if ent is not None else a.t_stop
+            ow = tr[(tr.team == own) & (tr.t > t0 - 1) & (tr.t < a.t_stop + 3)]
+            bb = bn[(bn.team == own) & (bn.t > t0 - 8) & (bn.t < a.t_stop + 3)]
+            rows.append({'game': gi, 'tower': a.tower, 't_stop': a.t_stop, 'loss': a.loss, 'cands': a.cands, 'frags': g.track.nunique(), 'amb': amb,
+                         'entry': ent, 'first': first, 'ivals': [round(b - x, 2) for (x, _), (b, _) in zip(steps, steps[1:])],
+                         'sizes': [round(s, 3) for _, s in steps],
+                         'own_near': ow[np.hypot(ow.x - p.x, ow.y - p.y) < 6].track.nunique() + len(bb[np.hypot(bb.x - p.x, bb.y - 2 - p.y) < 8])})
+    return pd.DataFrame(rows)
+
+
 def sim_arrival(card, lvl, horizon=20):
     # the same scenario in the engine: a lone unit walks from the bridge to the princess tower; time from its last step to the first tower hit
     g = Game(p1={'king_lvl': 15}, p2={'king_lvl': 15})
