@@ -1162,7 +1162,9 @@ class MKJump(Component):
                 if self.jtgt and getattr(self.jtgt,'alive',True):
                     jd=getattr(tr,'jump_dmg',getattr(tr,'spawn_zap_dmg',tr.dmg*2))
                     opp=g._opp(tr.team)
-                    best=self.jtgt;bd=999
+                    # he comes down on a troop that ended up nearer than his mark, never beyond it (wiki Mega Knight: he re-targets onto a troop
+                    # placed nearby if his original target is farther away); an unbounded pick sent him across the arena onto any stray body
+                    best=self.jtgt;jx,jy=pos(best);bd=math.hypot(tr.x-jx,tr.y-jy)
                     for e in g.players[opp].troops:
                         if not e.alive:continue
                         dd=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
