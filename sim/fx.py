@@ -1159,9 +1159,10 @@ class RowdyReroll(Ability):
         lost=tr.max_hp-tr.hp
         tr.hp=min(tr.max_hp,tr.hp+int(lost*self.heal_pct))
 class MKJump(Component):
-    # dur is the whole jump (wind-up plus flight); the wind-up is what remains after the flight time
-    def __init__(self,mn,mx,splash_r,jspd,dur=0.9,kb=0):
-        self.mn=mn;self.mx=mx;self.sr=splash_r;self.jspd=jspd;self.dur=dur;self.kb=kb
+    # the wind-up (wiki Jump Time 0.9, RoyaleAPI dash_cooldown 900, the Bandit's Dash Time twin) is stood through, then the flight runs at
+    # jspd (jump_speed 250) and the landing costs land (dash_landing_time 300) before the first swing
+    def __init__(self,mn,mx,splash_r,jspd,charge=0.9,kb=0,land=0.3):
+        self.mn=mn;self.mx=mx;self.sr=splash_r;self.jspd=jspd;self.charge=charge;self.kb=kb;self.land=land
         self.charging=False;self.airborne=False;self.timer=0
         self.osp=None;self.jtgt=None;self.jdist=0
     def on_tick(self,tr,g):
@@ -1187,10 +1188,15 @@ class MKJump(Component):
                         dd=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
                         if dd<bd:bd=dd;best=e
                     self.jtgt=best
-                    ax,ay=tr.x,tr.y;tr.x,tr.y=pos(self.jtgt);d=math.hypot(tr.x-ax,tr.y-ay) or 1
+                    ax,ay=tr.x,tr.y;jx,jy=pos(best);d=math.hypot(jx-ax,jy-ay) or 1
+                    # a troop is landed on; a tower or building is landed against, bodies touching, since he cannot stand on its footprint
+                    # (landing on the tower's centre kept short-reach defenders from ever touching him)
+                    gap=(getattr(best,'collision_r',1.0)+tr.collision_r) if hasattr(best,'ttype') or getattr(best,'is_building',False) else 0
+                    tr.x,tr.y=jx-(jx-ax)/d*min(gap,d),jy-(jy-ay)/d*min(gap,d)
                     # the knockback origin sits a hair behind the landing so a troop under him is thrown forward
                     for e in near(g,tr.team,tr.x,tr.y,self.sr,air='Air' in getattr(tr,'targets',['Ground'])):
-                        hurt(e,jd,g);push(e,tr.x-(tr.x-ax)/d*0.01,tr.y-(tr.y-ay)/d*0.01,self.kb)
+                        hurt(e,jd,g);push(e,tr.x-(jx-ax)/d*0.01,tr.y-(jy-ay)/d*0.01,self.kb)
+                    tr.cd=max(tr.cd,self.land)
                 self.jtgt=None
             return
         tgt=getattr(tr,'tgt',None)
@@ -1199,13 +1205,13 @@ class MKJump(Component):
             self.charging=False;return
         tx,ty=pos(tgt);d=math.hypot(tr.x-tx,tr.y-ty);rd=g._dist(tr,tgt)
         if self.mn<=rd<=self.mx and not self.charging:
-            self.charging=True;self.timer=max(0.0,self.dur-d/self.jspd);self.osp=tr.spd;tr.spd=0;self.jtgt=tgt;self.jdist=d
+            self.charging=True;self.timer=self.charge;self.osp=tr.spd;tr.spd=0;self.jtgt=tgt;self.jdist=d
         if self.charging:
             if tgt and tgt is not self.jtgt and rd<self.mn:
                 self.jtgt=tgt;self.jdist=d
             self.timer-=g.DT
             if self.timer<=0:
-                self.charging=False;self.airborne=True;self.timer=min(self.dur,self.jdist/self.jspd)
+                jx,jy=pos(self.jtgt);self.charging=False;self.airborne=True;self.timer=math.hypot(jx-tr.x,jy-tr.y)/self.jspd
 class EvoMegaKnight(Component):
     # the uppercut lands on every nth swing (wiki 4/8/2026: every 2 hits instead of every hit)
     def __init__(self,kb,every=1):self.kb=kb;self.every=every;self.n=0

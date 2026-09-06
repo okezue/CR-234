@@ -109,7 +109,8 @@ def attach(cfg,c,sk,lvl,chain=None):
         cs.append(fx.Charge(ch['range']));cfg['charge_dmg']=at(ch.get('damage'),lvl) or d
     da=sk.get('dash',{})
     if da.get('minRange') is not None and 'jump' in sk:
-        cs.append(fx.MKJump(da['minRange'],da['maxRange'],da.get('radius') or 0,da.get('speed') or 1,sk['jump'].get('duration') or 0,kb))
+        cs.append(fx.MKJump(da['minRange'],da['maxRange'],da.get('radius') or 0,da.get('speed') or 1,da.get('chargeTime') or 0,kb,
+                            sk['jump'].get('landingTime') or 0))
         cfg['jump_dmg']=at(da.get('damage'),lvl) or d
     elif da.get('minRange') is not None:
         cs.append(fx.BanditDash(da['minRange'],da['maxRange'],da.get('chargeTime') or 0,da.get('speed') or 8.333));cfg['dash_dmg']=at(da.get('damage'),lvl) or d

@@ -23,6 +23,12 @@
   "note": "Wiki Dart Goblin history, 2/3/2026 increased the Dart Goblin's sight range to 7.5 tiles (from 7 tiles). https://clashroyale.fandom.com/wiki/Dart_Goblin"},
  {"card": "goblin_machine", "path": "skills.secondaryAttack.hitSpeed", "value": 5.0,
   "note": "The rocket fires every 5 s: game data Goblin_machine_rocket attackDelay 1000 plus attackCooldown 4000; wiki Goblin Machine history, 4/8/2026 decreased the rocket hit speed to 5 seconds (from 3.5 seconds, the legacy value). https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Goblin_Machine"},
+ {"card": "mega_knight", "path": "skills.dash.chargeTime", "value": 0.9,
+  "note": "The jump's wind-up: he stands 0.9 s before leaving the ground (wiki Mega Knight Jump Attributes: Jump Time 0.9 sec, Jump Speed 250, the same table the Bandit's Dash Time 0.8 sec and Dash Speed 500 come from; RoyaleAPI cr-api-data MegaKnight dash_cooldown 900 against the Bandit's 800, jump_speed 250; the 2/8/2022 note: decreased the time required for charging his jump to 0.9 seconds from 1.1). The flight then runs at the jump speed, 5 tiles/s, so a 4 tile jump lands 1.7 s after the trigger; the 2026-09-01 patch read the 0.9 s as wind-up plus flight. https://clashroyale.fandom.com/wiki/Mega_Knight https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json"},
+ {"card": "mega_knight", "path": "skills.jump.duration", "value": null,
+  "note": "Superseded by skills.dash.chargeTime and the flight at skills.dash.speed."},
+ {"card": "mega_knight", "path": "skills.jump.landingTime", "value": 0.3,
+  "note": "RoyaleAPI cr-api-data MegaKnight dash_landing_time 300: the landing takes 0.3 s before he swings. https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json"},
  {"card": "battle_healer", "path": "skills.heal.radius", "value": 3.0,
   "note": "Heal radius 3 tiles: game data BattleHealer radius 3000; wiki Battle Healer history, 4/8/2026 decreased her heal radius to 3 tiles (from 4 tiles, the legacy value) and made it so she can no longer heal herself nor other Battle Healers. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Battle_Healer"}
 ]

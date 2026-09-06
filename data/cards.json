@@ -5668,6 +5668,7 @@
      "radius": 2.2
     },
     "dash": {
+     "chargeTime": 0.9,
      "damage": [null, null, null, null, null, null, null, null, 445, 489, 537, 590, 648, 711, 781, 858],
      "maxRange": 5,
      "minRange": 3.5,
@@ -5676,8 +5677,9 @@
      "targetType": null
     },
     "jump": {
-     "duration": 0.9,
+     "duration": null,
      "height": 3.0,
+     "landingTime": 0.3,
      "speed": 0.25
     },
     "pushback": {
@@ -5699,10 +5701,12 @@
     "skills.areaDamageOnSpawn.damage": "patch:2026-09-03",
     "skills.areaDamageOnSpawn.damage[]": "derived:levelMult",
     "skills.areaDamageOnSpawn.radius": "patch:2026-09-03",
+    "skills.dash.chargeTime": "patch:2026-09-06",
     "skills.dash.damage[]": "derived:levelMult",
     "skills.dash.radius": "patch:2026-09-03",
     "skills.dash.speed": "gd:debfe1e2",
-    "skills.jump.duration": "patch:2026-09-01",
+    "skills.jump.duration": "patch:2026-09-06",
+    "skills.jump.landingTime": "patch:2026-09-06",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9603,7 +9607,7 @@
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
    "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
    "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
-   "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/duration, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
+   "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
    "produceElixir": "interval and amount",
    "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still",
    "recoil": "self knockback per shot",

@@ -1,3 +1,4 @@
+import math
 import random
 from sim.game import Game
 from sim.cards import create as mk_card,card
@@ -108,8 +109,12 @@ def t_mega_knight_jump_time_and_knockback():
     while g.t<3 and t0 is None:
         g.tick()
         if d.hp<50000:t0=g.t
-    assert t0 is not None and abs(t0-0.9)<=0.1 and d.y>=15.5,f"{t0} {d.y}"
-    return f"Mega Knight jump lands after {t0:.2f} s (Jump Time 0.9) for 537 and at least 1 tile knockback (bodies then separate)"
+    # 0.9 s wind-up standing, then the 5.5 tile flight at 5 tiles/s
+    assert t0 is not None and abs(t0-2.0)<=0.1 and d.y>=15.5,f"{t0} {d.y}"
+    g=_game(towers=True);mk=mk_card('mega_knight',11,'blue',14.5,19.5);g.deploy('blue',mk);tw=g.arena.get_tower('red','princess','right')
+    g.run(2.5)
+    assert tw.hp<tw.max_hp and abs(math.hypot(mk.x-tw.cx,mk.y-tw.cy)-1.75)<0.05 and not g.arena.blocked(int(mk.x),int(mk.y)),f"{tw.hp} {mk.x},{mk.y}"
+    return f"Mega Knight jump lands after {t0:.2f} s (0.9 s wind-up, jump speed 250) for 537 and at least 1 tile knockback; a tower is landed against, not on"
 def t_miner_burrows_untargetable():
     g=Game();mn=mk_card('miner',11,'blue',9,25);g.deploy('blue',mn)
     assert has(mn,'burrowed') and (mn.x,mn.y)==(9.0,3.0)

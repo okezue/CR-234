@@ -577,12 +577,12 @@ def main():
                     "drags a troop to the unit's reach at dragSpeed or the unit to a building at selfDragSpeed, slowing the target (Fisherman)",
             "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill",
-            "params": "charge.range, dash.chargeTime/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "
+            "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "
                       "periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy "
                       "unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, "
                       "heal.radius/overHeal/perKillTiers, poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, "
                       "slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, "
-                      "jump.damage/radius/duration, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, "
+                      "jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, "
                       "rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, "
                       "boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), "
                       "ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
