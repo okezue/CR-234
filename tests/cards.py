@@ -673,7 +673,7 @@ def t_rocket_ct():
     ini=rpt.hp
     r=mk_card('rocket',11,'blue',rpt.cx,rpt.cy)
     r.apply(g)
-    assert rpt.hp==ini-343,f"Expected 343 CT dmg, got {ini-rpt.hp}"
+    assert rpt.hp==ini-341,f"Expected 341 CT dmg, got {ini-rpt.hp}"
     return f"Rocket crown tower ({ini}->{rpt.hp})"
 def t_rocket_kb():
     g=Game()
@@ -703,7 +703,7 @@ def t_arrows_ct():
     a=mk_card('arrows',11,'blue',rpt.cx,rpt.cy)
     a.apply(g)
     for _ in range(10):a.tick(0.05,g)
-    assert rpt.hp==ini-75,f"Expected 75 CT dmg (25*3), got {ini-rpt.hp}"
+    assert rpt.hp==ini-72,f"Expected 72 CT dmg (24*3, 20 percent of 122 a wave), got {ini-rpt.hp}"
     return f"Arrows crown tower ({ini}->{rpt.hp})"
 def t_arrows_volley():
     g=Game()
@@ -732,7 +732,7 @@ def t_gy_spawns():
     g.run(10)
     skels=[t for t in g.players['blue'].troops if t.alive]
     total=gy.spawned
-    assert total==13,f"Expected 13 spawns, got {total}"
+    assert total==12,f"Expected 12 spawns, got {total}"
     return f"Graveyard spawns 13 skeletons ({len(skels)} alive)"
 def t_gy_attack():
     g=Game()
@@ -2097,14 +2097,14 @@ def t_fisherman_v_knight():
     assert k.hp<1690,"Fisherman should fight Knight"
     return f"Fisherman vs Knight (knight_hp={k.hp})"
 def t_fisherman_hook():
-    # a ground troop 4.5 tiles away is hooked after the 1.3 s load and dragged into his reach, slowed; a building in the band drags him to it
+    # a ground troop 4.5 tiles away is hooked after the 1.3 s load and dragged into his reach (no slow since 6/4/2026); a building in the band drags him to it
     g=quiet(Game())
     f=mk_card('fisherman',11,'blue',9,10);g.deploy('blue',f)
     k=mk_card('knight',11,'red',9,15.5);g.deploy('red',k);k.spd=0
     g.run(1.2)
     assert f.spd==0 and k.y>15,"he stands and charges while the knight is in the 3.5-7 band"
     g.run(1.0)
-    assert g._dist(f,k)<=f.rng and k.y<13 and any(s.kind=='slow' for s in k.statuses),f"the knight is dragged to him and slowed (d={g._dist(f,k):.2f})"
+    assert g._dist(f,k)<=f.rng and k.y<13 and not any(s.kind=='slow' for s in k.statuses),f"the knight is dragged to him, not slowed (d={g._dist(f,k):.2f})"
     assert f.spd>0 and not any(s.kind=='slow' for s in f.statuses)
     g2=quiet(Game())
     f2=mk_card('fisherman',11,'blue',14.5,17.5);g2.deploy('blue',f2)
@@ -3925,7 +3925,7 @@ def t_scn_rocket_tower():
     ok,msg=g.play_card('blue','rocket',rpt.cx,rpt.cy)
     assert ok,f"Failed to play rocket: {msg}"
     g.run(5)
-    assert rpt.hp==ini-343,f"Expected 343 CT dmg, got {ini-rpt.hp}"
+    assert rpt.hp==ini-341,f"Expected 341 CT dmg, got {ini-rpt.hp}"
     return f"Scenario: Rocket on tower ({ini}->{rpt.hp})"
 def t_scn_gy_vs_arrows():
     random.seed(42)
@@ -5911,9 +5911,12 @@ def t_evo_mk_uppercut():
     d=Dummy('red',9,15,hp=50000,spd=0)
     g.deploy('red',d)
     iy=d.y
-    g.run(5)
+    # first swing at 0.5 s: no uppercut; the second (2.2 s) throws the dummy (wiki 4/8/2026: every 2 hits)
+    g.run(1.0)
+    assert d.hp<50000 and d.y==iy,f"first hit without uppercut: y {d.y}"
+    g.run(4)
     assert d.y!=iy,f"Should knock back: y still {d.y}"
-    return f"Evo Mega Knight uppercut (y: {iy:.1f}->{d.y:.1f})"
+    return f"Evo Mega Knight uppercut on every second hit (y: {iy:.1f}->{d.y:.1f})"
 def t_evo_idrag_retain():
     g=Game()
     idr=mk_card('inferno_dragon',11,'blue',9,10,evolved=True)

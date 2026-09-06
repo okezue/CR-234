@@ -284,6 +284,15 @@ def gd_crown(rec, spell, lo, pct, tag):
     # (ClashStrategic's Baby Dragon 161 and P.E.K.K.A 816 tower anchors are stale), a spawn effect at -100 spares towers (Electro
     # Wizard, Ice Wizard), the Goblin Machine's rocket is halved
     if rec["kind"] == "spell":
+        # a spell's tower damage is its per-hit damage at the game's percent where the cs anchor is off it by more than rounding
+        # (Earthquake -40 and Tornado -70 where cs kept 65 and 35 percent)
+        cp = next((v for v in re.findall(r'"crownTowerDamagePercent": (-?\d+)', json.dumps(spell))), None)
+        st = rec["stats"]
+        if cp is not None and st.get("damage") and st.get("towerDamage") and not rec["src"].get("stats.towerDamage", "").startswith("patch:"):
+            tw = [None if d is None else d * (100 + int(cp)) // 100 for d in st["damage"]]
+            if abs(tw[10] - st["towerDamage"][10]) > 1:
+                rec["src"]["stats.towerDamage"] = f"{tag} (damage at crownTowerDamagePercent {cp}; cs anchor {st['towerDamage'][10]} is stale)"
+                st["towerDamage"] = tw
         return
     ch = spell.get("summonCharacterData") or {}
     ae = spell.get("areaEffectObjectData") or {}

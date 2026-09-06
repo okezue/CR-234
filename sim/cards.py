@@ -338,7 +338,7 @@ def evolve(c,k,s,lvl,tr):
        'electro_dragon':lambda:fx.EvoElectroDragon(pi['bounceDamagePercent']/100,pi['bounceDistance'],pi['bounceDelay']/mult(pi['speedMultiplier'])),
        'executioner':lambda:fx.EvoExecutioner(sn['range'],mult(sn['damageMultiplier']),sn['pushbackDistance']),
        'goblin_drill':lambda:fx.Resurface([p/100 for p in bu['resurfacePercent']],bu.get('resurfaceCount') or [count(sd.get('count'))],unit(c,sd,lvl)),
-       'mega_knight':lambda:fx.EvoMegaKnight(pb['strength']),
+       'mega_knight':lambda:fx.EvoMegaKnight(pb['strength'],pb.get('everyHits') or 1),
        'inferno_dragon':lambda:fx.EvoInfernoDragon(at(rd['damageTiers'][-1],lvl),rd.get('retainTime') or 0,rd.get('finalStageTime') or 0),
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
        'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}

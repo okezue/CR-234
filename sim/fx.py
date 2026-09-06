@@ -351,12 +351,13 @@ class ZapPack(Component):
             if self.stun>0 and hasattr(attacker,'statuses'):
                 attacker.statuses.append(Status('stun',self.stun))
 class HealPulse(Component):
+    # the healer's own kind is left out (wiki Battle Healer 4/8/2026: she can no longer heal herself nor other Battle Healers)
     def __init__(self,heal,radius,pulses):
         self.heal=heal;self.radius=radius;self.pulses=pulses
     def on_attack(self,tr,tgt,g):
         for _ in range(self.pulses):
             for ally in g.players[tr.team].troops:
-                if not ally.alive:continue
+                if not ally.alive or ally.name==tr.name:continue
                 d=math.sqrt((ally.x-tr.x)**2+(ally.y-tr.y)**2)
                 if d<=self.radius:
                     ally.hp=min(ally.max_hp,ally.hp+self.heal)
@@ -448,7 +449,7 @@ class Hook(Component):
     def _hit(self,tr,t,g):
         self.flying=False
         if not t.alive or not tr.alive:return
-        if hasattr(t,'statuses'):t.statuses.append(Status('slow',self.sdur,self.sval))
+        if self.sdur>0 and hasattr(t,'statuses'):t.statuses.append(Status('slow',self.sdur,self.sval))
         mine=hasattr(t,'ttype') or getattr(t,'is_building',False)
         if not mine:
             tx,ty=pos(t);t.statuses.append(Status('knockback',0.05));t.statuses.append(Status('stun',math.hypot(tx-tr.x,ty-tr.y)/self.drag))
@@ -1206,9 +1207,12 @@ class MKJump(Component):
             if self.timer<=0:
                 self.charging=False;self.airborne=True;self.timer=min(self.dur,self.jdist/self.jspd)
 class EvoMegaKnight(Component):
-    def __init__(self,kb):self.kb=kb
+    # the uppercut lands on every nth swing (wiki 4/8/2026: every 2 hits instead of every hit)
+    def __init__(self,kb,every=1):self.kb=kb;self.every=every;self.n=0
     def on_attack(self,tr,tgt,g):
         if not hasattr(tgt,'x') or not hasattr(tgt,'y'):return
+        self.n+=1
+        if self.n%self.every:return
         twy=g.arena.get_tower(getattr(tgt,'team','red'),'king').cy
         dy=twy-tgt.y
         if abs(dy)>0.1:tgt.y+=dy/abs(dy)*min(self.kb,abs(dy))

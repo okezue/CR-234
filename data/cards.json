@@ -190,12 +190,13 @@
     "projectile.waves": "gd:debfe1e2",
     "stats.damage": "patch:2026-08-05",
     "stats.damage[]": "derived:levelMult",
+    "stats.towerDamage": "gd:debfe1e2 (damage at crownTowerDamagePercent -80; cs anchor 75 is stale)",
     "stats.towerDamage[]": "derived:levelMult"
    },
    "stats": {
     "damage": [143, 157, 173, 190, 208, 228, 251, 275, 303, 333, 366, 401, 441, 484, 531, 584],
     "hitpoints": null,
-    "towerDamage": [29, 31, 35, 38, 42, 46, 51, 55, 61, 67, 75, 81, 89, 98, 107, 119]
+    "towerDamage": [28, 31, 34, 38, 41, 45, 50, 55, 60, 66, 73, 80, 88, 96, 106, 116]
    },
    "summonDeployDelay": null,
    "summonRadius": null,
@@ -799,7 +800,7 @@
      "onSpawn": null,
      "overHeal": null,
      "perAttack": [null, null, 48, 53, 58, 64, 70, 77, 84, 93, 102, 112, 123, 135, 148, 163],
-     "radius": 4.0
+     "radius": 3.0
     }
    },
    "speed": 60,
@@ -808,7 +809,7 @@
     "loadTime": "patch:2026-09-05",
     "mass": "legacy:hidden_stats.mass",
     "skills.heal.perAttack[]": "derived:levelMult",
-    "skills.heal.radius": "legacy:mechanics.healing",
+    "skills.heal.radius": "patch:2026-09-06",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1680,7 +1681,7 @@
    "radius": null,
    "range": 6.5,
    "rarity": "rare",
-   "sightRange": 7.0,
+   "sightRange": 7.5,
    "skills": {},
    "speed": 120,
    "src": {
@@ -1692,6 +1693,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "sightRange": "patch:2026-09-06",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1746,7 +1748,7 @@
     "*": "cs2.4.0",
     "stats.buildingDamage": "gd:debfe1e2 buildingDamagePercent",
     "stats.damage[]": "derived:levelMult",
-    "stats.towerDamage": "wiki:Earthquake per hit (cs anchor 49 is not per hit)",
+    "stats.towerDamage": "gd:debfe1e2 (damage at crownTowerDamagePercent -40; cs anchor 53 is stale)",
     "stats.towerDamage[]": "derived:levelMult",
     "tick": "wiki:Earthquake"
    },
@@ -1754,7 +1756,7 @@
     "buildingDamage": [null, null, 133, 147, 161, 178, 196, 213, 234, 259, 287, 311, 343, 378, 416, 458],
     "damage": [null, null, 38, 42, 46, 51, 56, 61, 67, 74, 82, 89, 98, 108, 119, 131],
     "hitpoints": null,
-    "towerDamage": [null, null, 25, 27, 30, 33, 36, 40, 44, 48, 53, 59, 64, 71, 78, 85]
+    "towerDamage": [null, null, 22, 25, 27, 30, 33, 36, 40, 44, 49, 53, 58, 64, 71, 78]
    },
    "summonDeployDelay": null,
    "summonRadius": null,
@@ -1776,7 +1778,7 @@
     "cycles": 1,
     "skills": {
      "pierce": {
-      "bounceDamagePercent": 67,
+      "bounceDamagePercent": 33,
       "bounceDelay": 0.15,
       "bounceDistance": 4.5,
       "bounceMode": "nearest",
@@ -1844,7 +1846,7 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
-    "evo.skills.pierce.bounceDamagePercent": "legacy:evolution.changes.infinite_bounce",
+    "evo.skills.pierce.bounceDamagePercent": "patch:2026-09-06",
     "evo.skills.pierce.speedMultiplier": "patch:2026-09-03",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
@@ -2343,10 +2345,10 @@
       "ammo": null,
       "aoeRadius": null,
       "closeRange": true,
-      "damageMultiplier": 175,
+      "damageMultiplier": 157.5,
       "hitSpeedMultiplier": null,
-      "pushbackDistance": 1.5,
-      "range": 3.5,
+      "pushbackDistance": 1.0,
+      "range": 2.5,
       "rootDuration": null
      }
     },
@@ -2391,6 +2393,9 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
+    "evo.skills.snipe.damageMultiplier": "patch:2026-09-06",
+    "evo.skills.snipe.pushbackDistance": "patch:2026-09-06",
+    "evo.skills.snipe.range": "patch:2026-09-06",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
@@ -2637,7 +2642,7 @@
      "minRange": 3.5,
      "selfDragSpeed": 9.0,
      "slow": {
-      "duration": 2.5,
+      "duration": 0,
       "hitSpeedMultiplier": -35,
       "speedMultiplier": -35
      },
@@ -2649,6 +2654,7 @@
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "skills.hook": "patch:2026-09-05",
+    "skills.hook.slow.duration": "patch:2026-09-06",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -3001,13 +3007,13 @@
     "cycles": 2,
     "skills": {
      "pull": {
-      "distance": 4.5,
+      "distance": 4.0,
       "duration": 0.75,
       "radius": 2.5,
       "strength": null
      },
      "slow": {
-      "duration": 4.0
+      "duration": 3.0
      }
     },
     "stats": {
@@ -3054,8 +3060,8 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "evo.skills.pull.distance": "legacy:evolution.roll_distance",
-    "evo.skills.slow.duration": "legacy:evolution.slow_duration",
+    "evo.skills.pull.distance": "patch:2026-09-06",
+    "evo.skills.slow.duration": "patch:2026-09-06",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.towerDamage[15]": "derived:levelMult (source level16 71 is off the level curve)",
     "evo.stats.towerDamage[]": "derived:levelMult",
@@ -3891,7 +3897,7 @@
     "secondaryAttack": {
      "character": "RocketLauncher",
      "damage": [null, null, null, null, null, null, null, null, 252, 277, 304, 334, 367, 403, 442, 486],
-     "hitSpeed": 3.5,
+     "hitSpeed": 5.0,
      "loadTime": 1.0,
      "minRange": 2.5,
      "radius": 1.5,
@@ -3906,7 +3912,7 @@
     "mass": "legacy:hidden_stats.mass",
     "skills.secondaryAttack.character": "legacy:components.rocket_launcher",
     "skills.secondaryAttack.damage": "legacy:components.rocket_launcher",
-    "skills.secondaryAttack.hitSpeed": "legacy:components.rocket_launcher",
+    "skills.secondaryAttack.hitSpeed": "patch:2026-09-06",
     "skills.secondaryAttack.loadTime": "legacy:components.rocket_launcher",
     "skills.secondaryAttack.minRange": "legacy:components.rocket_launcher",
     "skills.secondaryAttack.radius": "legacy:components.rocket_launcher",
@@ -4312,7 +4318,7 @@
    "arena": "Arena_T",
    "collisionRadius": null,
    "cost": 5,
-   "count": 13,
+   "count": 12,
    "deployTime": null,
    "duration": 9.0,
    "evo": null,
@@ -4345,7 +4351,7 @@
    "speed": 90,
    "src": {
     "*": "cs2.4.0",
-    "count": "patch:2026-09-03",
+    "count": "patch:2026-09-06",
     "skills.spawn.character": "legacy:spawns",
     "skills.spawn.firstDelay": "patch:2026-09-01",
     "skills.spawn.interval": "legacy:spawns",
@@ -4373,7 +4379,7 @@
    "units": {
     "skeleton": {
      "card": "skeletons",
-     "count": 13,
+     "count": 12,
      "from": ["legacy:spawns", "legacy:sub_units.Skeleton"],
      "hitSpeed": 1.1,
      "loadTime": 0.6,
@@ -5624,6 +5630,7 @@
      "pushback": {
       "damage": null,
       "distance": null,
+      "everyHits": 2,
       "radius": null,
       "strength": 4.0
      }
@@ -5684,6 +5691,7 @@
    "src": {
     "*": "cs2.4.0",
     "evo.skills.dash.damage[]": "derived:levelMult",
+    "evo.skills.pushback.everyHits": "patch:2026-09-06",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
@@ -7294,12 +7302,13 @@
     "projectile.speed": "gd:debfe1e2",
     "stats.damage": "gd:debfe1e2 (cs anchor 1485 rounded off the curve)",
     "stats.damage[]": "derived:levelMult",
+    "stats.towerDamage": "gd:debfe1e2 (damage at crownTowerDamagePercent -77; cs anchor 343 is stale)",
     "stats.towerDamage[]": "derived:levelMult"
    },
    "stats": {
     "damage": [null, null, 701, 771, 846, 928, 1020, 1119, 1229, 1351, 1484, 1629, 1792, 1966, 2157, 2372],
     "hitpoints": null,
-    "towerDamage": [null, null, 162, 178, 195, 214, 235, 258, 284, 312, 343, 376, 414, 454, 498, 548]
+    "towerDamage": [null, null, 161, 177, 194, 213, 234, 257, 282, 310, 341, 374, 412, 452, 496, 545]
    },
    "summonDeployDelay": null,
    "summonRadius": null,
@@ -8867,13 +8876,13 @@
     "skills.pull.strength": "legacy:pull_strength",
     "stats.damage": "wiki:Tornado per hit (cs anchor 154 is not per hit)",
     "stats.damage[]": "derived:levelMult",
-    "stats.towerDamage": "wiki:Tornado per hit (cs anchor 46 is not per hit)",
+    "stats.towerDamage": "gd:debfe1e2 (damage at crownTowerDamagePercent -70; cs anchor 29 is stale)",
     "stats.towerDamage[]": "derived:levelMult"
    },
    "stats": {
     "damage": [null, null, null, null, null, 52, 58, 63, 69, 76, 84, 92, 101, 111, 122, 134],
     "hitpoints": null,
-    "towerDamage": [null, null, null, null, null, 17, 19, 21, 23, 25, 29, 30, 33, 37, 40, 44]
+    "towerDamage": [null, null, null, null, null, 15, 17, 18, 20, 22, 25, 27, 30, 33, 36, 40]
    },
    "summonDeployDelay": null,
    "summonRadius": null,
@@ -8892,7 +8901,7 @@
     "cycles": 2,
     "skills": {
      "pull": {
-      "damage": [null, null, 39, 43, 48, 52, 58, 63, 69, 76, 84, 92, 101, 111, 122, 134],
+      "damage": [null, null, 20, 22, 24, 27, 29, 32, 36, 39, 42, 47, 52, 57, 63, 69],
       "duration": 0.5,
       "radius": 5.0,
       "strength": 1.0
@@ -8958,7 +8967,8 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
-    "evo.skills.pull.damage": "legacy:evolution.changes.tornado_damage",
+    "evo.skills.pull.damage": "patch:2026-09-06",
+    "evo.skills.pull.damage[]": "derived:levelMult",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
@@ -9579,7 +9589,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-05",
+  "built": "2026-09-06",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9668,6 +9678,10 @@
    {
     "name": "data/patches/2026-09-05.json",
     "tag": "patch:2026-09-05"
+   },
+   {
+    "name": "data/patches/2026-09-06.json",
+    "tag": "patch:2026-09-06"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
