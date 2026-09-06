@@ -201,6 +201,13 @@ class DeathDamage(Component):
             for e in near(g,team,x,y,r):hurt(e,dd,g);push(e,x,y,self.kb)
         if self.fuse>0:g.spells.append(Timer(self.fuse,blast,x,y,team,tr.name))
         else:blast(g)
+class ShieldBurst(Component):
+    # the break of a shield blasts and shoves the troops around its owner once (Evolved Wizard's Fire Shield); towers are spared
+    def __init__(self,dmg,r,kb):self.dmg=dmg;self.r=r;self.kb=kb;self.done=False
+    def on_tick(self,tr,g):
+        if self.done or tr.max_shield_hp<=0 or tr.shield_hp>0:return
+        self.done=True
+        for e in near(g,tr.team,tr.x,tr.y,self.r,towers=False):hurt(e,self.dmg,g);push(e,tr.x,tr.y,self.kb)
 class DeathNova(Component):
     def __init__(self,slow_pct,slow_dur):
         self.slow_pct=slow_pct;self.slow_dur=slow_dur

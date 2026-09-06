@@ -357,3 +357,11 @@ def t_minion_giant_flying_building_tank():
     tw=g.arena.get_tower('red','princess','left');ini=tw.hp;g.run(15)
     assert d.hp==50000 and ini-tw.hp==6*189
     return "Minion Giant flies past troops and hits the tower for 189 every 1.5 s from 4 tiles"
+def t_evo_wizard_shield_burst():
+    g=_game();w=mk_card('wizard',11,'blue',9,10,evolved=True);g.deploy('blue',w)
+    assert w.shield_hp==192 and any(isinstance(c,fx.ShieldBurst) for c in w.components)
+    a,b=_dummies(g,(9,12),(9,14.5));g.run(0.1)
+    w.take_damage(192);g.run(0.1)
+    assert w.shield_hp==0 and 50000-a.hp==281 and a.y>12.5 and b.hp==50000,f"{a.hp} {a.y} {b.hp}"
+    w.dmg=0;g.run(1);assert 50000-a.hp==281
+    return "Evolved Wizard's Fire Shield break deals 281 in 3 tiles with a 3 tile pushback, once"

@@ -29,6 +29,12 @@
   "note": "Superseded by skills.dash.chargeTime and the flight at skills.dash.speed."},
  {"card": "mega_knight", "path": "skills.jump.landingTime", "value": 0.3,
   "note": "RoyaleAPI cr-api-data MegaKnight dash_landing_time 300: the landing takes 0.3 s before he swings. https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json"},
+ {"card": "wizard", "path": "evo.skills.shield.damage[10]", "value": 281,
+  "note": "The Fire Shield's break: wiki Wizard/Evolution, once the shield is destroyed all pushback capable troops within 3 tiles of the Wizard are pushed back 3 tiles and take high damage; statistics table Shield Death Damage death_11 281 (the legacy snapshot carried only the shield hitpoints). https://clashroyale.fandom.com/wiki/Wizard/Evolution"},
+ {"card": "wizard", "path": "evo.skills.shield.radius", "value": 3.0,
+  "note": "Shield break radius 3 tiles. https://clashroyale.fandom.com/wiki/Wizard/Evolution"},
+ {"card": "wizard", "path": "evo.skills.shield.pushbackDistance", "value": 3.0,
+  "note": "Shield break pushback 3 tiles (8/10/2024: decreased the Evolved Wizard's shield death pushback to 3 tiles from 4). https://clashroyale.fandom.com/wiki/Wizard/Evolution"},
  {"card": "battle_healer", "path": "skills.heal.radius", "value": 3.0,
   "note": "Heal radius 3 tiles: game data BattleHealer radius 3000; wiki Battle Healer history, 4/8/2026 decreased her heal radius to 3 tiles (from 4 tiles, the legacy value) and made it so she can no longer heal herself nor other Battle Healers. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Battle_Healer"}
 ]

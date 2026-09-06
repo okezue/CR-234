@@ -183,6 +183,7 @@ def attach(cfg,c,sk,lvl,chain=None):
         cs.append(fx.RampUp(tiers,cfg['ramp_durations']))
     sh=sk.get('shield',{})
     if not empty(sh.get('hitpoints')):cfg['shield_hp']=cfg['max_shield_hp']=at(sh['hitpoints'],lvl)
+    if not empty(sh.get('damage')):cs.append(fx.ShieldBurst(at(sh['damage'],lvl),sh.get('radius') or 0,sh.get('pushbackDistance') or 0))
     hl=sk.get('heal',{})
     if not empty(hl.get('perAttack')):
         h=at(hl['perAttack'],lvl);r=hl.get('radius') or 0
