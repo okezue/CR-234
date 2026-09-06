@@ -1432,11 +1432,13 @@ class EvoCannon(Component):
         for x,y in pts:
             for e in near(g,tr.team,x,y,self.r,air=False):hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g);push(e,x,y,self.kb)
 class EvoEliteBarbarians(Component):
-    # a rage-tipped spear at a ground target between mn and mx tiles every cd seconds; rage circles on the target and along the path
+    # a rage-tipped spear at a ground troop between mn and mx tiles every cd seconds (wiki: the spears target only ground troops, so none at
+    # a tower or building); rage circles on the target and along the path
     def __init__(self,dmg,mn,mx,cd,rr,rdur,boost):self.dmg=dmg;self.mn=mn;self.mx=mx;self.cd=cd;self.rr=rr;self.rdur=rdur;self.boost=boost;self.t=0
     def on_tick(self,tr,g):
         self.t=max(0,self.t-g.DT);tgt=getattr(tr,'tgt',None)
         if self.t>0 or not tgt or not getattr(tgt,'alive',False) or getattr(tgt,'transport','Ground')=='Air':return
+        if hasattr(tgt,'ttype') or getattr(tgt,'is_building',False):return
         tx,ty=pos(tgt)
         if not self.mn<=g._dist(tr,tgt)<=self.mx:return
         self.t=self.cd;hurt(tgt,self.dmg,g)

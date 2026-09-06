@@ -76,7 +76,11 @@ def t_evo_elite_barbarians_rage_spears():
     assert 50000-d.hp in (220,440) and len([z for z in g.spells if getattr(z,'name','')=='Rage'])>=2,f"{50000-d.hp} {len(g.spells)}"
     k=mk_card('knight',11,'blue',9,12.3);g.deploy('blue',k);g.run(0.2)
     assert has(k,'rage')
-    return "Evo Elite Barbarians throw 220 spears at 3.5 to 5 tiles and leave 1 tile rage circles that rage allies"
+    g=_game(towers=True);eb=mk_card('elite_barbarians',11,'blue',9,10,evolved=True)
+    for t in eb:t.x,t.y=3.5,21.0;g.deploy('blue',t)
+    tw=g.arena.get_tower('red','princess','left');g.run(0.3)
+    assert tw.hp==tw.max_hp and not [z for z in g.spells if getattr(z,'name','')=='Rage'],f"{tw.max_hp-tw.hp}"
+    return "Evo Elite Barbarians throw 220 spears at 3.5 to 5 tiles and leave 1 tile rage circles that rage allies; none at a tower"
 def t_goblin_demolisher_rocket_ride():
     g=_game();gd=mk_card('goblin_demolisher',11,'blue',9,17);g.deploy('blue',gd)
     b=mk_card('cannon',11,'red',9,20);g.deploy('red',b);d,=_dummies(g,(10.5,19),hp=5000)
