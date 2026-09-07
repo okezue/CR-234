@@ -342,12 +342,13 @@ class ChainAttack(Component):
 class HealBurst(Component):
     def __init__(self,heal,radius):
         self.heal=heal;self.radius=radius
-    def on_attack(self,tr,g_unused,g2=None):pass
-    def on_death(self,tr,g):
+    def on_attack(self,tr,tgt,g):
+        # The projectile creates the heal at impact; cloned spirits share components but trigger independently.
+        if getattr(tr,'heal_spent',False):return
+        tr.heal_spent=True;x,y=pos(tgt)
         for ally in g.players[tr.team].troops:
             if not ally.alive or ally is tr or getattr(ally,'is_building',False):continue
-            d=math.sqrt((ally.x-tr.x)**2+(ally.y-tr.y)**2)
-            if d<=self.radius:
+            if math.hypot(ally.x-x,ally.y-y)<=self.radius:
                 ally.hp=min(ally.max_hp,ally.hp+self.heal)
 class ZapPack(Component):
     # every attacker within the radius, a tower included, takes the reflected zap (reflectAttackCrownTowerDamage on towers) and its stun

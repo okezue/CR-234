@@ -61,10 +61,84 @@ def t_healing_spares_buildings():
         ally=mk_card('knight',11,'blue',10,10);ally.hp-=500;g.deploy('blue',ally)
         bh,ah=b.hp,ally.hp
         heal=next(c for c in tr.components if isinstance(c,(fx.HealPulse,fx.HealBurst)))
-        if name=='battle_healer':heal.on_attack(tr,None,g)
-        else:heal.on_death(tr,g)
+        target,=_dummies(g,(10,11))
+        heal.on_attack(tr,target,g)
         assert b.hp==bh,"healing only affects troops"
         assert ally.hp>ah
+
+def t_heal_spirit_destroyed_before_attack_does_not_heal():
+    for team in ('blue','red'):
+        for cause in ('tower','spell'):
+            g=Game();tr=mk_card('heal_spirit',11,team,9,10);g.deploy(team,tr)
+            ally=mk_card('knight',11,team,10,10);ally.hp-=500;g.deploy(team,ally)
+            if cause=='tower':g._tower_hit(g.arena.get_tower(g._opp(team),'princess','left'),tr,tr.hp)
+            else:mk_card('fireball',11,g._opp(team),9,10).apply(g)
+            assert 0<ally.hp<ally.max_hp and math.hypot(ally.x-tr.x,ally.y-tr.y)<=2.5
+            hp=ally.hp;g._proc_deaths()
+            assert not tr.alive and ally.hp==hp,(team,cause,ally.hp,hp)
+
+def t_heal_spirit_heals_at_projectile_impact_once():
+    g=_game();tr=mk_card('heal_spirit',11,'blue',9,10);g.deploy('blue',tr)
+    target,=_dummies(g,(9,13))
+    near=mk_card('knight',11,'blue',10,13);far=mk_card('knight',11,'blue',9,8)
+    for ally in (near,far):ally.hp-=600;g.deploy('blue',ally)
+    nh,fh=near.hp,far.hp
+    g._fire(tr,target);g._fire(tr,target)
+    for _ in range(4):g._proc_projs()
+    assert near.hp==nh and far.hp==fh
+    for _ in range(10):g._proc_projs()
+    assert not tr.alive and near.hp==nh+401 and far.hp==fh
+    g._proc_deaths()
+    assert near.hp==nh+401 and far.hp==fh
+
+def t_heal_spirit_hits_towers_and_defeated_air_targets():
+    for tower in (False,True):
+        g=quiet(Game());tr=mk_card('heal_spirit',11,'blue',9,20);g.deploy('blue',tr)
+        if tower:target=g.arena.get_tower('red','princess','left');target.hp=1
+        else:
+            target=mk_card('bats',11,'red',9,23)[0];g.deploy('red',target)
+        x,y=fx.pos(target);ally=mk_card('knight',11,'blue',x+1,y);ally.hp-=500;g.deploy('blue',ally);hp=ally.hp
+        g._do_attack(tr,target)
+        assert not target.alive and not tr.alive and ally.hp==hp+401
+
+def t_heal_spirit_heals_only_living_allied_troops_in_impact_radius():
+    for team in ('blue','red'):
+        g=Game();tr=mk_card('heal_spirit',11,team,9,10);g.deploy(team,tr)
+        target=Dummy(g._opp(team),9,13,hp=50000,spd=0,dmg=0);other=Dummy(g._opp(team),10,13,hp=50000,spd=0,dmg=0)
+        for enemy in (target,other):enemy.hp-=100;g.deploy(enemy.team,enemy)
+        ground=mk_card('knight',11,team,10,13);air=mk_card('baby_dragon',11,team,9,15.5)
+        dead=mk_card('knight',11,team,8,13);outside=mk_card('knight',11,team,9,15.51)
+        building=mk_card('cannon',11,team,9,12);clone=mk_card('knight',11,team,9,14);clone.hp=clone.max_hp=1
+        g.deploy(team,clone)
+        for ally in (ground,air,dead,outside,building):
+            ally.hp-=100;g.deploy(team,ally)
+        dead.take_damage(dead.hp)
+        oh,bh=outside.hp,building.hp;towers=[t.hp for t in g.arena.towers]
+        g._do_attack(tr,target);g._proc_deaths()
+        assert ground.hp==ground.max_hp and air.hp==air.max_hp and clone.hp==1
+        assert dead.hp==0 and outside.hp==oh and building.hp==bh
+        assert target.hp==other.hp==49900-tr.dmg
+        assert [t.hp for t in g.arena.towers]==towers
+
+def t_cloned_heal_spirits_trigger_independently():
+    g=_game();tr=mk_card('heal_spirit',11,'blue',9,10);g.deploy('blue',tr)
+    mk_card('clone',11,'blue',9,10).apply(g)
+    clone=next(t for t in g.players['blue'].troops if t is not tr)
+    ally=mk_card('knight',11,'blue',9,13);ally.hp=500;g.deploy('blue',ally)
+    target,=_dummies(g,(10,13))
+    g._do_attack(tr,target);g._do_attack(clone,target);g._proc_deaths()
+    assert ally.hp==500+2*401 and not tr.alive and not clone.alive
+
+def t_cloned_kamikaze_attacks_are_consumed_once():
+    for name in ('heal_spirit','fire_spirit','ice_spirit','electro_spirit','wall_breakers'):
+        g=_game();troops=mk_card(name,11,'blue',9,10)
+        tr=troops[0] if isinstance(troops,list) else troops;g.deploy('blue',tr)
+        mk_card('clone',11,'blue',9,10).apply(g)
+        clone=next(t for t in g.players['blue'].troops if t is not tr)
+        target=mk_card('cannon',11,'red',9,11);g.deploy('red',target)
+        assert clone.is_suicide,name
+        hp=target.hp;g._do_attack(clone,target);g._proc_deaths()
+        assert not clone.alive and clone not in g.players['blue'].troops and target.hp<hp,name
 
 def t_magic_archer_pierces_line():
     g=_game();ma=mk_card('magic_archer',11,'blue',9,10);g.deploy('blue',ma)

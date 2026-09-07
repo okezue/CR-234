@@ -229,7 +229,7 @@ class CloneSpell:
                 cfg={'hp':1,'max_hp':1,'dmg':t.dmg,'hspd':t.hspd,'fhspd':t.fhspd,
                      'spd':t.spd,'rng':t.rng,'targets':t.targets,
                      'transport':t.transport,'atk_type':t.atk_type,
-                     'splash_r':t.splash_r,'ct_dmg':t.ct_dmg,
+                     'splash_r':t.splash_r,'ct_dmg':t.ct_dmg,'is_suicide':getattr(t,'is_suicide',False),
                      'components':list(t.components),'lvl':t.lvl,'name':t.name,
                      'death_dmg':getattr(t,'death_dmg',0),
                      'death_splash_r':getattr(t,'death_splash_r',0)}

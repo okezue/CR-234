@@ -1789,8 +1789,11 @@ def t_hspirit_heal():
     ally=Dummy('blue',9,10.5,hp=1000,spd=0)
     ally.hp=500;ally.max_hp=1000
     g.deploy('blue',ally)
-    hs.hp=0;hs.alive=False;hs.on_death(g)
-    assert ally.hp>500,f"Heal Spirit should heal ally, got {ally.hp}"
+    target=Dummy('red',9,12,hp=1000,spd=0,dmg=0);g.deploy('red',target)
+    g._fire(hs,target)
+    for _ in range(6):g._proc_projs()
+    g._proc_deaths()
+    assert not hs.alive and ally.hp>500,f"Heal Spirit should heal ally on impact, got {ally.hp}"
     assert ally.hp<=1000,"Should not exceed max HP"
     return f"Heal Spirit heals ally (500->{ally.hp})"
 def t_hspirit_suicide():
