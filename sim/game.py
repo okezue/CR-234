@@ -266,6 +266,9 @@ class Game:
         self.players[opp].crowns+=1
         self._pf.rebuild_tower_grid()
         if tower.ttype=='king':
+            # the king's fall grants the remaining crowns (wiki King's Tower) and the battle log records the standing towers at zero
+            for t in self.arena.towers:
+                if t.team==tower.team and t.alive:t.hp=0;t.alive=False;t.down=True
             self.players[opp].crowns=3
             self.winner=opp;self.phase='end';self.ended=True
             self.log.append(f"[{self.t:.1f}] {opp} 3-crown win!")
