@@ -5,6 +5,7 @@ import os
 import pickle
 import time
 from multiprocessing import Pool
+from pathlib import Path
 from sim import replay as R
 from sim import knobs
 
@@ -25,16 +26,42 @@ GRID=[('sight_slack',[{'sight_slack':v} for v in (-1.0,-0.5,0.5,1.0,2.0)]),
       ('kite',[{'kite_drop':1,'kite_slack':v} for v in (0.0,0.5,1.0,2.0)])]
 COORD={n:sorted({k for o in c for k in o}) for n,c in GRID}
 
-def inputs():
-    st=(os.path.getmtime(META),os.path.getmtime(WORK))
+def _digest(paths):
+    h=hashlib.blake2b(digest_size=16)
+    for name,path in sorted(paths):
+        with open(path,'rb') as f:d=hashlib.file_digest(f,'sha256').digest()
+        h.update(name.encode()+b'\0'+d)
+    return h.hexdigest()
+
+def fingerprints():
+    root=Path(_BASE)
+    return {'engine':_digest((p.relative_to(root).as_posix(),p) for p in (root/'sim').rglob('*.py')),
+            'cards':_digest((n,root/'data'/n) for n in ('cards.json','aliases.json')),
+            'parser':_digest((n,root/n) for n in ('sim/replay.py','sim/cards.py','sim/game.py','sim/calib.py')),
+            'eval':_digest((('meta',META),('workers',WORK)))}
+
+def inputs(fp=None):
+    fp=fingerprints() if fp is None else fp
+    stamp={k:fp[k] for k in ('parser','cards','eval')}
     if os.path.exists(CACHE):
         with open(CACHE,'rb') as f:c=pickle.load(f)
-        if c['st']==st:return c['data']
+        if c.get('fingerprints')==stamp:return c['data']
     outcomes=R.load_meta_v2(META);ids=set(outcomes);placements,pids=R.load_worker_rows(WORK,ids,outcomes)
     bids=sorted(b for b in ids if b in placements and not outcomes[b].get('modifier'))
     data=(outcomes,placements,pids,bids)
-    with open(CACHE,'wb') as f:pickle.dump({'st':st,'data':data},f)
+    with open(CACHE,'wb') as f:pickle.dump({'fingerprints':stamp,'data':data},f)
     return data
+
+def _log_rows(log,fp):
+    rows=[]
+    if os.path.exists(log):
+        with open(log) as f:
+            for n,line in enumerate(f,1):
+                r=json.loads(line)
+                if r.get('fingerprints')!=fp:
+                    raise ValueError(f"Incompatible calibration log {log}, line {n}: missing or changed fingerprints; use --log with a new path.")
+                rows.append(r)
+    return rows
 
 def holdout(bid):return int(hashlib.sha1(bid.encode()).hexdigest(),16)%2==1
 
@@ -47,6 +74,7 @@ def summarize(infos):
     s={'n':n,'winner':sum(i['win_match'] for i in infos)/n,'crown':sum(i['crown_exact'] for i in infos)/n,'crown1':sum(i['crown_close'] for i in infos)/n,
        'premature':sum(i['premature'] for i in infos)/n,'hp':sum(hp)/len(hp),'state':sum(i['tower_state'] for i in infos if i['hp_err'] is not None)/len(hp),
        'aim':ah/an}
+    s['placement']={k:sum(i['placement'][k] for i in infos) for k in infos[0]['placement']}
     s['obj']=s['hp']+(1-s['crown'])+s['premature']+(1-s['aim'])
     return s
 
@@ -56,23 +84,25 @@ def pkey(ov):
 
 class Evaluator:
     def __init__(self,jobs,log=LOG):
-        self.outcomes,self.placements,self.pids,self.bids=inputs();self.pool=Pool(jobs);self.log=log;self.seen={};self.new=0
-        if os.path.exists(log):
-            with open(log) as f:
-                for line in f:r=json.loads(line);self.seen[pkey(r['params'])]=r
+        self.fingerprints=fingerprints();rows=_log_rows(log,self.fingerprints)
+        self.outcomes,self.placements,self.pids,self.bids=inputs(self.fingerprints);self.pool=Pool(jobs);self.log=log;self.new=0
+        self.seen={pkey(r['params']):r for r in rows}
     def __call__(self,ov):
         k=pkey(ov)
         if k in self.seen:return self.seen[k]
         t0=time.time();tr=[];ho=[]
         for h,info in self.pool.imap_unordered(_run,[(b,self.placements[b],self.outcomes[b],self.pids.get(b),ov) for b in self.bids],chunksize=4):
             (ho if h else tr).append(info)
-        r={'params':json.loads(k),'train':summarize(tr),'holdout':summarize(ho),'t':round(time.time()-t0,1)}
+        r={'fingerprints':self.fingerprints,'params':json.loads(k),'train':summarize(tr),'holdout':summarize(ho),'t':round(time.time()-t0,1)}
         with open(self.log,'a') as f:f.write(json.dumps(r)+'\n')
         self.seen[k]=r;self.new+=1
         print(f"[{self.new}] {k} train {fmt(r['train'])} | holdout {fmt(r['holdout'])} ({r['t']} s)",flush=True)
         return r
 
-def fmt(s):return f"obj {s['obj']:.4f} w {100*s['winner']:.1f} c {100*s['crown']:.1f} p {100*s['premature']:.1f} hp {s['hp']:.4f} aim {100*s['aim']:.1f}"
+def fmt(s):
+    p=s['placement']
+    return (f"obj {s['obj']:.4f} w {100*s['winner']:.1f} c {100*s['crown']:.1f} p {100*s['premature']:.1f} hp {s['hp']:.4f} aim {100*s['aim']:.1f}"
+            f" placements {p['rejected']}/{p['attempted']} rejected ({p['invalid']} invalid), {p['relocated']} relocated, {p['skipped']} skipped")
 
 def refine(ev,name,best_ov):
     # candidates for the next pass: the coordinate's best value so far and the midpoints toward its nearest values tried before (the step halves each round)
@@ -116,7 +146,7 @@ def line(r,bt,bh):
             f" premature {100*(h['premature']-bh['premature']):+.1f} obj {h['obj']-bh['obj']:+.4f} {'ACCEPT' if accept(h,bh) else 'reject'}")
 
 def report(log=LOG):
-    with open(log) as f:rows=[json.loads(l) for l in f]
+    rows=_log_rows(log,fingerprints())
     base=next(r for r in rows if not r['params']);bh=base['holdout'];bt=base['train']
     print(f"{len(rows)} evaluations; base: train {fmt(bt)} | holdout {fmt(bh)}\n\none knob at a time:")
     for name,cands in GRID:
@@ -130,9 +160,10 @@ def main():
     ap.add_argument('--jobs',type=int,default=16);ap.add_argument('--budget',type=int,default=200);ap.add_argument('--eps',type=float,default=0.003)
     ap.add_argument('--eval',type=str,default=None,help='JSON overrides to evaluate once');ap.add_argument('--report',action='store_true')
     ap.add_argument('--fixed',type=str,default='',help='comma separated knobs held at their default (those with a sourced value)')
+    ap.add_argument('--log',default=LOG,help='calibration JSONL for this engine, parser, data and eval baseline')
     a=ap.parse_args()
-    if a.report:report();return
-    ev=Evaluator(a.jobs)
+    if a.report:report(a.log);return
+    ev=Evaluator(a.jobs,a.log)
     if a.eval is not None:r=ev(json.loads(a.eval));print(f"train {fmt(r['train'])} | holdout {fmt(r['holdout'])}");return
     search(ev,a.budget,a.eps,set(filter(None,a.fixed.split(','))))
 
