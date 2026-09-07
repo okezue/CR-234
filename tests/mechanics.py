@@ -54,6 +54,18 @@ def t_mega_knight_lands_outside_tower_diagonally():
     assert not g.arena.blocked(int(mk.x),int(mk.y)),f"landing inside tower: {mk.x},{mk.y}"
     assert g._dist(mk,tw)<=mk.rng
 
+def t_healing_spares_buildings():
+    for name in ('battle_healer','heal_spirit'):
+        g=_game();tr=mk_card(name,11,'blue',9,10);g.deploy('blue',tr)
+        b=mk_card('cannon',11,'blue',9,11);b.hp-=200;g.deploy('blue',b)
+        ally=mk_card('knight',11,'blue',10,10);ally.hp-=500;g.deploy('blue',ally)
+        bh,ah=b.hp,ally.hp
+        heal=next(c for c in tr.components if isinstance(c,(fx.HealPulse,fx.HealBurst)))
+        if name=='battle_healer':heal.on_attack(tr,None,g)
+        else:heal.on_death(tr,g)
+        assert b.hp==bh,"healing only affects troops"
+        assert ally.hp>ah
+
 def t_magic_archer_pierces_line():
     g=_game();ma=mk_card('magic_archer',11,'blue',9,10);g.deploy('blue',ma)
     a,b,c=_dummies(g,(9,14),(9,18),(13,14))

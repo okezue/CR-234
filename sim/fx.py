@@ -345,7 +345,7 @@ class HealBurst(Component):
     def on_attack(self,tr,g_unused,g2=None):pass
     def on_death(self,tr,g):
         for ally in g.players[tr.team].troops:
-            if not ally.alive or ally is tr:continue
+            if not ally.alive or ally is tr or getattr(ally,'is_building',False):continue
             d=math.sqrt((ally.x-tr.x)**2+(ally.y-tr.y)**2)
             if d<=self.radius:
                 ally.hp=min(ally.max_hp,ally.hp+self.heal)
@@ -366,7 +366,7 @@ class HealPulse(Component):
     def on_attack(self,tr,tgt,g):
         for _ in range(self.pulses):
             for ally in g.players[tr.team].troops:
-                if not ally.alive or ally.name==tr.name:continue
+                if not ally.alive or ally.name==tr.name or getattr(ally,'is_building',False):continue
                 d=math.sqrt((ally.x-tr.x)**2+(ally.y-tr.y)**2)
                 if d<=self.radius:
                     ally.hp=min(ally.max_hp,ally.hp+self.heal)
