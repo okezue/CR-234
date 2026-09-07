@@ -160,9 +160,10 @@ def t_mother_witch_cursed_hog():
 def t_suspicious_bush_invisible_until_the_building():
     g=quiet(Game());bu=mk_card('suspicious_bush',11,'blue',9,20);g.deploy('blue',bu);tw=g.arena.get_tower('red','princess','left');ini=tw.hp
     g.run(0.2);assert has(bu,'invisible') and bu.hp==bu.max_hp and bu.targets==['Buildings']
-    g.run(4);assert bu.hp==bu.max_hp or not bu.alive
-    g.run(4);assert not bu.alive and ini-tw.hp>=256 and len(_named(g,'blue','Bush Goblin'))==2
-    return "Suspicious Bush walks invisible to the tower, bursts for 256 and leaves two Bush Goblins"
+    while bu.alive and g.t<12:g.tick()
+    # the burst itself deals nothing (game data damage 0, no death blast); the two goblins carry the 256
+    assert not bu.alive and tw.hp==ini and len(_named(g,'blue','Bush Goblin'))==2 and g._dist(bu,tw)<=1.6+0.05,f"{ini-tw.hp} {g._dist(bu,tw):.2f}"
+    return "Suspicious Bush walks invisible to the tower, bursts 1.6 tiles from it for no damage and leaves two Bush Goblins"
 def t_ronin_parries_melee_only():
     g=_game();rn=mk_card('ronin',11,'blue',9,14);g.deploy('blue',rn);rn.dmg=0;pk=mk_card('pekka',11,'red',9,15.2);g.deploy('red',pk);ini=pk.hp
     for _ in range(60):

@@ -3412,9 +3412,10 @@ def t_spiritempress_splash():
     return f"Spirit Empress single target (d1={5000-d1.hp} d2={5000-d2.hp})"
 def t_susbush_stats():
     r=mk_card('suspicious_bush',11,'blue',5,10)
-    assert r.hp==81 and r.dmg==256
+    # the bush hits nothing (game data damage 0): its goblins carry the 256
+    assert r.hp==81 and r.dmg==0 and r.death_dmg==0 and r.rng==1.6
     assert r.targets==['Buildings']
-    return f"Suspicious Bush stats (hp={r.hp} dmg={r.dmg})"
+    return f"Suspicious Bush stats (hp={r.hp} dmg={r.dmg}, bursts from {r.rng} tiles)"
 def t_susbush_deathspawn():
     g=Game()
     sb=mk_card('suspicious_bush',11,'blue',9,14)

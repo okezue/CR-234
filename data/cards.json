@@ -8438,7 +8438,7 @@
    "evo": null,
    "flying": false,
    "hero": null,
-   "hitSpeed": 1.4,
+   "hitSpeed": 0.3,
    "hitType": "single",
    "id": 26000097,
    "kamikaze": true,
@@ -8451,15 +8451,11 @@
    "placement": "own",
    "projectile": null,
    "radius": null,
-   "range": 0.0,
+   "range": 1.6,
    "rarity": "rare",
    "sightRange": 7.5,
    "skills": {
-    "areaDamageOnDeath": {
-     "areaEffect": "SuspiciousBush_DummyAEO",
-     "damage": [null, null, 121, 133, 146, 160, 176, 193, 212, 233, 256, 281, 309, 339, 372, 409],
-     "radius": 0.5
-    },
+    "areaDamageOnDeath": {},
     "invisibility": {
      "whenNotAttackingTime": null
     },
@@ -8471,12 +8467,16 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
+    "hitSpeed": "patch:2026-09-06",
     "mass": "legacy:hidden_stats.mass",
-    "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
+    "range": "patch:2026-09-06",
+    "skills.areaDamageOnDeath": "patch:2026-09-06",
     "skills.spawnOnDeath.character": "legacy:death_spawn",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
+    "stats.damage": "patch:2026-09-06",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
+    "stats.towerDamage": "patch:2026-09-06",
     "stats.towerDamage[]": "derived:levelMult",
     "units.bush_goblin.damage": "patch:2026-09-03",
     "units.bush_goblin.damage[]": "derived:levelMult",
@@ -8488,9 +8488,9 @@
     "units.bush_goblin.targets": "legacy:sub_units.Bush Goblin"
    },
    "stats": {
-    "damage": [null, null, 121, 133, 146, 160, 176, 193, 212, 233, 256, 281, 309, 339, 372, 409],
+    "damage": [null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     "hitpoints": [null, null, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
-    "towerDamage": [null, null, 121, 133, 146, 160, 176, 193, 212, 233, 256, 281, 309, 339, 372, 409]
+    "towerDamage": [null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
    },
    "summonDeployDelay": null,
    "summonRadius": null,
