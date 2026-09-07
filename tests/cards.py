@@ -6065,37 +6065,33 @@ def t_no_hero_and_evo_same_card():
                     'musketeer','valkyrie','skeleton_army','freeze'],
                    heroes={'wizard'},evolutions={'knight'})
     return "Cannot use same card as hero and evolution"
+def _mk_jump_status(kind,dur):
+    from sim.fx import MKJump
+    g=Game()
+    for t in g.arena.towers:t.alive=False
+    mk_t=mk_card('mega_knight',11,'blue',3.5,9);g.deploy('blue',mk_t)
+    d=Dummy('red',3.5,14.5,hp=50000,spd=0,dmg=0);g.deploy('red',d)
+    mjc=next(c for c in mk_t.components if isinstance(c,MKJump));spd=mk_t.spd
+    while not mjc.airborne and g.t<1.5:g.tick()
+    assert mjc.airborne and d.hp==50000
+    while mjc.timer>0.15 and g.t<3:g.tick()
+    status=Status(kind,dur);mk_t.statuses.append(status);t0=g.t;remaining=mjc.timer
+    g.tick()
+    assert mjc.airborne and status in mk_t.statuses and abs(mjc.timer-(remaining-g.DT))<1e-9
+    while mjc.airborne and g.t<3:g.tick()
+    assert not mjc.airborne and mjc.jtgt is None and mjc.osp is None and mk_t.spd==spd
+    assert abs(g.t-2.0)<=0.1 and 50000-d.hp==mk_t.jump_dmg and d.y>=15.5
+    assert status in mk_t.statuses and abs(status.dur-(dur-(g.t-t0)))<1e-9
+    hp=d.hp;mk_t.cd=0;g._proc_troops()
+    assert d.hp==hp,"the remaining landing status pauses melee attacks"
+    d.y=mk_t.y+5.5;mk_t.tgt=d;g._proc_troops()
+    assert not mjc.charging and not mjc.airborne,"the remaining landing status prevents a new charge"
 def t_mk_jump_survives_zap():
-    g=Game()
-    mk_t=mk_card('mega_knight',11,'blue',9,10)
-    g.deploy('blue',mk_t)
-    d=Dummy('red',9,14,hp=50000,spd=0)
-    g.deploy('red',d)
-    from sim.fx import MKJump
-    mjc=[c for c in mk_t.components if isinstance(c,MKJump)]
-    assert len(mjc)==1,"MK should have MKJump"
-    g.run(3)
-    from sim.units import Status
-    mjc[0].airborne=True;mjc[0].timer=0.1;mjc[0].jtgt=d
-    mk_t.statuses.append(Status('stun',0.5))
-    g.tick()
-    has_stun=any(s.kind=='stun' for s in mk_t.statuses)
-    assert not has_stun,"Stun should be stripped mid-jump"
-    return "MK jump survives zap (stun stripped mid-air)"
-def t_mk_jump_cancelled_by_freeze():
-    g=Game()
-    mk_t=mk_card('mega_knight',11,'blue',9,10)
-    g.deploy('blue',mk_t)
-    d=Dummy('red',9,14,hp=50000,spd=0)
-    g.deploy('red',d)
-    from sim.fx import MKJump
-    from sim.units import Status
-    mjc=[c for c in mk_t.components if isinstance(c,MKJump)][0]
-    mjc.airborne=True;mjc.timer=0.1;mjc.jtgt=d;mjc.osp=mk_t.spd;mk_t.spd=0
-    mk_t.statuses.append(Status('freeze',2.0))
-    g.tick()
-    assert not mjc.airborne,"Freeze should cancel jump"
-    return "MK jump cancelled by freeze"
+    _mk_jump_status('stun',0.5)
+    return "MK lands normally with the unexpired stun still active"
+def t_mk_jump_survives_freeze():
+    _mk_jump_status('freeze',2.0)
+    return "MK lands normally with the unexpired freeze still active"
 def t_mk_jump_crosses_river():
     g=Game()
     mk_t=mk_card('mega_knight',11,'blue',9,14)

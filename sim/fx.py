@@ -1174,14 +1174,11 @@ class MKJump(Component):
         self.mn=mn;self.mx=mx;self.sr=splash_r;self.jspd=jspd;self.charge=charge;self.kb=kb;self.land=land
         self.charging=False;self.airborne=False;self.timer=0
         self.osp=None;self.jtgt=None;self.jdist=0
+    def _valid_target(self,tr,tgt):
+        return tgt is not None and tgt.alive and tgt.team!=tr.team and not hidden(tgt) and getattr(tgt,'transport','Ground')=='Ground'
     def on_tick(self,tr,g):
         if self.airborne:
-            frz=any(s.kind=='freeze' for s in getattr(tr,'statuses',[]))
-            if frz:
-                self.airborne=False
-                if self.osp is not None:tr.spd=self.osp;self.osp=None
-                self.jtgt=None;return
-            tr.statuses=[s for s in tr.statuses if s.kind!='stun']
+            # stun and freeze persist through a normal landing (wiki Mega Knight)
             self.timer-=g.DT
             if self.timer<=0:
                 self.airborne=False
@@ -1191,9 +1188,10 @@ class MKJump(Component):
                     opp=g._opp(tr.team)
                     # he comes down on a troop that ended up nearer than his mark, never beyond it (wiki Mega Knight: he re-targets onto a troop
                     # placed nearby if his original target is farther away); an unbounded pick sent him across the arena onto any stray body
+                    # a locked target may cloak mid-jump; only new targets must be visible (wiki 15/11/2021)
                     best=self.jtgt;jx,jy=pos(best);bd=math.hypot(tr.x-jx,tr.y-jy)
                     for e in g.players[opp].troops:
-                        if not e.alive:continue
+                        if not self._valid_target(tr,e):continue
                         dd=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
                         if dd<bd:bd=dd;best=e
                     self.jtgt=best
@@ -1212,15 +1210,19 @@ class MKJump(Component):
                     tr.cd=max(tr.cd,self.land)
                 self.jtgt=None
             return
+        # stun cannot interrupt an initiated charge, but stun and freeze prevent a new one
+        if not self.charging and has(tr,'stun','freeze'):return
         tgt=getattr(tr,'tgt',None)
-        if not tgt:
+        if not self._valid_target(tr,tgt):
+            tgt=self.jtgt if self.charging and self.jtgt is not None and self.jtgt.alive else None
+        if tgt is None:
             if self.charging and self.osp is not None:tr.spd=self.osp;self.osp=None
-            self.charging=False;return
+            self.charging=False;self.jtgt=None;return
         tx,ty=pos(tgt);d=math.hypot(tr.x-tx,tr.y-ty);rd=g._dist(tr,tgt)
         if self.mn<=rd<=self.mx and not self.charging:
             self.charging=True;self.timer=self.charge;self.osp=tr.spd;tr.spd=0;self.jtgt=tgt;self.jdist=d
         if self.charging:
-            if tgt and tgt is not self.jtgt and rd<self.mn:
+            if tgt is not self.jtgt and rd<self.mn:
                 self.jtgt=tgt;self.jdist=d
             self.timer-=g.DT
             if self.timer<=0:

@@ -2,7 +2,7 @@ import math
 import random
 from sim.game import Game
 from sim.cards import create as mk_card,card
-from sim.units import has
+from sim.units import Status,has
 from sim import fx
 from tests.util import Dummy,quiet
 
@@ -160,6 +160,88 @@ def t_mega_knight_jump_time_and_knockback():
     g.run(2.5)
     assert tw.hp<tw.max_hp and abs(math.hypot(mk.x-tw.cx,mk.y-tw.cy)-1.75)<0.05 and not g.arena.blocked(int(mk.x),int(mk.y)),f"{tw.hp} {mk.x},{mk.y}"
     return f"Mega Knight jump lands after {t0:.2f} s (0.9 s wind-up, jump speed 250) for 537 and at least 1 tile knockback; a tower is landed against, not on"
+def _mk_jump():
+    g=_game();mk=mk_card('mega_knight',11,'blue',3.5,9);g.deploy('blue',mk);g.tick()
+    d,=_dummies(g,(3.5,14.5));mk.tgt=d
+    jump=next(c for c in mk.components if isinstance(c,fx.MKJump))
+    return g,mk,d,jump
+def t_mega_knight_status_blocks_new_charge():
+    for kind in ('stun','freeze'):
+        g,mk,d,jump=_mk_jump();spd=mk.spd;status=Status(kind,0.2);mk.statuses.append(status)
+        g._proc_troops()
+        assert not jump.charging and not jump.airborne and jump.jtgt is None and mk.spd==spd,kind
+        for _ in range(3):g.tick()
+        assert not jump.charging and not jump.airborne and status in mk.statuses,kind
+        g.tick()
+        assert jump.charging and not jump.airborne and jump.jtgt is d and status not in mk.statuses,kind
+        assert abs(jump.timer-(0.9-g.DT))<1e-9
+def t_mega_knight_status_does_not_interrupt_started_charge():
+    for kind in ('stun','freeze'):
+        g,mk,d,jump=_mk_jump();jump.on_tick(mk,g);status=Status(kind,3);mk.statuses.append(status)
+        for _ in range(17):g._proc_troops()
+        assert jump.airborne and not jump.charging and status in mk.statuses,kind
+        assert abs(jump.timer-5.5/5)<1e-9 and d.hp==50000
+        for _ in range(22):g._proc_troops()
+        assert not jump.airborne and 50000-d.hp==mk.jump_dmg and status in mk.statuses,kind
+def t_mega_knight_jump_suppresses_melee_not_component_ticks():
+    class Probe(fx.Component):
+        def __init__(self):self.ticks=0;self.attacks=0
+        def on_tick(self,tr,g):self.ticks+=1
+        def on_attack(self,tr,tgt,g):self.attacks+=1
+    for phase in ('charging','airborne'):
+        g,mk,d,jump=_mk_jump();jump.on_tick(mk,g)
+        if phase=='airborne':
+            for _ in range(17):jump.on_tick(mk,g)
+        assert getattr(jump,phase)
+        near,=_dummies(g,(3.5,11));mk.tgt=near;mk.aggro_tgt=None;mk.cd=0;probe=Probe();mk.components.append(probe)
+        for _ in range(3):g._proc_troops()
+        assert getattr(jump,phase) and near.hp==50000 and d.hp==50000,phase
+        assert probe.ticks==3 and probe.attacks==0,phase
+        for _ in range(40):
+            g._proc_troops()
+            if not jump.charging and not jump.airborne:break
+        assert not jump.charging and not jump.airborne and 50000-near.hp==mk.jump_dmg
+        assert probe.attacks==0 and mk.cd>0
+        for _ in range(10):g._proc_troops()
+        assert probe.attacks>0 and 50000-near.hp==mk.jump_dmg+mk.dmg
+def t_mega_knight_jump_rejects_invalid_new_targets():
+    for invalid in ('air','invisible','burrowed','dead','friendly'):
+        g,mk,d,jump=_mk_jump()
+        if invalid=='air':d.transport='Air'
+        elif invalid in ('invisible','burrowed'):d.statuses.append(Status(invalid,10))
+        elif invalid=='dead':d.take_damage(d.hp)
+        else:d.team=mk.team
+        spd=mk.spd;jump.on_tick(mk,g)
+        assert not jump.charging and not jump.airborne and jump.jtgt is None and mk.spd==spd,invalid
+def t_mega_knight_jump_retarget_ignores_air_and_hidden():
+    for phase in ('charging','airborne'):
+        for invalid in ('air','invisible','burrowed','dead'):
+            g,mk,d,jump=_mk_jump();jump.on_tick(mk,g)
+            if phase=='airborne':
+                for _ in range(17):jump.on_tick(mk,g)
+            near,=_dummies(g,(3.5,10.5));mk.tgt=near
+            if invalid=='air':near.transport='Air'
+            elif invalid=='dead':near.take_damage(near.hp)
+            else:near.statuses.append(Status(invalid,10))
+            for _ in range(50):
+                jump.on_tick(mk,g)
+                if not jump.charging and not jump.airborne:break
+            assert not jump.charging and not jump.airborne and 50000-d.hp==mk.jump_dmg,(phase,invalid)
+            assert (mk.x,mk.y)==(3.5,14.5) and near.hp==(0 if invalid=='dead' else 50000),(phase,invalid)
+def t_mega_knight_jump_still_retargets_nearer_ground():
+    g,mk,d,jump=_mk_jump();jump.on_tick(mk,g)
+    for _ in range(17):jump.on_tick(mk,g)
+    near,=_dummies(g,(3.5,11));far,=_dummies(g,(3.5,17))
+    for _ in range(22):jump.on_tick(mk,g)
+    assert not jump.airborne and (mk.x,mk.y)==(3.5,11)
+    assert 50000-near.hp==mk.jump_dmg and d.hp==far.hp==50000
+def t_mega_knight_jump_hits_locked_target_that_cloaks():
+    g,mk,d,jump=_mk_jump();jump.on_tick(mk,g)
+    for _ in range(17):jump.on_tick(mk,g)
+    d.statuses.append(Status('invisible',10))
+    for _ in range(22):jump.on_tick(mk,g)
+    assert not jump.airborne and 50000-d.hp==mk.jump_dmg
+
 def t_miner_burrows_untargetable():
     g=Game();mn=mk_card('miner',11,'blue',9,25);g.deploy('blue',mn)
     assert has(mn,'burrowed') and (mn.x,mn.y)==(9.0,3.0)

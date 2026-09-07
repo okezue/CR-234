@@ -3,7 +3,7 @@ import random
 from sim.arena import Arena
 from sim.towers import create as mk_tt,king,lock as tower_lock
 from sim.units import Status,hidden,has
-from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade
+from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump
 from sim.path import Pathfinder
 from sim.cards import create as mk_card,card
 from sim.knobs import K
@@ -642,8 +642,10 @@ class Game:
                 tgt,td=self._find_target(tr)
                 tr.tgt=tgt
                 if halt:continue
+                # Mega Knight's jump replaces melee attacks throughout wind-up and flight
+                jumping=any(isinstance(c,MKJump) and (c.charging or c.airborne) for c in getattr(tr,'components',[]))
                 mr=getattr(tr,'min_rng',0)
-                if tgt and td<=tr.rng and td>=mr:
+                if tgt and td<=tr.rng and td>=mr and not jumping:
                     tr.cd=max(0,tr.cd-self.DT*arate)
                     if tr.cd<=0:
                         self._fire(tr,tgt);tr.cd=tr.hspd
