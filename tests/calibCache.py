@@ -81,7 +81,8 @@ def t_incompatible_logs_fail_before_parsing_or_starting_workers(baseline,monkeyp
     log=baseline/'calib.jsonl';text=''.join(json.dumps(r)+'\n' for r in rows);log.write_text(text)
     monkeypatch.setattr(C,'inputs',lambda *args:pytest.fail('incompatible log must fail before parsing'))
     monkeypatch.setattr(C,'Pool',lambda *args:pytest.fail('incompatible log must fail before workers start'))
-    for call in (lambda:C.Evaluator(1,log),lambda:C.report(log)):
+    monkeypatch.setattr(sys,'argv',['sim.calib','--report','--log',str(log)])
+    for call in (lambda:C.Evaluator(1,log),lambda:C.report(log),C.main):
         with pytest.raises(ValueError,match=rf'Incompatible calibration log .*line {len(rows)}:.*--log'):
             call()
     assert log.read_text()==text
@@ -108,8 +109,13 @@ def t_matching_log_reuses_results_and_records_provenance(baseline,monkeypatch,ca
     text=log.read_text();assert json.loads(text)==first
     again=C.Evaluator(1,log)
     assert again({})==first and again.new==0 and len(calls)==1 and log.read_text()==text
-    C.report(log)
-    assert 'placements 2/3 rejected (1 invalid), 1 relocated, 1 skipped' in capsys.readouterr().out
+    monkeypatch.setattr(C,'inputs',lambda *args:pytest.fail('report must not parse inputs'))
+    monkeypatch.setattr(C,'Pool',lambda *args:pytest.fail('report must not start workers'))
+    monkeypatch.setattr(sys,'argv',['sim.calib','--report','--log',str(log)])
+    C.main()
+    text=capsys.readouterr().out
+    assert '1 evaluations; base:' in text
+    assert 'placements 2/3 rejected (1 invalid), 1 relocated, 1 skipped' in text
 
 def t_calibration_summarizes_recovery_without_changing_objective():
     infos=[_info(),_info()];summary=C.summarize(infos)
@@ -122,3 +128,17 @@ def t_calibration_cli_accepts_separate_log(monkeypatch,tmp_path):
     monkeypatch.setattr(C,'report',calls.append)
     C.main()
     assert calls==[log]
+
+@pytest.mark.parametrize('args,jobs',[([],2),(['--jobs','1'],1)])
+def t_calibration_cli_uses_lightweight_worker_default(monkeypatch,tmp_path,args,jobs):
+    calls=[];ev=object();log=str(tmp_path/'newBaseline.jsonl')
+    def evaluator(n,path):
+        calls.append((n,path))
+        return ev
+    def search(worker,budget,eps,fixed):
+        assert worker is ev and budget==200 and eps==0.003 and fixed==set()
+    monkeypatch.setattr(C,'Evaluator',evaluator)
+    monkeypatch.setattr(C,'search',search)
+    monkeypatch.setattr(sys,'argv',['sim.calib','--log',log,*args])
+    C.main()
+    assert calls==[(jobs,log)]

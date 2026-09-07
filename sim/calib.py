@@ -157,7 +157,7 @@ def report(log=LOG):
 
 def main():
     ap=argparse.ArgumentParser(description='fit the unsourced engine constants on a training half of the eval set')
-    ap.add_argument('--jobs',type=int,default=16);ap.add_argument('--budget',type=int,default=200);ap.add_argument('--eps',type=float,default=0.003)
+    ap.add_argument('--jobs',type=int,default=2);ap.add_argument('--budget',type=int,default=200);ap.add_argument('--eps',type=float,default=0.003)
     ap.add_argument('--eval',type=str,default=None,help='JSON overrides to evaluate once');ap.add_argument('--report',action='store_true')
     ap.add_argument('--fixed',type=str,default='',help='comma separated knobs held at their default (those with a sourced value)')
     ap.add_argument('--log',default=LOG,help='calibration JSONL for this engine, parser, data and eval baseline')
