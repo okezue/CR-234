@@ -30,7 +30,7 @@ class Troop:
         self.sight_r=cfg.get('sight_r',5.5)
         self.collision_r=cfg.get('collision_r',0.5)
         self.retarget_cd=0;self.aggro_tgt=None
-        self.proj_spd=cfg.get('projSpeed',0);self.hp_floor=0
+        self.proj_spd=cfg.get('projSpeed',0);self.hp_floor=0;self.on_shield_break=None
     def level_up(self):
         self.lvl+=1;oh=self.max_hp
         self.max_hp=int(self.max_hp*1.1)
@@ -41,8 +41,8 @@ class Troop:
         r=getattr(self,'_dmg_reduction',0)
         if r>0:a=max(1,int(a*(1-r)))
         if self.shield_hp>0:
-            self.shield_hp-=a
-            if self.shield_hp<0:self.shield_hp=0
+            self.shield_hp=max(0,self.shield_hp-a)
+            if self.shield_hp==0 and self.on_shield_break:self.on_shield_break()
             return
         self.hp-=a
         if self.hp<self.hp_floor:self.hp=self.hp_floor

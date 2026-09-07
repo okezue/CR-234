@@ -4,6 +4,7 @@ from sim.units import Status,Troop,Building,has,hidden
 from sim.arena import Arena
 from sim.knobs import K
 class Component:
+    def on_deploy(self,tr,g):pass
     def on_tick(self,tr,g):pass
     def on_attack(self,tr,tgt,g):pass
     def on_take_damage(self,tr,d,g):pass
@@ -204,7 +205,8 @@ class DeathDamage(Component):
 class ShieldBurst(Component):
     # the break of a shield blasts and shoves the troops around its owner once (Evolved Wizard's Fire Shield); towers are spared
     def __init__(self,dmg,r,kb):self.dmg=dmg;self.r=r;self.kb=kb;self.done=False
-    def on_tick(self,tr,g):
+    def on_deploy(self,tr,g):tr.on_shield_break=lambda:self.burst(tr,g)
+    def burst(self,tr,g):
         if self.done or tr.max_shield_hp<=0 or tr.shield_hp>0:return
         self.done=True
         for e in near(g,tr.team,tr.x,tr.y,self.r,towers=False):hurt(e,self.dmg,g);push(e,tr.x,tr.y,self.kb)
@@ -1199,6 +1201,10 @@ class MKJump(Component):
                     # a troop is landed on; a tower or building is landed against, bodies touching, since he cannot stand on its footprint
                     # (landing on the tower's centre kept short-reach defenders from ever touching him)
                     gap=(getattr(best,'collision_r',1.0)+tr.collision_r) if hasattr(best,'ttype') or getattr(best,'is_building',False) else 0
+                    if hasattr(best,'ttype'):
+                        edge=min(best.w*d/(2*abs(jx-ax)) if jx!=ax else math.inf,
+                                 best.h*d/(2*abs(jy-ay)) if jy!=ay else math.inf)
+                        gap=max(gap,edge+1e-6)
                     tr.x,tr.y=jx-(jx-ax)/d*min(gap,d),jy-(jy-ay)/d*min(gap,d)
                     # the knockback origin sits a hair behind the landing so a troop under him is thrown forward
                     for e in near(g,tr.team,tr.x,tr.y,self.sr,air='Air' in getattr(tr,'targets',['Ground'])):

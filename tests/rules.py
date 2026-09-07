@@ -55,6 +55,15 @@ def t_tiebreaker():
     assert g.ended and g.winner=='red' and not pt.alive
     assert g.players['red'].crowns==1 and not g.players['red'].troops,"tiebreaker kills all troops"
     return "Tiebreaker at 300s: lowest HP tower destroyed, its owner loses"
+def t_tiebreaker_king_clears_surviving_towers():
+    g=Game();kt=g.arena.get_tower('blue','king');kt.hp=1
+    g._tiebreaker()
+    assert g.ended and g.winner=='red' and g.players['red'].crowns==3
+    assert all(t.hp==0 and not t.alive and t.down for t in g.arena.towers if t.team=='blue')
+    g._tower_down(kt)
+    assert g.players['red'].crowns==3
+    assert not g._pf.seg_blocked(3.5,10,3.5,6.5)
+
 def t_tiebreaker_draw():
     g=Game()
     g.run_to(300.1)

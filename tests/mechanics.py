@@ -21,6 +21,39 @@ def _act(g,tr):
 def _named(g,team,name):return [t for t in g.players[team].troops if t.alive and t.name==name]
 def _comps(t):return [type(c).__name__ for c in t.components]
 
+def t_wizard_shield_break_during_deploy_and_death():
+    for dep in (0,1.0):
+        g=_game();w=mk_card('wizard',11,'blue',9,10,evolved=True);g._place('blue',w,dep)
+        d,=_dummies(g,(10,10));burst=next(c for c in w.components if isinstance(c,fx.ShieldBurst))
+        w.take_damage(w.shield_hp)
+        assert 50000-d.hp==burst.dmg and burst.done
+        w.take_damage(w.hp);g.tick()
+        assert 50000-d.hp==burst.dmg,"shield explosion happens once, even if the owner dies in the same tick"
+    g=_game();w=mk_card('wizard',11,'blue',9,10,evolved=True);g._place('blue',w,1.0)
+    d,=_dummies(g,(10,10));mk_card('fireball',11,'red',9,10).apply(g)
+    assert has(w,'deploying') and w.shield_hp==0 and 50000-d.hp==281
+
+def t_shield_burst_preserves_chained_death_effects():
+    for tm,opp in (('blue','red'),('red','blue')):
+        g=_game();ice=mk_card('ice_golem',11,tm,8,10);balloon=mk_card('balloon',11,tm,9,10)
+        w=mk_card('wizard',11,opp,9,11,evolved=True)
+        for t in (ice,balloon,w):g.deploy(t.team,t)
+        w.shield_hp=1;balloon.hp=1;ice.take_damage(ice.hp)
+        g._proc_deaths()
+        assert not balloon.alive and balloon not in g.players[tm].troops
+        bombs=[s for s in g.spells if isinstance(s,fx.Timer) and s.name==balloon.name]
+        assert len(bombs)==1,"a nested shield burst must not discard a troop's death effect"
+        g._proc_deaths()
+        assert len(g.spells)==1
+
+def t_mega_knight_lands_outside_tower_diagonally():
+    g=quiet(Game());mk=mk_card('mega_knight',11,'blue',10.5,21.5);g.deploy('blue',mk)
+    tw=g.arena.get_tower('red','princess','right');hp=tw.hp
+    while tw.hp==hp and g.t<4:g.tick()
+    assert tw.hp<hp
+    assert not g.arena.blocked(int(mk.x),int(mk.y)),f"landing inside tower: {mk.x},{mk.y}"
+    assert g._dist(mk,tw)<=mk.rng
+
 def t_magic_archer_pierces_line():
     g=_game();ma=mk_card('magic_archer',11,'blue',9,10);g.deploy('blue',ma)
     a,b,c=_dummies(g,(9,14),(9,18),(13,14))

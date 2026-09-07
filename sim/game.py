@@ -264,7 +264,6 @@ class Game:
         tower.down=True
         opp=self._opp(tower.team)
         self.players[opp].crowns+=1
-        self._pf.rebuild_tower_grid()
         if tower.ttype=='king':
             # the king's fall grants the remaining crowns (wiki King's Tower) and the battle log records the standing towers at zero
             for t in self.arena.towers:
@@ -278,6 +277,7 @@ class Game:
             if self.phase=='overtime':
                 self.winner=opp;self.phase='end';self.ended=True
                 self.log.append(f"[{self.t:.1f}] {opp} wins sudden death!")
+        self._pf.rebuild_tower_grid()
     def _tiebreaker(self):
         for p in self.players.values():p.troops=[]
         ts=[t for t in self.arena.towers if t.alive]
@@ -292,12 +292,8 @@ class Game:
                 self.winner=None
                 self.log.append(f"[{self.t:.1f}] Draw! (equal HP)")
             else:
-                l=lows[0];l.hp=0;l.alive=False
-                opp=self._opp(l.team)
-                self.players[opp].crowns+=1
-                if l.ttype=='princess':self._king_act(l.team)
-                elif l.ttype=='king':self.players[opp].crowns=3
-                self.winner=opp
+                l=lows[0];l.take_damage(l.hp)
+                self.winner=self._opp(l.team)
                 self.log.append(f"[{self.t:.1f}] Tiebreaker: {l.team} {l.ttype} destroyed")
         self.phase='end';self.ended=True
     def _check_phase(self):
@@ -362,7 +358,7 @@ class Game:
     def _place(self,team,tr,dep):
         # a deploying unit stands on the field, targetable and damageable, and acts only when its deploy time is over
         if dep>0:tr.statuses.append(Status('deploying',dep))
-        self.players[team].troops.append(tr);self.players[team]._register_champ(tr)
+        self.deploy(team,tr)
     def _proc_pending(self):
         done=[];stagger_add=[]
         for pd in self.pending:
@@ -676,36 +672,41 @@ class Game:
         self._pf.resolve_collisions(all_tr,self.DT)
     def _proc_deaths(self):
         dead_set=set()
-        for tm in ('blue','red'):
-            p=self.players[tm]
-            dead=[tr for tr in p.troops if not tr.alive]
-            for tr in dead:
-                dead_set.add(id(tr))
-                pa_match=[pa for pa in self.pending_ab if pa.troop is tr and not pa.is_banner]
-                for pa in pa_match:
-                    p.elixir=min(p.max_ex,p.elixir+pa.ability.cost)
-                    pa.ability._pend=False
-                    self.pending_ab.remove(pa)
-                if hasattr(tr,'on_death'):tr.on_death(self)
-                if getattr(tr,'ability',None):
-                    ab=tr.ability
-                    if isinstance(ab,BannerBrigade):
-                        heroes=[t for t in p.troops if t.alive and getattr(t,'is_hero',False) and getattr(t,'ability',None) is ab]
-                        if not heroes:
-                            ab.on_last_death(tr,self)
-                            if ab not in p.pending_abilities:p.pending_abilities.append(ab)
-                    else:
-                        p._on_champ_death(tr)
-            p.troops=[tr for tr in p.troops if tr.alive]
+        while True:
+            count=len(dead_set)
+            for tm in ('blue','red'):
+                p=self.players[tm]
+                dead=[tr for tr in p.troops if not tr.alive and tr not in dead_set]
+                for tr in dead:
+                    dead_set.add(tr)
+                    pa_match=[pa for pa in self.pending_ab if pa.troop is tr and not pa.is_banner]
+                    for pa in pa_match:
+                        p.elixir=min(p.max_ex,p.elixir+pa.ability.cost)
+                        pa.ability._pend=False
+                        self.pending_ab.remove(pa)
+                    if hasattr(tr,'on_death'):tr.on_death(self)
+                    if getattr(tr,'ability',None):
+                        ab=tr.ability
+                        if isinstance(ab,BannerBrigade):
+                            heroes=[t for t in p.troops if t.alive and getattr(t,'is_hero',False) and getattr(t,'ability',None) is ab]
+                            if not heroes:
+                                ab.on_last_death(tr,self)
+                                if ab not in p.pending_abilities:p.pending_abilities.append(ab)
+                        else:
+                            p._on_champ_death(tr)
+                # Death effects can kill more units, including allies through a shield burst.
+                p.troops=[tr for tr in p.troops if tr.alive or tr not in dead_set]
+            if len(dead_set)==count:break
         if dead_set:
             for tm in ('blue','red'):
                 for tr in self.players[tm].troops:
                     ag=getattr(tr,'aggro_tgt',None)
-                    if ag and id(ag) in dead_set:
+                    if ag in dead_set:
                         tr.retarget_cd=0.1;tr.aggro_tgt=None
     def deploy(self,team,troop):
         self.players[team].troops.append(troop)
         self.players[team]._register_champ(troop)
+        for c in getattr(troop,'components',[]):c.on_deploy(troop,self)
     def tick(self):
         if self.ended:return
         self.t=round(self.t+self.DT,10)
