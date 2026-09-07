@@ -45,6 +45,8 @@
   "note": "Wiki Suspicious Bush history, 6/4/2026: increased the Bush range to 1.6 tiles (from 0.5 tiles), now classified as Melee: Long; the bush bursts and drops its goblins from there. https://clashroyale.fandom.com/wiki/Suspicious_Bush"},
  {"card": "suspicious_bush", "path": "hitSpeed", "value": 0.3,
   "note": "Game data SuspiciousBush hitSpeed 300: the burst follows the arrival by 0.3 s; ClashStrategic's 1.4 is the Bush Goblins' hit speed. https://cache.statsroyale.com/gamedata-v5.json"},
+ {"card": "goblin_demolisher", "path": "skills.areaDamageOnDeath.damage[10]", "value": 404,
+  "note": "Death damage 404 at level 11: game data GoblinDemolisherDeathProjectile damage 158 on the level curve (158 x 2.56), wiki Goblin Demolisher statistics table death_11 404; the legacy snapshot's 847 was 2.1 times that. Radius 2.5 and pushback 2 tiles match the game data. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Goblin_Demolisher"},
  {"card": "battle_healer", "path": "skills.heal.radius", "value": 3.0,
   "note": "Heal radius 3 tiles: game data BattleHealer radius 3000; wiki Battle Healer history, 4/8/2026 decreased her heal radius to 3 tiles (from 4 tiles, the legacy value) and made it so she can no longer heal herself nor other Battle Healers. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Battle_Healer"}
 ]

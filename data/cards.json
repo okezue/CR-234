@@ -3394,7 +3394,7 @@
    "sightRange": 5.5,
    "skills": {
     "areaDamageOnDeath": {
-     "damage": [null, null, 400, 440, 483, 529, 582, 638, 701, 771, 847, 930, 1022, 1122, 1231, 1353],
+     "damage": [null, null, 191, 210, 230, 252, 278, 304, 334, 368, 404, 443, 488, 535, 587, 646],
      "radius": 2.5
     },
     "pushback": {
@@ -3416,7 +3416,8 @@
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
-    "skills.areaDamageOnDeath.damage": "legacy:death_damage",
+    "skills.areaDamageOnDeath.damage": "patch:2026-09-06",
+    "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
     "skills.areaDamageOnDeath.radius": "legacy:death_damage",
     "skills.transform": "patch:2026-09-01",
     "stats.damage[]": "derived:levelMult",
