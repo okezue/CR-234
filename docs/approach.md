@@ -116,6 +116,8 @@ Replay collection and datasets remain in the private scraping repository. Evalua
 
 The fidelity program compares recorded human placements against simulated winners, crowns, final tower hit points, early endings, and nearby units at selected spell casts. These are separate diagnostic measures, not an overall accuracy percentage. Invalid recorded placements are reported as relocated or skipped; replay recovery must not fabricate tower destruction. Calibration logs carry content fingerprints for the engine, parser, card data, and replay inputs so results from different baselines cannot silently mix. Mechanics fixes require sourced behavior, regression tests, and before/after replay checks, including fresh games outside the repeatedly used benchmark. Exact trajectory fidelity still requires measurements from recent gameplay recordings.
 
+At simulator revision `cf254e7`, the 1,927-game benchmark has 62.8% winner agreement, 40.6% exact crown scores, 47.6% premature endings, and 0.2113 mean normalized final tower HP error. Re-running `824f1eb` with the same corrected evaluator gives 62.1%, 39.9%, 49.1%, and 0.2174 respectively. The fresh 225-game standard-mode sample is mixed: winner agreement falls from 69.8% to 68.9%, while HP error improves from 0.2221 to 0.2177. These results establish remaining discrepancies, not completion of the 100% fidelity goal.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
