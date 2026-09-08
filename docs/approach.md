@@ -118,6 +118,8 @@ The fidelity program compares recorded human placements against simulated winner
 
 The reassessment at `59ba92b` completed all 2,000 games from a newly frozen sample, excluding every ID in the previous 2,256 selected games. The previous revision `9b5bdc5` and updated simulator used identical replay inputs and evaluator code. Winner agreement changed from 1,241/2,000 (62.05%) to 1,238/2,000 (61.90%); exact crowns from 824 (41.20%) to 821 (41.05%); premature endings from 1,009 (50.45%) to 1,015 (50.75%); normalized tower HP error from 0.2090 to 0.2082; and spell-aim agreement from 78.65% to 79.00%. The result is mixed, not an overall fidelity improvement. Earlier 1,927-game and 225-game results remain regression diagnostics, not substitutes for the full-size reassessment. The 100% fidelity goal remains unmet.
 
+A subsequent Tower Princess first-attack experiment restored the three Dart Goblin hits visible in a September 1 recording, but was withheld after a separate paired reassessment completed all 2,000 fresh games. Winner agreement fell from 62.40% to 62.25%, exact crowns from 39.85% to 39.00%, and premature endings rose from 49.35% to 52.45%. The initial-period value is sourced, but the candidate's reacquisition and short-gap reset behavior remains uncertain. The experiment and video comparison are retained for diagnosis; production mechanics are unchanged by this experiment.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
