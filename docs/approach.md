@@ -122,6 +122,8 @@ A subsequent Tower Princess first-attack experiment restored the three Dart Gobl
 
 Revision `7155d4e` removes inherited parent projectiles from five known melee-spawn configurations. A separate paired sample completed 2,000/2,000 games per version, excluding all 6,256 previously selected IDs. Winner agreement remained 64.80%; exact crowns changed from 41.95% to 41.90%, premature endings from 47.85% to 48.00%, and normalized tower HP error from 0.2066 to 0.2062. These small mixed deltas are not evidence of overall accuracy improvement. Reconstructing a recent Goblin Barrel encounter exposed the ownership error, while the observed first tower-response mismatch remains unresolved.
 
+Revision `bf7b382` repairs Goblin Barrel births inside blocked arena tiles, preserving legal samples and relocating only invalid ones. On another 2,000/2,000 paired sample, disjoint from all 8,256 previously selected games, winner agreement changed from 64.30% to 64.40%, exact crowns from 43.10% to 43.20%, and premature endings from 49.15% to 49.00%. Normalized tower HP error slightly worsened from 0.202368 to 0.202383. This validates the software's placement invariant and records small mixed replay effects; nearest-legal-tile relocation is a model policy, not measured reproduction of the game's exact formation.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
