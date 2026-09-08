@@ -635,7 +635,8 @@ def t_evo_goblin_barrel_decoys():
     g=_game();gb=mk_card('goblin_barrel',11,'blue',3.5,25,evolved=True);gb.apply(g)
     real=_named(g,'blue','Goblin');dec=_named(g,'blue','Decoy Goblin')
     assert len(real)==3 and len(dec)==3 and all(t.hp==202 and t.dmg==125 for t in real) and all(t.hp==81 and t.dmg==66 for t in dec)
-    assert all(abs(t.x-14.5)<=1 for t in dec) and all(abs(t.x-3.5)<=1 for t in real)
+    assert all(t.x>9 for t in dec) and all(t.x<9 for t in real)
+    assert all(0<=t.x<18 and 0<=t.y<32 and not g.arena.blocked(int(t.x),int(t.y)) for t in real+dec)
     return "Evo Goblin Barrel drops 3 Goblins and a decoy barrel of 3 Decoy Goblins (81 hp, 66 damage) on the mirrored tile"
 def t_evo_minion_horde_veil():
     g=_game();mh=mk_card('minion_horde',11,'blue',9,10,evolved=True)

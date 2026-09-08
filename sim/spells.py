@@ -90,12 +90,25 @@ class SpawnSpell:
         self.active=False;self.applied=False
         self.name=cfg.get('name','')
         self.proj_spd=cfg.get('projSpeed',0)
+    def _drop(self,game,x,y,cfg,count):
+        points=[(x+random.uniform(-1,1),y+random.uniform(-1,1)) for _ in range(count)]
+        a=game.arena
+        legal=lambda px,py:0<=px<a.W and 0<=py<a.H and not a.blocked(int(px),int(py))
+        reserved={(int(px),int(py)) for px,py in points if legal(px,py)}
+        free=None
+        for px,py in points:
+            if not legal(px,py):
+                if free is None:
+                    free=[(ix+0.5,iy+0.5) for iy in range(a.H) for ix in range(a.W) if not a.blocked(ix,iy)]
+                # Nearest legal tile repairs blocked births; row/column order breaks equal-distance ties.
+                px,py=min((p for p in free if (int(p[0]),int(p[1])) not in reserved),
+                          key=lambda p:((p[0]-px)**2+(p[1]-py)**2,p[1],p[0]))
+                reserved.add((int(px),int(py)))
+            spawn(game,self.team,px,py,cfg)
     def apply(self,game):
         if self.applied:return
         self.applied=True
-        for i in range(self.count):
-            ox=random.uniform(-1.0,1.0);oy=random.uniform(-1.0,1.0)
-            spawn(game,self.team,self.x+ox,self.y+oy,self.tcfg)
+        self._drop(game,self.x,self.y,self.tcfg,self.count)
         self.active=False
     def tick(self,dt,game=None):pass
 def spawn(game,team,x,y,cfg):
@@ -110,8 +123,8 @@ class DecoyBarrelSpell(SpawnSpell):
         super().__init__(team,x,y,cfg);self.dcfg=cfg['decoy_cfg'];self.dcount=cfg['decoy_count']
     def apply(self,game):
         if self.applied:return
-        super().apply(game);mx=game.arena.W-self.x
-        for i in range(self.dcount):spawn(game,self.team,mx+random.uniform(-1,1),self.y+random.uniform(-1,1),self.dcfg)
+        super().apply(game)
+        self._drop(game,game.arena.W-self.x,self.y,self.dcfg,self.dcount)
 class GraveyardSpell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
