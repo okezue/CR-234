@@ -552,6 +552,7 @@ def main():
                            "slow 45 = 0.9, medium 60 = 1.2, fast 90 = 1.8, very fast 120 = 2.4 (vid/)",
                   "projectile.speed": "tiles per second (game speed / 50, the same units per tick as the walking speed)",
                   "range": "tiles", "time": "seconds", "multipliers": "percent",
+                  "hovering": "crosses river tiles without changing ground targetability (Battle Healer, Royal Ghost)",
                   "summonRadius": "tiles from the deploy point to each summon of a multi-unit card (null: they appear touching)",
                   "summonDeployDelay": "seconds between consecutive summons (null: all at once)"},
         "hitType": {"single": "one target per hit (source: unique)", "splash": "area hit"},

@@ -83,7 +83,8 @@ def base(chain,lvl,name,parent=None):
             'transport':'Air' if p('flying') else 'Ground','atk_type':'area' if splash else 'single_target','splash_r':p('radius') if splash else 0,
             'ct_dmg':(at(ct,lvl) or 0)*shots,'components':[],'lvl':lvl,'name':name,'mass':p('mass') or 4,'sight_r':p('sightRange') or 5.5,
             'collision_r':p('collisionRadius') or 0.5,'projSpeed':pj.get('speed') or 0,'deploy':p('deployTime') or 0,
-            'is_suicide':bool(pick([o for o in chain if o is not parent],'kamikaze')),'card':chain[-1].get('name','')}
+            'is_suicide':bool(pick([o for o in chain if o is not parent],'kamikaze')),
+            'hovering':bool(pick([o for o in chain if o is not parent],'hovering')),'card':chain[-1].get('name','')}
 
 def unit(c,sk,lvl):
     # a spawned character: its own skill params, then the units record, then the card it is a copy of, then the parent

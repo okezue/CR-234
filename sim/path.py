@@ -88,7 +88,7 @@ class Pathfinder:
         gx=max(0,min(self.W-1,int(tx)))
         gy=max(0,min(self.H-1,int(ty)))
         if air is None:
-            air=getattr(tr,'transport','Ground')=='Air'
+            air=getattr(tr,'transport','Ground')=='Air' or getattr(tr,'hovering',False)
             if not air:
                 from sim.fx import RiverJump
                 if any(isinstance(c,RiverJump) for c in getattr(tr,'components',[])):air=True
@@ -99,7 +99,8 @@ class Pathfinder:
         return list(p)
     def _shift(self,u,dx,dy):
         a=self.arena;nx=min(max(u.x+dx,0.3),self.W-0.3);ny=min(max(u.y+dy,0.3),self.H-0.3)
-        if getattr(u,'transport','Ground')!='Air' and (a.blocked(int(nx),int(ny),True) or (int(ny) in a.RIVER and not a.on_bridge(nx))):return
+        if getattr(u,'transport','Ground')!='Air':
+            if a.blocked(int(nx),int(ny),True) or (not getattr(u,'hovering',False) and int(ny) in a.RIVER and not a.on_bridge(nx)):return
         u.x=nx;u.y=ny
     def resolve_collisions(self,troops,dt=0.1):
         # bodies of either team separate within their layer (ground or air); the overlap is split in inverse proportion to mass, buildings never move

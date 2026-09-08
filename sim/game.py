@@ -454,7 +454,8 @@ class Game:
                     if b and t.cd<=0:
                         self._shoot(t.team,t.cx,t.cy,t.proj_spd,b,lambda g,pr,b=b,dmg=t.dmg,t=t:g._tower_hit(t,b,dmg));t.cd=t.spd
     def _waypoint(self,tr,tx,ty):
-        if getattr(tr,'transport','Ground')=='Air' or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[])):return tx,ty
+        if getattr(tr,'transport','Ground')=='Air' or getattr(tr,'hovering',False):return tx,ty
+        if any(isinstance(c,RiverJump) for c in getattr(tr,'components',[])):return tx,ty
         a=self.arena;y0=a.RIVER[0];y1=a.RIVER[-1]+1;mid=(y0+y1)/2
         near,far=(y0-0.1,y1) if tr.y<mid else (y1,y0-0.1)
         on_br=a.on_bridge(tr.x)
@@ -594,7 +595,7 @@ class Game:
         return not a.blocked(int(x),int(y))
     def _move(self,tr,spd,tx,ty,tgt=None):
         a=self.arena;gnd=getattr(tr,'transport','Ground')!='Air'
-        rj=any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))
+        rj=getattr(tr,'hovering',False) or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))
         wx,wy=self._waypoint(tr,tx,ty)
         # river crossing is handled by _waypoint, so A* only detours towers and fences (the air grid); the target's own footprint is no
         # obstacle since the unit stops at range in front of it (detouring to the free tile nearest the start sent it to the tower's far corner)

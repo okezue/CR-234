@@ -34,8 +34,8 @@ def push(u,ox,oy,dist):
     gnd=getattr(u,'transport','Ground')!='Air';n=max(1,int(dist*4));x0,y0=u.x,u.y
     for i in range(1,n+1):
         nx=min(max(x0+dx/d*dist*i/n,0.3),_A.W-0.3);ny=min(max(y0+dy/d*dist*i/n,0.3),_A.H-0.3)
-        # a ground body stops at the river bank or a tower footprint instead of being thrown onto it
-        if gnd and (_A.blocked(int(nx),int(ny),True) or (int(ny) in _A.RIVER and not _A.on_bridge(nx))):break
+        # Hovering crosses water under displacement, but still respects footprints and fences.
+        if gnd and (_A.blocked(int(nx),int(ny),True) or (not getattr(u,'hovering',False) and int(ny) in _A.RIVER and not _A.on_bridge(nx))):break
         u.x,u.y=nx,ny
     if hasattr(u,'statuses'):u.statuses.append(Status('knockback',0.05))
 def strip(g,team,x0,y0,x1,y1,hw,air=True,skip=()):

@@ -228,7 +228,7 @@ class CloneSpell:
                 oy=-0.5 if self.team=='blue' else 0.5
                 cfg={'hp':1,'max_hp':1,'dmg':t.dmg,'hspd':t.hspd,'fhspd':t.fhspd,
                      'spd':t.spd,'rng':t.rng,'targets':t.targets,
-                     'transport':t.transport,'atk_type':t.atk_type,
+                     'transport':t.transport,'hovering':getattr(t,'hovering',False),'atk_type':t.atk_type,
                      'splash_r':t.splash_r,'ct_dmg':t.ct_dmg,'is_suicide':getattr(t,'is_suicide',False),
                      'components':list(t.components),'lvl':t.lvl,'name':t.name,
                      'death_dmg':getattr(t,'death_dmg',0),

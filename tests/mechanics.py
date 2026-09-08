@@ -54,6 +54,57 @@ def t_mega_knight_lands_outside_tower_diagonally():
     assert not g.arena.blocked(int(mk.x),int(mk.y)),f"landing inside tower: {mk.x},{mk.y}"
     assert g._dist(mk,tw)<=mk.rng
 
+def t_hovering_troops_cross_river_without_bridge():
+    for name,evo in (('battle_healer',False),('royal_ghost',False),('royal_ghost',True)):
+        for team in ('blue','red'):
+            g=quiet(Game());y,ty=(14,20) if team=='blue' else (18,12)
+            tr=mk_card(name,11,team,9,y,evolved=evo);g.deploy(team,tr)
+            target=Dummy(g._opp(team),9,ty,hp=50000,spd=0,dmg=0);g.deploy(target.team,target)
+            path=g._pf.get_path(tr,9,ty)
+            assert path and all(abs(x-9.5)<0.01 for x,_ in path)
+            while g.t<3 and (tr.y<17 if team=='blue' else tr.y>=15):g.tick()
+            assert abs(tr.x-9)<0.05 and (tr.y>=17 if team=='blue' else tr.y<15),(name,team,tr.x,tr.y)
+            assert tr.transport=='Ground' and tr.hovering
+
+def t_hovering_push_and_separation_can_enter_river():
+    for name in ('battle_healer','royal_ghost'):
+        g=Game();tr=mk_card(name,11,'blue',9,14.8);g.deploy('blue',tr)
+        fx.push(tr,9,13.8,1.0)
+        assert abs(tr.y-15.8)<0.01
+        before=tr.x;g._pf._shift(tr,0.2,0)
+        assert abs(tr.x-before-0.2)<0.01 and abs(tr.y-15.8)<0.01
+    for name in ('knight','hog_rider'):
+        g=Game();tr=mk_card(name,11,'blue',9,14.8);fx.push(tr,9,13.8,1.0);g._pf._shift(tr,0,0.4)
+        assert tr.y==14.8,name
+
+def t_hovering_remains_ground_target_and_respects_obstacles():
+    for name in ('battle_healer','royal_ghost'):
+        g=quiet(Game());tr=mk_card(name,11,'red',9,16);g.deploy('red',tr);tr.statuses=[]
+        cannon=mk_card('cannon',11,'blue',9,14);g.deploy('blue',cannon)
+        target,_=g._find_target(cannon)
+        assert target is tr and tr.transport=='Ground'
+        tr.x,tr.y=3.5,9;fx.push(tr,3.5,10,2)
+        assert not g.arena.blocked(int(tr.x),int(tr.y),True)
+        tr.x,tr.y=0.5,13.8;g._pf._shift(tr,0,0.5)
+        assert tr.y==13.8
+        tr.x,tr.y=9,16;air=mk_card('baby_dragon',11,'blue',9.2,16)
+        ax,ay=air.x,air.y;g._pf.resolve_collisions([tr,air])
+        assert (air.x,air.y)==(ax,ay)
+        building=mk_card('cannon',11,'blue',9.2,16);bx,by=building.x,building.y
+        g._pf.resolve_collisions([tr,building])
+        assert tr.x<9 and (building.x,building.y)==(bx,by)
+
+def t_hovering_flag_survives_clone_without_leaking_to_spawns():
+    for name in ('battle_healer','royal_ghost'):
+        g=Game();tr=mk_card(name,11,'blue',9,14);g.deploy('blue',tr)
+        mk_card('clone',11,'blue',9,14).apply(g)
+        clone=next(t for t in g.players['blue'].troops if t is not tr)
+        assert clone.hovering and clone.transport=='Ground'
+    g=Game();ghost=mk_card('royal_ghost',11,'blue',9,10,evolved=True);g.deploy('blue',ghost)
+    ghost.statuses=[];evo=next(c for c in ghost.components if isinstance(c,fx.EvoRoyalGhost));evo.on_tick(ghost,g)
+    spawned=[t for t in g.players['blue'].troops if t is not ghost]
+    assert len(spawned)==2 and not any(t.hovering for t in spawned)
+
 def t_battle_healer_single_target_attack_preserves_healing():
     for team in ('blue','red'):
         for level in (11,16):

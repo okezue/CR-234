@@ -6,7 +6,7 @@ class Troop:
         self.hp=cfg['hp'];self.max_hp=cfg['hp']
         self.dmg=cfg['dmg'];self.spd=cfg['spd']
         self.hspd=cfg['hspd'];self.fhspd=cfg.get('fhspd',cfg['hspd'])
-        self.rng=cfg['rng'];self.transport=cfg.get('transport','Ground')
+        self.rng=cfg['rng'];self.transport=cfg.get('transport','Ground');self.hovering=cfg.get('hovering',False)
         self.targets=cfg.get('targets',['Ground'])
         self.atk_type=cfg.get('atk_type','single_target')
         self.splash_r=cfg.get('splash_r',0)
