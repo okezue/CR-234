@@ -1,0 +1,6 @@
+[
+ {"card": "battle_healer", "path": "hitType", "value": "single",
+  "note": "Battle Healer deals single-target melee damage; the on-hit area effect only heals allies. The game character has damage 105 and no areaDamageRadius or projectile; areaEffectOnHitData carries healPerSecond, not damage. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Battle_Healer"},
+ {"card": "battle_healer", "path": "radius", "value": null,
+  "note": "Remove the inherited splash radius. Healing keeps its separate 3-tile skills.heal.radius. https://clashroyale.fandom.com/wiki/Battle_Healer"}
+]

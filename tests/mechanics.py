@@ -54,6 +54,39 @@ def t_mega_knight_lands_outside_tower_diagonally():
     assert not g.arena.blocked(int(mk.x),int(mk.y)),f"landing inside tower: {mk.x},{mk.y}"
     assert g._dist(mk,tw)<=mk.rng
 
+def t_battle_healer_single_target_attack_preserves_healing():
+    for team in ('blue','red'):
+        for level in (11,16):
+            g=_game();healer=mk_card('battle_healer',level,team,9,10);g.deploy(team,healer)
+            target=Dummy(g._opp(team),9,12,hp=5000,spd=0,dmg=0)
+            neighbor=Dummy(g._opp(team),10,12,hp=5000,spd=0,dmg=0)
+            building=mk_card('cannon',level,g._opp(team),8,12)
+            air=mk_card('baby_dragon',level,g._opp(team),9,12)
+            for enemy in (target,neighbor,building,air):g.deploy(enemy.team,enemy)
+            ally=mk_card('knight',level,team,10,10);ally.hp-=500;g.deploy(team,ally)
+            second=mk_card('battle_healer',level,team,8,10);second.hp-=500;g.deploy(team,second)
+            healer.hp-=500;hp=healer.hp;sh=second.hp;ah=ally.hp;bh=building.hp;fh=air.hp
+            heal=next(c for c in healer.components if isinstance(c,fx.HealPulse))
+            assert (healer.dmg,heal.heal)==((268,102) if level==11 else (429,163))
+            assert not any(isinstance(c,fx.SplashAttack) for c in healer.components)
+            g._do_attack(healer,target)
+            assert target.hp==5000-healer.dmg and neighbor.hp==5000
+            assert building.hp==bh and air.hp==fh
+            assert ally.hp==ah+heal.heal and healer.hp==hp and second.hp==sh
+            assert heal.radius==3 and healer.atk_type=='single_target' and healer.splash_r==0
+
+def t_battle_healer_does_not_splash_adjacent_tower():
+    for team in ('blue','red'):
+        g=quiet(Game());enemy=g._opp(team);tw=g.arena.get_tower(enemy,'princess','left')
+        step=1 if enemy=='blue' else -1
+        healer=mk_card('battle_healer',11,team,tw.cx,tw.cy+3*step);g.deploy(team,healer)
+        target=Dummy(enemy,tw.cx,tw.cy+2*step,hp=5000,spd=0,dmg=0);g.deploy(enemy,target)
+        hp=tw.hp
+        g.run(0.5)
+        assert target.hp==5000-healer.dmg and tw.hp==hp
+        g._do_attack(healer,tw)
+        assert tw.hp==hp-healer.dmg and target.hp==5000-healer.dmg
+
 def t_healing_spares_buildings():
     for name in ('battle_healer','heal_spirit'):
         g=_game();tr=mk_card(name,11,'blue',9,10);g.deploy('blue',tr)
