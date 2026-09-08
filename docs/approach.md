@@ -120,6 +120,8 @@ The reassessment at `59ba92b` completed all 2,000 games from a newly frozen samp
 
 A subsequent Tower Princess first-attack experiment restored the three Dart Goblin hits visible in a September 1 recording, but was withheld after a separate paired reassessment completed all 2,000 fresh games. Winner agreement fell from 62.40% to 62.25%, exact crowns from 39.85% to 39.00%, and premature endings rose from 49.35% to 52.45%. The initial-period value is sourced, but the candidate's reacquisition and short-gap reset behavior remains uncertain. The experiment and video comparison are retained for diagnosis; production mechanics are unchanged by this experiment.
 
+Revision `7155d4e` removes inherited parent projectiles from five known melee-spawn configurations. A separate paired sample completed 2,000/2,000 games per version, excluding all 6,256 previously selected IDs. Winner agreement remained 64.80%; exact crowns changed from 41.95% to 41.90%, premature endings from 47.85% to 48.00%, and normalized tower HP error from 0.2066 to 0.2062. These small mixed deltas are not evidence of overall accuracy improvement. Reconstructing a recent Goblin Barrel encounter exposed the ownership error, while the observed first tower-response mismatch remains unresolved.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
