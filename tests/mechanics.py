@@ -21,6 +21,124 @@ def _act(g,tr):
 def _named(g,team,name):return [t for t in g.players[team].troops if t.alive and t.name==name]
 def _comps(t):return [type(c).__name__ for c in t.components]
 
+def t_spawned_melee_does_not_inherit_parent_projectiles():
+    from sim.cards import unit
+    for name,skill in (('goblin_barrel','spawn'),('witch','periodicSpawn'),('mother_witch','spawnOnKill')):
+        c=card(name)
+        for level in (11,16):
+            cfg=unit(c,c['skills'][skill],level)
+            assert cfg['projSpeed']==0,(name,cfg['projSpeed'])
+            assert cfg['rng']<1 and cfg['dmg']>0
+    prince=card('little_prince')
+    assert unit(prince,prince['skills']['ability']['skills']['spawn'],11)['projSpeed']==0
+    assert mk_card('witch',11,'blue',9,10).proj_spd==12
+    assert mk_card('mother_witch',11,'blue',9,10).proj_spd==12
+
+def t_goblin_barrel_stabs_without_projectile():
+    for team in ('blue','red'):
+        for level in (11,16):
+            for evolved in (False,True):
+                g=quiet(Game());barrel=mk_card('goblin_barrel',level,team,9,10,evolved=evolved);barrel.apply(g)
+                assert barrel.proj_spd==8
+                goblins=list(g.players[team].troops)
+                assert len(goblins)==(6 if evolved else 3)
+                target=Dummy(g._opp(team),9,11,hp=50000,spd=0,dmg=0);g.deploy(target.team,target)
+                for goblin in goblins:
+                    hp=target.hp;g._fire(goblin,target)
+                    assert target.hp==hp-goblin.dmg and not g.projs
+                    assert goblin.proj_spd==0 and goblin.rng==0.5
+                tower=g.arena.get_tower(g._opp(team),'princess','left');hp=tower.hp
+                g._fire(goblins[0],tower)
+                assert tower.hp==hp-goblins[0].dmg and not g.projs
+
+def t_barrel_flight_deployment_and_melee_attack():
+    random.seed(42)
+    g=_game();barrel=mk_card('goblin_barrel',11,'blue',9,12)
+    target,=_dummies(g,(9,13))
+    g._cast('blue',barrel,9,12)
+    assert g.projs and not g.players['blue'].troops
+    while not g.players['blue'].troops and g.t<3:g.tick()
+    goblins=list(g.players['blue'].troops)
+    assert len(goblins)==3 and all(has(t,'deploying') for t in goblins)
+    assert not g.projs and target.hp==50000
+    g.run(0.9)
+    assert target.hp==50000 and not g.projs
+    while target.hp==50000 and g.t<5:
+        g.tick()
+        assert not g.projs,"melee Goblins must not launch a second traveling projectile"
+    assert target.hp<50000
+
+def t_spawned_goblin_stabs_can_be_parried():
+    g=_game();barrel=mk_card('goblin_barrel',11,'blue',9,12);barrel.apply(g)
+    goblin=g.players['blue'].troops[0];ronin=mk_card('ronin',11,'red',9,13);g.deploy('red',ronin)
+    hp=ronin.hp;ghp=goblin.hp;g._fire(goblin,ronin)
+    assert ronin.hp==hp and goblin.hp<ghp and not g.projs
+
+def t_melee_spawn_paths_keep_direct_attacks():
+    for team in ('blue','red'):
+        for evolved in (False,True):
+            g=_game();witch=mk_card('witch',11,team,9,10,evolved=evolved);g.deploy(team,witch)
+            timer=next(c for c in witch.components if isinstance(c,fx.SpawnTimer));timer.timer=0;timer.on_tick(witch,g)
+            skeletons=[t for t in g.players[team].troops if t is not witch]
+            assert len(skeletons)==4 and all(t.proj_spd==0 for t in skeletons)
+            victim=Dummy(g._opp(team),9,11,hp=5000,spd=0);g.deploy(victim.team,victim)
+            hp=victim.hp;g._fire(skeletons[0],victim)
+            assert victim.hp==hp-skeletons[0].dmg and not g.projs
+        g=_game();witch=mk_card('mother_witch',11,team,9,10);g.deploy(team,witch)
+        victim=Dummy(g._opp(team),9,11,hp=1,spd=0);g.deploy(victim.team,victim)
+        curse=next(c for c in witch.components if isinstance(c,fx.CurseOnHit))
+        curse.on_attack(witch,victim,g);victim.take_damage(1);curse.on_tick(witch,g)
+        hog=next(t for t in g.players[team].troops if t is not witch)
+        assert hog.proj_spd==0
+        tower=g.arena.get_tower(g._opp(team),'princess','left');tower.alive=True;hp=tower.hp
+        g._fire(hog,tower)
+        assert tower.hp==hp-hog.dmg and not g.projs
+        g=_game();prince=mk_card('little_prince',11,team,9,10);g.deploy(team,prince)
+        prince.ability.activate(prince,g)
+        guard=next(t for t in g.players[team].troops if t is not prince)
+        victim=Dummy(g._opp(team),9,11,hp=5000,spd=0);g.deploy(victim.team,victim)
+        assert guard.proj_spd==0 and guard.dmg==232
+        g._fire(guard,victim)
+        assert victim.hp==5000-232 and not g.projs
+
+def t_spawned_ranged_projectiles_keep_own_definition():
+    from sim.cards import unit
+    from sim.units import Troop
+    for name,skill in (('goblin_hut','periodicSpawn'),('goblin_giant','spawnOnDeath'),('lava_hound','spawnOnDeath')):
+        c=card(name);cfg=unit(c,c['skills'][skill],11)
+        assert cfg['projSpeed']==10,(name,cfg['projSpeed'])
+        g=_game();tr=Troop('blue',9,10,cfg);g.deploy('blue',tr);target,=_dummies(g,(9,12))
+        hp=target.hp;g._fire(tr,target)
+        assert target.hp==hp and len(g.projs)==1
+        for _ in range(4):g._proc_projs()
+        assert target.hp==hp-tr.dmg
+
+def t_spawn_projectile_override_precedence():
+    from sim.cards import base
+    parent={'hitSpeed':1.1,'speed':60,'range':0.5,'hitpoints':500,'damage':7,'projectile':{'speed':20,'count':9},'radius':0.1}
+    own={'damage':40,'hitpoints':100,'range':0.5,'projectile':{'speed':0,'count':1}}
+    cfg=base([own,parent],11,'Child',parent=parent)
+    assert cfg['projSpeed']==0 and cfg['dmg']==40
+    ranged={**own,'projectile':{'speed':10,'count':2}}
+    cfg=base([ranged,parent],11,'Child',parent=parent)
+    assert cfg['projSpeed']==10 and cfg['dmg']==80
+    cfg=base([{'projectile':{'speed':4,'count':1}},ranged,parent],11,'Child',parent=parent)
+    assert cfg['projSpeed']==4 and cfg['dmg']==40
+    assert base([parent],11,'Parent')['projSpeed']==20
+
+def t_unmodified_ranged_spawn_metadata_is_preserved():
+    from sim.cards import unit
+    c=card('musketeer');turret=unit(c,c['hero']['ability']['skills']['spawn'],11)
+    assert turret['projSpeed']==20 and turret['dmg']==66 and turret['rng']==5.5
+    expected={'goblin_gang':[('Goblin',0)]*3+[('SpearGoblin',10)]*3,
+              'goblinstein':[('Monster',0),('Goblinstein_doctor',10)],
+              'rascals':[('Rascal Boy',0)]+[('RascalGirl',16)]*2}
+    for name,values in expected.items():
+        assert [(t.name,t.proj_spd) for t in mk_card(name,11,'blue',9,10)]==values
+    for name,speed,damage in (('hunter',11,84),('firecracker',10,320),('little_prince',16,104)):
+        tr=mk_card(name,11,'blue',9,10)
+        assert (tr.proj_spd,tr.dmg)==(speed,damage)
+
 def t_wizard_shield_break_during_deploy_and_death():
     for dep in (0,1.0):
         g=_game();w=mk_card('wizard',11,'blue',9,10,evolved=True);g._place('blue',w,dep)

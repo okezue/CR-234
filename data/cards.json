@@ -3102,6 +3102,10 @@
       "hitpoints": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
       "interval": null,
       "lifetime": null,
+      "projectile": {
+       "count": 1,
+       "speed": 0
+      },
       "radius": null,
       "range": 0.5,
       "targets": ["ground"]
@@ -3137,7 +3141,11 @@
    "skills": {
     "spawn": {
      "character": "Goblin",
-     "count": 3
+     "count": 3,
+     "projectile": {
+      "count": 1,
+      "speed": 0
+     }
     }
    },
    "speed": 60,
@@ -3145,12 +3153,14 @@
     "*": "cs2.4.0",
     "evo.skills.spawn.damage[]": "derived:levelMult",
     "evo.skills.spawn.hitpoints[]": "derived:levelMult",
+    "evo.skills.spawn.projectile": "patch:2026-09-08",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "projectile.speed": "gd:debfe1e2",
     "skills.spawn.character": "legacy:spawns",
     "skills.spawn.count": "legacy:spawns",
+    "skills.spawn.projectile": "patch:2026-09-08",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -5347,6 +5357,10 @@
        "hitpoints": null,
        "interval": null,
        "lifetime": null,
+       "projectile": {
+        "count": 1,
+        "speed": 0
+       },
        "radius": null,
        "range": null,
        "targets": []
@@ -5370,6 +5384,7 @@
     "projectile.speed": "gd:debfe1e2",
     "skills.ability.cooldown": "patch:2026-09-01",
     "skills.ability.skills.spawn.damage[]": "derived:levelMult",
+    "skills.ability.skills.spawn.projectile": "patch:2026-09-08",
     "skills.charge": "patch:2026-08-26",
     "skills.charge.damage[]": "derived:levelMult",
     "skills.charge.range": "patch:2026-09-01",
@@ -6410,6 +6425,10 @@
      "interval": null,
      "lifetime": null,
      "markDuration": 5,
+     "projectile": {
+      "count": 1,
+      "speed": 0
+     },
      "radius": null,
      "range": 0.75,
      "speed": 120,
@@ -6424,6 +6443,7 @@
     "skills.spawnOnKill.damage[]": "derived:levelMult",
     "skills.spawnOnKill.hitpoints[15]": "derived:levelMult (source level16 1006 is off the level curve)",
     "skills.spawnOnKill.hitpoints[]": "derived:levelMult",
+    "skills.spawnOnKill.projectile": "patch:2026-09-08",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -9271,7 +9291,11 @@
      "character": "Skeleton",
      "count": 4,
      "firstDelay": 1.0,
-     "pauseTime": 7
+     "pauseTime": 7,
+     "projectile": {
+      "count": 1,
+      "speed": 0
+     }
     }
    },
    "speed": 60,
@@ -9288,6 +9312,7 @@
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
     "skills.periodicSpawn.firstDelay": "legacy:spawn",
+    "skills.periodicSpawn.projectile": "patch:2026-09-08",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -9607,7 +9632,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-07",
+  "built": "2026-09-08",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9704,6 +9729,10 @@
    {
     "name": "data/patches/2026-09-07.json",
     "tag": "patch:2026-09-07"
+   },
+   {
+    "name": "data/patches/2026-09-08.json",
+    "tag": "patch:2026-09-08"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

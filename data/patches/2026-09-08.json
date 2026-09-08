@@ -1,0 +1,12 @@
+[
+ {"card": "goblin_barrel", "path": "skills.spawn.projectile", "value": {"speed": 0, "count": 1},
+  "note": "The spawned Goblin deals direct melee damage. Zero disables a traveling attack projectile; it must not inherit the barrel transport speed. GoblinBarrelSpell.spawnCharacterData has damage and melee range with no projectileData. https://cache.statsroyale.com/gamedata-v5.json"},
+ {"card": "goblin_barrel", "path": "evo.skills.spawn.projectile", "value": {"speed": 0, "count": 1},
+  "note": "Decoy Goblins also deal direct melee damage. GoblinBarrelSpell_EV1_Decoy.spawnCharacterData has no projectileData. https://cache.statsroyale.com/gamedata-v5.json"},
+ {"card": "witch", "path": "skills.periodicSpawn.projectile", "value": {"speed": 0, "count": 1},
+  "note": "Spawned Skeletons have melee damage and no projectileData; they must not inherit the Witch's ranged attack. https://cache.statsroyale.com/gamedata-v5.json"},
+ {"card": "mother_witch", "path": "skills.spawnOnKill.projectile", "value": {"speed": 0, "count": 1},
+  "note": "Cursed Hogs use a direct melee attack against buildings, not the Mother Witch's projectile. Zero selects direct damage rather than an estimated projectile speed. https://clashroyale.fandom.com/wiki/Mother_Witch"},
+ {"card": "little_prince", "path": "skills.ability.skills.spawn.projectile", "value": {"speed": 0, "count": 1},
+  "note": "Guardienne's ordinary sword attack is melee; it must not inherit the Little Prince's crossbow projectile. Her charge remains a separate ability. https://clashroyale.fandom.com/wiki/Little_Prince"}
+]
