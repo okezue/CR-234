@@ -126,6 +126,8 @@ Revision `bf7b382` repairs Goblin Barrel births inside blocked arena tiles, pres
 
 Revision `e0579e4` uses Goblin Barrel's sourced 1.1-second spawn deployment delay instead of the ordinary Goblin's 1.0 second. Both versions completed another fresh, disjoint 2,000-game sample: winner agreement changed from 64.80% to 64.70%, exact crowns from 42.45% to 42.40%, premature endings from 48.60% to 48.30%, and normalized tower HP error from 0.201718 to 0.201837. The source-specific delay is corrected, but these mixed results do not establish an overall fidelity gain or resolve the observed tower-response discrepancy.
 
+Revision `d529260` preserves a cloned troop's projectile speed and optional homing instead of defaulting ranged clones to instant damage. Both versions completed a new, disjoint 2,000-game sample: winner agreement changed from 63.35% to 63.40%, exact crowns and premature endings remained 40.40% and 48.30%, and normalized tower HP error changed from 0.204564 to 0.204518. This is one additional winner match, not a broad accuracy claim. Regression tests verify projectile delivery, but the inspected September 5 footage did not isolate an attributable ranged-clone shot; direct visual confirmation and special-attack clone behavior remain open.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
