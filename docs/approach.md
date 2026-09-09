@@ -132,6 +132,8 @@ Revision `6992e11` preserves an existing shield on a clone as one shield HP plus
 
 Revision `a790a68` moves ranged recoil to projectile release, preserving the projectile's original launch position and leaving damage and other effects at impact. Native September 2 footage shows Firecracker retreating during flight before tower damage, supporting this phase correction, but not instantaneous movement or exact recoil duration. On a fresh paired sample of 2,000 games, winner agreement changed from 63.15% to 63.25%, exact crowns from 41.75% to 42.05%, premature endings from 48.65% to 48.45%, and normalized tower HP error from 0.203957 to 0.204094. Outcome counts improved slightly while HP error worsened slightly; secondary-effect geometry and full animation fidelity remain unresolved.
 
+Revision `9b14de1` prevents ordinary Inferno Dragon, Inferno Tower and Mighty Miner from accumulating ramp damage without a valid in-range target. The evolution's separate retention path and existing phase durations are unchanged. Both versions completed a fresh paired sample of 2,000 games: winner agreement changed from 65.35% to 65.70%, exact crowns from 43.90% to 44.35%, premature endings remained 47.60%, and normalized tower HP error changed from 0.199221 to 0.199398. These are mixed effects, not proof of overall accuracy. The inspected video did not isolate an ordinary Inferno beam; evolution retention and escalating Crown Tower damage remain separate unresolved mechanics.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
