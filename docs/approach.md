@@ -130,6 +130,8 @@ Revision `d529260` preserves a cloned troop's projectile speed and optional homi
 
 Revision `6992e11` preserves an existing shield on a clone as one shield HP plus one body HP, without restoring broken shields. On a new paired sample of 2,000 games, disjoint from all 14,256 previous selections, winner agreement, exact crowns and premature endings remained 61.75%, 41.80% and 49.75%. Normalized tower HP error changed from 0.206802 to 0.206791 in a single affected replay. Tests verify the explicit shield rule; the inspected September 3 footage did not establish a tracked cloned-shield interaction, and evolved-Wizard clone shield callbacks remain unresolved.
 
+Revision `a790a68` moves ranged recoil to projectile release, preserving the projectile's original launch position and leaving damage and other effects at impact. Native September 2 footage shows Firecracker retreating during flight before tower damage, supporting this phase correction, but not instantaneous movement or exact recoil duration. On a fresh paired sample of 2,000 games, winner agreement changed from 63.15% to 63.25%, exact crowns from 41.75% to 42.05%, premature endings from 48.65% to 48.45%, and normalized tower HP error from 0.203957 to 0.204094. Outcome counts improved slightly while HP error worsened slightly; secondary-effect geometry and full animation fidelity remain unresolved.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
