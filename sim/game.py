@@ -3,7 +3,7 @@ import random
 from sim.arena import Arena
 from sim.towers import create as mk_tt,king,lock as tower_lock
 from sim.units import Status,hidden,has
-from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump
+from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil
 from sim.path import Pathfinder
 from sim.cards import create as mk_card,card
 from sim.knobs import K
@@ -572,7 +572,8 @@ class Game:
             if hasattr(c,'pre_damage'):bd=c.pre_damage(tgt,tr,bd,self)
         tgt.take_damage(bd)
         if hasattr(tgt,'ttype') and not tgt.alive:self._tower_down(tgt)
-        for c in getattr(tr,'components',[]):c.on_attack(tr,tgt,self)
+        for c in getattr(tr,'components',[]):
+            if shot is None or not isinstance(c,Recoil):c.on_attack(tr,tgt,self)
         for c in getattr(tgt,'components',[]):
             if hasattr(c,'on_take_damage'):c.on_take_damage(tgt,tr,self)
         sd=getattr(tr,'slow_dur',0)
@@ -589,6 +590,9 @@ class Game:
         def hit(g,pr):
             if pr.homing or math.hypot(*(a-b for a,b in zip(g._pos(tgt),(pr.x,pr.y))))<=tr.splash_r+0.5:g._do_attack(tr,tgt,shot)
         self.projs.append(Projectile(tr.team,tr.x,tr.y,v,tgt,tx,ty,hit,getattr(tr,'proj_homing',True)))
+        # Recoil follows release; the projectile starts at the pre-recoil position.
+        for c in getattr(tr,'components',[]):
+            if isinstance(c,Recoil):c.on_attack(tr,tgt,self)
     def _walkable(self,x,y,rj):
         a=self.arena
         if int(y) in a.RIVER:return rj or a.on_bridge(x)
