@@ -240,13 +240,14 @@ class CloneSpell:
             if d<=self.radius:
                 oy=-0.5 if self.team=='blue' else 0.5
                 cfg={'hp':1,'max_hp':1,'dmg':t.dmg,'hspd':t.hspd,'fhspd':t.fhspd,
-                     'spd':t.spd,'rng':t.rng,'targets':t.targets,
+                     'spd':t.spd,'rng':t.rng,'targets':t.targets,'projSpeed':getattr(t,'proj_spd',0),
                      'transport':t.transport,'hovering':getattr(t,'hovering',False),'atk_type':t.atk_type,
                      'splash_r':t.splash_r,'ct_dmg':t.ct_dmg,'is_suicide':getattr(t,'is_suicide',False),
                      'components':list(t.components),'lvl':t.lvl,'name':t.name,
                      'death_dmg':getattr(t,'death_dmg',0),
                      'death_splash_r':getattr(t,'death_splash_r',0)}
                 cl=Troop(self.team,t.x,t.y+oy,cfg)
+                cl.proj_homing=getattr(t,'proj_homing',True)
                 cl.ability=None
                 clones.append(cl)
         for c in clones:
