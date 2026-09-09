@@ -1,4 +1,8 @@
 [
+ {"card": "goblin_barrel", "path": "skills.spawn.deployTime", "value": 1.1,
+  "note": "Barrel Goblins use the projectile-specific 1100 ms spawn delay, not the generic Goblin's 1000 ms deploy time. The Goblin Barrel attribute table and May 2019 change both specify 1.1 seconds. https://clashroyale.fandom.com/wiki/Goblin_Barrel https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json"},
+ {"card": "goblin_barrel", "path": "evo.skills.spawn.deployTime", "value": 1.1,
+  "note": "Both evolution projectiles inherit GoblinBarrelSpell without a spawn-delay override in the cached game data. Use its 1100 ms projectile-specific delay before the generic character default. https://cache.statsroyale.com/gamedata-v5.json https://raw.githubusercontent.com/RoyaleAPI/cr-api-data/master/docs/json/cards_stats.json"},
  {"card": "goblin_barrel", "path": "skills.spawn.projectile", "value": {"speed": 0, "count": 1},
   "note": "The spawned Goblin deals direct melee damage. Zero disables a traveling attack projectile; it must not inherit the barrel transport speed. GoblinBarrelSpell.spawnCharacterData has damage and melee range with no projectileData. https://cache.statsroyale.com/gamedata-v5.json"},
  {"card": "goblin_barrel", "path": "evo.skills.spawn.projectile", "value": {"speed": 0, "count": 1},

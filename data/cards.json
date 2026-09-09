@@ -3099,6 +3099,7 @@
       "character": "Goblin",
       "count": 3,
       "damage": [null, null, null, null, null, 41, 45, 50, 55, 60, 66, 73, 80, 88, 96, 106],
+      "deployTime": 1.1,
       "hitpoints": [null, null, null, null, null, 51, 56, 61, 67, 74, 81, 89, 98, 108, 119, 130],
       "interval": null,
       "lifetime": null,
@@ -3142,6 +3143,7 @@
     "spawn": {
      "character": "Goblin",
      "count": 3,
+     "deployTime": 1.1,
      "projectile": {
       "count": 1,
       "speed": 0
@@ -3152,6 +3154,7 @@
    "src": {
     "*": "cs2.4.0",
     "evo.skills.spawn.damage[]": "derived:levelMult",
+    "evo.skills.spawn.deployTime": "patch:2026-09-08",
     "evo.skills.spawn.hitpoints[]": "derived:levelMult",
     "evo.skills.spawn.projectile": "patch:2026-09-08",
     "evo.stats.damage[]": "derived:levelMult",
@@ -3160,6 +3163,7 @@
     "projectile.speed": "gd:debfe1e2",
     "skills.spawn.character": "legacy:spawns",
     "skills.spawn.count": "legacy:spawns",
+    "skills.spawn.deployTime": "patch:2026-09-08",
     "skills.spawn.projectile": "patch:2026-09-08",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -3181,7 +3185,7 @@
      "collisionRadius": 0.5,
      "count": 3,
      "damage": [null, null, null, null, null, 78, 86, 94, 103, 114, 125, 137, 151, 166, 182, 200],
-     "deployTime": 1.0,
+     "deployTime": 1.1,
      "from": ["gd.spawnCharacterData", "evo.skills.spawn", "legacy:spawns", "legacy:sub_units.Goblin"],
      "hitSpeed": 1.1,
      "hitpoints": [null, null, null, null, null, 126, 139, 152, 167, 184, 202, 221, 244, 267, 293, 323],

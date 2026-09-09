@@ -1,15 +1,78 @@
 import random
 from unittest.mock import patch
 
-from sim.cards import create
+from sim.cards import create,card
 from sim.game import Game
 from sim.units import has
-from tests.util import quiet
+from tests.util import Dummy,quiet
 
 
 def legal(game,troop):
     a=game.arena
     return 0<=troop.x<a.W and 0<=troop.y<a.H and not a.blocked(int(troop.x),int(troop.y))
+
+
+def t_barrel_specific_deployment_delay():
+    data=card('goblin_barrel')
+    assert data['skills']['spawn']['deployTime']==1.1
+    assert data['evo']['skills']['spawn']['deployTime']==1.1
+    for team in ('blue','red'):
+        for level in (11,16):
+            for evolved in (False,True):
+                g=quiet(Game());random.seed(42)
+                barrel=create('goblin_barrel',level,team,9,10,evolved=evolved)
+                assert barrel.proj_spd==8 and barrel.tcfg['deploy']==1.1
+                if evolved:assert barrel.dcfg['deploy']==1.1
+                barrel.apply(g);troops=g.players[team].troops
+                assert len(troops)==(6 if evolved else 3)
+                assert all(next(s for s in t.statuses if s.kind=='deploying').dur==1.1 for t in troops)
+                cds=[t.cd for t in troops]
+                for _ in range(21):g.tick()
+                assert all(has(t,'deploying') for t in troops)
+                assert [t.cd for t in troops]==cds
+                g.tick()
+                assert all(t.alive and not has(t,'deploying') for t in troops)
+
+
+def t_barrel_goblins_targetable_during_deployment():
+    for team in ('blue','red'):
+        g=Game();tower=g.arena.get_tower(g._opp(team),'princess','left')
+        barrel=create('goblin_barrel',11,team,tower.cx,tower.cy);barrel.apply(g)
+        troops=g.players[team].troops
+        target=tower.troop._tgt(tower,troops)
+        assert target in troops and has(target,'deploying')
+        hp=target.hp;g._tower_hit(tower,target,tower.troop.dmg)
+        assert target.hp==hp-tower.troop.dmg and has(target,'deploying')
+        assert next(s for s in target.statuses if s.kind=='deploying').dur==1.1
+
+
+def t_barrel_delay_keeps_first_attack_separate():
+    g=Game()
+    for tower in g.arena.towers:tower.alive=False
+    barrel=create('goblin_barrel',11,'blue',9,10);barrel.apply(g)
+    goblin=g.players['blue'].troops[0];g.players['blue'].troops=[goblin]
+    goblin.x,goblin.y=9,10
+    target=Dummy('red',9,11,hp=5000,spd=0,dmg=0);g.deploy('red',target)
+    assert abs(goblin.fhspd-0.4)<1e-9 and goblin.hspd==1.1
+    g.run(1.05)
+    assert has(goblin,'deploying') and target.hp==5000
+    g.run(0.35)
+    assert not has(goblin,'deploying') and target.hp==5000
+    g.tick()
+    assert target.hp==5000-goblin.dmg and not g.projs
+
+
+def t_barrel_delay_does_not_change_other_goblin_spawns():
+    from sim.cards import unit
+    assert card('goblins')['deployTime']==1.0
+    for name,skill in (('goblin_drill','periodicSpawn'),('goblin_giant','periodicSpawn')):
+        c=card(name);skills=c['evo']['skills'] if name=='goblin_giant' else c['skills']
+        assert unit(c,skills[skill],11)['deploy']==1.0
+    for name in ('barbarian_barrel','royal_delivery'):
+        assert create(name,11,'blue',9,10).tcfg['deploy']==1.0
+    g=Game(p1={'card_levels':{'goblin_barrel':11}})
+    mirrored=g._spawn('blue','mirror:goblin_barrel',9,10)
+    assert mirrored.tcfg['lvl']==12 and mirrored.tcfg['deploy']==1.1
 
 
 def t_centered_barrel_spawns_outside_intact_towers():
