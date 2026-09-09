@@ -128,6 +128,8 @@ Revision `e0579e4` uses Goblin Barrel's sourced 1.1-second spawn deployment dela
 
 Revision `d529260` preserves a cloned troop's projectile speed and optional homing instead of defaulting ranged clones to instant damage. Both versions completed a new, disjoint 2,000-game sample: winner agreement changed from 63.35% to 63.40%, exact crowns and premature endings remained 40.40% and 48.30%, and normalized tower HP error changed from 0.204564 to 0.204518. This is one additional winner match, not a broad accuracy claim. Regression tests verify projectile delivery, but the inspected September 5 footage did not isolate an attributable ranged-clone shot; direct visual confirmation and special-attack clone behavior remain open.
 
+Revision `6992e11` preserves an existing shield on a clone as one shield HP plus one body HP, without restoring broken shields. On a new paired sample of 2,000 games, disjoint from all 14,256 previous selections, winner agreement, exact crowns and premature endings remained 61.75%, 41.80% and 49.75%. Normalized tower HP error changed from 0.206802 to 0.206791 in a single affected replay. Tests verify the explicit shield rule; the inspected September 3 footage did not establish a tracked cloned-shield interaction, and evolved-Wizard clone shield callbacks remain unresolved.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
