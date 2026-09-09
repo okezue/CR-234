@@ -246,6 +246,7 @@ class CloneSpell:
                      'components':list(t.components),'lvl':t.lvl,'name':t.name,
                      'death_dmg':getattr(t,'death_dmg',0),
                      'death_splash_r':getattr(t,'death_splash_r',0)}
+                cfg['shield_hp']=cfg['max_shield_hp']=int(getattr(t,'shield_hp',0)>0)
                 cl=Troop(self.team,t.x,t.y+oy,cfg)
                 cl.proj_homing=getattr(t,'proj_homing',True)
                 cl.ability=None
