@@ -268,6 +268,10 @@ class RampUp(Component):
         frz=any(s.kind=='freeze' for s in getattr(tr,'statuses',[]))
         if stn or frz:self._reset(tr);return
         tgt=getattr(tr,'tgt',None)
+        # The evolution has separate retention handling; this guard covers ordinary ramps.
+        if not any(isinstance(c,EvoInfernoDragon) for c in tr.components):
+            if tgt is None or not tgt.alive or hidden(tgt) or not getattr(tr,'min_rng',0)<=g._dist(tr,tgt)<=tr.rng:
+                self._reset(tr);return
         if tgt is not self.cur_tgt or (self.cur_tgt and not getattr(self.cur_tgt,'alive',True)):
             self.cur_tgt=tgt;self.elapsed=0;tr.dmg=self.stages[0]
             return
