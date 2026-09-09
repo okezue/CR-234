@@ -124,6 +124,8 @@ Revision `7155d4e` removes inherited parent projectiles from five known melee-sp
 
 Revision `bf7b382` repairs Goblin Barrel births inside blocked arena tiles, preserving legal samples and relocating only invalid ones. On another 2,000/2,000 paired sample, disjoint from all 8,256 previously selected games, winner agreement changed from 64.30% to 64.40%, exact crowns from 43.10% to 43.20%, and premature endings from 49.15% to 49.00%. Normalized tower HP error slightly worsened from 0.202368 to 0.202383. This validates the software's placement invariant and records small mixed replay effects; nearest-legal-tile relocation is a model policy, not measured reproduction of the game's exact formation.
 
+Revision `e0579e4` uses Goblin Barrel's sourced 1.1-second spawn deployment delay instead of the ordinary Goblin's 1.0 second. Both versions completed another fresh, disjoint 2,000-game sample: winner agreement changed from 64.80% to 64.70%, exact crowns from 42.45% to 42.40%, premature endings from 48.60% to 48.30%, and normalized tower HP error from 0.201718 to 0.201837. The source-specific delay is corrected, but these mixed results do not establish an overall fidelity gain or resolve the observed tower-response discrepancy.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
