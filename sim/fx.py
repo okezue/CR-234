@@ -1517,13 +1517,12 @@ class EvoSkelArmy(Component):
         sh=Troop(tr.team,tr.x,tr.y,cfg);sh.statuses+=[Status('invincible',1e9),Status('invisible',1e9)]
         g.players[tr.team].troops.append(sh)
 class EvoTesla(Component):
-    # electro pulse on deploy and on destruction; troops only
+    # electro pulse on deploy; troops only
     def __init__(self,dmg,r,stun):self.dmg=dmg;self.r=r;self.stun=stun;self.done=False
     def pulse(self,tr,g):
         for e in near(g,tr.team,tr.x,tr.y,self.r,towers=False):hurt(e,self.dmg,g);e.statuses.append(Status('stun',self.stun))
     def on_tick(self,tr,g):
         if not self.done:self.done=True;self.pulse(tr,g)
-    def on_death(self,tr,g):self.pulse(tr,g)
 class CoffinCadets(Ability):
     # a Skeletrooper drops on the nearest ground enemy within rng, dealing landing damage (ct to towers), then fights on foot
     def __init__(self,cfg,dmg,ct,rng,cost,cd):

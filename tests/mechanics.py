@@ -673,8 +673,8 @@ def t_evo_tesla_pulse_kills_skeletons():
     te=mk_card('tesla',11,'blue',9,14,evolved=True);g.deploy('blue',te);g.run(0.1)
     assert not any(s.alive for s in sks)
     d,=_dummies(g,(9,19));te.alive=False;g.run(0.1)
-    assert 50000-d.hp==174 and has(d,'stun')
-    return "Evo Tesla pulses 174 in 6 tiles on deploy (kills Skeletons) and again on destruction"
+    assert d.hp==50000 and not has(d,'stun')
+    return "Evo Tesla pulses on deploy but not on destruction"
 def t_hero_balloon_coffin_cadets():
     g=_game();bl=mk_card('balloon',11,'blue',9,10,hero=True);g.deploy('blue',bl);d,=_dummies(g,(9,14),hp=5000)
     assert isinstance(bl.ability,fx.CoffinCadets) and bl.ability.uses==1
