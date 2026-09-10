@@ -358,7 +358,6 @@ class TornadoSpell:
                 self.tick_cd=self.interval;self.ticks_left-=1
                 for e in game.players[opp].troops:
                     if not e.alive:continue
-                    if getattr(e,'is_building',False):continue
                     d=tdist(e,self.x,self.y)
                     if d<=self.radius:e.take_damage(self.tick_dmg)
                 for tw in game.arena.towers:

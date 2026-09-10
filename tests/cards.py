@@ -4157,7 +4157,7 @@ def t_tornado_king_act():
     g.run(2)
     assert kt.dist(d.x,d.y)<=kt.rng and not kt.active,"Pulling a troop next to the king must not activate it"
     return "Tornado proximity does not activate king tower"
-def t_tornado_no_bldg_dmg():
+def t_tornado_building_damage():
     g=Game()
     for t in g.arena.towers:t.alive=False
     cn=mk_card('cannon',11,'red',9,25)
@@ -4167,8 +4167,9 @@ def t_tornado_no_bldg_dmg():
     tn.apply(g);g.spells.append(tn)
     g.run(2)
     spell_dmg=ini-cn.hp-decay
-    assert abs(spell_dmg)<5,f"Tornado should not damage buildings (spell_dmg={spell_dmg:.0f})"
-    return f"Tornado no bldg damage (spell_dmg={spell_dmg:.0f})"
+    assert abs(spell_dmg-2*tn.tick_dmg)<1e-6,f"Tornado building damage: {spell_dmg}"
+    assert (cn.x,cn.y)==(9,25)
+    return f"Tornado damages but does not displace buildings ({spell_dmg:.0f})"
 def t_void_single_full():
     g=Game()
     d=Dummy('red',9,22,hp=50000,spd=0)
