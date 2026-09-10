@@ -288,8 +288,9 @@ function render(idx){
 if(idx<0||idx>=SNAPS.length)return;
 fi=idx;
 const snap=SNAPS[fi];
-ctx.clearRect(0,0,CW,CH);
+ctx.save();ctx.clearRect(0,0,CW,CH);
 drawArena();drawValidZone(snap);drawTowers(snap);drawSpells(snap);drawTroops(snap);
+ctx.restore();
 const t=snap.t;
 const mn=Math.floor(t/60),sc=Math.floor(t%60);
 document.getElementById('time').textContent=mn+':'+(sc<10?'0':'')+sc;
@@ -321,14 +322,15 @@ nd.textContent=d.nxt?'next: '+d.nxt+(d.nxt_cd>0?' ('+d.nxt_cd.toFixed(1)+'s)':''
 seek.value=fi;
 document.getElementById('finfo').textContent='F:'+fi+'/'+SNAPS.length+' T:'+t.toFixed(1)+'s';
 const evDiv=document.getElementById('events');
-if(snap.events&&snap.events.length){
-snap.events.forEach(e=>{
+evDiv.replaceChildren();
+SNAPS.slice(0,fi+1).forEach(s=>{
+(s.events||[]).forEach(e=>{
 const d=document.createElement('div');
-d.textContent='['+t.toFixed(1)+'] '+e;
+d.textContent='['+s.t.toFixed(1)+'] '+e;
 evDiv.appendChild(d);
 });
+});
 evDiv.scrollTop=evDiv.scrollHeight;
-}
 drawGraphs();
 }
 function drawGraphs(){
@@ -415,6 +417,7 @@ spd=parseFloat(e.target.value);
 if(playing){stop();play();}
 });
 document.addEventListener('keydown',e=>{
+if(e.target.matches('input,select,textarea'))return;
 if(e.code==='Space'){e.preventDefault();togglePlay();}
 else if(e.code==='ArrowLeft'){stop();render(Math.max(0,fi-1));}
 else if(e.code==='ArrowRight'){stop();render(Math.min(SNAPS.length-1,fi+1));}
