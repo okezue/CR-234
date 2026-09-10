@@ -3,7 +3,7 @@ import random
 from sim.arena import Arena
 from sim.towers import create as mk_tt,king,lock as tower_lock
 from sim.units import Status,hidden,has
-from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil
+from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil,LineAttack
 from sim.path import Pathfinder
 from sim.cards import create as mk_card,card
 from sim.knobs import K
@@ -570,7 +570,16 @@ class Game:
         bd=ct if hasattr(tgt,'ttype') and ct>0 else dmg
         for c in getattr(tgt,'components',[]):
             if hasattr(c,'pre_damage'):bd=c.pre_damage(tgt,tr,bd,self)
-        tgt.take_damage(bd)
+        packets=next((c.sparks for c in tr.components if isinstance(c,LineAttack) and c.sparks>1),1)
+        # Separate shrapnel hits discard only the shield-breaking piece's overflow.
+        if packets>1 and bd>0 and int(bd)==bd:
+            base,extra=divmod(int(bd),packets)
+            # Remainders go to the earliest pieces; zero-sized pieces carry no hit.
+            hits=[base+(i<extra) for i in range(packets) if base or i<extra]
+        else:hits=[bd]
+        for amount in hits:
+            if not tgt.alive:break
+            tgt.take_damage(amount)
         if hasattr(tgt,'ttype') and not tgt.alive:self._tower_down(tgt)
         for c in getattr(tr,'components',[]):
             if shot is None or not isinstance(c,Recoil):c.on_attack(tr,tgt,self)
