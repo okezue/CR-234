@@ -1247,13 +1247,15 @@ class EvoInfernoDragon(Component):
         self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg
         self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
     def on_tick(self,tr,g):
+        if has(tr,'stun','freeze'):
+            self.total_beam=0;self.s4_active=False;return
         tgt=getattr(tr,'tgt',None)
         if tgt:
             self.idle_timer=0
             if tgt is not self.last_tgt:self.last_tgt=tgt
             self.total_beam+=g.DT
-            if self.total_beam>=self.s4_time and not self.s4_active:
-                self.s4_active=True;tr.dmg=self.s4_dmg
+            if self.total_beam>=self.s4_time:self.s4_active=True
+            if self.s4_active:tr.dmg=self.s4_dmg
         else:
             self.idle_timer+=g.DT
             if self.idle_timer>self.retain:

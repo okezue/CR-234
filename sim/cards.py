@@ -346,6 +346,11 @@ def evolve(c,k,s,lvl,tr):
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
        'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
     if k in E:tr.components.append(E[k]())
+    if k=='inferno_dragon':
+        # The evolution owns the final stage; the ordinary ramp stops at tier three.
+        ramp=next(c for c in tr.components if isinstance(c,fx.RampUp))
+        tr.ramp_stages=ramp.stages=ramp.stages[:-1]
+        tr.ramp_durations=ramp.durations=ramp.durations[:-1]
     # attach() also maps these evolutions' skills generically, so the effect came twice: the recruits' charge bonus (the shield-gated one
     # stays), the bats' heal per attack (perAttack is the sum of the two pulses) and the lumberjack's ghost, whose death spawn record names
     # its base character Barbarian and put a full Barbarian beside the ghost
