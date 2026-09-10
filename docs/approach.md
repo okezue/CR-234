@@ -134,6 +134,8 @@ Revision `a790a68` moves ranged recoil to projectile release, preserving the pro
 
 Revision `9b14de1` prevents ordinary Inferno Dragon, Inferno Tower and Mighty Miner from accumulating ramp damage without a valid in-range target. The evolution's separate retention path and existing phase durations are unchanged. Both versions completed a fresh paired sample of 2,000 games: winner agreement changed from 65.35% to 65.70%, exact crowns from 43.90% to 44.35%, premature endings remained 47.60%, and normalized tower HP error changed from 0.199221 to 0.199398. These are mixed effects, not proof of overall accuracy. The inspected video did not isolate an ordinary Inferno beam; evolution retention and escalating Crown Tower damage remain separate unresolved mechanics.
 
+A subsequent current-phase Crown Tower damage candidate passed 881 tests but was withheld. Both versions completed 2,000 fresh games: winner agreement changed from 62.25% to 62.20%, exact crowns from 40.55% to 39.10%, premature endings from 48.70% to 50.30%, and normalized tower HP error from 0.203884 to 0.208736. A traced evolved Inferno Dragon applied fourth-tier damage while its configured 20-second threshold was unmet. The routing correction is source-supported, but exposes existing incorrect stage selection to towers; the combined behavior must be resolved before shipping. The previous simulator was restored and its 869 tests passed. Later September 1 footage showed crowded tower pushes rather than an isolated beam, so no direct video validation is claimed.
+
 ## 8. Roadmap
 
 Phase 0 starts collection with the unified scraper and the official API client, establishes the replay harness metrics, and runs arms 1 and 2, which are cheap and give the baselines.
