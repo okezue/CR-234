@@ -346,7 +346,7 @@ class TornadoSpell:
         if self.pull_cd<=0:
             self.pull_cd=dt
             for e in game.players[opp].troops:
-                if not e.alive:continue
+                if not e.alive or getattr(e,'is_building',False):continue
                 dx=self.x-e.x;dy=self.y-e.y
                 d=math.sqrt(dx*dx+dy*dy)
                 if d<=self.radius and d>0.1:
