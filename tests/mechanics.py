@@ -717,7 +717,7 @@ def t_hero_ice_golem_three_blasts_kill_goblins():
 def t_hero_ice_wizard_frosty_fella():
     g=_game();iw=mk_card('ice_wizard',11,'blue',9,10,hero=True);g.deploy('blue',iw);d,=_dummies(g,(9,14),hp=5000)
     assert isinstance(iw.ability,fx.FrostyFella)
-    g.run(1.0);_act(g,iw);g.run(1.3);sm=_named(g,'blue','Snowman')
+    g.run(1.0);_act(g,iw);g.run(2.5);sm=_named(g,'blue','Snowman')
     assert len(sm)==1 and sm[0].is_building and abs(sm[0].y-15)<0.01 and sm[0].targets==[] and has(d,'freeze')
     g.run(8);assert not sm[0].alive and not has(d,'freeze')
     return "Frosty Fella raises a Snowman one tile behind the target that freezes everything within 2.5 tiles for its 7 s life"

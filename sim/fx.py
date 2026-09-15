@@ -1585,17 +1585,19 @@ class FreezeAura(Component):
         for e in hit:refresh(e,'freeze',2*g.DT)
         self.t=0 if hit else self.t+g.DT
         if self.t>=self.idle:tr.alive=False
-class FrostyFella(Ability):
-    # the Snowman rises one tile behind the current target (or ahead of the hero) with spawn damage and a freeze aura for its lifetime
+class FrostyFella(Ability,Component):
+    # Armed Snowman placement waits for the hero's next slowing hit, not his current target selection.
     def __init__(self,cfg,dmg,ct,r,cost,cd):
-        super().__init__(cost,cd);self.cfg=cfg;self.dmg=dmg;self.ct=ct;self.r=r
-    def activate(self,tr,g):
-        tgt=getattr(tr,'tgt',None)
-        if tgt and getattr(tgt,'alive',False):
-            tx,ty=pos(tgt);d=math.hypot(tx-tr.x,ty-tr.y);x,y=(tx+(tx-tr.x)/d,ty+(ty-tr.y)/d) if d>0 else (tx,ty)
-        else:x,y=tr.x,tr.y+(1 if tr.team=='blue' else -1)
+        super().__init__(cost,cd);self.cfg=cfg;self.dmg=dmg;self.ct=ct;self.r=r;self.owner=None
+    def activate(self,tr,g):self.active=True;self.owner=tr
+    def on_attack(self,tr,tgt,g):
+        from sim.units import immune
+        if not self.active or tr is not self.owner or not tr.alive:return
+        if not tgt.alive or immune(tgt) or tr.slow_dur<=0 or not has(tgt,'slow'):return
+        self.active=False;self.cd=self.max_cd
+        tx,ty=pos(tgt);d=math.hypot(tx-tr.x,ty-tr.y);x,y=(tx+(tx-tr.x)/d,ty+(ty-tr.y)/d) if d>0 else (tx,ty)
         for e in near(g,tr.team,x,y,self.r):hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g)
-        g.players[tr.team].troops.append(Building(tr.team,x,y,dict(self.cfg,components=[FreezeAura(self.r)])));self.cd=self.max_cd
+        g.players[tr.team].troops.append(Building(tr.team,x,y,dict(self.cfg,components=[FreezeAura(self.r)])))
 class RegalRevive(Ability):
     # the tombstone crumbles without its death skeletons and the Tomb Queen rises in its place
     def __init__(self,cfg,cost,cd):super().__init__(cost,cd);self.cfg=cfg

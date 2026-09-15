@@ -376,7 +376,9 @@ def troop(c,k,lvl,team,x,y,evolved,is_hero,ev,chain,sk,name):
         if sk.get('charging',{}).get('loadFirstHit'):tr.load_first=True;tr.cd=tr.hspd
         if sk.get('immunity',{}).get('knockback'):tr.kb_immune=True
     if ev:evolve(c,k,sk,lvl,tr)
-    if is_hero and c['hero']:tr.is_hero=True;tr.ability=uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])
+    if is_hero and c['hero']:
+        tr.is_hero=True;tr.ability=uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])
+        if isinstance(tr.ability,fx.FrostyFella):tr.components.append(tr.ability)
     for x in tr.components:
         if isinstance(x,fx.Burrow):x.start(tr)
     return tr
