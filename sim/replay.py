@@ -3,7 +3,7 @@ import os
 import argparse
 import random
 import math
-from sim.game import Game,MAX_LEVEL
+from sim.game import Game,MAX_LEVEL,MAX_HERO_SLOTS,MAX_EVOLUTION_SLOTS
 from sim.cards import load,key,card,at
 from sim.units import Troop,Building
 
@@ -39,7 +39,7 @@ def norm(c):
     return key(b) or b.replace('-','_'),evo,hero
 
 def _mk_deck(cards):
-    dk=list(cards);fi=0
+    dk=[key(c) or c for c in cards];fi=0
     while len(dk)<8:
         c=_FILLER[fi%len(_FILLER)]
         if c not in dk:dk.append(c)
@@ -177,10 +177,11 @@ def load_meta_v2(path):
             b_deck=[];b_lvls={};r_deck=[];r_lvls={};b_evo=set();r_evo=set();b_hero=set();r_hero=set()
             for i in range(8):
                 for pfx,deck,lvls,evos,heroes in (('team',b_deck,b_lvls,b_evo,b_hero),('opp',r_deck,r_lvls,r_evo,r_hero)):
-                    cn=r.get(f'{pfx}_card_{i}','')
+                    cn=(r.get(f'{pfx}_card_{i}') or '').strip()
                     cl=r.get(f'{pfx}_card_{i}_lvl','')
                     if not cn:continue
                     jn,evo,hero=norm(cn)
+                    if jn is None:continue
                     deck.append(jn)
                     if evo:evos.add(jn)
                     if hero:heroes.add(jn)
@@ -204,8 +205,10 @@ def load_meta_v2(path):
                 'b_tt':b_tt,'r_tt':r_tt,
                 't0_tag':team_tags,'o0_tag':opp_tags,
                 'gameMode':gm,
-                'b_hp':b_hp,'r_hp':r_hp,
-                'b_evo':b_evo,'r_evo':r_evo,'b_hero':b_hero,'r_hero':r_hero}
+                'b_hp':b_hp,'r_hp':r_hp}
+            # Only a complete side's deck can authoritatively rule out equipped variants.
+            for prefix,deck,evos,heroes in (('b',b_deck,b_evo,b_hero),('r',r_deck,r_evo,r_hero)):
+                if len(deck)==8:out[tag].update({f'{prefix}_evo':evos,f'{prefix}_hero':heroes})
             out[tag]['modifier']=_modifier(out[tag])
     return out
 
@@ -357,8 +360,8 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
     plays=[dict(p) for p in plays]
     if _detect_true_red(plays):
         _mirror_x(plays)
-    t0_deck=outcome.get('b_deck',[])
-    o0_deck=outcome.get('r_deck',[])
+    t0_deck=[key(c) or c for c in outcome.get('b_deck',[])]
+    o0_deck=[key(c) or c for c in outcome.get('r_deck',[])]
     t0_lvls=outcome.get('b_lvls',{})
     o0_lvls=outcome.get('r_lvls',{})
     t0_klvl=outcome.get('b_klvl',11)
@@ -384,6 +387,10 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         b_tt=outcome.get('b_tt','tower_princess')
         r_tt=outcome.get('r_tt','tower_princess')
         decks=extract_decks(plays)
+    for tm,metadata_deck in (('blue',t0_deck),('red',o0_deck)):
+        # Partial metadata must not replace observed cards with arbitrary filler slots.
+        observed=[norm(p['card'])[0] for p in plays if p['team']==tm and p['ability']!=1 and norm(p['card'])[0]]
+        decks[tm]=_mk_deck(list(dict.fromkeys(metadata_deck+observed)))
     blue_plays=[norm(p['card'])[0] for p in plays if p['team']=='blue' and norm(p['card'])[0]]
     red_plays=[norm(p['card'])[0] for p in plays if p['team']=='red' and norm(p['card'])[0]]
     # the hand shuffle is seeded too and unit ids restart, so a battle replays identically whatever ran before it in the worker
@@ -392,23 +399,41 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
     bh,bn,bq=_engineer_hand(decks['blue'],blue_plays)
     rh,rn,rq=_engineer_hand(decks['red'],red_plays)
     random.seed(42)
+    hero_cards={};evo_cards={};equipped={}
+    for tm,prefix in (('blue','b'),('red','r')):
+        for variant,selected in (('evo',evo_cards),('hero',hero_cards)):
+            field=f'{prefix}_{variant}'
+            if field in outcome:
+                selected[tm]={key(c) for c in outcome[field] or () if key(c)}
+            else:
+                selected[tm]=set()
+                for p in plays:
+                    if p['team']!=tm or p['ability']==1:continue
+                    base,evo,hero=norm(p['card'])
+                    if base and ((evo if variant=='evo' else hero) or p.get('card_type')==variant):selected[tm].add(base)
+        evo_meta=f'{prefix}_evo' in outcome;hero_meta=f'{prefix}_hero' in outcome
+        overlap=evo_cards[tm]&hero_cards[tm]
+        if overlap and evo_meta and hero_meta:raise ValueError(f"{tm} authoritative hero/evolution overlap: {sorted(overlap)}")
+        if evo_meta:hero_cards[tm]-=overlap
+        else:evo_cards[tm]-=overlap
+        # Playback and UI share supported deck slots; authoritative overflow is invalid, not silently truncated.
+        evos=[c for c in decks[tm] if c in evo_cards[tm] and _has_json(c) and card(c)['evo']]
+        room=max(0,MAX_HERO_SLOTS-sum(_card_rarity(c) in ('champion','hero') for c in decks[tm]))
+        heroes=[c for c in decks[tm] if c in hero_cards[tm] and _has_json(c) and card(c)['hero']]
+        if evo_meta and len(evos)>MAX_EVOLUTION_SLOTS:raise ValueError(f"{tm} authoritative evolution slots exceed {MAX_EVOLUTION_SLOTS}")
+        if hero_meta and len(heroes)>room:raise ValueError(f"{tm} authoritative hero/champion slots exceed {MAX_HERO_SLOTS}")
+        evo_cards[tm]=set(evos[:MAX_EVOLUTION_SLOTS]);hero_cards[tm]=set(heroes[:room])
+        equipped[tm]={'evolutions':evo_cards[tm],'heroes':hero_cards[tm]}
     g=Game(
         p1={'deck':decks['blue'],'king_lvl':b_klvl,'tt_name':b_tt,'tt_lvl':outcome.get('b_ttlvl'),'drag_del':0,'drag_std':0,
-            'ability_del':0,'ability_std':0,'card_levels':b_lvls},
+            'ability_del':0,'ability_std':0,'card_levels':b_lvls,**equipped['blue']},
         p2={'deck':decks['red'],'king_lvl':r_klvl,'tt_name':r_tt,'tt_lvl':outcome.get('r_ttlvl'),'drag_del':0,'drag_std':0,
-            'ability_del':0,'ability_std':0,'card_levels':r_lvls}
+            'ability_del':0,'ability_std':0,'card_levels':r_lvls,**equipped['red']}
     )
     bd=g.players['blue'].deck
     bd.hand=list(bh);bd.nxt=bn;bd.q=list(bq)
     rd=g.players['red'].deck
     rd.hand=list(rh);rd.nxt=rn;rd.q=list(rq)
-    hero_cards={'blue':set(outcome.get('b_hero',())),'red':set(outcome.get('r_hero',()))}
-    evo_cards={'blue':set(outcome.get('b_evo',())),'red':set(outcome.get('r_evo',()))}
-    for p in plays:
-        b,e,h=norm(p['card'])
-        if not b:continue
-        if h or p.get('card_type')=='hero':hero_cards[p['team']].add(b)
-        if e or p.get('card_type')=='evo':evo_cards[p['team']].add(b)
     n_played={'blue':{},'red':{}}
     errs=[]
     placement={'attempted':0,'rejected':0,'invalid':0,'relocated':0,'skipped':0}
@@ -438,9 +463,11 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         hero=base in hero_cards[tm]
         evo=False
         if base in evo_cards[tm] and card(base)['evo']:
-            # every (cycles+1)th deployment of an evolution card is the evolved one
+            # Count each recorded play once, including skipped placements, never individual recovery attempts.
             n=n_played[tm].get(base,0)+1;n_played[tm][base]=n
-            evo=n%((card(base)['evo'].get('cycles') or 1)+1)==0
+            charge=n%((card(base)['evo'].get('cycles') or 1)+1)
+            evo=charge==0
+            if base in g.players[tm].evolutions:g.players[tm].evolution_charge[base]=charge
         if base in AIMED and not any(t.alive and _near_tower(t,tx,ty) for t in g.arena.towers if t.team!=tm):
             # a real player aimed this spell at units that were there: a position oracle for the simulated state
             aim[0]+=1;aim[1]+=any(u.alive and math.hypot(u.x-tx,u.y-ty)<=2.5 for u in g.players[g._opp(tm)].troops)

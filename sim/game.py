@@ -5,7 +5,7 @@ from sim.towers import create as mk_tt,king,lock as tower_lock
 from sim.units import Status,hidden,has
 from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil,LineAttack
 from sim.path import Pathfinder
-from sim.cards import create as mk_card,card
+from sim.cards import create as mk_card,card,key
 from sim.knobs import K
 
 MAX_LEVEL=16
@@ -25,18 +25,23 @@ def card_info(name):
 _NO_START={'mirror','elixir_collector'}
 _HERO_RARITY={'champion','hero'}
 MAX_HERO_SLOTS=2
-def validate_deck(cards,heroes=None,evolutions=None):
-    assert len(cards)==8,"Deck must have exactly 8 cards"
-    hc=sum(1 for c in cards if card_info(c).get('rarity','') in _HERO_RARITY)
-    assert hc<=MAX_HERO_SLOTS,f"Max {MAX_HERO_SLOTS} hero/champion slots, got {hc}"
-    heroes=set(heroes or [])
-    evolutions=set(evolutions or [])
+MAX_EVOLUTION_SLOTS=2
+def _validate_slots(cards,heroes,evolutions):
     overlap=heroes&evolutions
     assert not overlap,f"Same card cannot be hero and evolution: {overlap}"
+    assert len(evolutions)<=MAX_EVOLUTION_SLOTS,f"Max {MAX_EVOLUTION_SLOTS} evolution slots, got {len(evolutions)}"
+    hc=sum(1 for c in cards if card_info(c)['rarity'] in _HERO_RARITY)
+    hc+=sum(1 for c in heroes if card_info(c)['rarity'] not in _HERO_RARITY)
+    assert hc<=MAX_HERO_SLOTS,f"Max {MAX_HERO_SLOTS} hero/champion slots, got {hc}"
+def validate_deck(cards,heroes=None,evolutions=None):
+    assert len(cards)==8,"Deck must have exactly 8 cards"
+    # This helper checks slot rules; Player also validates equipped membership and variant support.
+    _validate_slots(cards,{key(c) or c for c in heroes or ()},{key(c) or c for c in evolutions or ()})
     return True
 class Deck:
     def __init__(self,cards):
         assert len(cards)==8
+        cards=[key(c) or c for c in cards]
         self.all=list(cards)
         idx=list(range(8))
         random.shuffle(idx)
@@ -61,6 +66,7 @@ class Deck:
             else:
                 self.nxt=None
     def play(self,card,qcd):
+        card=key(card) or card
         if card not in self.hand:return False
         self.hand.remove(card)
         self.q.append(card)
@@ -72,7 +78,7 @@ class Deck:
             else:
                 self.nxt=None
         return True
-    def can_play(self,card):return card in self.hand
+    def can_play(self,card):return (key(card) or card) in self.hand
     def info(self):
         return f"hand={self.hand} nxt={self.nxt}({self.nxt_cd:.1f}s) q={self.q}"
 
@@ -101,10 +107,19 @@ class Projectile:
 class Player:
     def __init__(self,team,king_lvl=11,tt_name='tower_princess',tt_lvl=None,
                  deck=None,drag_del=0.5,drag_std=None,ability_del=0.15,ability_std=None,
-                 card_levels=None):
+                 card_levels=None,evolutions=None,heroes=None):
+        self.evolutions={key(c) for c in evolutions or ()}
+        self.heroes={key(c) for c in heroes or ()}
+        deck_keys={key(c) for c in deck or ()}
+        _validate_slots(deck or (),self.heroes,self.evolutions)
+        for equipped,variant in ((self.evolutions,'evo'),(self.heroes,'hero')):
+            assert None not in equipped,f"Unknown equipped {variant} card"
+            assert equipped<=deck_keys,f"Equipped {variant} cards must belong to the deck"
+            assert all(card(c).get(variant) for c in equipped),f"Equipped cards must have a {variant} variant"
+        self.evolution_charge={c:0 for c in sorted(self.evolutions)}
         self.team=team;self.king_lvl=king_lvl
         self.tt_name=tt_name;self.tt_lvl=tt_lvl or king_lvl
-        self.card_levels=card_levels or {}
+        self.card_levels={key(c) or c:level for c,level in (card_levels or {}).items()}
         self.elixir=5.0;self.max_ex=10.0
         self.crowns=0;self.troops=[]
         self.drag_del=drag_del
@@ -116,6 +131,9 @@ class Player:
         self.active_champ=None
         self.champ_queue=[]
         self.pending_abilities=[]
+    def evolution_ready(self,name):
+        k=key(name)
+        return k in self.evolutions and self.evolution_charge[k]==card(k)['evo']['cycles']
     def _register_champ(self,tr):
         if not getattr(tr,'ability',None):return
         if tr.hp==1 and tr.max_hp==1:return
@@ -146,7 +164,8 @@ class Replay:
         s={'t':g.t,'phase':g.phase,'winner':g.winner,'events':list(evts)}
         for tm in ('blue','red'):
             p=g.players[tm]
-            pd={'crowns':p.crowns,'elixir':round(p.elixir,2)}
+            pd={'crowns':p.crowns,'elixir':round(p.elixir,2),'evolutions':sorted(p.evolutions),'heroes':sorted(p.heroes),
+                'evolution_charge':{c:p.evolution_charge[c] for c in sorted(p.evolution_charge)}}
             if p.deck:
                 pd['hand']=list(p.deck.hand)
                 pd['nxt']=p.deck.nxt
@@ -164,7 +183,8 @@ class Replay:
                            'x':round(u.x,1),'y':round(u.y,1),
                            'hp':u.hp,'max_hp':u.max_hp,'alive':u.alive,
                            'transport':getattr(u,'transport','Ground'),
-                           'is_building':getattr(u,'is_building',False)})
+                           'is_building':getattr(u,'is_building',False),
+                           'evolved':getattr(u,'evolved',False),'is_hero':getattr(u,'is_hero',False)})
         s['troops']=tr
         sp=[]
         for sl in g.spells:
@@ -324,7 +344,9 @@ class Game:
             hw,hh=(9.0,8.0) if t.ttype=='king' else (5.5,10.5)
             if abs(cx-t.cx)<hw and abs(cy-t.cy)<hh:return False
         return True
-    def play_card(self,team,card,x,y,evolved=False,hero=False):
+    def play_card(self,team,card,x,y,evolved=None,hero=None):
+        # Explicit evolution overrides select a variant without advancing or consuming the automatic charge.
+        card=key(card) or card
         p=self.players[team]
         if not p.deck:return False,"no deck"
         if not p.deck.can_play(card):return False,"not in hand"
@@ -338,7 +360,7 @@ class Game:
             p.elixir-=mc
             p.deck.play(card,self._qcd())
             drag=p.sample_drag()
-            self.pending.append(Pending(team,'mirror:'+p.last_card,x,y,drag,evolved,hero,lci['deploy']))
+            self.pending.append(Pending(team,'mirror:'+p.last_card,x,y,drag,False,False,lci['deploy']))
             self.log.append(f"[{self.t:.1f}] {team} plays mirror({p.last_card}) at ({ix},{iy}) drag={drag:.2f}s deploy={lci['deploy']:.2f}s")
             return True,"ok"
         ci=card_info(card)
@@ -346,6 +368,11 @@ class Game:
         if not ci.get('deploy_anywhere') and not self._valid_deploy(team,ix,iy):return False,"invalid position"
         p.elixir-=ci['cost']
         p.deck.play(card,self._qcd())
+        k=key(card)
+        if evolved is None:
+            evolved=p.evolution_ready(k)
+            if k in p.evolutions:p.evolution_charge[k]=0 if evolved else p.evolution_charge[k]+1
+        if hero is None:hero=k in p.heroes
         drag=p.sample_drag()
         self.pending.append(Pending(team,card,x,y,drag,evolved,hero,ci['deploy']))
         self.log.append(f"[{self.t:.1f}] {team} plays {card} at ({ix},{iy}) drag={drag:.2f}s deploy={ci['deploy']:.2f}s")
@@ -356,6 +383,7 @@ class Game:
         actual=card
         if card.startswith('mirror:'):
             actual=card[7:]
+            evolved=hero=False
             mlvl=min(p.card_levels.get(actual,p.king_lvl)+1,MAX_LEVEL)
         else:
             mlvl=p.card_levels.get(actual,p.king_lvl)

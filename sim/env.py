@@ -6,6 +6,7 @@ except ImportError:
     import gym
     from gym import spaces
 from sim.game import Game
+from sim.cards import card,key
 
 MAX_TROOPS=30
 TROOP_FEAT=6
@@ -13,17 +14,24 @@ TOWER_FEAT=3
 N_TOWERS=6
 GAME_FEAT=5
 PLAYER_FEAT=4
-OBS_DIM=GAME_FEAT+2*PLAYER_FEAT+N_TOWERS*TOWER_FEAT+2*MAX_TROOPS*TROOP_FEAT
+DECK_FEAT=3
+DECK_SIZE=8
+OBS_DIM=GAME_FEAT+2*PLAYER_FEAT+N_TOWERS*TOWER_FEAT+2*MAX_TROOPS*TROOP_FEAT+2*DECK_SIZE*DECK_FEAT
 
 class CREnv(gym.Env):
     metadata={"render_modes":["human"]}
     def __init__(self,blue_deck=None,red_deck=None,blue_levels=None,red_levels=None,
-                 decision_freq=10,reward_mode="sparse",render_mode=None):
+                 decision_freq=10,reward_mode="sparse",render_mode=None,
+                 blue_evolutions=None,red_evolutions=None,blue_heroes=None,red_heroes=None):
         super().__init__()
         self.blue_deck=blue_deck or ["knight","archers","fireball","giant","musketeer","valkyrie","bomber","arrows"]
         self.red_deck=red_deck or ["knight","archers","fireball","giant","musketeer","valkyrie","bomber","arrows"]
         self.blue_levels=blue_levels or {}
         self.red_levels=red_levels or {}
+        self.blue_evolutions=set(blue_evolutions or ())
+        self.red_evolutions=set(red_evolutions or ())
+        self.blue_heroes=set(blue_heroes or ())
+        self.red_heroes=set(red_heroes or ())
         self.decision_freq=decision_freq
         self.reward_mode=reward_mode
         self.render_mode=render_mode
@@ -65,14 +73,23 @@ class CREnv(gym.Env):
                 obs[bi+4]=float(getattr(u,'transport','Ground')=='Air')
                 obs[bi+5]=float(getattr(u,'is_building',False))
             idx+=MAX_TROOPS*TROOP_FEAT
+        # Original deck order, after the unchanged prefix: evolution ready, charge fraction, equipped hero.
+        for tm in ("blue","red"):
+            p=g.players[tm]
+            for i,name in enumerate(p.deck.all if p.deck else ()):
+                bi=idx+i*DECK_FEAT;k=key(name)
+                obs[bi]=float(p.evolution_ready(k))
+                if k in p.evolutions:obs[bi+1]=p.evolution_charge[k]/max(1,card(k)['evo']['cycles'])
+                obs[bi+2]=float(k in p.heroes)
+            idx+=DECK_SIZE*DECK_FEAT
         return obs
     def _tower_hp_sum(self,team):
         return sum(tw.hp for tw in self.game.arena.towers if tw.team==team and tw.alive)
     def reset(self,seed=None,options=None):
         super().reset(seed=seed)
         self.game=Game(
-            p1={"deck":self.blue_deck,"card_levels":self.blue_levels},
-            p2={"deck":self.red_deck,"card_levels":self.red_levels},
+            p1={"deck":self.blue_deck,"card_levels":self.blue_levels,"evolutions":self.blue_evolutions,"heroes":self.blue_heroes},
+            p2={"deck":self.red_deck,"card_levels":self.red_levels,"evolutions":self.red_evolutions,"heroes":self.red_heroes},
         )
         self._prev_tower_hp={"blue":self._tower_hp_sum("blue"),"red":self._tower_hp_sum("red")}
         return self._get_obs(),{}
