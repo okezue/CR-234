@@ -292,7 +292,12 @@ class Game:
                 self.winner=None
                 self.log.append(f"[{self.t:.1f}] Draw! (equal HP)")
             else:
-                l=lows[0];l.take_damage(l.hp)
+                l=lows[0]
+                if len(lows)==1:
+                    # Tiebreak drain does not activate surviving kings as attack damage would.
+                    for t in ts:
+                        if t is not l:t.hp-=mn
+                l.take_damage(l.hp)
                 self.winner=self._opp(l.team)
                 self.log.append(f"[{self.t:.1f}] Tiebreaker: {l.team} {l.ttype} destroyed")
         self.phase='end';self.ended=True
