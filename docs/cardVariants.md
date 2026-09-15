@@ -34,6 +34,8 @@ A bounded diagnostic characterizes the unchanged reveal blast as one pulse aroun
 
 An [October 2025 developer-build report](https://note.com/kabutom/n/nc69b83627c28) explicitly describes ground-only, target-directed summoning damage, contrary to parts of that implementation. Its old damage and child behavior are not current values, and target-directed wording does not establish exact target-centered geometry. The current cached export names the summoning action without defining it. No blast patch is justified yet: current target eligibility, Crown Tower handling, origin, radius and timing still need direct evidence. Souldiers' 0.2-second deployment time is not proof of a 0.2-second blast delay.
 
+The public `RoyaleAPI/cr-api-data` master tip checked on September 15, 2026 is an [October 2023 revision](https://github.com/RoyaleAPI/cr-api-data/commit/d5461b0a59bff33c4da2fc845b07275b66b2d6ff). It predates Royal Ghost Evolution and is not a current source for that action chain. Its published JSON directory has no actions table; this does not establish that a complete current export is unavailable elsewhere.
+
 Hero Ice Wizard's Frosty Fella is armed by activation and waits for the next surviving primary slowing hit before raising a Snowman behind that hit target. Tests cover targetless activation, projectile travel, changed targets, shields, dead targets, clones and crown towers. Primary-versus-secondary target selection, Snowman classification, freeze edge behavior and exact cast timing remain incompletely verified. The existing Snowman HP, lifetime and aura behavior are retained rather than recalibrated from promotional footage.
 
 ## Training observations
