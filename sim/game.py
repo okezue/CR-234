@@ -540,11 +540,11 @@ class Game:
         return all(x.alive for x in self.arena.towers if x.team==opp and x.ttype=='princess')
     def _default_target(self,tr):
         opp=self._opp(tr.team);ks=self._king_shielded(opp)
-        best=None;bd=999
+        best=None;bd=999;mr=getattr(tr,'min_rng',0)
         for tw in self.arena.towers:
             if tw.team!=opp or not tw.alive or (ks and tw.ttype=='king'):continue
             d=tw.dist(tr.x,tr.y)
-            if d<bd:bd=d;best=tw
+            if mr<=d<bd:bd=d;best=tw
         return best,bd
     def _find_target(self,tr):
         tt=getattr(tr,'_taunt_target',None)
@@ -552,6 +552,7 @@ class Game:
         if getattr(tr,'retarget_cd',0)>0:
             return self._default_target(tr)
         ag=getattr(tr,'aggro_tgt',None)
+        mr=getattr(tr,'min_rng',0)
         sr=max(getattr(tr,'sight_r',5.5),tr.rng)+K['sight_slack']
         if ag and getattr(ag,'alive',False):
             is_tower=hasattr(ag,'ttype')
@@ -560,7 +561,7 @@ class Game:
             # a building or tower target holds only while being hit (a closer building pulls; a Giant pushing the attacker out of range makes it retarget);
             # an engaged troop is followed as long as possible (wiki Basics of Battle), not only while it stays within sight
             if is_bldg_troop or is_tower or getattr(tr,'is_building',False):
-                if d<=tr.rng:return ag,d
+                if mr<=d<=tr.rng:return ag,d
             elif not hidden(ag) and not (K['kite_drop'] and d>sr+K['kite_slack']):return ag,d
         opp=self._opp(tr.team)
         tgts=getattr(tr,'targets',['Ground'])
@@ -574,6 +575,8 @@ class Game:
                 et=getattr(e,'transport','Ground')
                 if et=='Air' and 'Air' not in tgts:continue
             d=self._dist(tr,e)
+            # Blind-spot enemies cannot distract from an attackable target.
+            if d<mr:continue
             all_c.append((d,e))
             if d<=sr:near_c.append((d,e))
         is_bldg=getattr(tr,'is_building',False)
@@ -583,6 +586,7 @@ class Game:
             for tw in self.arena.towers:
                 if tw.team!=opp or not tw.alive:continue
                 d=tw.dist(tr.x,tr.y)
+                if d<mr:continue
                 # princess towers are the default target while they stand; the king is only picked when in sight
                 if d<=sr:near_c.append((d,tw))
                 if not(ks and tw.ttype=='king'):all_c.append((d,tw))
