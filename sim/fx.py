@@ -791,9 +791,10 @@ class EvoSkeletons(Component):
         cfg={'hp':tr.max_hp,'dmg':tr.dmg,'hspd':tr.hspd,'fhspd':tr.fhspd,
              'spd':tr.spd,'rng':tr.rng,'targets':tr.targets,'transport':tr.transport,
              'atk_type':tr.atk_type,'splash_r':tr.splash_r,'ct_dmg':tr.ct_dmg,
-             'components':[],'lvl':tr.lvl,'name':tr.name,'card':tr.card}
+             'components':[EvoSkeletons(self.mx)],'lvl':tr.lvl,'name':tr.name,'card':tr.card}
         ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5)
-        g.players[tr.team].troops.append(Troop(tr.team,tr.x+ox,tr.y+oy,cfg))
+        child=Troop(tr.team,tr.x+ox,tr.y+oy,cfg);child.evolved=True
+        g.players[tr.team].troops.append(child)
 class EvoBarbarians(Component):
     def __init__(self,aspd,mspd,dur):
         self.aspd=aspd;self.mspd=mspd;self.dur=dur
