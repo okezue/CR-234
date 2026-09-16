@@ -4,7 +4,7 @@ import argparse
 import random
 import math
 from sim.game import Game,MAX_LEVEL,MAX_HERO_SLOTS,MAX_EVOLUTION_SLOTS
-from sim.cards import load,key,card,at
+from sim.cards import load,key,card
 from sim.units import Troop,Building
 
 _FILLER=['knight','archers','fireball','zap','valkyrie','musketeer','baby_dragon','mini_pekka']
@@ -23,12 +23,11 @@ def _api_lvl(jn,raw_lvl):
     # the RoyaleAPI level is relative to the rarity minimum
     return raw_lvl+load()['meta']['minLevel'][_card_rarity(jn)]-1
 
-def _hp_to_klvl(hp):
-    if not hp:return 11
-    try:h=int(float(hp))
-    except ValueError:return 11
-    hps=card('king_tower')['stats']['hitpoints']
-    return next((i+1 for i,v in enumerate(hps) if h<=v),MAX_LEVEL)
+def _label_int(value,maximum=None):
+    try:n=float(value)
+    except (ValueError,TypeError):return None
+    if not math.isfinite(n) or n<0 or n!=int(n) or maximum is not None and n>maximum:return None
+    return int(n)
 
 def norm(c):
     if not c or c=='_invalid':return None,False,False
@@ -94,12 +93,20 @@ def _force_hand(g,tm,card):
     return False
 
 def _ability_troop(g,tm,base):
-    # the recorded ability names its card; the harness makes that troop the active one since the real game did
+    # The recorded card identifies its latest living ability-bearing deployment.
     if not base or not _has_json(base):return None
     c=card(base);nm={c['name']}|{u.get('name') for u in c['units'].values()};p=g.players[tm]
-    tr=next((t for t in p.troops if t.alive and getattr(t,'ability',None) and getattr(t,'name','') in nm),None)
-    if tr and tr is not p.active_champ and not hasattr(tr.ability,'banner_pos'):p.active_champ=tr
-    return tr
+    return next((t for t in reversed(p.troops) if t.alive and getattr(t,'ability',None) and getattr(t,'name','') in nm),None)
+
+def submit_recorded_ability(g,team,base):
+    from sim.fx import BannerBrigade
+    tr=_ability_troop(g,team,base)
+    if tr is not None:return g.activate_ability(team,tr)
+    p=g.players[team]
+    if key(base)=='goblins':
+        ab=next((ab for ab in reversed(p.pending_abilities) if isinstance(ab,BannerBrigade) and ab.can_use()),None)
+        if ab is not None:return g.activate_banner(team,ab)
+    return False,'recorded ability troop absent'
 
 AIMED={'fireball','arrows','zap','giant_snowball','lightning','poison','rocket'}
 
@@ -168,10 +175,10 @@ def load_meta_v2(path):
             tag=r.get('replayTag','').lstrip('#')
             if not tag:continue
             res=r.get('result','')
-            tc=int(float(r.get('team_crowns',0) or 0))
-            oc=int(float(r.get('opp_crowns',0) or 0))
-            if not res:
-                res='W' if tc>oc else 'L' if tc<oc else 'D'
+            tc=_label_int(r.get('team_crowns'),3)
+            oc=_label_int(r.get('opp_crowns'),3)
+            if res not in ('W','L','D'):
+                res=('W' if tc>oc else 'L' if tc<oc else 'D') if tc is not None and oc is not None else None
             team_tags=r.get('team_tags','').lstrip('#')
             opp_tags=r.get('opponent_tags','').lstrip('#')
             b_deck=[];b_lvls={};r_deck=[];r_lvls={};b_evo=set();r_evo=set();b_hero=set();r_hero=set()
@@ -195,13 +202,13 @@ def load_meta_v2(path):
             b_tt=r.get('team_tower_troop','') or 'tower_princess'
             r_tt=r.get('opp_tower_troop','') or 'tower_princess'
             b_hp=_hp(r,'team');r_hp=_hp(r,'opp');gm=r.get('gameMode_name','') or r.get('battle_type','')
-            # the level column is the tower troop's; a king that ended above that level's hitpoints reveals a higher king level
-            b_kl=max(b_klvl,_hp_to_klvl(b_hp[0])) if b_hp and b_hp[0] else b_klvl
-            r_kl=max(r_klvl,_hp_to_klvl(r_hp[0])) if r_hp and r_hp[0] else r_klvl
+            # Legacy rows provide one tower level; terminal HP must never reconstruct the initial king.
+            b_ttlvl=int(float(r.get('team_tower_lvl') or b_klvl))
+            r_ttlvl=int(float(r.get('opp_tower_lvl') or r_klvl))
             out[tag]={'result':res,'tc':tc,'oc':oc,
                 'b_deck':b_deck,'r_deck':r_deck,
                 'b_lvls':b_lvls,'r_lvls':r_lvls,
-                'b_klvl':b_kl,'r_klvl':r_kl,'b_ttlvl':b_klvl,'r_ttlvl':r_klvl,
+                'b_klvl':b_klvl,'r_klvl':r_klvl,'b_ttlvl':b_ttlvl,'r_ttlvl':r_ttlvl,
                 'b_tt':b_tt,'r_tt':r_tt,
                 't0_tag':team_tags,'o0_tag':opp_tags,
                 'gameMode':gm,
@@ -214,19 +221,13 @@ def load_meta_v2(path):
 
 _MODIFIER_MODES=('C.H.A.O.S','7x Elixir','Sudden Death Battle')
 def _modifier(o):
-    # event modes with doubled tower hitpoints or other modifiers, or towers that ended above any level's hitpoints, cannot be simulated with standard rules
-    if o['gameMode'].startswith(_MODIFIER_MODES):return True
-    for tm in ('b','r'):
-        hp=o[f'{tm}_hp']
-        if not hp:continue
-        kmax=at(card('king_tower')['stats']['hitpoints'],o[f'{tm}_klvl']);pmax=at(card(o[f'{tm}_tt'])['stats']['hitpoints'],o[f'{tm}_ttlvl'])
-        if hp[0]>kmax or max(hp[1],hp[2])>pmax:return True
-    return False
+    # Eligibility uses the declared mode, never the recorded outcome.
+    return o['gameMode'].startswith(_MODIFIER_MODES)
 
 def _hp(r,side):
     v=[r.get(f'{side}_king_hp',''),r.get(f'{side}_princess_hp_0',''),r.get(f'{side}_princess_hp_1','')]
-    try:return [int(float(x)) for x in v]
-    except ValueError:return None
+    values=[_label_int(x) for x in v]
+    return values if all(x is not None for x in values) else None
 
 def load_worker_rows(path,ids,meta=None):
     ok_pids={}
@@ -243,9 +244,9 @@ def load_worker_rows(path,ids,meta=None):
             if bid not in ids:continue
             pid=r.get('player_id','')
             if bid in ok_pids and pid not in ok_pids[bid]:continue
-            t_raw=r.get('time','0')
-            try:t=int(float(t_raw))
-            except ValueError:t=0
+            t_raw=r.get('time')
+            valid_time=_label_int(t_raw)
+            t=valid_time if valid_time is not None else 0
             card=r.get('card','')
             tm=r.get('team','blue')
             key=(bid,card,t,tm)
@@ -265,6 +266,7 @@ def load_worker_rows(path,ids,meta=None):
                 'tile_x':tx,'tile_y':ty,
                 'ability':1 if is_ability else 0,
                 'card_type':r.get('card_type','normal'),
+                **({'time_valid':False} if valid_time is None else {}),
             })
     for bid in data:
         data[bid].sort(key=lambda p:p['time'])
@@ -285,9 +287,9 @@ def load_placements(path,ids):
         for r in csv.DictReader(f):
             bid=r['battle_id']
             if bid not in ids:continue
-            t_raw=r.get('time','0')
-            try:t=int(float(t_raw))
-            except ValueError:t=0
+            t_raw=r.get('time')
+            valid_time=_label_int(t_raw)
+            t=valid_time if valid_time is not None else 0
             card=r.get('card','')
             tm=r.get('team','blue')
             key=(bid,card,t,tm)
@@ -305,6 +307,7 @@ def load_placements(path,ids):
                 'tile_x':tx,'tile_y':ty,
                 'ability':int(r.get('ability','0') or '0'),
                 'card_type':r.get('card_type','normal'),
+                **({'time_valid':False} if valid_time is None else {}),
             })
     for bid in data:
         data[bid].sort(key=lambda p:p['time'])
@@ -454,7 +457,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         if g.ended:break
         if p['ability']==1:
             g.players[tm].elixir=10
-            g.activate_ability(tm,_ability_troop(g,tm,base))
+            submit_recorded_ability(g,tm,base)
             continue
         if base is None:continue
         if not _has_json(base):
@@ -504,9 +507,9 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
     atc=outcome['tc']
     aoc=outcome['oc']
     actual_winner='blue' if aw=='W' else 'red' if aw=='L' else None
-    win_match=(sw==actual_winner)
-    crown_exact=(bc==atc and rc==aoc)
-    crown_close=(abs(bc-atc)<=1 and abs(rc-aoc)<=1)
+    win_match=(sw==actual_winner) if aw in ('W','L','D') else None
+    crown_exact=(bc==atc and rc==aoc) if atc is not None and aoc is not None else None
+    crown_close=(abs(bc-atc)<=1 and abs(rc-aoc)<=1) if atc is not None and aoc is not None else None
     stm='blue' if sw=='blue' else 'red' if sw=='red' else 'draw'
     last=max((p['time'] for p in plays),default=0)/20.0
     info={'bid':bid,'sim_winner':sw,'sim_bc':bc,'sim_rc':rc,
@@ -619,9 +622,9 @@ def main():
     skip=[b for b in bids if outcomes[b].get('modifier')]
     if skip and not args.battle:
         bids=[b for b in bids if b not in set(skip)]
-        print(f"Excluded {len(skip)} modifier-mode battles (event modes or towers above their level's hitpoints)")
+        print(f"Excluded {len(skip)} declared modifier-mode battles")
     tot=len(bids)
-    wm=0;ce=0;cc=0;pm=0;done=0;hpe=[];tst=[];aimN=0;aimH=0;probes=[];placement={}
+    wm=0;ce=0;cc=0;pm=0;done=0;unscored_winner=0;unscored_crowns=0;hpe=[];tst=[];aimN=0;aimH=0;probes=[];placement={}
     print(f"Running {tot} battles...\n")
     if args.jobs>1 and not args.visualize:
         from multiprocessing import Pool
@@ -629,6 +632,8 @@ def main():
     else:runs=(replay_battle(b,placements[b],outcomes[b],verbose=args.verbose,pid=pids.get(b),probe=args.aim_by_card) for b in bids)
     for g,info in runs:
         bid=info['bid']
+        if info['win_match'] is None:unscored_winner+=1
+        if info['crown_exact'] is None:unscored_crowns+=1
         if info['win_match']:wm+=1
         if info['crown_exact']:ce+=1
         if info['crown_close']:cc+=1
@@ -648,6 +653,8 @@ def main():
     print(f"Winner match: {wm}/{done} ({100*wm/done:.1f}%)")
     print(f"Crown exact:  {ce}/{done} ({100*ce/done:.1f}%)")
     print(f"Crown +/-1:   {cc}/{done} ({100*cc/done:.1f}%)")
+    if unscored_winner or unscored_crowns:
+        print(f"Unavailable labels: {unscored_winner} winners, {unscored_crowns} crown scores; percentages above are lower bounds over all games.")
     print(f"Ended before last human play: {pm}/{done} ({100*pm/done:.1f}%)")
     if hpe:print(f"Tower HP error (mean, fraction of max): {sum(hpe)/len(hpe):.3f}; tower alive/dead agreement: {100*sum(tst)/len(tst):.1f}%")
     if aimN:print(f"Spell aim agreement (sim unit within 2.5 tiles of a real cast away from towers): {aimH}/{aimN} ({100*aimH/aimN:.1f}%)")

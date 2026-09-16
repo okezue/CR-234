@@ -140,13 +140,13 @@ class Player:
         if self.active_champ is None:self.active_champ=tr
         else:self.champ_queue.append(tr)
     def _on_champ_death(self,tr):
-        if tr is not self.active_champ:
-            if tr in self.champ_queue:self.champ_queue.remove(tr)
-            return
         ab=getattr(tr,'ability',None)
         if ab and ab.casting:
             self.elixir=min(self.max_ex,self.elixir+ab.cost)
             ab.casting=False;ab.cast_timer=0
+        if tr is not self.active_champ:
+            if tr in self.champ_queue:self.champ_queue.remove(tr)
+            return
         self.active_champ=self.champ_queue.pop(0) if self.champ_queue else None
     def sample_drag(self):
         if self.drag_del==0:return 0
@@ -505,9 +505,19 @@ class Game:
             ix=tr.x+(tx-tr.x)*(near-tr.y)/(ty-tr.y) if ty!=tr.y else tr.x;hw=max(0.0,a.BRIDGE_HW-getattr(tr,'collision_r',0.5))
             lx+=K['bridge_blend']*(min(max(ix,lx-hw),lx+hw)-lx)
         return lx,near
+    def activate_banner(self,team,ab):
+        p=self.players[team]
+        if not isinstance(ab,BannerBrigade) or ab not in p.pending_abilities or not ab.can_use():return False,"ability not ready"
+        if p.elixir<ab.cost:return False,"not enough elixir"
+        p.elixir-=ab.cost;ab._pend=True
+        self.pending_ab.append(PendingAbility(team,None,ab,p.sample_ability_del(),is_banner=True))
+        self.log.append(f"[{self.t:.1f}] {team} activates banner ability")
+        return True,"ok"
     def activate_ability(self,team,troop=None):
         p=self.players[team]
-        if troop is None:troop=p.active_champ
+        if troop is None:
+            default=p.active_champ
+            troop=next((t for t in reversed(p.troops) if default and t.alive and t.name==default.name and getattr(t,'ability',None)),default)
         if not troop:
             for ab in p.pending_abilities:
                 if ab.can_use() and p.elixir>=ab.cost:
@@ -517,18 +527,21 @@ class Game:
                     self.log.append(f"[{self.t:.1f}] {team} activates banner ability drag={delay:.2f}s")
                     return True,"ok"
             return False,"no champion"
-        if p.active_champ is None and getattr(troop,'ability',None):
-            p._register_champ(troop)
         ab=getattr(troop,'ability',None)
-        if ab and hasattr(ab,'banner_pos') and ab.banner_pos:
+        banner=isinstance(ab,BannerBrigade) and ab in p.pending_abilities and ab.banner_pos
+        if troop.team!=team or not banner and (troop not in p.troops or not troop.alive):return False,"no champion"
+        if p.active_champ is None and ab and not banner:p._register_champ(troop)
+        if banner:
             if ab.can_use() and p.elixir>=ab.cost:
                 p.elixir-=ab.cost;ab._pend=True
                 delay=p.sample_ability_del()
                 self.pending_ab.append(PendingAbility(team,troop,ab,delay,is_banner=True))
                 self.log.append(f"[{self.t:.1f}] {team} activates banner ability drag={delay:.2f}s")
                 return True,"ok"
-        if troop is not p.active_champ:return False,"not active champion"
         if troop.hp==1 and troop.max_hp==1:return False,"clones cannot use abilities"
+        # Distinct hero cards have separate buttons; each card uses its latest living deployment.
+        selected=next((t for t in reversed(p.troops) if t.alive and t.name==troop.name and getattr(t,'ability',None)),None)
+        if troop is not selected:return False,"not active champion"
         if not ab or not ab.can_use():return False,"ability not ready"
         if p.elixir<ab.cost:return False,"not enough elixir"
         p.elixir-=ab.cost;ab._pend=True

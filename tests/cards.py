@@ -4835,11 +4835,11 @@ def t_champ_not_active_cant_use():
     gk2=mk_card('golden_knight',11,'blue',5,10)
     g.deploy('blue',gk1);g.deploy('blue',gk2)
     g.players['blue'].elixir=10
-    gk2.ability.cd=0
-    ok,msg=g.activate_ability('blue',gk2)
-    assert not ok,"Queued champion should not use ability"
+    gk1.ability.cd=0
+    ok,msg=g.activate_ability('blue',gk1)
+    assert not ok,"The older copy should not use the latest deployment's ability"
     assert msg=="not active champion"
-    return "Non-active champion can't use ability"
+    return "Older champion copy cannot use ability"
 def t_evo_knight_dmg_red():
     g=Game()
     k=mk_card('knight',11,'blue',9,14,evolved=True)
@@ -5228,15 +5228,14 @@ def t_int_champ_ability_after_death():
     g.deploy('blue',gk1);g.deploy('blue',gk2)
     p=g.players['blue']
     assert p.active_champ is gk1
-    p.elixir=10;gk2.ability.cd=0
-    ok,_=g.activate_ability('blue',gk2)
-    assert not ok,"Queued champ can't use ability"
-    gk1.alive=False;g._proc_deaths()
-    assert p.active_champ is gk2
-    gk2.ability.cd=0
-    ok2,_=g.activate_ability('blue',gk2)
+    p.elixir=10;gk1.ability.cd=0
+    ok,_=g.activate_ability('blue',gk1)
+    assert not ok,"Older copy cannot use the newest copy's ability"
+    gk2.alive=False;g._proc_deaths()
+    assert p.active_champ is gk1
+    ok2,_=g.activate_ability('blue',gk1)
     g.run(1.3)
-    assert ok2,"Now-active champ should use ability"
+    assert ok2,"The surviving copy should use its ability"
     return "Champion ability handoff on death works"
 def t_int_evo_barbs_v_pekka():
     g=Game()
