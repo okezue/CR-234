@@ -2191,7 +2191,7 @@
    "id": 27000007,
    "kamikaze": false,
    "kind": "building",
-   "lifetime": 65.0,
+   "lifetime": 93,
    "loadTime": null,
    "mass": null,
    "minRange": null,
@@ -2205,6 +2205,7 @@
    "skills": {
     "produceElixir": {
      "amount": 1,
+     "deathAmount": 1,
      "interval": 13
     }
    },
@@ -2212,7 +2213,9 @@
    "src": {
     "*": "cs2.4.0",
     "sightRange": "legacy:hidden_stats.sight_range_tiles",
+    "lifetime": "patch:2026-09-16",
     "skills.produceElixir.amount": "legacy:production",
+    "skills.produceElixir.deathAmount": "patch:2026-09-16",
     "skills.produceElixir.interval": "legacy:production",
     "stats.hitpoints[]": "derived:levelMult"
    },
@@ -9737,6 +9740,10 @@
    {
     "name": "data/patches/2026-09-08.json",
     "tag": "patch:2026-09-08"
+   },
+   {
+    "name": "data/patches/2026-09-16.json",
+    "tag": "patch:2026-09-16"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

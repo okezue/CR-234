@@ -1,0 +1,6 @@
+[
+ {"card": "elixir_collector", "path": "lifetime", "value": 93,
+  "note": "Official November 2025 balance notes: lifetime 1min26sec to 1min33sec, production 12 to 13 seconds. Current ElixirCollector source has lifeTime 93000. https://supercell.com/en/games/clashroyale/blog/release-notes/november-balance-changes-2 https://cache.statsroyale.com/gamedata-v5.json"},
+ {"card": "elixir_collector", "path": "skills.produceElixir.deathAmount", "value": 1,
+  "note": "ElixirCollector manaOnDeath is 1; the card produces one Elixir upon destruction in addition to periodic production. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Elixir_Collector"}
+]

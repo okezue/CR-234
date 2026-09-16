@@ -424,16 +424,21 @@ class FormTransform(Component):
         t=Troop(tr.team,tr.x,tr.y,dict(self.spirit_cfg,components=list(self.spirit_cfg.get('components',[]))))
         g.players[tr.team].troops.append(t)
 class ElixirProd(Component):
-    def __init__(self,interval,amount):
-        self.interval=interval;self.amount=amount;self.timer=interval
+    def __init__(self,interval,amount,death_amount=0):
+        self.interval=interval;self.amount=amount;self.timer=interval;self.death_amount=death_amount;self.dead=False
     def on_tick(self,tr,g):
-        halt,rate,_=g._status_mods(tr)
-        if halt:return
-        self.timer-=g.DT*rate
-        if self.timer<=0:
-            p=g.players[tr.team]
+        if self.timer>0:
+            halt,rate,_=g._status_mods(tr)
+            if halt:return
+            self.timer=max(0,self.timer-g.DT*rate)
+        p=g.players[tr.team]
+        if self.timer<=0 and p.elixir<p.max_ex:
             p.elixir=min(p.max_ex,p.elixir+self.amount)
             self.timer=self.interval
+    def on_death(self,tr,g):
+        if self.dead:return
+        self.dead=True;p=g.players[tr.team]
+        p.elixir=min(p.max_ex,p.elixir+self.death_amount)
 class BanditDash(Component):
     # she stands for the wind-up, then closes at the dash speed (over the river if need be), immune, and lands the dash hit on arrival
     def __init__(self,mn,mx,ct,spd):

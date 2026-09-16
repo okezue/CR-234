@@ -2739,7 +2739,7 @@ def t_bld_elixcoll():
     ec=mk_card('elixir_collector',11,'blue',5,10)
     assert isinstance(ec,Building)
     assert ec.hp==1070
-    assert ec.lifetime==65,f"Elixir collector lifetime should be 65, got {ec.lifetime}"
+    assert ec.lifetime==93,f"Elixir collector lifetime should be 93, got {ec.lifetime}"
     from sim.fx import ElixirProd
     ep=[c for c in ec.components if isinstance(c,ElixirProd)]
     assert len(ep)==1
@@ -3052,12 +3052,12 @@ def t_bld_gobhut_death_spawn():
     return f"Goblin Hut death spawn ({len(spawned)})"
 def t_bld_elixcoll_lifetime():
     ec=mk_card('elixir_collector',11,'blue',5,10)
-    assert ec.lifetime==65
-    g=Game();g.deploy('blue',ec);g.run(62)
-    assert ec.alive,"Collector should still be alive at 62s"
-    g.run(4)
-    assert not ec.alive,"Collector should expire after 65s"
-    return "Elixir Collector 65s lifetime"
+    assert ec.lifetime==93
+    g=Game();g.deploy('blue',ec);g.run(92)
+    assert ec.alive,"Collector should still be alive at 92s"
+    g.run(2)
+    assert not ec.alive,"Collector should expire after 93s"
+    return "Elixir Collector 93s lifetime"
 def t_bld_elixcoll_full_prod():
     ec=mk_card('elixir_collector',11,'blue',5,10)
     g=Game();g.deploy('blue',ec)
@@ -3071,7 +3071,7 @@ def t_bld_elixcoll_full_prod():
         base.players['blue'].elixir=0;base.run(13.1)
         btotal+=base.players['blue'].elixir
     diff=total-btotal
-    assert diff>=4.9,f"Collector should produce ~5 extra elixir, got {diff:.1f}"
+    assert diff>=6.9,f"Collector should produce 7 living Elixir, got {diff:.1f}"
     return f"Elixir Collector full production (+{diff:.1f} elixir)"
 def t_bld_gobdrill_spawns():
     gd=mk_card('goblin_drill',11,'blue',9,20)
@@ -3209,7 +3209,7 @@ def t_bld_lifetime_all():
     from sim.units import Building
     lifetimes={'cannon':30,'tesla':25,'bomb_tower':30,'mortar':30,'x_bow':30,
                'tombstone':30,'barbarian_hut':30,'goblin_hut':29,
-               'goblin_cage':20,'elixir_collector':65,'goblin_drill':10}
+               'goblin_cage':20,'elixir_collector':93,'goblin_drill':10}
     ok=0
     for name,exp in lifetimes.items():
         b=mk_card(name,11,'blue',5,10)

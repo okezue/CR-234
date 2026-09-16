@@ -203,7 +203,7 @@ def attach(cfg,c,sk,lvl,chain=None):
             cs.append(fx.RiderAttack(at(p('damage'),lvl),p('hitSpeed'),p('range'),1-mult(sl.get('speedMultiplier') or 0) if sl.get('duration') else 0,
                 sl.get('duration') or 0,first(p('hitSpeed'),p('loadTime')),count(p('count')),not sa.get('troopsOnly')))
     pe=sk.get('produceElixir',{})
-    if pe.get('interval'):cs.append(fx.ElixirProd(pe['interval'],pe.get('amount') or 1))
+    if pe.get('interval'):cs.append(fx.ElixirProd(pe['interval'],pe.get('amount') or 1,pe.get('deathAmount') or 0))
     if kb and 'areaDamageOnDeath' not in sk and 'dash' not in sk and 'pierce' not in sk and cfg['atk_type']!='area':
         cs.append(fx.MonkCombo(pb['cycle'],kb) if pb.get('cycle') else fx.Knockback(kb))
     if sk.get('recoil',{}).get('distance'):cs.append(fx.Recoil(sk['recoil']['distance']))
