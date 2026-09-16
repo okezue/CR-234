@@ -29,6 +29,7 @@ def _game(*names,evolutions=None,heroes=None):
 def _ready(g,name,team='blue'):
     p=g.players[team]
     R._force_hand(g,team,name)
+    while len(p.deck.hand)>4:p.deck.q.append(p.deck.hand.pop(0 if p.deck.hand[-1]==name else -1))
     p.elixir=10
     return p
 

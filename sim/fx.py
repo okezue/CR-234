@@ -168,6 +168,12 @@ class Charge(Component):
         if self.orig_spd is not None:tr.spd=self.orig_spd
         if hasattr(self,'_ofh'):tr.fhspd=self._ofh
         self.charged=False;self.moved=0
+def spawned_child(parent,x,y,cfg):
+    child=Troop(parent.team,x,y,dict(cfg,components=list(cfg.get('components',[]))))
+    if getattr(parent,'is_clone',False):
+        child.is_clone=True;child.hp=child.max_hp=1
+        child.shield_hp=child.max_shield_hp=int(child.shield_hp>0)
+    return child
 class SpawnTimer(Component):
     # a wave appears in front of the spawner (toward its target, else toward the enemy side), its units stagger seconds apart; a spawner with a
     # spawn range (Goblin Hut) sleeps until an enemy is within it and then spawns its first unit after the first delay
@@ -186,7 +192,7 @@ class SpawnTimer(Component):
             x,y,team=tr.x+dx*2.0,tr.y+dy*2.0,tr.team
             def one(g):
                 if not tr.alive:return
-                t=Troop(team,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),dict(self.cfg,components=list(self.cfg.get('components',[]))))
+                t=spawned_child(tr,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),self.cfg)
                 t._spawner=tr;tr._spawned=t._spawn_no=getattr(tr,'_spawned',0)+1;g._place(team,t,self.cfg.get('deploy',0))
             for i in range(self.count):
                 if i and self.stagger:g.spells.append(Timer(i*self.stagger,one,x,y,team))
@@ -238,7 +244,7 @@ class DeathSpawn(Component):
     def on_death(self,tr,g):
         x,y,team=tr.x,tr.y,tr.team
         def one(g):
-            t=Troop(team,x+random.uniform(-0.5,0.5),y+random.uniform(-0.5,0.5),dict(self.cfg,components=list(self.cfg.get('components',[]))))
+            t=spawned_child(tr,x+random.uniform(-0.5,0.5),y+random.uniform(-0.5,0.5),self.cfg)
             g._place(team,t,self.cfg.get('deploy',0))
         for i in range(self.count):
             if i and K['death_stagger']:g.spells.append(Timer(i*K['death_stagger'],one,x,y,team))

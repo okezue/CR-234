@@ -2,7 +2,7 @@ import math
 import random
 from copy import copy
 from sim.units import Status,Troop
-from sim.fx import strip,hurt,push,tdist,Stealth,Fade,EvoRoyalGhost
+from sim.fx import strip,hurt,push,tdist,Stealth,Fade,EvoRoyalGhost,SpawnTimer
 class Spell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
@@ -236,13 +236,13 @@ class CloneSpell:
         for t in game.players[self.team].troops:
             if not t.alive:continue
             if getattr(t,'is_building',False):continue
-            if t.hp==1 and t.max_hp==1:continue
+            if getattr(t,'is_clone',False) or t.hp==1 and t.max_hp==1:continue
             d=math.sqrt((t.x-self.x)**2+(t.y-self.y)**2)
             if d<=self.radius:
                 oy=-0.5 if self.team=='blue' else 0.5
                 # Ghost clones are unevolved and own their invisibility/idle timers.
                 components=[Stealth(c.after) if isinstance(c,Stealth) and t.name=='Royal Ghost'
-                            else copy(c) if isinstance(c,(Stealth,Fade)) else c
+                            else copy(c) if isinstance(c,(Stealth,Fade,SpawnTimer)) else c
                             for c in t.components if not isinstance(c,EvoRoyalGhost)]
                 cfg={'hp':1,'max_hp':1,'dmg':t.dmg,'hspd':t.hspd,'fhspd':t.fhspd,
                      'spd':t.spd,'rng':t.rng,'targets':t.targets,'projSpeed':getattr(t,'proj_spd',0),
@@ -255,7 +255,7 @@ class CloneSpell:
                 cfg['shield_hp']=cfg['max_shield_hp']=int(getattr(t,'shield_hp',0)>0)
                 cl=Troop(self.team,t.x,t.y+oy,cfg)
                 cl.proj_homing=getattr(t,'proj_homing',True)
-                cl.ability=None
+                cl.ability=None;cl.is_clone=True
                 clones.append(cl)
         for c in clones:
             c.max_hp=1;c.hp=1
