@@ -643,12 +643,14 @@ class Game:
             if hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',stn))
         if suicide:tr.alive=False
     def _fire(self,tr,tgt):
+        if getattr(tr,'_self_destructed',False):return
         v=getattr(tr,'proj_spd',0)
         if v<=0:self._do_attack(tr,tgt);return
         tx,ty=self._pos(tgt);shot=(tr.dmg,getattr(tr,'ct_dmg',0),getattr(tr,'is_suicide',False))
         def hit(g,pr):
             if pr.homing or math.hypot(*(a-b for a,b in zip(g._pos(tgt),(pr.x,pr.y))))<=tr.splash_r+0.5:g._do_attack(tr,tgt,shot)
         self.projs.append(Projectile(tr.team,tr.x,tr.y,v,tgt,tx,ty,hit,getattr(tr,'proj_homing',True)))
+        if shot[2] and tr.name=='Fire Spirit':tr._self_destructed=True;tr.alive=False
         # Recoil follows release; the projectile starts at the pre-recoil position.
         for c in getattr(tr,'components',[]):
             if isinstance(c,Recoil):c.on_attack(tr,tgt,self)

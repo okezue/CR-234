@@ -1426,7 +1426,7 @@ class CurseOnHit(Component):
             if e.alive and g.t<=until:continue
             del self.marks[k]
             # troops that break into sub-troops (Golem, Lava Hound) do not turn into hogs
-            if e.alive or any(isinstance(c,DeathSpawn) for c in e.components):continue
+            if e.alive or getattr(e,'_self_destructed',False) or any(isinstance(c,DeathSpawn) for c in e.components):continue
             g.players[tr.team].troops.append(Troop(tr.team,e.x,e.y,dict(self.cfg,components=list(self.cfg['components']))))
 class Parry(Component):
     # blocks one melee hit every cd seconds and returns mult times the blocked damage to the attacker

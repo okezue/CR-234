@@ -232,12 +232,12 @@ def t_clone_melee_and_duplicate_exclusion_unchanged():
     assert not clone.alive and original.hp==original.max_hp
 
 
-def t_clone_spirit_projectile_consumes_once_on_impact():
+def t_clone_spirit_body_consumed_at_release_damage_once_on_impact():
     g,original,clone=copied('fire_spirit')
     assert clone.is_suicide and clone.proj_spd==original.proj_spd>0
     target=Dummy('red',9,12.5,hp=5000,spd=0,dmg=0);g.deploy('red',target)
     g._fire(clone,target)
-    assert clone.alive and target.hp==5000 and len(g.projs)==1
+    assert not clone.alive and target.hp==5000 and len(g.projs)==1
     for _ in range(20):g._proc_projs()
     assert not clone.alive and target.hp==5000-clone.dmg
     g._proc_deaths()
