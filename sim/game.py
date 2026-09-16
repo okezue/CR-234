@@ -3,7 +3,7 @@ import random
 from sim.arena import Arena
 from sim.towers import create as mk_tt,king,lock as tower_lock
 from sim.units import Status,hidden,has
-from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil,LineAttack,SoulCollect
+from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil,LineAttack,SoulCollect,SoulSummoning,SoulContinuation
 from sim.path import Pathfinder
 from sim.cards import create as mk_card,card,key
 from sim.knobs import K
@@ -686,8 +686,15 @@ class Game:
     def _proc_troops(self):
         for tm in ('blue','red'):
             p=self.players[tm]
+            for sp in self.spells:
+                if isinstance(sp,SoulContinuation) and sp.team==tm:sp.tick(self.DT,self)
             for tr in p.troops:
-                if not tr.alive or has(tr,'deploying'):continue
+                if not tr.alive:
+                    ab=getattr(tr,'ability',None)
+                    if isinstance(ab,SoulSummoning) and ab.active and not ab.continuing:
+                        ab.continue_after_death(tr,self).tick(self.DT,self)
+                    continue
+                if has(tr,'deploying'):continue
                 ab=getattr(tr,'ability',None)
                 if ab:ab.tick(self.DT,tr,self)
                 for c in getattr(tr,'components',[]):c.on_tick(tr,self)
@@ -731,7 +738,8 @@ class Game:
         for pr in self.projs:pr.tick(self.DT,self)
         self.projs=[pr for pr in self.projs if pr.alive]
     def _proc_spells(self):
-        for sp in self.spells:sp.tick(self.DT,self)
+        for sp in self.spells:
+            if not isinstance(sp,SoulContinuation):sp.tick(self.DT,self)
         self.spells=[sp for sp in self.spells if sp.active]
     def _resolve_collisions(self):
         all_tr=[]
@@ -760,6 +768,7 @@ class Game:
                     if hasattr(tr,'on_death'):tr.on_death(self)
                     if getattr(tr,'ability',None):
                         ab=tr.ability
+                        if isinstance(ab,SoulSummoning):ab.continue_after_death(tr,self)
                         if isinstance(ab,BannerBrigade):
                             heroes=[t for t in p.troops if t.alive and getattr(t,'is_hero',False) and getattr(t,'ability',None) is ab]
                             if not heroes:
@@ -798,6 +807,7 @@ class Game:
         self._proc_spells()
         self._proc_projs()
         self._proc_troops()
+        self.spells=[sp for sp in self.spells if not isinstance(sp,SoulContinuation) or sp.active]
         self._resolve_collisions()
         self._proc_deaths()
         self._check_phase()

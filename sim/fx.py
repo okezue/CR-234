@@ -605,7 +605,12 @@ class DashingDash(Ability):
 class SoulSummoning(Ability):
     def __init__(self,scfg,radius,cost,cd,base,interval):
         super().__init__(cost,cd);self.scfg=scfg;self.radius=radius
-        self.base=base;self.q=0;self.si=interval;self.timer=0
+        self.base=base;self.q=0;self.si=interval;self.timer=0;self.last_tick=None;self.continuing=False
+    def continue_after_death(self,tr,g):
+        if not self.active or self.continuing:return
+        self.continuing=True
+        continuation=SoulContinuation(self,tr);g.spells.append(continuation)
+        return continuation
     def activate(self,tr,g):
         sc=None
         for c in tr.components:
@@ -615,6 +620,7 @@ class SoulSummoning(Ability):
         if sc:sc.souls=0
         self.active=True;self.timer=0
     def tick(self,dt,tr,g):
+        self.last_tick=g.t
         if not self.active:super().tick(dt,tr,g);return
         if self.q<=0:self.active=False;self.cd=self.max_cd;return
         self.timer-=dt
@@ -625,6 +631,13 @@ class SoulSummoning(Ability):
             t.hp=t.max_hp=1;t.is_clone=True
             g.players[tr.team].troops.append(t)
             self.q-=1;self.timer=self.si
+class SoulContinuation:
+    def __init__(self,ability,tr):
+        self.ability=ability;self.x=tr.x;self.y=tr.y;self.team=tr.team
+        self.name='Soul Summoning';self.radius=ability.radius;self.active=True
+    def tick(self,dt,g):
+        if self.ability.last_tick!=g.t:self.ability.tick(dt,self,g)
+        self.active=self.ability.active
 class GetawayGrenade(Ability):
     def __init__(self,dist,invis_dur,cost,cd,uses):
         super().__init__(cost,cd);self.dist=dist;self.invis_dur=invis_dur
