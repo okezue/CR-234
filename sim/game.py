@@ -438,7 +438,7 @@ class Game:
         halt=any(s.kind in ('stun','freeze') for s in st)
         sv=min([s.val for s in st if s.kind=='slow']+[1.0])
         rv=max([s.val for s in st if s.kind=='rage']+[0.0])
-        mv=min([s.val for s in st if s.kind=='mslow']+[1.0])
+        mv=min([s.val for s in st if s.kind in ('mslow','snare')]+[1.0])
         return halt,sv*(1+rv),min(sv,mv)*(1+rv)
     def _shoot(self,team,x,y,spd,tgt,hit):
         if spd<=0:hit(self,None);return

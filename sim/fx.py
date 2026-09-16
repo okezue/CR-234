@@ -111,7 +111,7 @@ class RiderAttack(Component):
         if t is not None and not (t.alive and not hidden(t) and dist(t)<=self.rng):t=None
         if t is None:
             c=[e for e in g.players[opp].troops if e.alive and not hidden(e) and (self.bldgs or not getattr(e,'is_building',False)) and dist(e)<=self.rng]
-            if self.slow_pct>0:c=[e for e in c if not has(e,'slow')] or c
+            if self.slow_pct>0:c=[e for e in c if not has(e,'snare')] or c
             t=min(c,key=dist) if c else None
         self.tgt=best=t
         if not best:self.cd=max(self.fhspd,self.cd-g.DT);return
@@ -119,7 +119,7 @@ class RiderAttack(Component):
         if self.cd>0:return
         best.take_damage(self.dmg*self.count)
         if self.slow_pct>0 and hasattr(best,'statuses'):
-            best.statuses.append(Status('slow',self.slow_dur,1.0-self.slow_pct))
+            best.statuses.append(Status('snare',self.slow_dur,1.0-self.slow_pct))
         self.cd=self.hspd
 class MeleeSwitch(Component):
     # a close ground enemy is met with the bayonet: the hit deals the melee damage while the target is a ground unit within melee reach
@@ -183,7 +183,9 @@ class SpawnTimer(Component):
     def on_tick(self,tr,g):
         if has(tr,'burrowed'):return
         if self.rng and not near(g,tr.team,tr.x,tr.y,self.rng,towers=False):self.timer=self.first;return
-        self.timer-=g.DT
+        halt,rate,_=g._status_mods(tr)
+        if halt:return
+        self.timer-=g.DT*rate
         if self.timer<=0:
             tgt=getattr(tr,'tgt',None);dx,dy=0,(1 if tr.team=='blue' else -1)
             if tgt:
@@ -425,7 +427,9 @@ class ElixirProd(Component):
     def __init__(self,interval,amount):
         self.interval=interval;self.amount=amount;self.timer=interval
     def on_tick(self,tr,g):
-        self.timer-=g.DT
+        halt,rate,_=g._status_mods(tr)
+        if halt:return
+        self.timer-=g.DT*rate
         if self.timer<=0:
             p=g.players[tr.team]
             p.elixir=min(p.max_ex,p.elixir+self.amount)
