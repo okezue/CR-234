@@ -622,6 +622,7 @@ class SoulSummoning(Ability):
             ox=random.uniform(-self.radius,self.radius)
             oy=random.uniform(-self.radius,self.radius)
             t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.scfg,components=[]));t.no_soul=True
+            t.hp=t.max_hp=1;t.is_clone=True
             g.players[tr.team].troops.append(t)
             self.q-=1;self.timer=self.si
 class GetawayGrenade(Ability):
@@ -1429,6 +1430,7 @@ class CurseOnHit(Component):
             if e.alive or getattr(e,'_self_destructed',False) or any(isinstance(c,DeathSpawn) for c in e.components):continue
             child=Troop(tr.team,e.x,e.y,dict(self.cfg,components=list(self.cfg['components'])))
             child.no_soul=getattr(e,'is_clone',False) or getattr(e,'no_soul',False)
+            if getattr(e,'is_clone',False):child.hp=child.max_hp=1;child.is_clone=True
             g.players[tr.team].troops.append(child)
 class Parry(Component):
     # blocks one melee hit every cd seconds and returns mult times the blocked damage to the attacker
