@@ -1,7 +1,8 @@
 import math
 import random
+from copy import copy
 from sim.units import Status,Troop
-from sim.fx import strip,hurt,push,tdist
+from sim.fx import strip,hurt,push,tdist,Stealth,Fade,EvoRoyalGhost
 class Spell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
@@ -239,11 +240,15 @@ class CloneSpell:
             d=math.sqrt((t.x-self.x)**2+(t.y-self.y)**2)
             if d<=self.radius:
                 oy=-0.5 if self.team=='blue' else 0.5
+                # Ghost clones are unevolved and own their invisibility/idle timers.
+                components=[Stealth(c.after) if isinstance(c,Stealth) and t.name=='Royal Ghost'
+                            else copy(c) if isinstance(c,(Stealth,Fade)) else c
+                            for c in t.components if not isinstance(c,EvoRoyalGhost)]
                 cfg={'hp':1,'max_hp':1,'dmg':t.dmg,'hspd':t.hspd,'fhspd':t.fhspd,
                      'spd':t.spd,'rng':t.rng,'targets':t.targets,'projSpeed':getattr(t,'proj_spd',0),
                      'transport':t.transport,'hovering':getattr(t,'hovering',False),'atk_type':t.atk_type,
                      'splash_r':t.splash_r,'ct_dmg':t.ct_dmg,'is_suicide':getattr(t,'is_suicide',False),
-                     'components':list(t.components),'lvl':t.lvl,'name':t.name,
+                     'components':components,'lvl':t.lvl,'name':t.name,
                      'death_dmg':getattr(t,'death_dmg',0),
                      'death_splash_r':getattr(t,'death_splash_r',0)}
                 cfg['shield_hp']=cfg['max_shield_hp']=int(getattr(t,'shield_hp',0)>0)
