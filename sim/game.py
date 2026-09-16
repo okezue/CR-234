@@ -3,7 +3,7 @@ import random
 from sim.arena import Arena
 from sim.towers import create as mk_tt,king,lock as tower_lock
 from sim.units import Status,hidden,has
-from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil,LineAttack
+from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil,LineAttack,SoulCollect
 from sim.path import Pathfinder
 from sim.cards import create as mk_card,card,key
 from sim.knobs import K
@@ -747,6 +747,11 @@ class Game:
                 dead=[tr for tr in p.troops if not tr.alive and tr not in dead_set]
                 for tr in dead:
                     dead_set.add(tr)
+                    for owner in self.players.values():
+                        for collector in owner.troops:
+                            if collector.alive and not getattr(collector,'is_clone',False):
+                                for c in collector.components:
+                                    if isinstance(c,SoulCollect):c.collect(tr)
                     pa_match=[pa for pa in self.pending_ab if pa.troop is tr and not pa.is_banner]
                     for pa in pa_match:
                         p.elixir=min(p.max_ex,p.elixir+pa.ability.cost)

@@ -113,7 +113,7 @@ def t_cursed_fire_spirit_only_becomes_hog_on_external_death(self_destruct):
 def t_fire_spirit_self_destruction_still_supplies_a_soul():
     g,spirit,_=placed();king=create('skeleton_king',11,'red',16,26);g.deploy('red',king)
     souls=next(c for c in king.components if isinstance(c,SoulCollect))
-    g.tick();assert spirit in souls._prev and souls.souls==0
+    g.tick();assert spirit.alive and souls.souls==0
     g.run(2);assert souls.souls==1
 
 

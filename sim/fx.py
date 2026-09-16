@@ -503,14 +503,12 @@ class Hook(Component):
         if t is not None and getattr(t,'transport','Ground')!='Air' and not hidden(t) and self.mn<=g._dist(tr,t)<=self.mx:
             self.charging=True;self.timer=self.load;self.osp=tr.spd;tr.spd=0;self.htgt=t
 class SoulCollect(Component):
-    def __init__(self,cap):
-        self.cap=cap;self.souls=0;self._prev=set()
-    def on_tick(self,tr,g):
-        opp=g._opp(tr.team)
-        alive=set(e for e in g.players[opp].troops if e.alive)
-        died=self._prev-alive
-        self.souls=min(self.cap,self.souls+len(died))
-        self._prev=alive
+    def __init__(self,cap):self.cap=cap;self.souls=0
+    def collect(self,dead):
+        if getattr(dead,'is_building',False) or getattr(dead,'is_clone',False) or getattr(dead,'no_soul',False):return
+        if any(isinstance(c,Breakdown) for c in dead.components):return
+        if dead.name!='Goblin Giant' and any(isinstance(c,DeathSpawn) for c in dead.components):return
+        self.souls=min(self.cap,self.souls+1)
 class MonkCombo(Component):
     def __init__(self,cycle,kb):
         self.cycle=cycle;self.kb=kb;self.cnt=0
@@ -623,7 +621,7 @@ class SoulSummoning(Ability):
         if self.timer<=0:
             ox=random.uniform(-self.radius,self.radius)
             oy=random.uniform(-self.radius,self.radius)
-            t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.scfg,components=[]))
+            t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.scfg,components=[]));t.no_soul=True
             g.players[tr.team].troops.append(t)
             self.q-=1;self.timer=self.si
 class GetawayGrenade(Ability):
@@ -1414,8 +1412,10 @@ class Hatch(Component):
     def on_tick(self,tr,g):
         self.t-=g.DT
         if self.t>0:return
-        tr.alive=False;tr.components=[]
-        g.players[tr.team].troops.append(Troop(tr.team,tr.x,tr.y,dict(self.cfg,components=list(self.cfg['components']))))
+        tr.alive=False;tr.components=[];tr.no_soul=True
+        child=Troop(tr.team,tr.x,tr.y,dict(self.cfg,components=list(self.cfg['components'])))
+        child.no_soul=getattr(tr,'is_clone',False)
+        g.players[tr.team].troops.append(child)
 class CurseOnHit(Component):
     # every hit marks the troop for dur seconds; a marked troop that dies leaves a hog for the witch's side
     def __init__(self,cfg,dur):self.cfg=cfg;self.dur=dur;self.marks={}
@@ -1427,7 +1427,9 @@ class CurseOnHit(Component):
             del self.marks[k]
             # troops that break into sub-troops (Golem, Lava Hound) do not turn into hogs
             if e.alive or getattr(e,'_self_destructed',False) or any(isinstance(c,DeathSpawn) for c in e.components):continue
-            g.players[tr.team].troops.append(Troop(tr.team,e.x,e.y,dict(self.cfg,components=list(self.cfg['components']))))
+            child=Troop(tr.team,e.x,e.y,dict(self.cfg,components=list(self.cfg['components'])))
+            child.no_soul=getattr(e,'is_clone',False) or getattr(e,'no_soul',False)
+            g.players[tr.team].troops.append(child)
 class Parry(Component):
     # blocks one melee hit every cd seconds and returns mult times the blocked damage to the attacker
     def __init__(self,mult,cd):self.mult=mult;self.cd=cd;self.ready=0
