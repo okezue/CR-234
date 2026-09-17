@@ -388,9 +388,23 @@ class Game:
         else:
             mlvl=p.card_levels.get(actual,p.king_lvl)
         return mk_card(actual,mlvl,team,x,y,evolved=evolved,hero=hero)
+    def _free_spot(self,tr):
+        # a ground unit born on a tower footprint, a fence or open water (a spawner's forward spot behind the King Tower) cannot walk
+        # off it; it takes the nearest walkable tile centre instead
+        rj=getattr(tr,'hovering',False) or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))
+        if getattr(tr,'transport','Ground')=='Air' or getattr(tr,'is_building',False) or self._walkable(tr.x,tr.y,rj):return
+        a=self.arena;best=None
+        for ty in range(max(0,int(tr.y)-3),min(a.H,int(tr.y)+4)):
+            for tx in range(max(0,int(tr.x)-3),min(a.W,int(tr.x)+4)):
+                cx,cy=tx+0.5,ty+0.5
+                if not self._walkable(cx,cy,rj):continue
+                d=math.hypot(cx-tr.x,cy-tr.y)
+                if best is None or d<best[0]:best=(d,cx,cy)
+        if best:tr.x,tr.y=best[1],best[2]
     def _place(self,team,tr,dep):
         # a deploying unit stands on the field, targetable and damageable, and acts only when its deploy time is over
         if dep>0:tr.statuses.append(Status('deploying',dep))
+        self._free_spot(tr)
         self.deploy(team,tr)
     def _proc_pending(self):
         done=[];stagger_add=[]

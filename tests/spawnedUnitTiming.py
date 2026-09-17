@@ -19,7 +19,8 @@ def t_furnace_spawn_record_matches_the_current_fire_spirit():
 @pytest.mark.parametrize('team',('blue','red'))
 def t_spawned_spirit_carries_the_card_spirit_timing_and_range(team):
     g=quiet(Game());furnace=create('furnace',11,team,9,10 if team=='blue' else 22);g.deploy(team,furnace)
-    g.run(6.2)
+    # the first spirit comes with the deploy (patch 2026-09-17f); it is read before it can jump at anything
+    g.run(0.5)
     spirits=[t for t in g.players[team].troops if t.name=='Fire Spirit']
     card=create('fire_spirit',11,team,9,9);card=card[0] if isinstance(card,list) else card
     assert len(spirits)==1
@@ -29,15 +30,16 @@ def t_spawned_spirit_carries_the_card_spirit_timing_and_range(team):
 
 
 def t_spawned_spirit_jumps_within_a_fifth_of_a_second_of_reaching_range():
-    g=quiet(Game());furnace=create('furnace',11,'blue',9,10);g.deploy('blue',furnace);g.run(6.2)
+    g=quiet(Game());furnace=create('furnace',11,'blue',9,10);g.deploy('blue',furnace);g.run(1.2)
     spirit=next(t for t in g.players['blue'].troops if t.name=='Fire Spirit')
     # the Furnace is removed so only the spirit can damage the target
     furnace.hp=0;furnace.alive=False;g._proc_deaths()
     victim=create('giant',11,'red',9,spirit.y+3.5);victim.spd=0;victim.dmg=0;g.deploy('red',victim);hp=victim.hp
     entered=None;launched=None
     for _ in range(int(round(4.0/g.DT))):
-        g.tick()
+        # range is read at the start of a tick, the state the swing countdown of that tick sees
         if entered is None and g._dist(spirit,victim)<=spirit.rng:entered=g.t
+        g.tick()
         if launched is None and not spirit.alive:launched=g.t
         if victim.hp<hp:break
     assert entered is not None and launched is not None
@@ -53,9 +55,10 @@ def t_furnace_itself_still_attacks_with_its_own_cadence():
     for _ in range(int(round(4.9/g.DT))):
         last=victim.hp;g.tick()
         if victim.hp!=last:hits.append((round(g.t,2),last-victim.hp))
-    # before the first spawn at five seconds only the Furnace's own shots land: 179 per hit at level 11, 1.7 s apart
-    assert len(hits)>=2 and {d for _,d in hits}=={179}
-    assert all(round(b-a,2)==1.7 for (a,_),(b,_) in zip(hits,hits[1:]))
+    # the Furnace's own shots land 179 per hit at level 11, 1.7 s apart; the spirit spawned with the deploy adds one 207 blast
+    own=[(t,d) for t,d in hits if d==179]
+    assert len(own)>=2 and {d for _,d in hits}<={179,207}
+    assert all(round(b-a,2)==1.7 for (a,_),(b,_) in zip(own,own[1:]))
 
 
 # game data spawn records: Goblin_Stab (Goblin Gang) loadTime 500, Goblin (Goblin Drill) 700, BushGoblin (Suspicious Bush) 1100

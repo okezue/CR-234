@@ -2837,6 +2837,7 @@
     "periodicSpawn": {
      "character": "Fire Spirit",
      "count": 1,
+     "firstDelay": 0,
      "pauseTime": 5
     }
    },
@@ -2847,6 +2848,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "projectile.speed": "gd:debfe1e2",
+    "skills.periodicSpawn.firstDelay": "patch:2026-09-17f",
     "skills.periodicSpawn.pauseTime": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9767,6 +9769,10 @@
    {
     "name": "data/patches/2026-09-17e.json",
     "tag": "patch:2026-09-17e"
+   },
+   {
+    "name": "data/patches/2026-09-17f.json",
+    "tag": "patch:2026-09-17f"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

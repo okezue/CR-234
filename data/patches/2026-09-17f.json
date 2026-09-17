@@ -1,0 +1,8 @@
+[
+ {
+  "card": "furnace",
+  "path": "skills.periodicSpawn.firstDelay",
+  "value": 0,
+  "note": "The reworked Furnace spawns its first Fire Spirit as soon as it has deployed and then every 5 s; the engine waited a full interval. Game data export debfe1e2 names the spawn as the character's onStartingActionData (Furnace_rework_continuous_spawn, interval 5000; Furnace_EV1_Start_Group for the evolution) but carries no first-delay field, so the timing rests on the recording. LCQ broadcast of 5 September 2026, game 09YP9UPGJGU8: Ian's Furnace placed at 122.10 s shows its deploy clock through 124.00 s and a Fire Spirit with its own level badge stands at its feet at 124.25 s (local/lcqGameTwo/furnaceFirstSpirit123to126.jpg), the Furnace's own first shot lands at 125.25 s and the spirit's blast on the Royal Giant at about 125.75 s; new spirits leave the Furnace at 129.5 and 134.5 s; the evolved Furnace placed at 156.15 s has its first spirit beside it at 158.50 s, the frame after its deploy light fades (furnaceSecondSpirit156to160.jpg). https://cache.statsroyale.com/gamedata-v5.json https://www.youtube.com/watch?v=FKnS7I4oqj8"
+ }
+]
