@@ -831,7 +831,7 @@
   },
   "battle_ram": {
    "arena": "Arena3",
-   "collisionRadius": 0.5,
+   "collisionRadius": 0.75,
    "cost": 4,
    "count": 1,
    "deployTime": 1.0,
@@ -878,7 +878,7 @@
    "placement": "own",
    "projectile": null,
    "radius": null,
-   "range": 0.7,
+   "range": 0.5,
    "rarity": "rare",
    "sightRange": 5.5,
    "skills": {
@@ -898,6 +898,7 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
+    "collisionRadius": "patch:2026-09-17b",
     "evo.skills.boost": "patch:2026-09-01",
     "evo.skills.charge.range": "patch:2026-09-01",
     "evo.skills.pushback.damage": "patch:2026-09-01",
@@ -911,6 +912,7 @@
     "hitSpeed": "patch:2026-09-05",
     "loadTime": "patch:2026-09-05",
     "mass": "legacy:hidden_stats.mass",
+    "range": "patch:2026-09-17b",
     "skills.charge.damage[]": "derived:levelMult",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage": "patch:2026-08-05",
@@ -3802,7 +3804,7 @@
    "id": 27000001,
    "kamikaze": false,
    "kind": "building",
-   "lifetime": 29.0,
+   "lifetime": 30.0,
    "loadTime": null,
    "mass": null,
    "minRange": null,
@@ -3832,6 +3834,7 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "lifetime": "patch:2026-09-17b",
     "sightRange": "legacy:hidden_stats.sight_range_tiles",
     "skills.periodicSpawn.character": "legacy:spawn",
     "skills.periodicSpawn.count": "legacy:spawn",
@@ -9739,6 +9742,10 @@
    {
     "name": "data/patches/2026-09-17.json",
     "tag": "patch:2026-09-17"
+   },
+   {
+    "name": "data/patches/2026-09-17b.json",
+    "tag": "patch:2026-09-17b"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

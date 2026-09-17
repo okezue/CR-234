@@ -3208,7 +3208,7 @@ def t_bld_building_killed_stops_atk():
 def t_bld_lifetime_all():
     from sim.units import Building
     lifetimes={'cannon':30,'tesla':25,'bomb_tower':30,'mortar':30,'x_bow':30,
-               'tombstone':30,'barbarian_hut':30,'goblin_hut':29,
+               'tombstone':30,'barbarian_hut':30,'goblin_hut':30,
                'goblin_cage':20,'elixir_collector':93,'goblin_drill':10}
     ok=0
     for name,exp in lifetimes.items():

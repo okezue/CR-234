@@ -1,0 +1,8 @@
+[
+ {"card": "goblin_hut", "path": "lifetime", "value": 30.0,
+  "note": "Game data GoblinHut lifeTime 30000 (dump debfe1e2); wiki history: the May 2025 update increased the lifetime to 30 seconds from 29, which the ClashStrategic snapshot still carries. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Goblin_Hut"},
+ {"card": "battle_ram", "path": "range", "value": 0.5,
+  "note": "Game data BattleRam range 500 and collisionRadius 750 (dump debfe1e2); the ClashStrategic snapshot carries the death-spawned Barbarian's 0.7 range and 0.5 collision radius on the ram itself. Edge reach changes from 1.2 to 1.25 tiles; the body is wider for collision and pathing. https://cache.statsroyale.com/gamedata-v5.json"},
+ {"card": "battle_ram", "path": "collisionRadius", "value": 0.75,
+  "note": "Same BattleRam record: collisionRadius 750."}
+]
