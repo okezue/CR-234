@@ -265,12 +265,19 @@ class SpawnZap(Component):
             if hasattr(e,'ttype'):continue
             if sd>0:e.statuses.append(Status('stun',sd))
             if sld>0:e.statuses.append(Status('slow',sld,getattr(tr,'slow_val',1.0)))
+def tower_tiers(tiers,dmg,ct):
+    # Crown Tower damage follows the ramp at the card's sourced tier-one ratio; the game data carries no crownTowerDamagePercent on the
+    # Inferno Dragon, Inferno Tower or Mighty Miner, so their towerDamage equals damage and every tier lands in full
+    return [t*ct//dmg for t in tiers] if ct and dmg else None
 class RampUp(Component):
-    def __init__(self,stages,durations):
-        self.stages=stages;self.durations=durations
+    def __init__(self,stages,durations,ct_stages=None):
+        self.stages=stages;self.durations=durations;self.ct_stages=ct_stages
         self.cur_tgt=None;self.elapsed=0
+    def _stage(self,tr,i):
+        tr.dmg=self.stages[i]
+        if self.ct_stages:tr.ct_dmg=self.ct_stages[i]
     def _reset(self,tr):
-        self.cur_tgt=None;self.elapsed=0;tr.dmg=self.stages[0]
+        self.cur_tgt=None;self.elapsed=0;self._stage(tr,0)
     def on_tick(self,tr,g):
         stn=any(s.kind=='stun' for s in getattr(tr,'statuses',[]))
         frz=any(s.kind=='freeze' for s in getattr(tr,'statuses',[]))
@@ -281,14 +288,14 @@ class RampUp(Component):
             if tgt is None or not tgt.alive or hidden(tgt) or not getattr(tr,'min_rng',0)<=g._dist(tr,tgt)<=tr.rng:
                 self._reset(tr);return
         if tgt is not self.cur_tgt or (self.cur_tgt and not getattr(self.cur_tgt,'alive',True)):
-            self.cur_tgt=tgt;self.elapsed=0;tr.dmg=self.stages[0]
+            self.cur_tgt=tgt;self.elapsed=0;self._stage(tr,0)
             return
         self.elapsed+=g.DT
         t=0
         for i,d in enumerate(self.durations):
             t+=d
-            if self.elapsed<t:tr.dmg=self.stages[i];return
-        tr.dmg=self.stages[-1]
+            if self.elapsed<t:self._stage(tr,i);return
+        self._stage(tr,len(self.stages)-1)
 class RageDrop(Component):
     def __init__(self,radius,dur,boost):
         self.radius=radius;self.dur=dur;self.boost=boost
@@ -1272,8 +1279,8 @@ class EvoMegaKnight(Component):
         dy=twy-tgt.y
         if abs(dy)>0.1:tgt.y+=dy/abs(dy)*min(self.kb,abs(dy))
 class EvoInfernoDragon(Component):
-    def __init__(self,s4_dmg,retain_sec,s4_time):
-        self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg
+    def __init__(self,s4_dmg,retain_sec,s4_time,s4_ct=0):
+        self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg;self.s4_ct=s4_ct
         self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
     def on_tick(self,tr,g):
         if has(tr,'stun','freeze'):
@@ -1284,7 +1291,9 @@ class EvoInfernoDragon(Component):
             if tgt is not self.last_tgt:self.last_tgt=tgt
             self.total_beam+=g.DT
             if self.total_beam>=self.s4_time:self.s4_active=True
-            if self.s4_active:tr.dmg=self.s4_dmg
+            if self.s4_active:
+                tr.dmg=self.s4_dmg
+                if self.s4_ct:tr.ct_dmg=self.s4_ct
         else:
             self.idle_timer+=g.DT
             if self.idle_timer>self.retain:

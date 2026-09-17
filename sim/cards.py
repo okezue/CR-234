@@ -180,8 +180,10 @@ def attach(cfg,c,sk,lvl,chain=None):
     elif rf.get('damageMultiplier'):cs.append(fx.Parry(mult(rf['damageMultiplier']),rf.get('cooldown') or 0))
     rd=sk.get('rampingDamage',{})
     if rd.get('damageTiers'):
-        tiers=[at(t,lvl) for t in rd['damageTiers']];cfg['dmg']=tiers[0];cfg['ramp_stages']=tiers;cfg['ramp_durations']=[rd['rampInterval']]*(len(tiers)-1)
-        cs.append(fx.RampUp(tiers,cfg['ramp_durations']))
+        tiers=[at(t,lvl) for t in rd['damageTiers']];cfg['ramp_stages']=tiers;cfg['ramp_durations']=[rd['rampInterval']]*(len(tiers)-1)
+        ct_tiers=fx.tower_tiers(tiers,cfg['dmg'],cfg['ct_dmg']);cfg['dmg']=tiers[0]
+        if ct_tiers:cfg['ct_dmg']=ct_tiers[0]
+        cs.append(fx.RampUp(tiers,cfg['ramp_durations'],ct_tiers))
     sh=sk.get('shield',{})
     if not empty(sh.get('hitpoints')):cfg['shield_hp']=cfg['max_shield_hp']=at(sh['hitpoints'],lvl)
     if not empty(sh.get('damage')):cs.append(fx.ShieldBurst(at(sh['damage'],lvl),sh.get('radius') or 0,sh.get('pushbackDistance') or 0))
@@ -241,9 +243,10 @@ def ability(c,a,lvl,tr):
         return fx.CloakingCape(iv.get('duration') or b['duration'],tr.spd*mult(b.get('speedMultiplier') or 0),mult(b['hitSpeedMultiplier'])-1,cost,cd)
     if n=='MightyMinerLaneSwitch':
         # the drill's ramp is filed under the ability in the game data but is the base attack
-        rd=s['rampingDamage'];tiers=[at(t,lvl) for t in rd['damageTiers']]
+        rd=s['rampingDamage'];tiers=[at(t,lvl) for t in rd['damageTiers']];ct_tiers=fx.tower_tiers(tiers,tr.dmg,tr.ct_dmg)
         tr.dmg=tiers[0];tr.ramp_stages=tiers;tr.ramp_durations=[rd['rampInterval']]*(len(tiers)-1)
-        tr.components.append(fx.RampUp(tiers,tr.ramp_durations))
+        if ct_tiers:tr.ct_dmg=ct_tiers[0]
+        tr.components.append(fx.RampUp(tiers,tr.ramp_durations,ct_tiers))
         dd=s['areaDamageOnDeath'];return fx.ExplosiveEscape(at(dd['damage'],lvl),dd['radius'],s.get('pushback',{}).get('distance') or 0,cost,cd)
     if n=='Goblinstein_ability':return fx.LightningLink(at(po['damage'],lvl),at(po['towerDamage'],lvl),po['radius'],po['duration'],po['tickInterval'],cost,cd)
     if n=='ChampGuardianAbility':
@@ -342,7 +345,8 @@ def evolve(c,k,s,lvl,tr):
        'executioner':lambda:fx.EvoExecutioner(sn['range'],mult(sn['damageMultiplier']),sn['pushbackDistance']),
        'goblin_drill':lambda:fx.Resurface([p/100 for p in bu['resurfacePercent']],bu.get('resurfaceCount') or [count(sd.get('count'))],unit(c,sd,lvl)),
        'mega_knight':lambda:fx.EvoMegaKnight(pb['strength'],pb.get('everyHits') or 1),
-       'inferno_dragon':lambda:fx.EvoInfernoDragon(at(rd['damageTiers'][-1],lvl),rd.get('retainTime') or 0,rd.get('finalStageTime') or 0),
+       'inferno_dragon':lambda:fx.EvoInfernoDragon(at(rd['damageTiers'][-1],lvl),rd.get('retainTime') or 0,rd.get('finalStageTime') or 0,
+                                                   (fx.tower_tiers([at(rd['damageTiers'][-1],lvl)],tr.dmg,tr.ct_dmg) or [0])[0]),
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
        'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
     if k in E:tr.components.append(E[k]())
@@ -351,6 +355,7 @@ def evolve(c,k,s,lvl,tr):
         ramp=next(c for c in tr.components if isinstance(c,fx.RampUp))
         tr.ramp_stages=ramp.stages=ramp.stages[:-1]
         tr.ramp_durations=ramp.durations=ramp.durations[:-1]
+        if ramp.ct_stages:ramp.ct_stages=ramp.ct_stages[:-1]
     # attach() also maps these evolutions' skills generically, so the effect came twice: the recruits' charge bonus (the shield-gated one
     # stays), the bats' heal per attack (perAttack is the sum of the two pulses) and the lumberjack's ghost, whose death spawn record names
     # its base character Barbarian and put a full Barbarian beside the ghost
