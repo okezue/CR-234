@@ -6276,6 +6276,7 @@
     },
     "pushback": {
      "cycle": 3,
+     "damage": [null, null, null, null, null, null, null, null, null, null, 422, 463, 509, 559, 613, 674],
      "distance": 1.8
     }
    },
@@ -6288,6 +6289,8 @@
     "skills.ability.skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
     "skills.pushback.cycle": "legacy:attack.mechanics.combo",
+    "skills.pushback.damage": "patch:2026-09-17c",
+    "skills.pushback.damage[]": "derived:levelMult",
     "skills.pushback.distance": "legacy:attack.mechanics.combo",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9746,6 +9749,10 @@
    {
     "name": "data/patches/2026-09-17b.json",
     "tag": "patch:2026-09-17b"
+   },
+   {
+    "name": "data/patches/2026-09-17c.json",
+    "tag": "patch:2026-09-17c"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

@@ -207,7 +207,10 @@ def attach(cfg,c,sk,lvl,chain=None):
     pe=sk.get('produceElixir',{})
     if pe.get('interval'):cs.append(fx.ElixirProd(pe['interval'],pe.get('amount') or 1,pe.get('deathAmount') or 0))
     if kb and 'areaDamageOnDeath' not in sk and 'dash' not in sk and 'pierce' not in sk and cfg['atk_type']!='area':
-        cs.append(fx.MonkCombo(pb['cycle'],kb) if pb.get('cycle') else fx.Knockback(kb))
+        if pb.get('cycle'):
+            # pushback.damage is the third hit's total damage
+            cs.append(fx.MonkCombo(pb['cycle'],kb,at(pb.get('damage'),lvl) or 0))
+        else:cs.append(fx.Knockback(kb))
     if sk.get('recoil',{}).get('distance'):cs.append(fx.Recoil(sk['recoil']['distance']))
     ms=sk.get('meleeSwitch',{})
     if not empty(ms.get('damage')):cs.append(fx.MeleeSwitch(at(ms['damage'],lvl),ms.get('range') or 1.6))

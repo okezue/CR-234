@@ -1,0 +1,4 @@
+[
+ {"card": "monk", "path": "skills.pushback.damage", "value": {"level11": 422},
+  "note": "Game data Monk variableDamage3 165 (damage 55, variableDamage2 55, isMeleePushbackAll3 true; dump debfe1e2): the third hit of the combo deals 165 base, 422 at level 11 (wiki combo_11 422), and knocks back. The same tiers were already carried under the ability's rampingDamage where nothing reads them. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Monk"}
+]

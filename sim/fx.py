@@ -517,12 +517,19 @@ class SoulCollect(Component):
         if dead.name!='Goblin Giant' and any(isinstance(c,DeathSpawn) for c in dead.components):return
         self.souls=min(self.cap,self.souls+1)
 class MonkCombo(Component):
-    def __init__(self,cycle,kb):
-        self.cycle=cycle;self.kb=kb;self.cnt=0
+    # the third hit of the combo lands as one blow of the combo damage (game data variableDamage3) and shoves ground troops, immune or
+    # not; killing a troop does not reset the count; the raised damage is armed after the second hit so shields and reductions see one hit
+    def __init__(self,cycle,kb,combo=0):
+        self.cycle=cycle;self.kb=kb;self.combo=combo;self.cnt=0;self.base=None
     def on_attack(self,tr,tgt,g):
         self.cnt+=1
+        if self.cnt==self.cycle-1 and self.combo:
+            self.base=(tr.dmg,tr.ct_dmg);tr.dmg=self.combo;tr.ct_dmg=self.combo if tr.ct_dmg else 0
+            return
         if self.cnt>=self.cycle:
             self.cnt=0
+            if self.base is not None:tr.dmg,tr.ct_dmg=self.base;self.base=None
+            if hasattr(tgt,'ttype') or getattr(tgt,'is_building',False) or getattr(tgt,'transport','Ground')=='Air':return
             if hasattr(tgt,'x') and hasattr(tgt,'y'):
                 dx=tgt.x-tr.x;dy=tgt.y-tr.y
                 d=math.sqrt(dx*dx+dy*dy)
