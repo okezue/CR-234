@@ -1,0 +1,67 @@
+[
+ {
+  "card": "mother_witch",
+  "path": "skills.spawnOnKill.hitpoints",
+  "value": {
+   "level11": 629,
+   "level16": 1006
+  },
+  "note": "Game data export debfe1e2 MotherWitch projectile targetBuffData VoodooCurse deathSpawnData VoodooHog hitpoints 246 against the Mother Witch's own 207, both on the card curve: 629 at level 11, the wiki Mother Witch page's Cursed Hog Hitpoints (hog_hp_11 629). The ClashStrategic snapshot's level11 value 529 copies the Witch's hitpoints while its level16 value 1006 sits on the hog's curve. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Mother_Witch"
+ },
+ {
+  "card": "mother_witch",
+  "path": "skills.spawnOnKill.loadTime",
+  "value": 0.95,
+  "note": "Game data export VoodooHog loadTime 950 with hitSpeed 1200 (the hit speed the record already carries); the legacy sub-unit record had 0.5."
+ },
+ {
+  "card": "mother_witch",
+  "path": "skills.spawnOnKill.deployTime",
+  "value": 0.2,
+  "note": "Game data export VoodooHog deployTime 200: a hog stands for a fifth of a second where the cursed troop died before it runs."
+ },
+ {
+  "card": "mother_witch",
+  "path": "skills.spawnOnKill.collisionRadius",
+  "value": 0.6,
+  "note": "Game data export VoodooHog collisionRadius 600."
+ },
+ {
+  "card": "mother_witch",
+  "path": "units.cursed_hog",
+  "value": {
+   "name": "Cursed Hog",
+   "card": null,
+   "count": {
+    "base": 1,
+    "maxStacks": 5,
+    "perStack": 1
+   },
+   "hitSpeed": 1.2,
+   "loadTime": 0.95,
+   "deployTime": 0.2,
+   "collisionRadius": 0.6,
+   "hitpoints": {
+    "level11": 629,
+    "level16": 1006
+   },
+   "damage": {
+    "level11": 53,
+    "level16": 85
+   },
+   "range": 0.75,
+   "speed": 120,
+   "sightRange": 9.5,
+   "targets": [
+    "buildings"
+   ],
+   "skills": {
+    "jump": {
+     "height": 4.0,
+     "speed": 0.16
+    }
+   }
+  },
+  "note": "Whole record because a patched unit replaces the scanned one: the same export values as the spawnOnKill skill (hitSpeed 1200, loadTime 950, deployTime 200, collisionRadius 600, range 750, speed 120, sightRange 9500, damage 21 on the card curve = 53 at level 11), so the legacy 1.0 s hit speed and 0.5 s load time and the copied hitpoints no longer sit behind the skill in the lookup chain. The record's skills carry the export's river jump (jumpHeight 4000, jumpSpeed 160, the Royal Hogs' values); the hog crossed only by the bridges before."
+ }
+]

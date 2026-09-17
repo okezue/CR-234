@@ -555,11 +555,12 @@ def t_evo_goblin_drill_resurfaces_twice():
 def t_mother_witch_cursed_hog():
     g=_game();mw=mk_card('mother_witch',11,'blue',9,10);g.deploy('blue',mw);d,=_dummies(g,(9,13),hp=150)
     g.run(3);hogs=_named(g,'blue','Cursed Hog')
-    assert not d.alive and len(hogs)==1 and hogs[0].targets==['Buildings'] and hogs[0].hp==529 and hogs[0].dmg==53
+    # game data VoodooHog 246 on the card curve: 629 at level 11 (wiki Mother Witch hog_hp_11); the Witch herself has 529
+    assert not d.alive and len(hogs)==1 and hogs[0].targets==['Buildings'] and hogs[0].hp==629 and hogs[0].dmg==53
     g=_game();mw=mk_card('mother_witch',11,'blue',9,10);g.deploy('blue',mw);d,=_dummies(g,(9,13),hp=5000)
     g.run(1.2);mw.alive=False;g.run(0.1);g.run(5.5);d.alive=False;g.run(0.2)
     assert not _named(g,'blue','Cursed Hog')
-    return "A troop killed within 5 s of a Mother Witch hit becomes a 529 hp Cursed Hog; the curse expires after 5 s"
+    return "A troop killed within 5 s of a Mother Witch hit becomes a 629 hp Cursed Hog; the curse expires after 5 s"
 def t_suspicious_bush_invisible_until_the_building():
     g=quiet(Game());bu=mk_card('suspicious_bush',11,'blue',9,20);g.deploy('blue',bu);tw=g.arena.get_tower('red','princess','left');ini=tw.hp
     g.run(0.2);assert has(bu,'invisible') and bu.hp==bu.max_hp and bu.targets==['Buildings']

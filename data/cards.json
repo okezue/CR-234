@@ -6423,16 +6423,19 @@
     "spawnOnKill": {
      "chance": 100,
      "character": "Cursed Hog",
+     "collisionRadius": 0.6,
      "count": {
       "base": 1,
       "maxStacks": 5,
       "perStack": 1
      },
      "damage": [null, null, null, null, null, null, null, null, 44, 48, 53, 59, 64, 71, 78, 85],
+     "deployTime": 0.2,
      "hitSpeed": 1.2,
-     "hitpoints": [null, null, null, null, null, null, null, null, 438, 482, 529, 581, 639, 701, 770, 846],
+     "hitpoints": [null, null, null, null, null, null, null, null, 521, 573, 629, 691, 760, 833, 915, 1006],
      "interval": null,
      "lifetime": null,
+     "loadTime": 0.95,
      "markDuration": 5,
      "projectile": {
       "count": 1,
@@ -6449,18 +6452,19 @@
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.spawnOnKill.collisionRadius": "patch:2026-09-17g",
     "skills.spawnOnKill.damage[]": "derived:levelMult",
-    "skills.spawnOnKill.hitpoints[15]": "derived:levelMult (source level16 1006 is off the level curve)",
+    "skills.spawnOnKill.deployTime": "patch:2026-09-17g",
+    "skills.spawnOnKill.hitpoints": "patch:2026-09-17g",
     "skills.spawnOnKill.hitpoints[]": "derived:levelMult",
+    "skills.spawnOnKill.loadTime": "patch:2026-09-17g",
     "skills.spawnOnKill.projectile": "patch:2026-09-08",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
+    "units.cursed_hog": "patch:2026-09-17g",
     "units.cursed_hog.damage[]": "derived:levelMult",
-    "units.cursed_hog.hitSpeed": "legacy:sub_units.Cursed Hog",
-    "units.cursed_hog.hitpoints[15]": "derived:levelMult (source level16 1006 is off the level curve)",
-    "units.cursed_hog.hitpoints[]": "derived:levelMult",
-    "units.cursed_hog.loadTime": "legacy:sub_units.Cursed Hog"
+    "units.cursed_hog.hitpoints[]": "derived:levelMult"
    },
    "stats": {
     "damage": [null, null, null, null, null, null, null, null, 110, 121, 133, 146, 160, 176, 193, 212],
@@ -6473,18 +6477,27 @@
    "tribe": null,
    "units": {
     "cursed_hog": {
+     "collisionRadius": 0.6,
      "count": {
       "base": 1,
       "maxStacks": 5,
       "perStack": 1
      },
      "damage": [null, null, null, null, null, null, null, null, 44, 48, 53, 59, 64, 71, 78, 85],
-     "from": ["skills.spawnOnKill", "legacy:sub_units.Cursed Hog"],
-     "hitSpeed": 1.0,
-     "hitpoints": [null, null, null, null, null, null, null, null, 438, 482, 529, 581, 639, 701, 770, 846],
-     "loadTime": 0.5,
+     "deployTime": 0.2,
+     "from": ["legacy:sub_units.Cursed Hog"],
+     "hitSpeed": 1.2,
+     "hitpoints": [null, null, null, null, null, null, null, null, 521, 573, 629, 691, 760, 833, 915, 1006],
+     "loadTime": 0.95,
      "name": "Cursed Hog",
      "range": 0.75,
+     "sightRange": 9.5,
+     "skills": {
+      "jump": {
+       "height": 4.0,
+       "speed": 0.16
+      }
+     },
      "speed": 120,
      "targets": ["buildings"]
     }
@@ -9773,6 +9786,10 @@
    {
     "name": "data/patches/2026-09-17f.json",
     "tag": "patch:2026-09-17f"
+   },
+   {
+    "name": "data/patches/2026-09-17g.json",
+    "tag": "patch:2026-09-17g"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

@@ -1473,7 +1473,8 @@ class CurseOnHit(Component):
             child=Troop(tr.team,e.x,e.y,dict(self.cfg,components=list(self.cfg['components'])))
             child.no_soul=getattr(e,'is_clone',False) or getattr(e,'no_soul',False)
             if getattr(e,'is_clone',False):child.hp=child.max_hp=1;child.is_clone=True
-            g.players[tr.team].troops.append(child)
+            # the hog stands for its deploy time (game data VoodooHog deployTime 200) and is placed like any born unit
+            g._place(tr.team,child,self.cfg.get('deploy',0))
 class Parry(Component):
     # blocks one melee hit every cd seconds and returns mult times the blocked damage to the attacker
     def __init__(self,mult,cd):self.mult=mult;self.cd=cd;self.ready=0
