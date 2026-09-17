@@ -866,17 +866,17 @@ class EvoRoyalRecruits(Charge):
         if tr.shield_hp>0:self.px,self.py=tr.x,tr.y;self.moved=0;return
         super().on_tick(tr,g)
 class EvoRoyalGiant(Component):
+    # the recoil shockwave of every shot: low damage and a one tile shove to enemy ground units in the radius; air units are immune to
+    # it, and the shove follows the knockback rules (heavy, immune and building bodies stand, hit troops restart their swing)
     def __init__(self,radius,kb,dmg):self.radius=radius;self.kb=kb;self.dmg=dmg
     def on_attack(self,tr,tgt,g):
         opp=g._opp(tr.team)
         for e in g.players[opp].troops:
-            if not e.alive or e is tgt:continue
+            if not e.alive or e is tgt or getattr(e,'transport','Ground')=='Air':continue
             d=math.sqrt((e.x-tr.x)**2+(e.y-tr.y)**2)
             if d<=self.radius:
                 e.take_damage(self.dmg)
-                dx=e.x-tr.x;dy=e.y-tr.y
-                dd=math.sqrt(dx*dx+dy*dy)
-                if dd>0:e.x+=dx/dd*self.kb;e.y+=dy/dd*self.kb
+                push(e,tr.x,tr.y,self.kb)
 class EvoIceSpirit(Component):
     def __init__(self,delay,radius,freeze,dmg):
         self.delay=delay;self.radius=radius;self.freeze=freeze;self.dmg=dmg;self.boom_pos=None;self.timer=0
