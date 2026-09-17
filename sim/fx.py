@@ -625,9 +625,10 @@ class SoulSummoning(Ability):
         if self.q<=0:self.active=False;self.cd=self.max_cd;return
         self.timer-=dt
         if self.timer<=0:
-            ox=random.uniform(-self.radius,self.radius)
-            oy=random.uniform(-self.radius,self.radius)
-            t=Troop(tr.team,tr.x+ox,tr.y+oy,dict(self.scfg,components=[]));t.no_soul=True
+            angle=random.uniform(0,2*math.pi);radius=self.radius*math.sqrt(random.uniform(0,1))
+            x=min(math.nextafter(float(g.arena.W),0),max(0,tr.x+radius*math.cos(angle)))
+            y=min(math.nextafter(float(g.arena.H),0),max(0,tr.y+radius*math.sin(angle)))
+            t=Troop(tr.team,x,y,dict(self.scfg,components=[]));t.no_soul=True
             t.hp=t.max_hp=1;t.is_clone=True
             g.players[tr.team].troops.append(t)
             self.q-=1;self.timer=self.si

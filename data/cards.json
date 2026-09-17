@@ -2212,8 +2212,8 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
-    "sightRange": "legacy:hidden_stats.sight_range_tiles",
     "lifetime": "patch:2026-09-16",
+    "sightRange": "legacy:hidden_stats.sight_range_tiles",
     "skills.produceElixir.amount": "legacy:production",
     "skills.produceElixir.deathAmount": "patch:2026-09-16",
     "skills.produceElixir.interval": "legacy:production",
@@ -8150,7 +8150,7 @@
        "hitpoints": [null, null, null, null, null, null, null, null, null, null, 81, 89, 98, 108, 119, 130],
        "interval": 0.25,
        "lifetime": null,
-       "radius": 4.0,
+       "radius": 3.5,
        "range": null,
        "targets": []
       }
@@ -8166,6 +8166,7 @@
     "skills.ability.skills.spawn.damage[]": "derived:levelMult",
     "skills.ability.skills.spawn.hitpoints": "patch:2026-08-05",
     "skills.ability.skills.spawn.hitpoints[]": "derived:levelMult",
+    "skills.ability.skills.spawn.radius": "patch:2026-09-16",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -8200,7 +8201,7 @@
      "hitpoints": [null, null, null, null, null, null, null, null, null, null, 81, 89, 98, 108, 119, 130],
      "loadTime": 0.6,
      "name": "Skeleton",
-     "radius": 4.0,
+     "radius": 3.5,
      "range": 0.5,
      "speed": 90,
      "targets": ["ground"]
@@ -9639,7 +9640,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-08",
+  "built": "2026-09-16",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
