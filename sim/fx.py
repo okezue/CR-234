@@ -581,14 +581,22 @@ class Ability:
             return
         if not self.active:self.cd=max(0,self.cd-dt)
 class DashingDash(Ability):
-    def __init__(self,dd,mxd,sr,cost,cd):
-        super().__init__(cost,cd);self.dd=dd;self.mxd=mxd;self.sr=sr
-        self.dashing=False;self.dashes=0;self.hit=set()
+    def __init__(self,dd,mxd,sr,cost,cd,boost=0):
+        super().__init__(cost,cd);self.dd=dd;self.mxd=mxd;self.sr=sr;self.boost=boost
+        self.dashing=False;self.dashes=0;self.hit=set();self.pending=False
     def activate(self,tr,g):
-        self.active=True;self.dashing=True;self.dashes=0;self.hit=set()
+        self.active=True;self.dashing=True;self.dashes=0;self.hit=set();self.pending=False
+    def _wait(self,tr,on):
+        # with no target in range the ability stays armed and the knight runs at the sourced boosted speed until one enters range;
+        # a movement-only status, since the export buff carries a speed multiplier and nothing else, and no duration
+        if on and not self.pending:
+            self.pending=True
+            if self.boost:tr.statuses.append(Status('mboost',float('inf'),self.boost))
+        elif not on and self.pending:
+            self.pending=False;tr.statuses=[s for s in tr.statuses if s.kind!='mboost']
     def tick(self,dt,tr,g):
         if not self.active:super().tick(dt,tr,g);return
-        if not self.dashing:self.active=False;self.cd=self.max_cd;return
+        if not self.dashing:self._wait(tr,False);self.active=False;self.cd=self.max_cd;return
         opp=g._opp(tr.team)
         best=None;bd=999
         for e in g.players[opp].troops:
@@ -599,7 +607,10 @@ class DashingDash(Ability):
             if tw.team!=opp or not tw.alive or tw in self.hit:continue
             d=tw.dist(tr.x,tr.y)
             if d<=self.sr and d<bd:bd=d;best=tw
-        if not best:self.dashing=False;return
+        if not best:
+            if self.dashes==0:self._wait(tr,True);return
+            self.dashing=False;return
+        self._wait(tr,False)
         best.take_damage(self.dd)
         self.hit.add(best)
         if hasattr(best,'cx'):tr.x=best.cx;tr.y=best.cy

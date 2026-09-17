@@ -234,7 +234,9 @@ def ability(c,a,lvl,tr):
         if b.get('radius'):
             tr.components.append(fx.Enchant(b['radius'],b.get('count') or 1,b.get('hitsPerBonus') or 1,at(b.get('damage'),lvl) or 0,b.get('duration') or 0))
         return None
-    if n=='GoldenKnightChain':return fx.DashingDash(at(da['damage'],lvl),da['count'],da['maxRange'],cost,cd)
+    if n=='GoldenKnightChain':
+        # the boost is the pending run speed while no ground target is within dash range
+        return fx.DashingDash(at(da['damage'],lvl),da['count'],da['maxRange'],cost,cd,mult(b['speedMultiplier'])-1 if b.get('speedMultiplier') else 0)
     if n=='SkeletonKing':
         tr.components.append(fx.SoulCollect(sp['count']['maxStacks']))
         return fx.SoulSummoning(unit(c,sp,lvl),sp['radius'],cost,cd,sp['count']['base'],sp['interval'])
