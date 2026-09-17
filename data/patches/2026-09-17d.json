@@ -1,0 +1,4 @@
+[
+ {"card": "berserker", "path": "range", "value": 0.8,
+  "note": "Wiki Berserker attributes: Range Melee: Short (0.8). The game data export omits the range field for this character and the ClashStrategic snapshot has none, so the engine fell back to its 0.5 minimum. https://clashroyale.fandom.com/wiki/Berserker"}
+]

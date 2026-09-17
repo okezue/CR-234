@@ -1005,7 +1005,7 @@
    "placement": "own",
    "projectile": null,
    "radius": null,
-   "range": null,
+   "range": 0.8,
    "rarity": "common",
    "sightRange": 5.5,
    "skills": {},
@@ -1021,6 +1021,7 @@
     "hero.ability.skills.invincible.duration": "patch:2026-08-26",
     "hero.ability.skills.invincible.minHitpoints": "patch:2026-09-01",
     "mass": "legacy:hidden_stats.mass",
+    "range": "patch:2026-09-17d",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -9753,6 +9754,10 @@
    {
     "name": "data/patches/2026-09-17c.json",
     "tag": "patch:2026-09-17c"
+   },
+   {
+    "name": "data/patches/2026-09-17d.json",
+    "tag": "patch:2026-09-17d"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
