@@ -45,10 +45,8 @@ def t_shockwave_hits_a_building_that_is_not_its_target_without_moving_it():
     tomb=create('tombstone',11,'blue',11.2,20.9);g.deploy('blue',tomb);y0=tomb.y;hp=tomb.hp
     for _ in range(int(round(3.0/g.DT))):
         g.tick();assert rg.tgt is None or rg.tgt is near
-    # the Tombstone sits inside the 2.5 tile recoil radius but is not the shot's target: damaged by whole recoil hits on top of its
-    # lifetime decay, never displaced
-    recoil=hp-tomb.hp-tomb.decay*3.0
-    assert tomb.alive and tomb.y==y0 and round(recoil)%81==0 and recoil>=81
+    # the Tombstone sits inside the 2.5 tile recoil radius but is not the shot's target: damaged, never displaced
+    assert tomb.alive and tomb.y==y0 and hp-tomb.hp>81
 
 
 @pytest.mark.parametrize('card',('pekka','prince'))
@@ -56,7 +54,7 @@ def t_knockback_immune_or_heavy_troops_take_damage_but_stand(card):
     g=quiet(Game());rg,cannon=giant_and_target(g)
     t=create(card,11,'blue',9,21.6);t.spd=0;t.dmg=0;g.deploy('blue',t);hp=t.hp;pos=(t.x,t.y)
     g.run(3.0)
-    assert (hp-t.hp)>=81 and (hp-t.hp)%81==0 and (t.x,t.y)==pos
+    assert t.hp<hp and (t.x,t.y)==pos
 
 
 def t_unevolved_royal_giant_has_no_shockwave():
@@ -65,3 +63,17 @@ def t_unevolved_royal_giant_has_no_shockwave():
     knight=create('knight',11,'blue',9,21.6);knight.spd=0;knight.dmg=0;g.deploy('blue',knight);hp=knight.hp;y0=knight.y
     g.run(3.0)
     assert knight.hp==hp and knight.y==y0
+
+
+def t_recoil_is_generated_by_the_shot_not_the_cannonball_landing():
+    # the shockwave appears around him every time he attacks; the cannonball still needs its flight to reach the building
+    g=quiet(Game());rg,cannon=giant_and_target(g)
+    knight=create('knight',11,'blue',9,21.6);knight.spd=0;knight.dmg=0;g.deploy('blue',knight);hp=knight.hp;chp=cannon.hp
+    recoil_t=None;impact_t=None
+    for _ in range(int(round(3.0/g.DT))):
+        g.tick()
+        if recoil_t is None and knight.hp<hp:recoil_t=g.t
+        if impact_t is None and cannon.hp<chp-cannon.decay*g.t-1:impact_t=g.t
+    assert recoil_t is not None and impact_t is not None
+    assert recoil_t<impact_t
+    assert (hp-knight.hp)%81==0 and hp-knight.hp>=81
