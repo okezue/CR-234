@@ -518,7 +518,8 @@ class SoulCollect(Component):
         self.souls=min(self.cap,self.souls+1)
 class MonkCombo(Component):
     # the third hit of the combo lands as one blow of the combo damage (game data variableDamage3) and shoves ground troops, immune or
-    # not; killing a troop does not reset the count; the raised damage is armed after the second hit so shields and reductions see one hit
+    # not, except a troop immune to any knockback (another Monk); killing a troop does not reset the count; the raised damage is armed
+    # after the second hit so shields and reductions see one hit
     def __init__(self,cycle,kb,combo=0):
         self.cycle=cycle;self.kb=kb;self.combo=combo;self.cnt=0;self.base=None
     def on_attack(self,tr,tgt,g):
@@ -530,6 +531,7 @@ class MonkCombo(Component):
             self.cnt=0
             if self.base is not None:tr.dmg,tr.ct_dmg=self.base;self.base=None
             if hasattr(tgt,'ttype') or getattr(tgt,'is_building',False) or getattr(tgt,'transport','Ground')=='Air':return
+            if getattr(tgt,'kb_immune_all',False):return
             if hasattr(tgt,'x') and hasattr(tgt,'y'):
                 dx=tgt.x-tr.x;dy=tgt.y-tr.y
                 d=math.sqrt(dx*dx+dy*dy)
@@ -1191,6 +1193,8 @@ class EvoElectroDragon(Component):
         hit=getattr(tr,'chain_hit',[tgt])
         if len(hit)>1:g.spells.append(Bolt(tr.team,hit[-1],int(tr.dmg*self.pct),self.br,self.period,tr.name))
 class EvoExecutioner(Component):
+    # the close-quarters axe adds damage and an ordinary knockback: heavy and immune troops stand (wiki Executioner/Evolution: he pushes
+    # back all troops affected by knockback; the Giant Skeleton and Mighty Miner cannot be pushed)
     def __init__(self,close_rng,dmg_m,kb):
         self.close_rng=close_rng;self.dmg_m=dmg_m;self.kb=kb
     def on_attack(self,tr,tgt,g):
@@ -1200,10 +1204,7 @@ class EvoExecutioner(Component):
         if d<=self.close_rng:
             extra=int(tr.dmg*(self.dmg_m-1))
             tgt.take_damage(extra)
-            if hasattr(tgt,'x'):
-                dx=tgt.x-tr.x;dy=tgt.y-tr.y
-                dd=math.sqrt(dx*dx+dy*dy)
-                if dd>0:tgt.x+=dx/dd*self.kb;tgt.y+=dy/dd*self.kb
+            push(tgt,tr.x,tr.y,self.kb)
             if hasattr(tgt,'ttype') and not tgt.alive:g._tower_down(tgt)
 class RowdyReroll(Ability):
     def __init__(self,roll_dist,heal_pct,roll_dmg,cost):
@@ -1287,12 +1288,12 @@ class MKJump(Component):
             if self.timer<=0:
                 jx,jy=pos(self.jtgt);self.charging=False;self.airborne=True;self.timer=math.hypot(jx-tr.x,jy-tr.y)/self.jspd
 class EvoMegaKnight(Component):
-    # the uppercut lands on every nth swing (wiki 4/8/2026: every 2 hits instead of every hit)
+    # the uppercut lands on every nth swing (wiki 4/8/2026: every 2 hits instead of every hit); a troop immune to any knockback stays
     def __init__(self,kb,every=1):self.kb=kb;self.every=every;self.n=0
     def on_attack(self,tr,tgt,g):
         if not hasattr(tgt,'x') or not hasattr(tgt,'y'):return
         self.n+=1
-        if self.n%self.every:return
+        if self.n%self.every or getattr(tgt,'kb_immune_all',False):return
         twy=g.arena.get_tower(getattr(tgt,'team','red'),'king').cy
         dy=twy-tgt.y
         if abs(dy)>0.1:tgt.y+=dy/abs(dy)*min(self.kb,abs(dy))

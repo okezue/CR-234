@@ -384,7 +384,10 @@ def troop(c,k,lvl,team,x,y,evolved,is_hero,ev,chain,sk,name):
         if 'ability' in sk:tr.ability=uses(ability(c,sk['ability'],lvl,tr),sk['ability'])
         # LoadFirstHit (Sparky): she comes in unloaded and must charge the whole hit speed, and a stun empties the charge
         if sk.get('charging',{}).get('loadFirstHit'):tr.load_first=True;tr.cd=tr.hspd
-        if sk.get('immunity',{}).get('knockback'):tr.kb_immune=True
+        im=sk.get('immunity',{})
+        if im.get('knockback'):tr.kb_immune=True
+        # forcedKnockback (Monk since 12/12/2025): the pushes that override ordinary immunity leave him in place too
+        if im.get('forcedKnockback'):tr.kb_immune_all=True
     if ev:evolve(c,k,sk,lvl,tr)
     if is_hero and c['hero']:
         tr.is_hero=True;tr.ability=uses(hero(c,c['hero']['ability'],lvl,tr),c['hero']['ability'])

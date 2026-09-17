@@ -255,6 +255,9 @@ class CloneSpell:
                 cfg['shield_hp']=cfg['max_shield_hp']=int(getattr(t,'shield_hp',0)>0)
                 cl=Troop(self.team,t.x,t.y+oy,cfg)
                 cl.proj_homing=getattr(t,'proj_homing',True)
+                # a clone keeps its original's knockback immunities
+                for flag in ('kb_immune','kb_immune_all'):
+                    if getattr(t,flag,False):setattr(cl,flag,True)
                 cl.ability=None;cl.is_clone=True
                 clones.append(cl)
         for c in clones:
@@ -277,9 +280,10 @@ class LogSpell:
         d=self._dir()
         for e in strip(game,self.team,self.x,self.y+d*a,self.x,self.y+d*b,self.width/2.0,air=False,skip=self.hit):
             self.hit.append(e);hurt(e,self.ct_dmg if hasattr(e,'ttype') and self.ct_dmg else self.dmg,game)
-            # the roll shoves every ground troop whatever its mass or immunity, and the shove resets its swing and charge like any knockback
-            # (wiki The Log: pushes back all ground troops, resetting the Prince's and Dark Prince's charges; the Barbarian Barrel lost its pushback)
-            if self.pushback>0 and not hasattr(e,'ttype') and not getattr(e,'is_building',False):
+            # the roll shoves every ground troop whatever its mass or ordinary immunity, and the shove resets its swing and charge like any
+            # knockback (wiki The Log: pushes back all ground troops, resetting the Prince's and Dark Prince's charges; the Barbarian Barrel
+            # lost its pushback); a troop immune to any knockback (the Monk) only takes the damage
+            if self.pushback>0 and not hasattr(e,'ttype') and not getattr(e,'is_building',False) and not getattr(e,'kb_immune_all',False):
                 e.y+=d*self.pushback;e.statuses.append(Status('knockback',0.05))
     def apply(self,game):
         if self.applied:return

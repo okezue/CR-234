@@ -569,7 +569,8 @@ def main():
             "charging": "loadFirstHit: the unit comes in unloaded and charges the whole hit speed before its first hit, a stun empties the charge (Sparky); "
                         "every other unit deploys loaded and loads while walking, so its first hit takes hit speed less load time",
             "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
-            "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince)",
+            "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince); forcedKnockback: it also ignores the "
+                        "pushes that override ordinary immunity, the Monk combo, the Evolved Mega Knight uppercut and the Log's roll (Monk)",
             "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
             "scatter": "shotgun volley of projectile.count pellets: angle between neighbouring pellets in degrees, radius and range of each pellet; the "
                        "aimed pellet is the base hit and every other pellet hits the first body on its line (Hunter)",

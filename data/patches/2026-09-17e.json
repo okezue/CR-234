@@ -1,0 +1,4 @@
+[
+ {"card": "monk", "path": "skills.immunity", "value": {"knockback": true, "forcedKnockback": true},
+  "note": "Wiki Version History/2025, Balance Changes (12/12/2025): Monk: immune to any knockback; the 24/11/2025 update had made him vulnerable to the Evolved Mega Knight's uppercut, another Monk's combo and corner hits of Fireball and Giant Snowball, and 12/12 reverted that to full immunity. The ClashStrategic snapshot carries no immunity for him and the game data export strips pushback flags. forcedKnockback marks that even the pushes which override ordinary immunity (Monk combo, Evolved Mega Knight uppercut) leave him in place; the Fisherman's hook and Tornado are pulls, not knockbacks, and still move him. In the 5 September 2026 LCQ broadcast (game 09YP9UPGJGU8, 140 to 145 s) both duelling Monks stay on their tiles through six third strikes. https://clashroyale.fandom.com/wiki/Version_History/2025 https://clashroyale.fandom.com/wiki/Monk"}
+]
