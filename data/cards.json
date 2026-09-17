@@ -2848,10 +2848,7 @@
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
-    "units.fire_spirit.hitSpeed": "legacy:sub_units.Fire Spirit",
-    "units.fire_spirit.range": "legacy:sub_units.Fire Spirit",
-    "units.fire_spirit.speed": "legacy:sub_units.Fire Spirit",
-    "units.fire_spirit.targets": "legacy:sub_units.Fire Spirit"
+    "units.fire_spirit": "patch:2026-09-17"
    },
    "stats": {
     "damage": [null, null, 84, 93, 102, 112, 123, 135, 148, 163, 179, 196, 216, 237, 260, 286],
@@ -2866,10 +2863,11 @@
     "fire_spirit": {
      "card": "fire_spirit",
      "count": 1,
-     "from": ["skills.periodicSpawn", "legacy:sub_units.Fire Spirit"],
-     "hitSpeed": 1.0,
+     "from": ["legacy:sub_units.Fire Spirit"],
+     "hitSpeed": 0.3,
+     "loadTime": 0.1,
      "name": "Fire Spirit",
-     "range": 2.0,
+     "range": 2.5,
      "speed": 120,
      "targets": ["air", "ground"]
     }
@@ -3549,11 +3547,7 @@
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "targets": "patch:2026-09-03",
-    "units.goblin.hitSpeed": "legacy:sub_units.Goblin",
-    "units.goblin.loadTime": "legacy:sub_units.Goblin",
-    "units.goblin.range": "legacy:sub_units.Goblin",
-    "units.goblin.speed": "legacy:sub_units.Goblin",
-    "units.goblin.targets": "legacy:sub_units.Goblin"
+    "units.goblin": "patch:2026-09-17"
    },
    "stats": {
     "damage": [null, null, null, null, null, 52, 58, 63, 69, 76, 84, 92, 101, 111, 122, 134],
@@ -3569,9 +3563,9 @@
      "card": "goblins",
      "count": 1,
      "deployTime": 1.0,
-     "from": ["skills.spawnOnDeath", "skills.periodicSpawn", "evo.skills.spawnOnDeath", "evo.skills.periodicSpawn", "legacy:sub_units.Goblin"],
+     "from": ["legacy:sub_units.Goblin"],
      "hitSpeed": 1.1,
-     "loadTime": 0.6,
+     "loadTime": 0.7,
      "name": "Goblin",
      "radius": 0.5,
      "range": 0.5,
@@ -3628,13 +3622,7 @@
     "stats.towerDamage[]": "derived:levelMult",
     "summonDeployDelay": "gd:debfe1e2",
     "summonRadius": "gd:debfe1e2",
-    "units.goblin": "legacy:composition.Goblin",
-    "units.goblin.count": "legacy:composition.Goblin",
-    "units.goblin.hitSpeed": "legacy:composition.Goblin",
-    "units.goblin.loadTime": "legacy:composition.Goblin",
-    "units.goblin.range": "legacy:composition.Goblin",
-    "units.goblin.speed": "legacy:composition.Goblin",
-    "units.goblin.targets": "legacy:composition.Goblin",
+    "units.goblin": "patch:2026-09-17",
     "units.spear_goblin": "gd:debfe1e2"
    },
    "stats": {
@@ -3650,9 +3638,9 @@
     "goblin": {
      "card": "goblins",
      "count": 3,
-     "from": ["legacy:composition.Goblin"],
+     "from": ["legacy:sub_units.Goblin", "legacy:composition.Goblin"],
      "hitSpeed": 1.1,
-     "loadTime": 0.7,
+     "loadTime": 0.5,
      "name": "Goblin",
      "range": 0.5,
      "speed": 120,
@@ -8518,6 +8506,7 @@
     "units.bush_goblin.hitSpeed": "legacy:sub_units.Bush Goblin",
     "units.bush_goblin.hitpoints": "patch:2026-09-03",
     "units.bush_goblin.hitpoints[]": "derived:levelMult",
+    "units.bush_goblin.loadTime": "patch:2026-09-17",
     "units.bush_goblin.range": "legacy:sub_units.Bush Goblin",
     "units.bush_goblin.speed": "legacy:sub_units.Bush Goblin",
     "units.bush_goblin.targets": "legacy:sub_units.Bush Goblin"
@@ -8537,6 +8526,7 @@
      "from": ["legacy:sub_units.Bush Goblin"],
      "hitSpeed": 1.4,
      "hitpoints": [null, null, 143, 158, 173, 190, 209, 229, 252, 277, 304, 334, 367, 403, 442, 486],
+     "loadTime": 1.1,
      "range": 0.8,
      "speed": 60,
      "targets": ["ground"]
@@ -9640,7 +9630,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-16",
+  "built": "2026-09-17",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9745,6 +9735,10 @@
    {
     "name": "data/patches/2026-09-16.json",
     "tag": "patch:2026-09-16"
+   },
+   {
+    "name": "data/patches/2026-09-17.json",
+    "tag": "patch:2026-09-17"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

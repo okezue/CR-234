@@ -1,0 +1,62 @@
+[
+ {
+  "card": "furnace",
+  "path": "units.fire_spirit",
+  "value": {
+   "name": "Fire Spirit",
+   "card": "fire_spirit",
+   "count": 1,
+   "hitSpeed": 0.3,
+   "loadTime": 0.1,
+   "range": 2.5,
+   "speed": 120,
+   "targets": [
+    "air",
+    "ground"
+   ]
+  },
+  "note": "Game data Furnace_rework onStartingActionData Furnace_rework_continuous_spawn spawnDataData FireSpirits: hitSpeed 300, loadTime 100, range 2500, speed 120, attacksGround with air targets (dump debfe1e2). The reworked Furnace spawns the current Fire Spirit, identical to the Fire Spirit card; the legacy sub_units record kept the pre-rework 1.0 s hit speed and 2.0 range, so spawned spirits jumped 0.7 s later from half a tile closer. Whole record because a patched unit replaces the scanned one. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Furnace"
+ },
+ {
+  "card": "goblin_gang",
+  "path": "units.goblin",
+  "value": {
+   "card": "goblins",
+   "count": 3,
+   "hitSpeed": 1.1,
+   "loadTime": 0.5,
+   "name": "Goblin",
+   "range": 0.5,
+   "speed": 120,
+   "targets": [
+    "ground"
+   ]
+  },
+  "note": "Game data GoblinGang summonCharacterData Goblin_Stab loadTime 500 (hitSpeed 1100, range 500 unchanged); the legacy composition record carried 0.7. https://cache.statsroyale.com/gamedata-v5.json Whole record because a patched unit replaces the scanned one."
+ },
+ {
+  "card": "goblin_drill",
+  "path": "units.goblin",
+  "value": {
+   "card": "goblins",
+   "count": 1,
+   "deployTime": 1.0,
+   "hitSpeed": 1.1,
+   "loadTime": 0.7,
+   "name": "Goblin",
+   "radius": 0.5,
+   "range": 0.5,
+   "speed": 120,
+   "targets": [
+    "ground"
+   ]
+  },
+  "note": "Game data GoblinDrill spawnPathfindMorphData spawnCharacterData and deathSpawnCharacterData Goblin loadTime 700 (hitSpeed 1100, range 500 unchanged); the legacy sub_units record carried 0.6. https://cache.statsroyale.com/gamedata-v5.json Whole record because a patched unit replaces the scanned one."
+ },
+ {
+  "card": "suspicious_bush",
+  "path": "units.bush_goblin.loadTime",
+  "value": 1.1,
+  "note": "Game data SuspiciousBush deathAreaEffectData spawnDataData BushGoblin loadTime 1100 (hitSpeed 1400, range 800); the legacy record had no load time so the goblins inherited the bush's own 0.3. https://cache.statsroyale.com/gamedata-v5.json"
+ }
+]
