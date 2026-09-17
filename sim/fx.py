@@ -585,7 +585,7 @@ class DashingDash(Ability):
         opp=g._opp(tr.team)
         best=None;bd=999
         for e in g.players[opp].troops:
-            if not e.alive or e in self.hit:continue
+            if not e.alive or e in self.hit or getattr(e,'transport','Ground')=='Air':continue
             d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
             if d<=self.sr and d<bd:bd=d;best=e
         for tw in g.arena.towers:
