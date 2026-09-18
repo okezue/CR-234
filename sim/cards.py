@@ -147,7 +147,9 @@ def attach(cfg,c,sk,lvl,chain=None):
         cs.append(fx.SpawnZap(kb if 'dash' in sk else 0));cfg['spawn_zap_dmg']=at(az['damage'],lvl);cfg['spawn_zap_r']=az.get('radius') or 0
         cfg['spawn_zap_ct']=at(az.get('towerDamage'),lvl)
     bu=sk.get('burrow')
-    if bu is not None:cs.append(fx.Burrow((bu.get('speed') or 0)/SPD,c['deployTime'] or 1.0))
+    # the Burrow goes first so that on the arrival tick the unit stands at its spot, and starts its surfacing deploy, before its spawn
+    # components act
+    if bu is not None:cs.insert(0,fx.Burrow((bu.get('speed') or 0)/SPD,c['deployTime'] or 1.0,bu.get('surfaceDeploy') or 0.0))
     tf=sk.get('transform',{})
     if tf.get('hpPercent') and tf.get('building'):cs.append(fx.Breakdown(tf['hpPercent']/100,tf.get('lifetime') or 0))
     elif tf.get('hpPercent'):cs.append(fx.RocketRide(tf['hpPercent']/100,(tf.get('speed') or 0)/SPD,tf.get('range') or 0.5,tf.get('lifetime') or 0))

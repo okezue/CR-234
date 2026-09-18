@@ -537,16 +537,20 @@ def t_miner_close_placement_waits_the_deploy_time():
     assert abs(ts-1.0)<0.01
     return "A Miner placed near his King Tower surfaces after the 1 s deploy time"
 def t_goblin_drill_surfaces_and_spawns():
+    # burrow speed 300 (6 tiles/s): 17 tiles from the King Tower take 2.85 s; the spawn damage lands on arrival, the surfaced drill
+    # then deploys for 1 s and the first Goblin follows 1 s later (patch 2026-09-17h; wiki 6/10/2025 first spawn 1 s)
     g=_game();gd=mk_card('goblin_drill',11,'blue',9,20);g.deploy('blue',gd);d,=_dummies(g,(9,21))
-    g.run(0.9);assert has(gd,'burrowed') and d.hp==50000 and gd.hp==gd.max_hp
-    g.run(0.2);assert not has(gd,'burrowed') and 50000-d.hp==84
-    g.run(1.0);assert len(_named(g,'blue','Goblin'))==1
+    g.run(2.8);assert has(gd,'burrowed') and d.hp==50000 and gd.hp==gd.max_hp
+    g.run(0.1);assert not has(gd,'burrowed') and has(gd,'deploying') and 50000-d.hp==84
+    g.run(1.0);assert not has(gd,'deploying') and not _named(g,'blue','Goblin')
+    g.run(0.85);assert not _named(g,'blue','Goblin')
+    g.run(0.15);assert len(_named(g,'blue','Goblin'))==1
     g.run(3.0);assert len(_named(g,'blue','Goblin'))==2
-    g=Game();gd=mk_card('goblin_drill',11,'blue',14.5,25.5);g.deploy('blue',gd);tw=g.arena.get_tower('red','princess','right');ini=tw.hp;g.run(1.9)
+    g=Game();gd=mk_card('goblin_drill',11,'blue',14.5,25.5);g.deploy('blue',gd);tw=g.arena.get_tower('red','princess','right');ini=tw.hp;g.run(6.0)
     assert tw.hp==ini,"the drill itself never attacks, even sitting on the tower"
-    return "Goblin Drill surfaces after 1 s with 84 spawn damage (none to towers), a Goblin 1 s later then every 3 s"
+    return "Goblin Drill travels at 300, deploys 1 s on arrival with 84 spawn damage (none to towers), a Goblin 1 s later then every 3 s"
 def t_evo_goblin_drill_resurfaces_twice():
-    g=_game();gd=mk_card('goblin_drill',11,'blue',9,20,evolved=True);g.deploy('blue',gd);d,=_dummies(g,(9,21));g.run(1.1)
+    g=_game();gd=mk_card('goblin_drill',11,'blue',9,20,evolved=True);g.deploy('blue',gd);d,=_dummies(g,(9,21));g.run(4.0)
     n0=len(_named(g,'blue','Goblin'));h0=50000-d.hp
     gd.hp=int(gd.max_hp*0.6);g.run(0.1);n1=len(_named(g,'blue','Goblin'))
     gd.hp=int(gd.max_hp*0.3);g.run(0.1);n2=len(_named(g,'blue','Goblin'))

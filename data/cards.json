@@ -3518,7 +3518,9 @@
      "towerDamage": 0
     },
     "burrow": {
-     "duration": 10.0
+     "duration": 10.0,
+     "speed": 300,
+     "surfaceDeploy": 1.0
     },
     "periodicSpawn": {
      "character": "Goblin",
@@ -3547,6 +3549,8 @@
     "skills.areaDamageOnSpawn.damage[]": "derived:levelMult",
     "skills.areaDamageOnSpawn.radius": "legacy:spawn_damage",
     "skills.areaDamageOnSpawn.towerDamage": "patch:2026-09-01",
+    "skills.burrow.speed": "patch:2026-09-17h",
+    "skills.burrow.surfaceDeploy": "patch:2026-09-17h",
     "skills.periodicSpawn.firstDelay": "legacy:spawn",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
@@ -9790,6 +9794,10 @@
    {
     "name": "data/patches/2026-09-17g.json",
     "tag": "patch:2026-09-17g"
+   },
+   {
+    "name": "data/patches/2026-09-17h.json",
+    "tag": "patch:2026-09-17h"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

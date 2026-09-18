@@ -3078,16 +3078,18 @@ def t_bld_gobdrill_spawns():
     g=Game()
     for t in g.arena.towers:t.alive=False
     g.deploy('blue',gd)
-    g.run(7)
+    # 17 tiles of travel at 300 and the 1 s surfacing deploy end at 3.85 s; Goblins follow at 4.85 and 7.85
+    g.run(9)
     spawned=[tr for tr in g.players['blue'].troops if tr is not gd and tr.alive]
-    assert len(spawned)>=2,f"Drill should spawn goblins over 7s, got {len(spawned)}"
-    return f"Goblin Drill spawns ({len(spawned)} goblins in 7s)"
+    assert len(spawned)>=2,f"Drill should spawn goblins over 9s, got {len(spawned)}"
+    return f"Goblin Drill spawns ({len(spawned)} goblins in 9s)"
 def t_bld_gobdrill_death_spawn():
     gd=mk_card('goblin_drill',11,'blue',9,10)
     g=Game()
     for t in g.arena.towers:t.alive=False
     g.deploy('blue',gd)
-    gd.hp=1;g.run(1.2)
+    # it dies after surfacing (7 tiles of travel at 300 and the 1 s deploy end at 2.2 s); underground it cannot be hurt
+    g.run(2.3);gd.hp=1;g.run(1.2)
     spawned=[tr for tr in g.players['blue'].troops if tr is not gd and tr.alive]
     assert len(spawned)>=2,f"Drill should death-spawn 2 goblins, got {len(spawned)}"
     return f"Goblin Drill death spawn ({len(spawned)})"
@@ -3097,11 +3099,12 @@ def t_bld_gobdrill_lifetime():
     g=Game()
     for t in g.arena.towers:t.alive=False
     g.deploy('blue',gd)
-    g.run(9)
-    assert gd.alive,"Drill should be alive at 9s"
+    # the lifetime runs from the end of the surfacing deploy: 7 tiles of travel at 300 plus 1 s puts that at 2.2 s
+    g.run(11)
+    assert gd.alive,"Drill should be alive at 11s"
     g.run(2)
-    assert not gd.alive,"Drill should expire after 10s"
-    return "Goblin Drill 10s lifetime"
+    assert not gd.alive,"Drill should expire 10s after surfacing"
+    return "Goblin Drill 10s lifetime from surfacing"
 def t_bld_gobdrill_spawn_zap():
     from sim.fx import SpawnZap
     gd=mk_card('goblin_drill',11,'blue',9,10)
@@ -3112,7 +3115,8 @@ def t_bld_gobdrill_spawn_zap():
     g.deploy('blue',gd)
     d=Dummy('red',9,11,hp=50000,spd=0)
     g.deploy('red',d)
-    g.run(1.2)
+    # 7 tiles of travel at 300 end on the 1.2 s tick; run past it so the check does not depend on the exact arrival tick
+    g.run(1.5)
     zap_dmg=50000-d.hp
     assert zap_dmg>0,f"Spawn zap should deal damage, dealt {zap_dmg}"
     return f"Goblin Drill spawn zap ({zap_dmg} dmg)"

@@ -1,0 +1,14 @@
+[
+ {
+  "card": "goblin_drill",
+  "path": "skills.burrow.speed",
+  "value": 300,
+  "note": "Wiki Goblin Drill history, Balance Update 7/6/2022: burrowing speed decreased to 300 (from 400); the record carried no speed, so the engine surfaced the drill after its one second deploy wherever it was placed. Recording, LCQ broadcast of 5 September 2026 game 09YP9UPGQ2YU: the drill placed at 96.85 s shows its underground trail from Ian's King Tower at 97.5 s and reaches Wallace's tower, about 21 tiles away, at 100.5 s (local/lcqGameOne/drillTravel96to102.jpg), 6 to 7 tiles per second. https://clashroyale.fandom.com/wiki/Goblin_Drill"
+ },
+ {
+  "card": "goblin_drill",
+  "path": "skills.burrow.surfaceDeploy",
+  "value": 1.0,
+  "note": "Game data export debfe1e2 GoblinDrill spawnPathfindMorphData deployTime 1000: the surfaced building deploys for a second after the travel; the recording shows the deploy clock at the tower from 100.5 to 101.5 s. The Miner's record has no surfacing morph, so his single deploy rule is unchanged."
+ }
+]

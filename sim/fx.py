@@ -181,7 +181,7 @@ class SpawnTimer(Component):
         self.cfg=cfg;self.interval=interval;self.count=count;self.stagger=stagger;self.rng=rng
         self.timer=self.first=first_delay
     def on_tick(self,tr,g):
-        if has(tr,'burrowed'):return
+        if has(tr,'burrowed','deploying'):return
         if self.rng and not near(g,tr.team,tr.x,tr.y,self.rng,towers=False):self.timer=self.first;return
         halt,rate,_=g._status_mods(tr)
         if halt:return
@@ -255,6 +255,7 @@ class SpawnZap(Component):
     def __init__(self,kb=0):
         self.fired=False;self.kb=kb
     def on_tick(self,tr,g):
+        # the blast lands on arrival, before the surfacing deploy (recording: the burst shows with the deploy clock)
         if self.fired or has(tr,'burrowed'):return
         self.fired=True;self.fire(tr,g)
     def fire(self,tr,g):
@@ -1408,18 +1409,23 @@ class Scatter(Component):
                 if -r<=t<=self.rng+r and abs((ex-tr.x)*cy-(ey-tr.y)*cx)<=r and (best is None or t<best[0]):best=(t,e)
             if best:hurt(best[1],tr.ct_dmg if hasattr(best[1],'ttype') and tr.ct_dmg else tr.dmg,g)
 class Burrow(Component):
-    # underground from the own king tower to the deploy spot at spd tiles/s; surfaces after the deploy time or the travel, whichever is longer
-    def __init__(self,spd,deploy):self.spd=spd;self.deploy=deploy;self.t=None
+    # underground from the own king tower to the deploy spot at spd tiles/s; the burrowing form's deploy time overlaps the travel
+    # (surfaces after whichever is longer), and a surfaced form with its own deploy (game data spawnPathfindMorphData deployTime, the
+    # Goblin Drill) deploys again on arrival
+    def __init__(self,spd,deploy,surface=0.0):self.spd=spd;self.deploy=deploy;self.surface=surface;self.t=None
     def start(self,tr):
         self.tx,self.ty=tr.x,tr.y;self.sx,self.sy=Arena.W/2,Arena.KING_Y[0 if tr.team=='blue' else 1]
-        self.T=max(self.deploy,math.hypot(self.tx-self.sx,self.ty-self.sy)/self.spd if self.spd>0 else 0);self.t=0
+        travel=math.hypot(self.tx-self.sx,self.ty-self.sy)/self.spd if self.spd>0 else 0
+        self.T=max(self.deploy,travel);self.t=0
         tr.statuses.append(Status('burrowed',self.T));tr.x,tr.y=self.sx,self.sy
     def on_tick(self,tr,g):
         if self.t is None:self.start(tr)
         if self.t>=self.T:return
         self.t+=g.DT;f=min(1,self.t/self.T) if self.T>0 else 1
         tr.x=self.sx+(self.tx-self.sx)*f;tr.y=self.sy+(self.ty-self.sy)*f
-        if f>=1:tr.statuses=[s for s in tr.statuses if s.kind!='burrowed']
+        if f>=1:
+            tr.statuses=[s for s in tr.statuses if s.kind!='burrowed']
+            if self.surface>0:tr.statuses.append(Status('deploying',self.surface))
 class Resurface(Component):
     # evo drill: at each hp threshold it submerges, pops back up with its spawn damage and leaves goblins behind
     def __init__(self,thresholds,counts,cfg):self.th=list(thresholds);self.counts=list(counts);self.cfg=cfg;self.done=set()
