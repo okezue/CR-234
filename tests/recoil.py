@@ -11,7 +11,8 @@ def setup(team='blue',evolved=False):
     g=Game()
     for tower in g.arena.towers:tower.alive=False
     tr=create('firecracker',11,team,9,10,evolved=evolved);g.deploy(team,tr)
-    target=Dummy(g._opp(team),9,16 if team=='blue' else 4,hp=5000,spd=0,dmg=0)
+    # the dummy is pinned six tiles out on row 16 (water; a real unit born there would be moved) so the flight is exactly 12 ticks
+    target=Dummy(g._opp(team),9,16 if team=='blue' else 4,hp=5000,spd=0,dmg=0);target._settled=True
     g.deploy(target.team,target)
     return g,tr,target
 

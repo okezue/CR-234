@@ -50,6 +50,8 @@ def t_hog_born_on_a_tower_footprint_is_placed_beside_it():
     g=quiet(Game());witch=create('mother_witch',11,'blue',9,10);g.deploy('blue',witch)
     tw=g.arena.get_tower('red','princess','left')
     victim=create('knight',11,'red',tw.cx,tw.cy);victim.spd=0;victim.dmg=0;victim.hp=1;g.deploy('red',victim)
+    # the victim is pinned on the footprint for the test (the settle rule would otherwise move it off) so the hog is born there
+    victim._settled=True
     # the Witch stands off the tower's axis so the Knight on the tower centre is her nearest target by a clear margin
     witch.x,witch.y=tw.cx+2.5,tw.cy-3
     for _ in range(int(round(3.0/g.DT))):

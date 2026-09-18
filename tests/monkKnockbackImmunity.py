@@ -79,8 +79,9 @@ def t_evolved_royal_giant_recoil_damages_a_monk_without_moving_it():
 
 def t_evolved_mega_knight_uppercut_leaves_a_monk_but_launches_a_knight():
     def duel(card):
-        g=quiet(Game());mk=create('mega_knight',11,'blue',9,14,evolved=True);g.deploy('blue',mk)
-        v=create(card,11,'red',9,15.4);freeze(mk,v);disarm(v);g.deploy('red',v);y0=v.y
+        g=quiet(Game());mk=create('mega_knight',11,'blue',9,13.4,evolved=True);g.deploy('blue',mk)
+        # the victim stands on the bank (row 15 is water) clear of the Mega Knight's body
+        v=create(card,11,'red',9,14.8);freeze(mk,v);disarm(v);g.deploy('red',v);y0=v.y
         run(g,4.0)
         return v,y0
     knight,ky=duel('knight')

@@ -405,7 +405,7 @@ class Game:
         # a deploying unit stands on the field, targetable and damageable, and acts only when its deploy time is over; a burrowing unit
         # is governed by its Burrow instead (the deploy is folded into the travel, or follows it for the Goblin Drill)
         if dep>0 and not has(tr,'burrowed'):tr.statuses.append(Status('deploying',dep))
-        self._free_spot(tr)
+        self._free_spot(tr);tr._settled=True
         self.deploy(team,tr)
     def _proc_pending(self):
         done=[];stagger_add=[]
@@ -706,6 +706,10 @@ class Game:
             for sp in self.spells:
                 if isinstance(sp,SoulContinuation) and sp.team==tm:sp.tick(self.DT,self)
             for tr in p.troops:
+                # a unit that a spell or component added directly takes the walkable-tile rule of placement before its first action
+                if not getattr(tr,'_settled',False):
+                    tr._settled=True
+                    if tr.alive:self._free_spot(tr)
                 if not tr.alive:
                     ab=getattr(tr,'ability',None)
                     if isinstance(ab,SoulSummoning) and ab.active and not ab.continuing:

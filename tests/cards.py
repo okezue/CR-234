@@ -2102,10 +2102,11 @@ def t_fisherman_v_knight():
 def t_fisherman_hook():
     # a ground troop 4.5 tiles away is hooked after the 1.3 s load and dragged into his reach (no slow since 6/4/2026); a building in the band drags him to it
     g=quiet(Game())
-    f=mk_card('fisherman',11,'blue',9,10);g.deploy('blue',f)
-    k=mk_card('knight',11,'red',9,15.5);g.deploy('red',k);k.spd=0
+    f=mk_card('fisherman',11,'blue',9,9.5);g.deploy('blue',f)
+    # the knight stands on the bank (row 15 is water, and a unit born on water is moved to a walkable tile), 5 tiles away
+    k=mk_card('knight',11,'red',9,14.5);g.deploy('red',k);k.spd=0
     g.run(1.2)
-    assert f.spd==0 and k.y>15,"he stands and charges while the knight is in the 3.5-7 band"
+    assert f.spd==0 and k.y>14,"he stands and charges while the knight is in the 3.5-7 band"
     g.run(1.0)
     assert g._dist(f,k)<=f.rng and k.y<13 and not any(s.kind=='slow' for s in k.statuses),f"the knight is dragged to him, not slowed (d={g._dist(f,k):.2f})"
     assert f.spd>0 and not any(s.kind=='slow' for s in f.statuses)
@@ -4574,9 +4575,9 @@ def t_sk_summon_min():
 def t_bb_dash():
     g=Game()
     random.seed(42)
-    bb=mk_card('boss_bandit',11,'blue',9,10)
+    bb=mk_card('boss_bandit',11,'blue',9,9.5)
     g.deploy('blue',bb)
-    d=Dummy('red',9,15,hp=50000,spd=0)
+    d=Dummy('red',9,14.5,hp=50000,spd=0)
     g.deploy('red',d)
     ini=d.hp
     g.run(3)
@@ -5912,11 +5913,12 @@ def t_int_evo_exe_v_push():
     return f"Evo Executioner v Barbarians ({alive} barbs alive)"
 def t_evo_mk_uppercut():
     g=Game()
-    mk_t=mk_card('mega_knight',11,'blue',9,14,evolved=True)
+    mk_t=mk_card('mega_knight',11,'blue',9,13.5,evolved=True)
     g.deploy('blue',mk_t)
     from sim.fx import EvoMegaKnight
     assert any(isinstance(c,EvoMegaKnight) for c in mk_t.components)
-    d=Dummy('red',9,15,hp=50000,spd=0)
+    # the dummy stands on the bank (row 15 is water) clear of the Mega Knight's body
+    d=Dummy('red',9,14.8,hp=50000,spd=0)
     g.deploy('red',d)
     iy=d.y
     # first swing at 0.5 s: no uppercut; the second (2.2 s) throws the dummy (wiki 4/8/2026: every 2 hits)
