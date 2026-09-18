@@ -691,7 +691,19 @@ class Game:
         dx=wx-tr.x;dy=wy-tr.y;ds=math.hypot(dx,dy)
         if ds<=0:return
         st=min(ds,spd*self.DT)
+        # a unit walking straight at its target that fails to close in step after step is stalled behind other bodies (the collision
+        # resolver reads the counter too); a walk to a bridge waypoint or a detour node is never counted
+        dd=math.hypot(tx-tr.x,ty-tr.y);last=getattr(tr,'_last_dd',None);tr._last_dd=dd
+        direct=(wx,wy)==(tx,ty)
+        tr._stalled_ticks=(getattr(tr,'_stalled_ticks',0)+1) if (direct and last is not None and dd>last-0.3*st) else 0
         nx=tr.x+dx/ds*st;ny=tr.y+dy/ds*st
+        if tr._stalled_ticks>=2 and tgt is not None and dd>0:
+            # stalled behind other bodies: step along the ring around the target, away from the nearest body ahead
+            o=self._blocker(tr,nx,ny,tgt)
+            if o is not None:
+                px,py=-(ty-tr.y)/dd,(tx-tr.x)/dd
+                if px*(o.x-tr.x)+py*(o.y-tr.y)>0:px,py=-px,-py
+                nx=tr.x+px*st;ny=tr.y+py*st
         if gnd and not self._walkable(nx,ny,rj):
             if self._walkable(nx,tr.y,rj):ny=tr.y
             elif self._walkable(tr.x,ny,rj):nx=tr.x
@@ -700,6 +712,17 @@ class Game:
                 else:ny=tr.y
                 nx=tr.x
         tr.x=nx;tr.y=ny
+    def _blocker(self,tr,nx,ny,tgt):
+        # the nearest body of the same layer that the step would press into and that lies ahead of the unit; the target itself never blocks
+        layer=getattr(tr,'transport','Ground');best=None
+        for tm in ('blue','red'):
+            for o in self.players[tm].troops:
+                if o is tr or o is tgt or not o.alive or getattr(o,'transport','Ground')!=layer or has(o,'burrowed'):continue
+                mr=getattr(tr,'collision_r',0.5)+getattr(o,'collision_r',0.5)
+                dn=math.hypot(nx-o.x,ny-o.y)
+                if dn>=mr-0.05 or dn>=math.hypot(tr.x-o.x,tr.y-o.y):continue
+                if best is None or dn<best[0]:best=(dn,o)
+        return best[1] if best else None
     def _proc_troops(self):
         for tm in ('blue','red'):
             p=self.players[tm]
@@ -741,6 +764,7 @@ class Game:
                 jumping=any(isinstance(c,MKJump) and (c.charging or c.airborne) for c in getattr(tr,'components',[]))
                 mr=getattr(tr,'min_rng',0)
                 if tgt and td<=tr.rng and td>=mr and not jumping:
+                    tr._stalled_ticks=0
                     tr.cd=max(0,tr.cd-self.DT*arate)
                     if tr.cd<=0:
                         self._fire(tr,tgt);tr.cd=tr.hspd

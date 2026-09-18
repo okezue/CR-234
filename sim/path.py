@@ -121,4 +121,15 @@ class Pathfinder:
                         if d<1e-6:dx,dy,d=1.0,0.0,1.0
                         ov=(mr-d)*K['sep_strength'];nx=dx/d;ny=dy/d;ma=getattr(a,'mass',4);mb=getattr(b,'mass',4)
                         fa,fb=(0,1) if a_imm else (1,0) if b_imm else (mb/(ma+mb),ma/(ma+mb))
-                        self._shift(a,nx*ov*fa,ny*ov*fa);self._shift(b,-nx*ov*fb,-ny*ov*fb)
+                        ax,ay=self._around(a,b,nx,ny);bx_,by_=self._around(b,a,-nx,-ny)
+                        self._shift(a,ax*ov*fa,ay*ov*fa);self._shift(b,bx_*ov*fb,by_*ov*fb)
+    def _around(self,u,o,nx,ny):
+        # a stalled body pressed back by another that stands between it and its target slides around that body along the ring
+        t=getattr(u,'tgt',None)
+        if t is None or o is t or getattr(u,'is_building',False) or getattr(u,'_stalled_ticks',0)<2:return nx,ny
+        tx,ty=(t.cx,t.cy) if hasattr(t,'cx') else (t.x,t.y)
+        du=math.hypot(tx-u.x,ty-u.y);do=math.hypot(tx-o.x,ty-o.y)
+        if do>=du or du<1e-6:return nx,ny
+        px,py=-(ty-u.y)/du,(tx-u.x)/du
+        if px*nx+py*ny<0:px,py=-px,-py
+        return px,py
