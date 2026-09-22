@@ -21,17 +21,20 @@ from sim import replay as R
 from sim.cards import key
 from train.feats import FEAT_DIM,featurize
 
-COLS=('bid','idx','t','team','card','x','y','evolved','hero','elixir_rate')
+COLS=('bid','idx','t','team','card','x','y','evolved','hero','elixir_rate','hand')
 
 
 class Recorder(R.Game):
     # snapshots the acting player's view just before the shipped play_card runs, so a rejected or relocated placement is still a
-    # decision at its recorded time and tile
+    # decision at its recorded time and tile; the replay's relocation retries of the same play add no record, so record i is
+    # decision play i of the replay; the hand is the replay's forced hand, the menu a counterfactual play is drawn from
     records=None
     def play_card(self,team,card,x,y,evolved=None,hero=None):
         if self.records is not None:
-            self.records.append({'t':self.t,'team':team,'card':key(card) or card,'x':x,'y':y,'evolved':bool(evolved),'hero':bool(hero),
-                                 'erate':self._erate(),'state':featurize(self,team).astype(np.float16)})
+            k=key(card) or card;last=self.records[-1] if self.records else None
+            if not (last and last['t']==self.t and last['team']==team and last['card']==k):
+                self.records.append({'t':self.t,'team':team,'card':k,'x':x,'y':y,'evolved':bool(evolved),'hero':bool(hero),
+                                     'erate':self._erate(),'hand':'|'.join(self.players[team].deck.hand),'state':featurize(self,team).astype(np.float16)})
         return super().play_card(team,card,x,y,evolved=evolved,hero=hero)
 
 
@@ -67,7 +70,7 @@ def build(data,out,jobs=2,limit=0):
         for game,recs in pool.imap(_work,[(b,placements[b],outcomes[b],pids.get(b)) for b in bids],chunksize=2):
             games.append(game)
             for i,r in enumerate(recs):
-                rows.append((game['bid'],i,r['t'],r['team'],r['card'],r['x'],r['y'],r['evolved'],r['hero'],r['erate']));states.append(r['state'])
+                rows.append((game['bid'],i,r['t'],r['team'],r['card'],r['x'],r['y'],r['evolved'],r['hero'],r['erate'],r['hand']));states.append(r['state'])
     X=np.stack(states) if states else np.zeros((0,FEAT_DIM),np.float16)
     out=Path(out);out.parent.mkdir(parents=True,exist_ok=True)
     np.savez_compressed(out,X=X,**{c:np.array([r[k] for r in rows]) for k,c in enumerate(COLS)})

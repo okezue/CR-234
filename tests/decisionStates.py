@@ -25,7 +25,16 @@ def t_one_record_per_recorded_card_play_from_the_actors_side():
     # the state is the actor's view: the clock feature is the recorded time, and the acting player's elixir is the forced ten
     assert abs(float(recs[2]['state'][0])-20.0/300.0)<1e-3
     assert float(recs[2]['state'][8])==1.0
-    assert R.Game is not Recorder and Recorder.records is None
+    # the recorded card sits in the forced hand of four, the menu counterfactual plays are drawn from
+    assert all(r['card'] in r['hand'].split('|') and len(r['hand'].split('|'))==4 for r in recs)
+    assert R.Game is not Recorder and Recorder.records is None and COLS[-1]=='hand'
+
+
+def t_a_relocated_placement_is_one_decision_at_its_recorded_tile():
+    # a blue troop recorded on the enemy side is rejected and relocated by the replay; the retries add no record
+    plays=[row('knight','blue',40,x=9,y=25),row('archers','blue',200)]
+    game,recs=extract('synthetic',plays,{'result':'W','tc':1,'oc':0})
+    assert game['n']==len(recs)==2 and (recs[0]['x'],recs[0]['y'])==(9,25) and recs[1]['card']=='archers'
 
 
 def t_labels_follow_the_recorded_winner_and_draws_carry_none():
@@ -42,4 +51,4 @@ def t_the_state_precedes_the_play_and_tower_features_are_read_from_the_arena():
     assert not unit_block.any()
     towers=s[GAME_FEAT:GAME_FEAT+36].reshape(6,6)
     assert (towers[:,0]==1).all() and (towers[:,2]==1).all() and towers[:,3].sum()==3
-    assert len(COLS)==10 and game['actual_winner']=='red'
+    assert len(COLS)==11 and game['actual_winner']=='red'
