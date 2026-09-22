@@ -527,7 +527,8 @@ def t_miner_burrows_untargetable():
         if not has(mn,'burrowed'):ts=g.t
     exp=max(1.0,22.0/(650/50))
     assert abs(ts-exp)<=0.1 and mn.hp==mn.max_hp and abs(mn.x-9)<0.1 and abs(mn.y-25)<0.1,f"{ts} {mn.hp} {mn.x},{mn.y}"
-    g.run(1);assert mn.hp<mn.max_hp
+    # surfaced, he is shot after the tower's 0.8 s first attack period plus the arrow's flight
+    g.run(1.6);assert mn.hp<mn.max_hp
     return f"Miner travels underground from the King Tower at 650 and surfaces at {ts:.2f} s (expected {exp:.2f}) untouched by the towers"
 def t_miner_close_placement_waits_the_deploy_time():
     g=Game();mn=mk_card('miner',11,'blue',9,6);g.deploy('blue',mn);ts=None

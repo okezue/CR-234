@@ -5,7 +5,7 @@ from sim.units import hidden
 def king(lvl):
     k=card('king_tower')
     return {'hp':at(k['stats']['hitpoints'],lvl),'dmg':at(k['stats']['damage'],lvl),'spd':k['hitSpeed'],'rng':k['range'],
-            'projSpeed':(k['projectile'] or {}).get('speed') or 0}
+            'fspd':first(k['hitSpeed'],k['loadTime']),'projSpeed':(k['projectile'] or {}).get('speed') or 0}
 
 def lock(o,tw,en,rng):
     l=getattr(o,'lock',None)
@@ -15,44 +15,38 @@ def lock(o,tw,en,rng):
         if not e.alive or hidden(e):continue
         d=tw.dist(e.x,e.y)-getattr(e,'collision_r',0)
         if d<=rng and d<bd:bd=d;b=e
-    # the tower shoots on the tick it acquires: the documented 0.8 s first attack period (wiki Tower Princess, hit speed 800 with no load
-    # time in the game data) judged 61.5/37.5/77.0/52.6 -> 60.2/35.8/72.1/57.6 and is not applied
     o.lock=b
     return b
 
+def load_idle(cd,fspd,dt):
+    # idle, the swing loads down to the first attack period and no further, the troop rule (wiki Tower Princess: Attack Period 0.8 s,
+    # First Attack Period 0.8 s; the recording of game 09YP9UPGJGU8 shows her turning to the hogs and releasing about 0.55 s later)
+    return max(fspd,cd-dt)
+
 class TT:
     def __init__(self,jn,lvl):
-        self.lvl=lvl;self.name=jn;self.cd=0;self.lock=None
+        self.lvl=lvl;self.name=jn;self.lock=None
         d=card(jn);s=d['stats']
         self.hp=at(s['hitpoints'],lvl);self.dmg=at(s['damage'],lvl)
-        self.spd=d['hitSpeed'];self.fspd=first(d['hitSpeed'],d['loadTime']);self.RNG=d['range']
+        self.spd=d['hitSpeed'];self.fspd=first(d['hitSpeed'],d['loadTime']);self.RNG=d['range'];self.cd=self.fspd
         self.proj_spd=(d['projectile'] or {}).get('speed') or 0
     def _tgt(self,tw,en):
         # the tower holds its target until it dies, hides or leaves range (a stun resets it); a tank keeps the fire off what follows
         return lock(self,tw,en,self.RNG)
     def tick(self,dt,tw,en,al,**kw):
-        r=[];self.cd=max(0,self.cd-dt)
-        t=self._tgt(tw,en)
-        if t and self.cd<=0:
-            r.append(('atk',t,self.dmg));self.cd=self.spd
+        r=[];t=self._tgt(tw,en)
+        if t:
+            self.cd=max(0,self.cd-dt)
+            if self.cd<=0:r.append(('atk',t,self.dmg));self.cd=self.spd
+        else:self.cd=load_idle(self.cd,self.fspd,dt)
         return r
 
 class TPrincess(TT):
     def __init__(self,lvl):super().__init__('tower_princess',lvl)
 
 class Cannoneer(TT):
-    def __init__(self,lvl):
-        super().__init__('cannoneer',lvl);self.eng=False
-    def tick(self,dt,tw,en,al,**kw):
-        r=[];self.cd=max(0,self.cd-dt)
-        t=self._tgt(tw,en)
-        if t:
-            if not self.eng:self.cd=max(self.cd,self.fspd);self.eng=True
-            if self.cd<=0:
-                r.append(('atk',t,self.dmg));self.cd=self.spd
-        else:
-            self.eng=False;self.cd=0
-        return r
+    # first shot 0.8 s after acquiring (2.2 hit speed less the 1.4 load), the shared tower troop rule
+    def __init__(self,lvl):super().__init__('cannoneer',lvl)
 
 class DaggerDuchess(TT):
     def __init__(self,lvl):

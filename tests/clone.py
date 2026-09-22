@@ -121,7 +121,10 @@ def t_shielded_clone_survives_first_tower_projectile():
     create('clone',11,'blue',3.5,20).apply(g)
     clone=next(t for t in g.players['blue'].troops if t is not original)
     g.players['blue'].troops.remove(original);clone.spd=0;clone.dmg=0
-    g.tick()
+    # the tower's first arrow leaves after its 0.8 s first attack period
+    for _ in range(20):
+        g.tick()
+        if g.projs:break
     assert g.projs and clone.shield_hp==1
     for _ in range(20):
         g.tick()

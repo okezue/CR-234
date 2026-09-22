@@ -186,17 +186,17 @@ def t_cannoneer():
     tr=Dummy('red',3.0,13.0,hp=50000)
     g.deploy('red',tr)
     ini=tr.hp
-    # first shot at 0.8 s (2.2 hit speed less 1.4 load), the cannonball flies at 1000 units per tick to the approaching dummy (0.25 s)
-    g.run(1.0)
-    assert tr.hp==ini,"Shot landed before 1.0s"
-    g.run(0.1)
+    # first shot at 0.8 s (2.2 hit speed less 1.4 load), the cannonball flies at 1000 units per tick to the approaching dummy (0.2 s)
+    g.run(0.95)
+    assert tr.hp==ini,"Shot landed before 0.95s"
+    g.run(0.15)
     assert tr.hp<ini,"No shot by 1.1s"
     d1=ini-tr.hp;hp1=tr.hp
-    g.run(2.0)
-    assert tr.hp==hp1,"Extra shot between 1.1-3.1s"
-    g.run(0.2)
+    g.run(1.85)
+    assert tr.hp==hp1,"Extra shot between 1.1-2.95s"
+    g.run(0.35)
     assert tr.hp<hp1,"No second shot by 3.3s"
-    return f"Cannoneer first shot ({d1} dmg at ~1.05s, 2nd at ~3.2s)"
+    return f"Cannoneer first shot ({d1} dmg at ~1.0s, 2nd at ~3.1s)"
 def t_troop_atk():
     g=Game()
     tr=Dummy('red',3.0,8.0,hp=50000,dmg=200,spd=2.0)
@@ -403,11 +403,11 @@ def t_cannoneer_preload():
     tr=Dummy('red',3.0,13.0,hp=50000)
     g.deploy('red',tr)
     ini=tr.hp
-    g.run(1.0);assert tr.hp==ini
-    g.run(0.1);d1=ini-tr.hp;assert d1>0
-    hp1=tr.hp;g.run(2.0);assert tr.hp==hp1
-    g.run(0.2);assert tr.hp<hp1
-    return f"Cannoneer preload ({d1} dmg, 1st@~1.05s, 2nd@~3.2s)"
+    g.run(0.95);assert tr.hp==ini
+    g.run(0.15);d1=ini-tr.hp;assert d1>0
+    hp1=tr.hp;g.run(1.85);assert tr.hp==hp1
+    g.run(0.35);assert tr.hp<hp1
+    return f"Cannoneer preload ({d1} dmg, 1st@~1.0s, 2nd@~3.2s)"
 def t_cannoneer_disengage_reload():
     g=Game(p1={'tt_name':'cannoneer','tt_lvl':11})
     tr=Dummy('red',3.0,13.0,hp=50000)
@@ -419,8 +419,8 @@ def t_cannoneer_disengage_reload():
     tr2=Dummy('red',3.0,13.0,hp=50000)
     g.deploy('red',tr2)
     ini2=tr2.hp
-    g.run(1.0);assert tr2.hp==ini2
-    g.run(0.1);assert tr2.hp<ini2
+    g.run(0.95);assert tr2.hp==ini2
+    g.run(0.15);assert tr2.hp<ini2
     return "Cannoneer disengage->reload->fast first shot"
 def t_cannoneer_high_dmg():
     cn=mk_tt('cannoneer',11)
@@ -1046,7 +1046,10 @@ def t_freeze_tower():
     lpt.statuses.append(Status('freeze',3.0))
     g.run(2.9)
     assert tr.hp==50000,"frozen tower must not shoot"
-    g.run(1.0)
+    # thawed, the tower still owes its 0.8 s first attack period before the arrow leaves (the swing was never loaded down)
+    g.run(0.8)
+    assert tr.hp==50000,"shot before the first attack period"
+    g.run(0.8)
     assert tr.hp<50000
     fz=mk_card('freeze',11,'blue',14.5,25.5);fz.apply(g)
     assert any(s.kind=='freeze' for s in g.arena.get_tower('red','princess','right').statuses)
@@ -1086,7 +1089,8 @@ def t_proj_tower():
     lpt.troop.proj_spd=10.0
     tr=Dummy('red',3.5,12.0,hp=50000,spd=0)
     g.deploy('red',tr)
-    g.run(0.3)
+    # the arrow leaves after the 0.8 s first attack period and flies 5.5 tiles at 10 tiles/s
+    g.run(1.1)
     assert tr.hp==50000 and g.projs,"tower arrow in flight"
     g.run(0.4)
     assert tr.hp<50000
