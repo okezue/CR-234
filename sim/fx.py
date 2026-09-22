@@ -994,7 +994,8 @@ class EvoRoyalHogs(Component):
     def on_tick(self,tr,g):
         if not self.flying:return
         if tr.hp<tr.max_hp:
-            self.flying=False;tr.transport='Ground'
+            # a hog that lands over a fence corner or a footprint is settled like a born unit, or it would stand there for the game
+            self.flying=False;tr.transport='Ground';g._free_spot(tr)
             opp=g._opp(tr.team)
             for e in g.players[opp].troops:
                 if not e.alive:continue

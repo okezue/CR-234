@@ -7712,6 +7712,9 @@
     "jump": {
      "height": 4.0,
      "speed": 0.16
+    },
+    "line": {
+     "spacing": 1.2
     }
    },
    "speed": 120,
@@ -7723,6 +7726,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "patch:2026-09-03",
+    "skills.line": "patch:2026-09-21",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -9661,7 +9665,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-17",
+  "built": "2026-09-21",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9673,7 +9677,7 @@
    "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, leader names its unit overrides",
    "hook": "special attack on a ground target between minRange and maxRange: the unit stands for loadTime, the hook flies at speed and drags a troop to the unit's reach at dragSpeed or the unit to a building at selfDragSpeed, slowing the target (Fisherman)",
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince); forcedKnockback: it also ignores the pushes that override ordinary immunity, the Monk combo, the Evolved Mega Knight uppercut and the Log's roll (Monk)",
-   "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits)",
+   "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits, Royal Hogs)",
    "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
    "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, shield.damage/radius/pushbackDistance (blast when the shield breaks), poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
    "produceElixir": "interval and amount",
@@ -9798,6 +9802,10 @@
    {
     "name": "data/patches/2026-09-17h.json",
     "tag": "patch:2026-09-17h"
+   },
+   {
+    "name": "data/patches/2026-09-21.json",
+    "tag": "patch:2026-09-21"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

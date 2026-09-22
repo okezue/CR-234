@@ -1,0 +1,10 @@
+[
+ {
+  "card": "royal_hogs",
+  "path": "skills.line",
+  "value": {
+   "spacing": 1.2
+  },
+  "note": "Deployment is a horizontal formation (wiki Royal Hogs: 'Their deployment is in a horizontal formation'; history: 'their spawn formation was changed to be on a straight horizontal line'). The spacing is the touching-bodies rule, twice the game data export's collision radius 600; the export carries no formation field, and its summonRadius of 1 (a thousandth of a tile) stacked the four on the point, where the engine's collision resolution scattered them into a diamond with one hog a tile ahead and one behind. Recording, LCQ broadcast of 5 September 2026 game 09YP9UPGJGU8: the deployments at 113.55, 204.55 and 255.15 s (evolved) and 70.7 s (plain, read two seconds in while running) show four level badges on one row 12.8 to 13.7 pixels apart against 129.5 pixels for the 11 tiles between the Princess Towers; with the tower scale taken on the near side of the camera and the badges floating above the bodies, that brackets the spacing between about 1.0 and 1.25 tiles and does not separate 1.1 from 1.2 (local/lcqGameTwo/hogFormation.jpg, badgeRulers.png, towersRuler72.png). https://clashroyale.fandom.com/wiki/Royal_Hogs"
+ }
+]
