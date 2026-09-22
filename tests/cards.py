@@ -1217,8 +1217,9 @@ def t_gskel_v_skarmy():
     gs.hp=1
     d=Dummy('red',9,14.5,hp=50000,dmg=500,spd=0,hspd=0.5)
     g.deploy('red',d)
-    # the tower arrows now fly (600 units per tick), so the last tower kill lands a hair after the 3.5 s bomb
-    g.run(3.6)
+    # the tower arrows fly (600 units per tick) and each tower owes its 0.8 s first attack period, so the tenth kill (bomb plus tower
+    # arrows) lands after the 3.5 s bomb, inside the next attack period
+    g.run(4.4)
     assert not gs.alive
     dead=[s for s in sk if not s.alive]
     assert len(dead)>=10,f"Giant Skeleton bomb should kill most skarmy, only killed {len(dead)}"
