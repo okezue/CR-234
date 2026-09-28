@@ -22,9 +22,9 @@ def hits(tr,g,until,step=0.05,stop_at_first=False):
 
 def t_tower_princess_fires_her_first_arrow_after_the_first_attack_period():
     g=Game();tr=Dummy('red',3.0,13.0,hp=50000,spd=0);g.deploy('red',tr)
-    # 6.5 tiles from the tower centre, inside range from the first tick; the arrow flies 12 tiles/s, about 0.55 s
+    # 6.5 tiles from the tower centre, inside range from the first tick; the arrow flies 17 tiles/s (patch 2026-09-28), 0.40 s
     h=hits(tr,g,3.0)
-    assert h and 1.3<=h[0]<=1.45,h
+    assert h and 1.15<=h[0]<=1.3,h
     assert len(h)>=2 and 0.75<=h[1]-h[0]<=0.85,h
 
 
@@ -35,7 +35,7 @@ def t_an_idle_tower_reloads_to_the_first_attack_period_between_targets():
     g.run(3.0)
     tr2=Dummy('red',3.0,13.0,hp=50000,spd=0);g.deploy('red',tr2);t0=g.t
     h2=hits(tr2,g,t0+2.0)
-    assert h2 and 1.3<=h2[0]-t0<=1.45,(h2,t0)
+    assert h2 and 1.15<=h2[0]-t0<=1.3,(h2,t0)
 
 
 def t_a_target_that_follows_a_kill_is_shot_on_the_attack_period_without_reloading():

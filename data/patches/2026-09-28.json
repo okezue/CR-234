@@ -1,0 +1,14 @@
+[
+ {
+  "card": "tower_princess",
+  "path": "projectile.speed",
+  "value": 17.0,
+  "note": "Recorded arrow flights, LCQ broadcast of 5 September 2026 (local/lcqGameTwo/findings.md, 'Recorded projectile flights, second round'): in game 09YP9UPGJGU8 the idle princess releases at 36.10 to 36.15 s and hits the front Royal Hog 6.8 to 7.3 tiles from the tower centre at 36.53 to 36.55 (15.1 to 19.2 tiles/s); in game 09YP9UPGQ2YU her arrow leaves at 96.35 and the hero Knight 6.6 tiles out flashes at 96.75 (14.7 to 18.9 tiles/s). The game data export gives TowerPrincessProjectile speed 600, which under the engine's units-per-tick convention (verified in the same recordings for the rolling Log at 200, the Bomber's bomb at 400 and the evolved Giant Snowball at 800) is 12 tiles/s and 0.55 to 0.6 s for these flights; both recorded flights exclude it. 17 is the centre of the joint bracket. https://clashroyale.fandom.com/wiki/Tower_Princess"
+ },
+ {
+  "card": "fireball",
+  "path": "projectile.speed",
+  "value": 18.0,
+  "note": "Recorded Fireball flights, LCQ broadcast of 5 September 2026, game 09YP9UPGJGU8 (local/lcqGameTwo/findings.md; local/projectileRound/fireball158launch.jpg, fireball158column.jpg): the 158.05 s Fireball leaves Wallace's King Tower at 158.30 and bursts at 159.25 after 17.6 tiles, 0.90 to 0.95 s, 18.5 to 19.6 tiles/s (18.0 to 20.1 with the frame tolerance); the 115.90 s Fireball of the 480p scan covers 10.1 tiles in about 0.55 to 0.65 s, 15.5 to 18.4 tiles/s. The export's FireballSpell speed 600 is 12 tiles/s under the engine's convention (1.47 s and 0.84 s for these flights) and both recordings exclude it. 18 is the overlap of the two readings. https://clashroyale.fandom.com/wiki/Fireball"
+ }
+]
