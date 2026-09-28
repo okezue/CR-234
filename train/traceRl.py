@@ -61,7 +61,8 @@ def prepare(cols,X,games,vocab=None):
     y=np.array([1.0 if games[str(b)]['actual_winner']==t else 0.0 for b,t in zip(cols['bid'][keep],teams)],np.float32)
     return {'S':torch.tensor(S),'H':torch.tensor(H),'card':torch.tensor(card),'cell':torch.tensor(cell),'y':torch.tensor(y),
             'phase':np.array([phase(float(t)) for t in cols['t'][keep]]),'gid':np.array([str(b) for b in cols['bid'][keep]]),
-            'idx':np.array([int(i) for i in cols['idx'][keep]]),'vocab':vocab,'n_state':S.shape[1],'mu':mu,'sd':sd}
+            'idx':np.array([int(i) for i in cols['idx'][keep]]),'team':np.array(teams),'evolved':cols['evolved'][keep].astype(bool),
+            'hero':cols['hero'][keep].astype(bool),'vocab':vocab,'n_state':S.shape[1],'mu':mu,'sd':sd}
 
 
 def split(gid,holdout=0.25):
@@ -115,10 +116,12 @@ def fit_head(head,S,y,card=None,cell=None,epochs=60,lr=2e-3,l2=1e-4,batch=4096,s
     return head
 
 
-def train_policy(pol,d,tr,method,ref=None,V=None,adv_cf=None,epochs=30,lr=1e-3,batch=2048,beta=0.5,clip=0.2,wmax=20.0,ent=0.0,seed=0,refresh=0,log=False):
+def train_policy(pol,d,tr,method,ref=None,V=None,adv_cf=None,epochs=30,lr=1e-3,batch=2048,beta=0.5,clip=0.2,wmax=20.0,ent=0.0,seed=0,refresh=0,log=False,
+                 snap=None,snap_at=()):
     # one method's update on the training records; ref is the frozen behaviour policy (ppo1, simgroup), V the frozen value head;
     # refresh > 0 re-anchors the clipped ratio to the current policy every that many epochs (iterated trust region, as with a
-    # world model that can be queried again), 0 keeps the behaviour policy as the anchor for the whole run (offline setting)
+    # world model that can be queried again), 0 keeps the behaviour policy as the anchor for the whole run (offline setting);
+    # snap(epochs_done, pol) is called after every epoch count in snap_at, so one run yields the checkpoints of an iteration
     torch.manual_seed(seed);opt=torch.optim.AdamW(pol.parameters(),lr=lr,weight_decay=1e-5)
     S,H,card,cell,y=(d[k][tr] for k in ('S','H','card','cell','y'))
     with torch.no_grad():
@@ -144,6 +147,8 @@ def train_policy(pol,d,tr,method,ref=None,V=None,adv_cf=None,epochs=30,lr=1e-3,b
             if ent:
                 lc,_=pol.card_logp(S[b],H[b]);loss=loss-ent*(-(lc.exp()*lc).sum(1)).mean()
             opt.zero_grad();loss.backward();nn.utils.clip_grad_norm_(pol.parameters(),1.0);opt.step()
+        if snap is not None and e+1 in snap_at:
+            pol.eval();snap(e+1,pol);pol.train()
     return pol
 
 
