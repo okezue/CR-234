@@ -2075,7 +2075,8 @@ def t_egiant_reflect_tower():
     eg=mk_card('electro_giant',11,'red',3.5,9.5)
     g.deploy('red',eg)
     lpt=g.arena.get_tower('blue','princess','left');eg.dmg=eg.ct_dmg=0
-    g.run(1.5)
+    # the first arrow lands at 0.2 s (3 tiles at 17 tiles/s), the stun holds the tower's swing, and the second lands at 1.5 s
+    g.run(1.4)
     assert lpt.hp==lpt.max_hp-97,f"tower should take one reflected 97, took {lpt.max_hp-lpt.hp}"
     assert any(s.kind=='stun' for s in lpt.statuses) or lpt.hp<lpt.max_hp
     return "Electro Giant reflects the tower's shot onto the tower"
