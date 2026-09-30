@@ -47,7 +47,7 @@ def t_ordinary_ramp_does_not_charge_without_target():
 def t_range_exit_resets_before_same_target_returns():
     for name in NAMES:
         g,tr,ramp,target=setup(name);target.y=10+tr.rng
-        g.run(3.5);assert tr.dmg==ramp.stages[-1]
+        g.run(4.5);assert tr.dmg==ramp.stages[-1]
         target.y=10+tr.rng+2;hp=target.hp;g.run(1)
         assert target.hp==hp and ramp.elapsed==0 and ramp.cur_tgt is None and tr.dmg==ramp.stages[0]
         target.y=10+tr.rng
@@ -87,7 +87,7 @@ def t_ramp_tower_range_uses_tower_edge_not_center():
 def t_invalid_target_clears_ramp_without_changing_status_rules():
     for name in NAMES:
         for invalid in ('dead','invisible','burrowed','stun','freeze'):
-            g,tr,ramp,target=setup(name);target.y=10+tr.rng;g.run(2)
+            g,tr,ramp,target=setup(name);target.y=10+tr.rng;g.run(2.5)
             assert tr.dmg==ramp.stages[1]
             if invalid=='dead':target.take_damage(target.hp)
             elif invalid in ('invisible','burrowed'):target.statuses.append(Status(invalid,1))
@@ -120,7 +120,7 @@ def t_walking_inferno_starts_at_low_damage():
 
 
 def t_evolution_retention_path_is_not_cleared_by_ordinary_gate():
-    g,tr,ramp,target=setup('inferno_dragon',evolved=True);target.y=10+tr.rng;g.run(2)
+    g,tr,ramp,target=setup('inferno_dragon',evolved=True);target.y=10+tr.rng;g.run(2.5)
     assert tr.dmg==ramp.stages[1]
     target.y=10+tr.rng+2;elapsed=ramp.elapsed;g.tick()
     assert ramp.cur_tgt is target and ramp.elapsed>elapsed and tr.dmg==ramp.stages[1]

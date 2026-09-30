@@ -35,7 +35,7 @@ def t_evolved_construction_separates_final_stage():
             assert tr.components.index(ramp)<tr.components.index(evo)
             assert len(ramp.stages)==3 and ramp.stages==expected[:3]
             assert tr.ramp_stages==ramp.stages
-            assert ramp.durations==tr.ramp_durations==[1.5,1.5]
+            assert ramp.durations==tr.ramp_durations==[2.0,2.0]
             assert (evo.s4_dmg,evo.s4_time,evo.retain)==(expected[-1],20.0,7.0)
             assert tr.ct_dmg==expected[0]
     assert card('inferno_dragon')==source
@@ -119,7 +119,7 @@ def t_ordinary_ramps_and_crown_routing_stay_unchanged():
     for name,stages in (('inferno_dragon',[35,120,422]),('inferno_tower',[43,158,847]),('mighty_miner',[43,204,409])):
         tr=create(name,11,'blue',9,10)
         ramp=next(c for c in tr.components if isinstance(c,RampUp))
-        assert ramp.stages==stages and ramp.durations==[1.5,1.5]
+        assert ramp.stages==stages and ramp.durations==[2.0,2.0]
         assert tr.ct_dmg==stages[0]
     g,tr,_,evo,_=setup();tower=g.arena.get_tower('red','princess','left');tower.alive=True
     tr.dmg=evo.s4_dmg;hp=tower.hp;g._do_attack(tr,tower)
