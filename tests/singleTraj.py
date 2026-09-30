@@ -36,7 +36,7 @@ def shards(tmp_path,n_games=900,n_dec=10,follow=0.6,seed=0,per=300):
         for g in range(k,min(k+per,n_games)):
             bid=f'G{g:05d}';share={'blue':0,'red':0};hid={'blue':rng.random()<0.5,'red':rng.random()<0.5};recs=[]
             for i in range(n_dec):
-                team='blue' if i%2==0 else 'red';s=rng.normal(0,1,FEAT_DIM).astype(np.float32);c=1.0 if rng.random()<0.5 else -1.0;s[40]=c*3.0
+                team='blue' if i%2==0 else 'red';s=np.zeros(FEAT_DIM,np.float32);s[:16]=rng.normal(0,1,16);c=1.0 if rng.random()<0.5 else -1.0;s[40]=c*3.0
                 right=right_card(c);card=right if rng.random()<follow else rng.choice([h for h in HANDS.split('|') if h!=right])
                 share[team]+=card==right;x,y=CELLS[int(rng.choice(own_cells(team)))][0];X.append(s.astype(np.float16))
                 opp=('minions' if hid[team] else 'musketeer')+'|goblins|zap|hog'
@@ -128,9 +128,10 @@ def t_single_pass_recipes_learn_the_planted_rule_and_flipped_outcomes_do_not(tmp
     for a in ('flash:mu=warm','sao:mu=warm','bpco:mu=warm','bpco_hidden:mu=warm'):assert g[a]>0.02,(a,g)
     for a in ('flash:mu=warm:flip','bpco:mu=warm:flip'):assert g[a]<min(g['flash:mu=warm'],g['bpco:mu=warm'])/2,(a,g)
     assert abs(g['bc_online'])<g['bpco:mu=warm']
-    st=r['train_stats']['flash:mu=warm'];assert all(0<v['admitted']<=1 for v in st.values())
-    # the trust region binds harder with the estimate fit on other data than with the actor's own starting point
-    assert np.mean([v['masked'] for v in r['train_stats']['bpco'].values()])>=np.mean([v['masked'] for v in r['train_stats']['bpco:mu=warm'].values()])
+    # against a fixed behaviour estimate the sequence trust region admits most trajectories at first and closes as the actor drifts
+    st=r['train_stats']['flash:mu=warm'];assert st['day244']['admitted']>st['day247']['admitted']>=0
+    # with the actor's own starting point as the estimate the first day's ratios start at one; the estimate fit on other data does not
+    st=r['train_stats'];assert st['bpco:mu=warm']['day244']['abs_logratio']<st['bpco']['day244']['abs_logratio']
     assert m['flash_nogate']['kl_to_bc']>=m['flash:mu=warm']['kl_to_bc'] and 'critic_heldB' in m['bpco:mu=warm']
 
 

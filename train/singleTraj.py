@@ -27,7 +27,8 @@ References: bc (the warm-up behaviour clone every arm starts from, frozen), bc_o
 floor). Evaluation on held-out games (the final day, half B; the Q model is fit on half A) and prequentially on each next unseen day
 before training on it: winner gap, agreement with winners' and losers' cards, KL to bc, entropy, mass on plays with support in the
 data seen so far, and the Q-eval three ways: restricted to supported plays and renormalised, pessimistic (off-support mass scored at
-the state's worst supported play), and direct (unrestricted; the estimate the REINFORCE collapse fooled before).
+the state's worst supported play), and direct (unrestricted; the estimate the REINFORCE collapse fooled before). The winner gap also
+rises when a policy is merely sharper in states that look won, so the entropy gap (won minus lost states) is reported beside it.
 Usage: python -m train.singleTraj pack|prep|arms ... (see main)
 """
 import argparse
@@ -182,7 +183,7 @@ def extend(c,base,priv=(),mu=None,flip=None):
     # an arm's view of a batch: its critic-only inputs, its behaviour estimate and, for the noise floor, its flipped outcomes
     (a,b),(ta,tb)=base['rows'],base['trajs'];out=dict(base)
     if priv:out['Z']=c.priv(priv,np.arange(a,b))
-    if mu is not None:out['mu']=torch.from_numpy(np.asarray(mu[a:b],np.float32))
+    if mu is not None:out['mu']=torch.from_numpy(np.array(mu[a:b],np.float32))
     if flip is not None:out['R']=torch.where(torch.from_numpy(flip[c.a['t_game'][ta:tb]]),1-base['R'],base['R'])
     return out
 
@@ -391,12 +392,12 @@ def support(c,rows,min_n=5):
 
 def evaluate(pol,ref,Q,ev,sup,q_n=30000,chunk=20000):
     # held-out metrics of one policy against the reference (bc): see the module docstring; the Q-eval uses the first q_n records
-    S,H,card,cell,y=ev['S'],ev['H'],ev['card'],ev['cell'],ev['y'];n=len(y);won=y>0.5;acc={k:[] for k in ('lp','kl','ent','top','mass')};qs=[]
+    S,H,card,cell,y=ev['S'],ev['H'],ev['card'],ev['cell'],ev['y'];n=len(y);won=y>0.5;acc={k:[] for k in ('lp','lpc','kl','ent','top','mass')};qs=[]
     with torch.no_grad():
         for i in range(0,n,chunk):
-            s,h=S[i:i+chunk],H[i:i+chunk];lp=token_logp(pol,s,h,card[i:i+chunk],cell[i:i+chunk]).sum(1);menu=pol.menu_logp(s,h);rm=ref.menu_logp(s,h)
+            s,h=S[i:i+chunk],H[i:i+chunk];tk=token_logp(pol,s,h,card[i:i+chunk],cell[i:i+chunk]);lp=tk.sum(1);menu=pol.menu_logp(s,h);rm=ref.menu_logp(s,h)
             p=menu.exp();ok=sup[h.clamp(min=0)]&(h>=0)[:,:,None];mc=menu.clamp(min=-30)
-            acc['lp'].append(lp);acc['kl'].append((p*(mc-rm.clamp(min=-30))).sum((1,2)));acc['ent'].append(-(p*mc).sum((1,2)))
+            acc['lp'].append(lp);acc['lpc'].append(tk[:,0]);acc['kl'].append((p*(mc-rm.clamp(min=-30))).sum((1,2)));acc['ent'].append(-(p*mc).sum((1,2)))
             lc,_=pol.card_logp(s,h);acc['top'].append(lc.argmax(1));acc['mass'].append((p*ok).sum((1,2)))
             if i<q_n:
                 m=min(chunk,q_n-i);q,okq=menu_q(Q,s[:m],h[:m],sup);pm=p[:m];qs.append((pm,okq,q,(h[:m]>=0)[:,:,None].expand(-1,-1,N_CELLS)))
@@ -407,7 +408,8 @@ def evaluate(pol,ref,Q,ev,sup,q_n=30000,chunk=20000):
         qdir=(pm*q*valid).sum((1,2)).mean()
     out={'logp':float(lp.mean()),'winner_gap':float(lp[won].mean()-lp[~won].mean()),'top1_won':float((a['top'][won]==card[won]).float().mean()),
          'top1_lost':float((a['top'][~won]==card[~won]).float().mean()),'kl_to_bc':float(a['kl'].mean()),'entropy':float(a['ent'].mean()),
-         'support_mass':float(a['mass'].mean()),'q_support':float(qsup),'q_pess':float(qpess),'q_direct':float(qdir),'records':n,'q_records':int(len(pm))}
+         'support_mass':float(a['mass'].mean()),'winner_gap_card':float(a['lpc'][won].mean()-a['lpc'][~won].mean()),
+         'entropy_gap':float(a['ent'][won].mean()-a['ent'][~won].mean()),'q_support':float(qsup),'q_pess':float(qpess),'q_direct':float(qdir),'records':n,'q_records':int(len(pm))}
     for i,(_,_,label) in enumerate(PHASES):
         m=torch.from_numpy(ev['phase']==i)
         if (m&won).sum()>=50 and (m&~won).sum()>=50:out[f'winner_gap_{label}']=float(lp[m&won].mean()-lp[m&~won].mean())
@@ -522,6 +524,24 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
     return rep
 
 
+def table(paths):
+    # one markdown row per arm and run: changes against bc on held-out B, the pre-registered leave-the-data flag (the direct Q-eval gains
+    # more than 0.002 over the pessimistic one, or support mass falls by more than a point), and the pass's mean training statistics
+    cols=('run','arm','winner gap','entropy gap','top1 won-lost','KL','entropy','support','dq support','dq pess','dq direct','flag','admitted','masked',
+          'critic EV')
+    rows=['| '+' | '.join(cols)+' |','|'+'---|'*len(cols)];f=lambda v,d=4:'' if v is None else f'{v:.{d}f}'
+    for p in paths:
+        r=json.loads(Path(p).read_text());b=r['bc']
+        for arm,m in [('bc',b)]+list(r['arms'].items()):
+            st=r['train_stats'].get(arm,{});mean=lambda k:float(np.mean([v[k] for v in st.values() if k in v])) if any(k in v for v in st.values()) else None
+            dq={k:m[k]-b[k] for k in ('q_support','q_pess','q_direct')};flag=dq['q_direct']-dq['q_pess']>0.002 or m['support_mass']<b['support_mass']-0.01
+            cells=(Path(p).stem,arm,f(m['winner_gap']),f(m.get('entropy_gap')),f(m['top1_won']-m['top1_lost'],3),f(m['kl_to_bc']),f(m['entropy'],3),
+                   f(m['support_mass']),f(dq['q_support']),f(dq['q_pess']),f(dq['q_direct']),'LEAVES' if flag else '',f(mean('admitted'),3),f(mean('masked'),3),
+                   f((m.get('critic_heldB') or {}).get('ev')))
+            rows.append('| '+' | '.join(cells)+' |')
+    return '\n'.join(rows)
+
+
 def main():
     ap=argparse.ArgumentParser();sp=ap.add_subparsers(dest='cmd',required=True)
     a=sp.add_parser('pack');a.add_argument('--states',required=True);a.add_argument('--out',required=True)
@@ -530,9 +550,11 @@ def main():
     a.add_argument('--critic_epochs',type=int,default=2)
     a=sp.add_parser('arms');a.add_argument('--pack',required=True);a.add_argument('--arms',nargs='+',required=True);a.add_argument('--slice',default='all')
     a.add_argument('--out',required=True);a.add_argument('--threads',type=int,default=4);a.add_argument('--batch_games',type=int,default=64)
-    a.add_argument('--lr',type=float,default=1e-4);a=ap.parse_args()
+    a.add_argument('--lr',type=float,default=1e-4)
+    a=sp.add_parser('table');a.add_argument('runs',nargs='+');a=ap.parse_args()
     if a.cmd=='pack':print(json.dumps(pack(a.states,a.out,a.warm_end,a.held_start),indent=1))
     elif a.cmd=='prep':prep(a.pack,threads=a.threads,bc_epochs=a.bc_epochs,critic_epochs=a.critic_epochs)
+    elif a.cmd=='table':print(table(a.runs))
     else:
         r=run_arms(a.pack,a.arms,a.slice,a.out,a.batch_games,a.lr,threads=a.threads)
         keys=('winner_gap','top1_won','top1_lost','kl_to_bc','entropy','support_mass','q_support','q_pess','q_direct')
