@@ -155,6 +155,8 @@ def t_the_pessimistic_q_eval_does_not_reward_leaving_the_data(tmp_path):
     a=evaluate(bc,bc,Q(),ev,sup,q_n=400);b=evaluate(leave,bc,Q(),ev,sup,q_n=400)
     assert b['support_mass']<a['support_mass']-0.5 and b['q_direct']>a['q_direct']+0.3
     assert b['q_pess']<a['q_pess'] and abs(b['q_support']-a['q_support'])<1e-3
+    strict=sup.clone();strict[:,:24]=False;s=evaluate(bc,bc,Q(),ev,sup,q_n=400,strict=strict)
+    assert s['support_mass_strict']<s['support_mass'] and s['q_pess_strict']<=s['q_pess']+1e-6 and 0<s['q_top_mass']<1
     lp=token_logp(bc,ev['S'][:5],ev['H'][:5],ev['card'][:5],ev['cell'][:5]).sum(1)
     assert torch.allclose(lp,bc.logp(ev['S'][:5],ev['H'][:5],ev['card'][:5],ev['cell'][:5]),atol=1e-5)
 

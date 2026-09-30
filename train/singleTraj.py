@@ -390,8 +390,9 @@ def support(c,rows,min_n=5):
     return torch.from_numpy(cnt>=min_n)
 
 
-def evaluate(pol,ref,Q,ev,sup,q_n=30000,chunk=20000):
-    # held-out metrics of one policy against the reference (bc): see the module docstring; the Q-eval uses the first q_n records
+def evaluate(pol,ref,Q,ev,sup,q_n=30000,chunk=20000,strict=None):
+    # held-out metrics of one policy against the reference (bc): see the module docstring; the Q-eval uses the first q_n records; strict,
+    # a support mask with a higher count threshold, adds the mass and pessimistic Q-eval on it and the mass on each state's Q-argmax play
     S,H,card,cell,y=ev['S'],ev['H'],ev['card'],ev['cell'],ev['y'];n=len(y);won=y>0.5;acc={k:[] for k in ('lp','lpc','kl','ent','top','mass')};qs=[]
     with torch.no_grad():
         for i in range(0,n,chunk):
@@ -400,16 +401,20 @@ def evaluate(pol,ref,Q,ev,sup,q_n=30000,chunk=20000):
             acc['lp'].append(lp);acc['lpc'].append(tk[:,0]);acc['kl'].append((p*(mc-rm.clamp(min=-30))).sum((1,2)));acc['ent'].append(-(p*mc).sum((1,2)))
             lc,_=pol.card_logp(s,h);acc['top'].append(lc.argmax(1));acc['mass'].append((p*ok).sum((1,2)))
             if i<q_n:
-                m=min(chunk,q_n-i);q,okq=menu_q(Q,s[:m],h[:m],sup);pm=p[:m];qs.append((pm,okq,q,(h[:m]>=0)[:,:,None].expand(-1,-1,N_CELLS)))
+                m=min(chunk,q_n-i);q,okq=menu_q(Q,s[:m],h[:m],sup);pm=p[:m];vs=(h[:m]>=0)[:,:,None].expand(-1,-1,N_CELLS)
+                qs.append((pm,okq,q,vs,(strict[h[:m].clamp(min=0)]&vs) if strict is not None else okq))
         a={k:torch.cat(v) for k,v in acc.items()};lp=a['lp']
         pm=torch.cat([x[0] for x in qs]);okq=torch.cat([x[1] for x in qs]);q=torch.cat([x[2] for x in qs]);valid=torch.cat([x[3] for x in qs])
         mass=(pm*okq).sum((1,2));cov=mass>1e-6;qsup=((pm*okq*q).sum((1,2))[cov]/mass[cov]).mean()
         qmin=torch.where(okq,q,torch.full_like(q,2.0)).amin((1,2));qpess=((pm*okq*q).sum((1,2))+(1-mass)*qmin)[cov].mean()
-        qdir=(pm*q*valid).sum((1,2)).mean()
+        qdir=(pm*q*valid).sum((1,2)).mean();oks=torch.cat([x[4] for x in qs]);ms=(pm*oks).sum((1,2));cs=ms>1e-6
+        qps=((pm*oks*q).sum((1,2))+(1-ms)*torch.where(oks,q,torch.full_like(q,2.0)).amin((1,2)))[cs].mean()
+        top=torch.where(okq,q,torch.full_like(q,-1.0)).flatten(1).argmax(1);qtop=pm.flatten(1).gather(1,top[:,None])[:,0].mean()
     out={'logp':float(lp.mean()),'winner_gap':float(lp[won].mean()-lp[~won].mean()),'top1_won':float((a['top'][won]==card[won]).float().mean()),
          'top1_lost':float((a['top'][~won]==card[~won]).float().mean()),'kl_to_bc':float(a['kl'].mean()),'entropy':float(a['ent'].mean()),
          'support_mass':float(a['mass'].mean()),'winner_gap_card':float(a['lpc'][won].mean()-a['lpc'][~won].mean()),
-         'entropy_gap':float(a['ent'][won].mean()-a['ent'][~won].mean()),'q_support':float(qsup),'q_pess':float(qpess),'q_direct':float(qdir),'records':n,'q_records':int(len(pm))}
+         'entropy_gap':float(a['ent'][won].mean()-a['ent'][~won].mean()),'q_support':float(qsup),'q_pess':float(qpess),'q_direct':float(qdir),'records':n,'q_records':int(len(pm)),
+         'support_mass_strict':float(ms.mean()),'q_pess_strict':float(qps),'q_top_mass':float(qtop)}
     for i,(_,_,label) in enumerate(PHASES):
         m=torch.from_numpy(ev['phase']==i)
         if (m&won).sum()>=50 and (m&~won).sum()>=50:out[f'winner_gap_{label}']=float(lp[m&won].mean()-lp[m&~won].mean())
@@ -484,6 +489,7 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
     for p in bc.parameters():p.requires_grad_(False)
     Q=Head(c.n_state,c.n_card,hidden=hidden);Q.load_state_dict(torch.load(P/'q.pt'));Q.eval();E=torch.load(P/'evals.pt',weights_only=False);sup=E['sup']
     evs={k:eval_set(c,r) for k,r in E['rows'].items()};stream=c.games('stream')
+    strict=support(c,np.concatenate([c.records(c.games('warm')),c.records(stream)]),100)
     if slice_=='rolled':gs=stream[A['g_rolled'][stream]];src='rolled';gs=gs[json.loads((P/'prep.json').read_text())['rolled_pretrain_games']:]
     elif slice_.startswith('last:'):gs=stream[-int(slice_[5:]):];src='warm'
     else:gs=stream;src='warm'
@@ -517,10 +523,12 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
             cfg=a.cfg;a.step(extend(c,base,cfg.get('priv',()),mus[f"{cfg['mu']}_{cfg['T']:g}"],flips.get(cfg['seed']) if cfg['flip'] else None))
         if (nb+1)%500==0:log(f'[{time.monotonic()-t0:.0f}s] batch {nb+1}/{len(bl)}',flush=True)
     for a in arms:
-        rep['train_stats'][a.spec][f'day{cur}']=a.take_stats();a.pol.eval();rep['arms'][a.spec]=evaluate(a.pol,bc,Q,evs['heldB'],sup['final'])
+        rep['train_stats'][a.spec][f'day{cur}']=a.take_stats();a.pol.eval();rep['arms'][a.spec]=evaluate(a.pol,bc,Q,evs['heldB'],sup['final'],strict=strict)
         if a.critic is not None:rep['arms'][a.spec]['critic_heldB']=critic_ev(a.critic,c,evs['heldB']['rows'],a.cfg['priv'])
-    rep['bc']=evaluate(bc,bc,Q,evs['heldB'],sup['final']);rep['seconds']=round(time.monotonic()-t0,1)
-    if out:Path(out).parent.mkdir(parents=True,exist_ok=True);Path(out).write_text(json.dumps(rep,indent=1)+'\n')
+    rep['bc']=evaluate(bc,bc,Q,evs['heldB'],sup['final'],strict=strict);rep['seconds']=round(time.monotonic()-t0,1)
+    if out:
+        Path(out).parent.mkdir(parents=True,exist_ok=True);Path(out).write_text(json.dumps(rep,indent=1)+'\n')
+        torch.save({a.spec:a.pol.state_dict() for a in arms},Path(out).with_suffix('.pt'))
     return rep
 
 
@@ -566,8 +574,8 @@ def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2
 def table(paths):
     # one markdown row per arm and run: changes against bc on held-out B, the pre-registered leave-the-data flag (the direct Q-eval gains
     # more than 0.002 over the pessimistic one, or support mass falls by more than a point), and the pass's mean training statistics
-    cols=('run','arm','winner gap','entropy gap','top1 won-lost','KL','entropy','support','dq support','dq pess','dq direct','flag','admitted','masked',
-          'critic EV')
+    cols=('run','arm','winner gap','entropy gap','top1 won-lost','KL','entropy','support','dq support','dq pess','dq direct','flag','support100','dq pess100',
+          'top-Q mass','admitted','masked','critic EV')
     rows=['| '+' | '.join(cols)+' |','|'+'---|'*len(cols)];f=lambda v,d=4:'' if v is None else f'{v:.{d}f}'
     for p in paths:
         r=json.loads(Path(p).read_text());b=r['bc']
@@ -575,8 +583,9 @@ def table(paths):
             st=r['train_stats'].get(arm,{});mean=lambda k:float(np.mean([v[k] for v in st.values() if k in v])) if any(k in v for v in st.values()) else None
             dq={k:m[k]-b[k] for k in ('q_support','q_pess','q_direct')};flag=dq['q_direct']-dq['q_pess']>0.002 or m['support_mass']<b['support_mass']-0.01
             cells=(Path(p).stem,arm,f(m['winner_gap']),f(m.get('entropy_gap')),f(m['top1_won']-m['top1_lost'],3),f(m['kl_to_bc']),f(m['entropy'],3),
-                   f(m['support_mass']),f(dq['q_support']),f(dq['q_pess']),f(dq['q_direct']),'LEAVES' if flag else '',f(mean('admitted'),3),f(mean('masked'),3),
-                   f((m.get('critic_heldB') or {}).get('ev')))
+                   f(m['support_mass']),f(dq['q_support']),f(dq['q_pess']),f(dq['q_direct']),'LEAVES' if flag else '',f(m.get('support_mass_strict')),
+                   f(m['q_pess_strict']-b['q_pess_strict'] if 'q_pess_strict' in m and 'q_pess_strict' in b else None),f(m.get('q_top_mass'),3),
+                   f(mean('admitted'),3),f(mean('masked'),3),f((m.get('critic_heldB') or {}).get('ev')))
             rows.append('| '+' | '.join(cells)+' |')
     return '\n'.join(rows)
 
