@@ -1,0 +1,26 @@
+[
+ {
+  "card": "inferno_dragon",
+  "path": "skills.rampingDamage.rampInterval",
+  "value": 2.0,
+  "note": "Two seconds per damage stage. The client game data as extracted by RoyaleAPI gives InfernoDragon variable_damage_time1 2000 and variable_damage_time2 2000 (ms), and the card page says the damage goes up a stage every two seconds until stage 3, with the optimal stun at 4 seconds; no balance entry changes the stage time. ClashStrategic cs2.4.0 gives every ramp record 1.5, the Monk's non-timed Deflect combo included. https://clashroyale.fandom.com/wiki/Inferno_Dragon https://github.com/RoyaleAPI/cr-api-data/blob/master/docs/json/cards_stats.json"
+ },
+ {
+  "card": "inferno_dragon",
+  "path": "evo.skills.rampingDamage.rampInterval",
+  "value": 2.0,
+  "note": "The evolution keeps the base beam's first three stages (Beam Momentum only retains the charge and adds a fourth stage after 20 seconds), so its stage time is the base card's two seconds. https://clashroyale.fandom.com/wiki/Inferno_Dragon/Evolution"
+ },
+ {
+  "card": "inferno_tower",
+  "path": "skills.rampingDamage.rampInterval",
+  "value": 2.0,
+  "note": "Two seconds per damage stage: the card page gives 5% of the maximum damage for the first two seconds and 18.75% in the next two, and the client game data as extracted by RoyaleAPI gives InfernoTower variable_damage_time1 2000 and variable_damage_time2 2000 (ms); no balance entry changes the stage time. https://clashroyale.fandom.com/wiki/Inferno_Tower https://github.com/RoyaleAPI/cr-api-data/blob/master/docs/json/cards_stats.json"
+ },
+ {
+  "card": "mighty_miner",
+  "path": "skills.ability.skills.rampingDamage.rampInterval",
+  "value": 2.0,
+  "note": "Two seconds per damage stage: the Balance Update of 8/1/2025 decreased the time required to change stages to 2 seconds (from 2.25, set on 8/8/2023; RoyaleAPI's extraction still carries the 2250 ms of that period). https://clashroyale.fandom.com/wiki/Mighty_Miner"
+ }
+]

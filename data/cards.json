@@ -4961,7 +4961,7 @@
        [null, null, null, null, null, null, null, null, 699, 768, 844, 927, 1019, 1118, 1227, 1349]
       ],
       "finalStageTime": 20.0,
-      "rampInterval": 1.5,
+      "rampInterval": 2.0,
       "retainTime": 7.0
      }
     },
@@ -4996,7 +4996,7 @@
       [null, null, null, null, null, null, null, null, 99, 109, 120, 132, 145, 159, 174, 192],
       [null, null, null, null, null, null, null, null, 349, 384, 422, 463, 509, 559, 613, 674]
      ],
-     "rampInterval": 1.5
+     "rampInterval": 2.0
     }
    },
    "speed": 60,
@@ -5007,6 +5007,7 @@
     "evo.skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
     "evo.skills.rampingDamage.damageTiers[3][]": "derived:levelMult",
     "evo.skills.rampingDamage.finalStageTime": "patch:2026-09-01",
+    "evo.skills.rampingDamage.rampInterval": "patch:2026-09-30",
     "evo.skills.rampingDamage.retainTime": "patch:2026-09-01",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
@@ -5015,6 +5016,7 @@
     "skills.rampingDamage.damageTiers[0][]": "derived:levelMult",
     "skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
     "skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
+    "skills.rampingDamage.rampInterval": "patch:2026-09-30",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -5063,7 +5065,7 @@
       [null, null, 75, 82, 90, 99, 109, 119, 131, 144, 158, 174, 191, 210, 230, 253],
       [null, null, 400, 440, 483, 529, 582, 638, 701, 771, 847, 930, 1022, 1122, 1231, 1353]
      ],
-     "rampInterval": 1.5
+     "rampInterval": 2.0
     }
    },
    "speed": null,
@@ -5072,6 +5074,7 @@
     "skills.rampingDamage.damageTiers[0][]": "derived:levelMult",
     "skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
     "skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
+    "skills.rampingDamage.rampInterval": "patch:2026-09-30",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -5863,7 +5866,7 @@
         [null, null, null, null, null, null, null, null, null, null, 204, 224, 247, 271, 297, 327],
         [null, null, null, null, null, null, null, null, null, null, 409, 449, 494, 542, 595, 654]
        ],
-       "rampInterval": 1.5
+       "rampInterval": 2.0
       }
      }
     },
@@ -5881,6 +5884,7 @@
     "skills.ability.skills.rampingDamage.damageTiers[0][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
+    "skills.ability.skills.rampingDamage.rampInterval": "patch:2026-09-30",
     "skills.immunity.knockback": "patch:2026-09-05",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9665,7 +9669,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-28",
+  "built": "2026-09-30",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9810,6 +9814,10 @@
    {
     "name": "data/patches/2026-09-28.json",
     "tag": "patch:2026-09-28"
+   },
+   {
+    "name": "data/patches/2026-09-30.json",
+    "tag": "patch:2026-09-30"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
