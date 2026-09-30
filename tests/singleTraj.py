@@ -173,3 +173,11 @@ def t_the_world_model_as_an_environment_learns_from_an_oracle_menu(tmp_path):
     rep=simgroup(d,cf,epochs=(1,5),batch_size=256,lr=3e-3,hidden=32,threads=1,log=lambda *a,**k:None)
     assert rep['games']==200 and rep['rows']==200*10*3
     assert rep['arms']['simgroup:epochs=5']['winner_gap']>rep['arms']['simgroup:epochs=1']['winner_gap']>rep['bc']['winner_gap']
+
+
+def t_a_short_menu_never_masks_the_first_vocabulary_card():
+    # a hand with an empty slot and vocabulary card 0 in it: the card keeps its probability under both log-probability paths
+    torch.manual_seed(0);pol=Policy(8,6,hidden=16);S=torch.randn(3,8);H=torch.tensor([[3,0,-1,-1],[0,2,5,-1],[4,1,0,2]]);card=torch.tensor([0,0,0]);cell=torch.tensor([1,2,3])
+    lp=token_logp(pol,S,H,card,cell)
+    assert torch.isfinite(lp).all() and (lp[:,0]>-20).all() and torch.allclose(lp.sum(1),pol.logp(S,H,card,cell),atol=1e-5)
+    menu=pol.menu_logp(S,H).exp().sum((1,2));assert torch.allclose(menu,torch.ones(3),atol=1e-4)

@@ -190,7 +190,7 @@ def extend(c,base,priv=(),mu=None,flip=None):
 
 def token_logp(pol,S,H,card,cell,T=1.0,temps=None):
     # (n, 2) log-probabilities of the card token and the cell token given the card at temperature T, or a list of them for temps
-    h=pol.trunk(S);logits=pol.card(h);mask=torch.zeros_like(logits,dtype=torch.bool);mask.scatter_(1,H.clamp(min=0),H>=0)
+    h=pol.trunk(S);logits=pol.card(h);mask=torch.zeros_like(logits,dtype=torch.bool);mask.scatter_(1,torch.where(H>=0,H,H[:,:1]),True)
     cl=pol.cell(torch.cat([h,pol.emb(card)],1));out=[]
     for t in temps or (T,):
         lc=F.log_softmax((logits/t).masked_fill(~mask,-1e9),1).gather(1,card[:,None])[:,0]
