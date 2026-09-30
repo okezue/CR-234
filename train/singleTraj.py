@@ -513,6 +513,7 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
             if cur is not None:
                 for a in arms:rep['train_stats'][a.spec][f'day{cur}']=a.take_stats()
             if prequential and slice_=='all' and f'day{d}' in evs:
+                rep['prequential'].setdefault('bc',{})[f'day{d}']=evaluate(bc,bc,Q,evs[f'day{d}'],sup[f'day{d}'],q_n=10000)
                 for a in arms:
                     a.pol.eval();rep['prequential'][a.spec][f'day{d}']=evaluate(a.pol,bc,Q,evs[f'day{d}'],sup[f'day{d}'],q_n=10000);a.pol.train()
                 gaps=' '.join(f"{a.spec}:{rep['prequential'][a.spec][f'day{d}']['winner_gap']}" for a in arms)
