@@ -194,6 +194,39 @@ def per_mode(h,a):
     return out
 
 
+def rate_block(a,vocab,min_n,rrates,h1,c6,wd,k=10):
+    rates={vocab[c]:v for c,v in holder_rates(a).items() if v['n']>=min_n}
+    block={'games':int(len(a['y'])),'team_win_rate':round(float(a['y'].mean()),4),'cards':len(rates),
+           'holder_rates':{c:{'n':v['n'],'rate':round(v['rate'],4),'se':round(v['se'],4)} for c,v in sorted(rates.items(),key=lambda kv:-kv[1]['rate'])}}
+    if rrates:
+        common=[c for c in rates if c in rrates];rr=np.array([rrates[c]['rate'] for c in common])
+        block['stream_vs_replay']={'cards':len(common),'spearman':spearman(np.array([rates[c]['rate'] for c in common]),rr),
+                                   'spearman_stream_weight_vs_replay_rate':spearman(np.array([wd[c] for c in common]),rr),
+                                   'moved_3se':moved(rates,rrates),'stream_only':sorted(set(rates)-set(rrates)),'replay_only':sorted(set(rrates)-set(rates))}
+    if h1 and c6:
+        # the simulated holder rate of the replay set minus the stream's recorded rate; hero variants take their base card's stream rate
+        table={}
+        for c,v in h1['cards'].items():
+            sc=rates.get(base(c))
+            if sc is None or c not in c6:continue
+            n6,s6,r6=c6[c];sim6=s6/n6
+            table[c]={'bias_head1':v['bias'],'correction_head1':v['correction'],'sim_rate_replay':round(sim6,4),'sim_n':n6,'recorded_replay':round(r6/n6,4),
+                      'recorded_stream':round(sc['rate'],4),'stream_n':sc['n'],'bias_stream':round(sim6-sc['rate'],4),'folded_hero':c.endswith('-hero')}
+        cs=sorted(table);col=lambda key:np.array([table[c][key] for c in cs]);b1=col('bias_head1');bs=col('bias_stream');corr=col('correction_head1')
+        top1=sorted(cs,key=lambda c:-table[c]['bias_head1'])[:k];tops=sorted(cs,key=lambda c:-table[c]['bias_stream'])[:k]
+        bot1=sorted(cs,key=lambda c:table[c]['bias_head1'])[:k];bots=sorted(cs,key=lambda c:table[c]['bias_stream'])[:k]
+        block['bias_vs_stream']={'cards':len(cs),'spearman_bias_head1_vs_bias_stream':spearman(b1,bs),'spearman_bias_allsix_vs_bias_stream':spearman(col('sim_rate_replay')-col('recorded_replay'),bs),
+                                 'spearman_correction_vs_bias_stream':spearman(corr,bs),'spearman_correction_vs_bias_head1':spearman(corr,b1),
+                                 'spearman_sim_rate_vs_recorded_stream':spearman(col('sim_rate_replay'),col('recorded_stream')),
+                                 'spearman_sim_rate_vs_recorded_replay':spearman(col('sim_rate_replay'),col('recorded_replay')),
+                                 'spearman_recorded_replay_vs_recorded_stream':spearman(col('recorded_replay'),col('recorded_stream')),
+                                 'sd_sim_rate':round(float(col('sim_rate_replay').std()),4),'sd_recorded_replay':round(float(col('recorded_replay').std()),4),
+                                 'sd_recorded_stream':round(float(col('recorded_stream').std()),4),
+                                 'top10_distrust_head1':top1,'top10_distrust_stream':tops,'top10_overlap':len(set(top1)&set(tops)),
+                                 'top10_trust_head1':bot1,'top10_trust_stream':bots,'bottom10_overlap':len(set(bot1)&set(bots)),'table':table}
+    return block
+
+
 def run(battles,out,pairs=(),holdout=2,head1=None,holdout_day=None,min_n=2000,epochs=6,persist=None,modes=MODES):
     t0=time.time();df=load(battles,modes=modes);vocab=vocab_of(df);a=arrays(df,vocab)
     game_modes=df['gameMode_name'].value_counts().head(25);attrs=dict(df.attrs);del df
@@ -230,37 +263,21 @@ def run(battles,out,pairs=(),holdout=2,head1=None,holdout_day=None,min_n=2000,ep
     report['deck_weights']={c:round(float(w[i]),4) for i,c in enumerate(vocab)}
     report['dense_weights']=dict(zip(TOWER_TROOPS+['level_diff','king_diff'],[round(float(v),4) for v in h.d.detach().numpy()]))
     report['intercept']=round(h.b.item(),4)
-    # per-card recorded holder win rates on the whole stream (day-split rows), against the replay set and against head1's bias
-    rates={vocab[c]:v for c,v in holder_rates(sub(a,both)).items() if v['n']>=min_n}
-    report['holder_rates']={c:{'n':v['n'],'rate':round(v['rate'],4),'se':round(v['se'],4)} for c,v in sorted(rates.items(),key=lambda kv:-kv[1]['rate'])}
-    if rep is not None:
-        rrates={vocab[c]:v for c,v in holder_rates(rep).items() if v['n']>=150}
-        common=[c for c in rates if c in rrates]
-        report['replay_rates']={c:{'n':v['n'],'rate':round(v['rate'],4),'se':round(v['se'],4)} for c,v in rrates.items()}
-        rr=np.array([rrates[c]['rate'] for c in common]);wd=report['deck_weights']
-        report['stream_vs_replay']={'cards':len(common),'spearman':spearman(np.array([rates[c]['rate'] for c in common]),rr),
-                                    'spearman_stream_weight_vs_replay_rate':spearman(np.array([wd[c] for c in common]),rr),
-                                    'moved_3se':moved(rates,rrates),'stream_only':sorted(set(rates)-set(rrates)),'replay_only':sorted(set(rrates)-set(rates))}
+    p=splits['day'][0]['y'].mean();te=splits['day'][1]
+    report['models']['constant']['test_by_mode']={m:constant(p,sub(te,te['mode']==m)) for m in report['models']['deck']['test_by_mode']}
+    # per-card recorded holder win rates on all standard-rule games and on Ranked alone (the population nearest the replay set),
+    # each against the replay set's rates and against head1's bias table
+    rrates=None;h1=None;c6=None
+    if rep is not None:rrates={vocab[c]:v for c,v in holder_rates(rep).items() if v['n']>=150}
     if head1 and pairs:
         h1=json.load(open(head1));rows_by=[rows_of(j,b) for j,b in pairs]
         ct=holder_counts([r for rs in rows_by[:-holdout] for r in rs]);c6=holder_counts([r for rs in rows_by for r in rs])
-        rep_bias={c:(s-r)/n for c,(n,s,r) in ct.items() if n>=150};check=max(abs(rep_bias[c]-h1['cards'][c]['bias']) for c in h1['cards'] if c in rep_bias)
-        table={}
-        for c,v in h1['cards'].items():
-            sc=rates.get(base(c))
-            if sc is None or c not in c6:continue
-            n6,s6,r6=c6[c]
-            sim6=s6/n6;table[c]={'bias_head1':v['bias'],'correction_head1':v['correction'],'sim_rate_replay':round(sim6,4),'sim_n':n6,'recorded_replay':round(r6/n6,4),
-                                 'recorded_stream':round(sc['rate'],4),'stream_n':sc['n'],'bias_stream':round(sim6-sc['rate'],4),'folded_hero':c.endswith('-hero')}
-        cs=sorted(table);col=lambda k:np.array([table[c][k] for c in cs]);b1=col('bias_head1');bs=col('bias_stream')
-        b6=col('sim_rate_replay')-col('recorded_replay');corr=col('correction_head1');k=10
-        top1=sorted(cs,key=lambda c:-table[c]['bias_head1'])[:k];tops=sorted(cs,key=lambda c:-table[c]['bias_stream'])[:k]
-        bot1=sorted(cs,key=lambda c:table[c]['bias_head1'])[:k];bots=sorted(cs,key=lambda c:table[c]['bias_stream'])[:k]
-        report['bias_vs_stream']={'head1_bias_reproduced_max_abs_diff':round(float(check),5),'cards':len(cs),'spearman_bias_head1_vs_bias_stream':spearman(b1,bs),
-                                  'spearman_bias_allsix_vs_bias_stream':spearman(b6,bs),'spearman_correction_vs_bias_stream':spearman(corr,bs),'spearman_correction_vs_bias_head1':spearman(corr,b1),
-                                  'spearman_bias_head1_vs_recorded_stream':spearman(b1,col('recorded_stream')),'spearman_bias_head1_vs_recorded_replay':spearman(b1,col('recorded_replay')),
-                                  'top10_distrust_head1':top1,'top10_distrust_stream':tops,'top10_overlap':len(set(top1)&set(tops)),
-                                  'top10_trust_head1':bot1,'top10_trust_stream':bots,'bottom10_overlap':len(set(bot1)&set(bots)),'table':table}
+        rep_bias={c:(s-r)/n for c,(n,s,r) in ct.items() if n>=150}
+        report['head1_bias_reproduced_max_abs_diff']=round(float(max(abs(rep_bias[c]-h1['cards'][c]['bias']) for c in h1['cards'] if c in rep_bias)),5)
+    report['rates']={}
+    for name,m in (('all',both),('ranked',both&(a['mode']=='pathOfLegend'))):
+        report['rates'][name]=rate_block(sub(a,m),vocab,min_n,rrates,h1,c6,report['deck_weights'])
+    if rrates:report['replay_rates']={c:{'n':v['n'],'rate':round(v['rate'],4),'se':round(v['se'],4)} for c,v in rrates.items()}
     report['seconds']=round(time.time()-t0,1)
     for p in [out]+([persist] if persist else []):Path(p).parent.mkdir(parents=True,exist_ok=True);Path(p).write_text(json.dumps(report,indent=1)+'\n')
     return report
@@ -275,6 +292,8 @@ if __name__=='__main__':
     rep=run(a.battles,a.out,[tuple(p.split('=')) for p in a.pairs],a.holdout,a.head1,a.holdout_day,a.min_n,a.epochs,persist=a.persist,modes=modes)
     print('games',rep['games'],'day split',rep['day_split'],'random',rep['random_split'])
     for k,v in rep['models'].items():print(k,{s:v[s]['test'] for s in ('day','random')},v.get('replay_set'))
-    if 'stream_vs_replay' in rep:
-        sv=rep['stream_vs_replay'];print('stream vs replay rates',sv['cards'],'cards spearman',round(sv['spearman'],3),'moved >3se',len(sv['moved_3se']))
-    if 'bias_vs_stream' in rep:print({k:v for k,v in rep['bias_vs_stream'].items() if k!='table'})
+    for name,blk in rep['rates'].items():
+        print(name,blk['games'],'games',blk['cards'],'cards')
+        if 'stream_vs_replay' in blk:
+            sv=blk['stream_vs_replay'];print('  stream vs replay rates',sv['cards'],'cards spearman',round(sv['spearman'],3),'moved >3se',len(sv['moved_3se']))
+        if 'bias_vs_stream' in blk:print('  ',{k:v for k,v in blk['bias_vs_stream'].items() if k!='table'})

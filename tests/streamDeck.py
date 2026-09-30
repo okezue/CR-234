@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 from train.calibratedHead import TOWER_TROOPS,features
-from train.streamDeck import arrays,constant,day_split,dense,fit,holder_rates,key_hash,load,moved,score,sub,vocab_of
+from train.streamDeck import arrays,constant,day_split,dense,fit,holder_rates,key_hash,load,moved,rate_block,score,sub,vocab_of
 
 # Synthetic battles.csv rows in the schema the stream converter writes (the frozen-sample columns, no replays). The recorded winner
 # follows a planted deck effect (the holder of 'big' wins more, of 'small' less), a planted counter ('rock' beats 'scissors' only when
@@ -106,6 +106,18 @@ def t_draft_modes_are_excluded_and_counted(tmp_path):
     synthetic(tmp_path/'d.csv',n=500,draws=10,draft=40);every=load(tmp_path/'d.csv');std=load(tmp_path/'d.csv',modes=('Ranked','Ladder'))
     assert len(every)==490 and every.attrs['draws']==10 and len(std)==450 and std.attrs['excluded_modes']=={'C.H.A.O.S Chaos_1v1_Draft':40}
     assert set(std['gameMode_name'].astype(str))=={'Ranked'}
+
+
+def t_rate_block_sets_the_simulated_rate_against_the_stream_and_folds_heroes(tmp_path):
+    synthetic(tmp_path/'b.csv',n=3000);a=arrays(load(tmp_path/'b.csv'),CARDS);rates=holder_rates(a)
+    rrates={CARDS[c]:v for c,v in rates.items()};wd={c:0.0 for c in CARDS}
+    h1={'cards':{'big':{'bias':0.2,'correction':-0.1},'giant-hero':{'bias':0.05,'correction':0.0},'unseen':{'bias':0.0,'correction':0.0}}}
+    c6={'big':(400,300,200),'giant-hero':(200,120,100)}
+    b=rate_block(a,CARDS,100,rrates,h1,c6,wd)
+    assert b['stream_vs_replay']['spearman']>0.999 and b['stream_vs_replay']['moved_3se']=={}
+    t=b['bias_vs_stream']['table'];big=rates[CARDS.index('big')];giant=rates[CARDS.index('giant')]
+    assert set(t)=={'big','giant-hero'} and abs(t['big']['bias_stream']-(0.75-big['rate']))<1e-3 and t['big']['sim_rate_replay']==0.75
+    assert t['giant-hero']['folded_hero'] and t['giant-hero']['stream_n']==giant['n'] and abs(t['giant-hero']['bias_stream']-(0.6-giant['rate']))<1e-3
 
 
 def t_moved_flags_only_the_card_whose_rate_shifted():
