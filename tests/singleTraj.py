@@ -11,7 +11,7 @@ from train.counterfactual import CELLS,own_cells
 from train.decisionStates import COLS
 from train.feats import FEAT_DIM
 from train.singleTraj import (Corpus,Critic,Policy,batch,dppo_loss,eval_set,evaluate,flash_loss,from_mat,gae,la_lambda,pack,prep,run_arms,sao_loss,
-                              to_mat,token_logp)
+                              simgroup,to_mat,token_logp)
 
 # Single-trajectory RL on synthetic production traces through the shipped pack, prep and single-pass functions. Games plant the
 # decision rule of tests/traceRl.py (feature 40 says which of knight and archers is right; the behaviour follows it 60 percent of the
@@ -110,7 +110,7 @@ def t_pack_orders_by_battle_time_and_makes_one_trajectory_per_player(tmp_path):
     # every trajectory is one team's decisions in order, labelled with that team's recorded outcome
     for ti in range(0,120,17):
         r=np.arange(A['t_start'][ti],A['t_start'][ti]+A['t_len'][ti]);assert (A['team'][r]==A['t_team'][ti]).all() and (A['pos'][r]==np.arange(5)).all()
-        assert (A['y'][r]==A['t_R'][ti]).all() and A['t_R'][2*(ti//2)]+A['t_R'][2*(ti//2)+1]==1
+        assert (A['y'][r]==A['t_R'][ti]).all() and A['t_R'][2*(ti//2)]+A['t_R'][2*(ti//2)+1]==1 and (A['idx'][r]==2*A['pos'][r]+A['t_team'][ti]).all()
     b=batch(c,3,7);assert b['n']==8 and b['S'].shape==(40,c.n_state) and int(b['tr'].max())==7 and (b['H'][:,0]==b['card']).all()
     idx={x:i for i,x in enumerate(c.vocab)};assert idx['minions'] in set(A['OH'].ravel().tolist()) and (A['ON']==idx['log']).all()
 
@@ -157,3 +157,19 @@ def t_the_pessimistic_q_eval_does_not_reward_leaving_the_data(tmp_path):
     assert b['q_pess']<a['q_pess'] and abs(b['q_support']-a['q_support'])<1e-3
     lp=token_logp(bc,ev['S'][:5],ev['H'][:5],ev['card'][:5],ev['cell'][:5]).sum(1)
     assert torch.allclose(lp,bc.logp(ev['S'][:5],ev['H'][:5],ev['card'][:5],ev['cell'][:5]),atol=1e-5)
+
+
+def t_the_world_model_as_an_environment_learns_from_an_oracle_menu(tmp_path):
+    d=packed(tmp_path);prep(d,hidden=32,bc_epochs=20,critic_epochs=1,q_epochs=10,eval_n=4000,day_n=200,rolled_pre=10,log=lambda *a,**k:None,fit_batch=256)
+    c=Corpus(d);A=c.a;rows=[]
+    # a perfect world model: in every stream decision's menu the right card returns +1 and the others -1
+    for g in c.games('stream')[:200]:
+        bid=c.meta['bid'][g]
+        for r in range(int(c.gr[g]),int(c.gr[g+1])):
+            right=right_card(float(c.X[r,40]));team='red' if A['team'][r] else 'blue'
+            for k,name in enumerate(('knight','archers','fireball')):
+                rows.append((bid,int(A['idx'][r]),k,team,name,4.5,4.5,0.0,0.0,1.0 if name==right else -1.0))
+    cf=tmp_path/'cf.json';cf.write_text(json.dumps({'rows':rows})+'\n')
+    rep=simgroup(d,cf,epochs=(1,5),batch_size=256,lr=3e-3,hidden=32,threads=1,log=lambda *a,**k:None)
+    assert rep['games']==200 and rep['rows']==200*10*3
+    assert rep['arms']['simgroup:epochs=5']['winner_gap']>rep['arms']['simgroup:epochs=1']['winner_gap']>rep['bc']['winner_gap']

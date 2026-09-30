@@ -46,7 +46,7 @@ from torch import nn
 import torch.nn.functional as F
 
 from train.corpusStates import load as load_shard
-from train.counterfactual import cell_of
+from train.counterfactual import cell_of,load_groups
 from train.decisionHead import PHASES,phase,relative
 from train.feats import FEAT_DIM
 from train.traceRl import HAND,N_CELLS,Head,Policy,fit_head,menu_q
@@ -85,7 +85,7 @@ def pack(states,out,warm_end='2026-09-02',held_start='2026-09-06'):
         vocab|=set(d['card'][keep].tolist())|set(d['opp_next'][keep].tolist())
     vocab=sorted(vocab-{''});idx={c:i for i,c in enumerate(vocab)};X=np.lib.format.open_memmap(out/'X.npy','w+',np.float16,(n,FEAT_DIM))
     rec={k:np.zeros(s,t) for k,s,t in (('H',(n,HAND),np.int16),('card',n,np.int16),('cell',n,np.int8),('team',n,np.int8),('t',n,np.float32),
-         ('game',n,np.int32),('pos',n,np.int16),('traj',n,np.int32),('OH',(n,HAND),np.int16),('ON',n,np.int16),('roll',(n,4),np.float16),
+         ('game',n,np.int32),('pos',n,np.int16),('idx',n,np.int16),('traj',n,np.int32),('OH',(n,HAND),np.int16),('ON',n,np.int16),('roll',(n,4),np.float16),
          ('rel',(n,6),np.float16),('y',n,np.int8))}
     games={k:[] for k in ('bid','ts','winner','sim_v','sim_dc','sim_ds','rolled','split','rstart','tstart','mode')}
     traj={k:[] for k in ('start','len','game','team','R')};w_end=utc(warm_end);h_start=utc(held_start);r0=0;s1=None;s2=None;nw=0
@@ -95,7 +95,7 @@ def pack(states,out,warm_end='2026-09-02',held_start='2026-09-06'):
         sel=[i for i,b in enumerate(bids) if b in order]
         sel.sort(key=lambda i:(order[bids[i]],cols['team'][i]!='blue',int(cols['idx'][i])))
         sel=np.array(sel,dtype=np.int64);m=len(sel);Xk=Xs[sel];X[r0:r0+m]=Xk;rel=relative(Xk.astype(np.float32))
-        rec['rel'][r0:r0+m]=rel;rec['roll'][r0:r0+m]=roll[sel];rec['t'][r0:r0+m]=cols['t'][sel]
+        rec['rel'][r0:r0+m]=rel;rec['roll'][r0:r0+m]=roll[sel];rec['t'][r0:r0+m]=cols['t'][sel];rec['idx'][r0:r0+m]=cols['idx'][sel]
         teams=cols['team'][sel];rec['team'][r0:r0+m]=(teams=='red')
         for j,i in enumerate(sel):
             r=r0+j;h=[x for x in str(cols['hand'][i]).split('|') if x in idx];c=str(cols['card'][i])
@@ -524,6 +524,45 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
     return rep
 
 
+def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2,hidden=128,threads=4,log=print):
+    # the prior arm with the world model as an environment (train.traceRl simgroup): menus of recorded decisions replayed with one play
+    # replaced (train.counterfactual), advantages the simulated return minus the menu mean (normalised), a clipped ratio against the
+    # frozen warm-up clone, evaluated after each epoch count in epochs (rollouts can be reused because the world model can be queried)
+    torch.set_num_threads(threads);c=Corpus(pack_dir);P=Path(pack_dir)/'prep';A=c.a;t0=time.monotonic()
+    bc=Policy(c.n_state,c.n_card,hidden);bc.load_state_dict(torch.load(P/'bc_warm.pt'));bc.eval()
+    for q in bc.parameters():q.requires_grad_(False)
+    Q=Head(c.n_state,c.n_card,hidden=hidden);Q.load_state_dict(torch.load(P/'q.pt'));Q.eval();E=torch.load(P/'evals.pt',weights_only=False)
+    ev=eval_set(c,E['rows']['heldB']);sup=E['sup']['final'];gid={b:g for g,b in enumerate(c.meta['bid'])};groups=load_groups(cf);where={}
+    for g in {gid[b] for b,_ in groups if b in gid}:
+        for r in range(int(c.gr[g]),int(c.gr[g+1])):where[(c.meta['bid'][g],int(A['idx'][r]))]=r
+    rows=[]
+    for key_,plays in groups.items():
+        r=where.get(key_)
+        if r is None or len(plays)<2:continue
+        rets=np.array([pl[5] for pl in plays]);hand=set(A['H'][r].tolist());vi={x:i for i,x in enumerate(c.vocab)}
+        for (name,x,y,_,_,ret) in plays:
+            if name in vi and vi[name] in hand:rows.append((r,vi[name],cell_of(x,y),ret-rets.mean()))
+    ri=np.array([x[0] for x in rows]);card=torch.tensor([x[1] for x in rows]);cell=torch.tensor([x[2] for x in rows])
+    adv=torch.tensor([x[3] for x in rows],dtype=torch.float32);adv=adv/(adv.std()+1e-6);S=c.S(0,0,ri);H=torch.from_numpy(A['H'][ri].astype(np.int64))
+    with torch.no_grad():old=bc.logp(S,H,card,cell)
+    pol=copy.deepcopy(bc)
+    for q in pol.parameters():q.requires_grad_(True)
+    opt=torch.optim.Adam(pol.parameters(),lr=lr);torch.manual_seed(0)
+    rep={'rows':len(rows),'decisions':len({x[0] for x in rows}),'games':len({int(A['game'][x[0]]) for x in rows}),'epochs':list(epochs),'arms':{},
+         'train_stats':{}}
+    for e in range(1,max(epochs)+1):
+        perm=torch.randperm(len(rows))
+        for i in range(0,len(rows),batch_size):
+            j=perm[i:i+batch_size];r=torch.exp(pol.logp(S[j],H[j],card[j],cell[j])-old[j])
+            loss=-torch.min(r*adv[j],r.clamp(1-clip,1+clip)*adv[j]).mean();opt.zero_grad();loss.backward();nn.utils.clip_grad_norm_(pol.parameters(),1.0);opt.step()
+        if e in epochs:
+            pol.eval();rep['arms'][f'simgroup:epochs={e}']=evaluate(pol,bc,Q,ev,sup);pol.train()
+            log(f'[{time.monotonic()-t0:.0f}s] simgroup epoch {e}',flush=True)
+    rep['bc']=evaluate(bc,bc,Q,ev,sup);rep['seconds']=round(time.monotonic()-t0,1)
+    if out:Path(out).write_text(json.dumps(rep,indent=1)+'\n')
+    return rep
+
+
 def table(paths):
     # one markdown row per arm and run: changes against bc on held-out B, the pre-registered leave-the-data flag (the direct Q-eval gains
     # more than 0.002 over the pessimistic one, or support mass falls by more than a point), and the pass's mean training statistics
@@ -551,10 +590,13 @@ def main():
     a=sp.add_parser('arms');a.add_argument('--pack',required=True);a.add_argument('--arms',nargs='+',required=True);a.add_argument('--slice',default='all')
     a.add_argument('--out',required=True);a.add_argument('--threads',type=int,default=4);a.add_argument('--batch_games',type=int,default=64)
     a.add_argument('--lr',type=float,default=1e-4)
+    a=sp.add_parser('simgroup');a.add_argument('--pack',required=True);a.add_argument('--cf',required=True);a.add_argument('--out',required=True)
+    a.add_argument('--threads',type=int,default=4)
     a=sp.add_parser('table');a.add_argument('runs',nargs='+');a=ap.parse_args()
     if a.cmd=='pack':print(json.dumps(pack(a.states,a.out,a.warm_end,a.held_start),indent=1))
     elif a.cmd=='prep':prep(a.pack,threads=a.threads,bc_epochs=a.bc_epochs,critic_epochs=a.critic_epochs)
     elif a.cmd=='table':print(table(a.runs))
+    elif a.cmd=='simgroup':simgroup(a.pack,a.cf,a.out,threads=a.threads)
     else:
         r=run_arms(a.pack,a.arms,a.slice,a.out,a.batch_games,a.lr,threads=a.threads)
         keys=('winner_gap','top1_won','top1_lost','kl_to_bc','entropy','support_mass','q_support','q_pess','q_direct')
