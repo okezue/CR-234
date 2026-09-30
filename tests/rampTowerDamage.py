@@ -40,20 +40,21 @@ def beam(g,tw,name,team,dy,seconds,evolved=False):
 @pytest.mark.parametrize('name',('inferno_dragon','inferno_tower','mighty_miner'))
 def t_ramp_tiers_reach_crown_towers_in_full(name,team,dy):
     g,tw=setup(team);start=tw.hp
-    t,hits=beam(g,tw,name,team,dy,6.0)
+    t,hits=beam(g,tw,name,team,dy,7.0)
     tiers=TIERS[name]
-    def tier(at):return tiers[0] if at<1.5 else tiers[1] if at<3.0 else tiers[2]
-    assert [d for at,d,_ in hits if at<1.5] and [d for at,d,_ in hits if 1.5<at<3.0] and [d for at,d,_ in hits if at>3.0]
+    # the stage clock starts on the lock tick, one tick in, so the hits at 2.0 and 4.0 s still land the lower tier
+    def tier(at):return tiers[0] if at<2.05 else tiers[1] if at<4.05 else tiers[2]
+    assert [d for at,d,_ in hits if at<2.05] and [d for at,d,_ in hits if 2.05<at<4.05] and [d for at,d,_ in hits if at>4.05]
     # the final blow is capped by the tower's remaining health; every other hit lands the full tier
     assert [(at,d) for at,d,before in hits]==[(at,min(tier(at),before)) for at,d,before in hits]
     assert t.ct_dmg==tiers[2]
     assert start-tw.hp==sum(d for _,d,_ in hits)
-    # a level 11 Princess Tower cannot survive six seconds of a locked ramp at these tiers
+    # a level 11 Princess Tower cannot survive seven seconds of a locked ramp at these tiers
     assert not tw.alive
 
 
 def t_ramp_reset_returns_tower_damage_to_the_first_tier():
-    g,tw=setup();t,hits=beam(g,tw,'inferno_dragon','blue',-2.5,3.5)
+    g,tw=setup();t,hits=beam(g,tw,'inferno_dragon','blue',-2.5,4.5)
     assert hits[-1][1]==422 and t.ct_dmg==422
     ramp=next(c for c in t.components if type(c).__name__=='RampUp')
     ramp._reset(t)
@@ -62,7 +63,7 @@ def t_ramp_reset_returns_tower_damage_to_the_first_tier():
 
 def t_stun_resets_tower_damage_through_the_shipped_tick():
     from sim.units import Status
-    g,tw=setup();t,hits=beam(g,tw,'inferno_tower','blue',-2.5,3.5)
+    g,tw=setup();t,hits=beam(g,tw,'inferno_tower','blue',-2.5,4.5)
     assert hits[-1][1]==847
     t.statuses.append(Status('stun',0.5));last=tw.hp;after=[]
     for _ in range(int(round(1.2/g.DT))):
@@ -76,19 +77,19 @@ def t_stun_resets_tower_damage_through_the_shipped_tick():
 def t_king_tower_takes_ramped_damage_too():
     g=Game(p1={'deck':DECK,'drag_del':0},p2={'deck':DECK,'drag_del':0});quiet(g)
     king=next(t for t in g.arena.towers if t.team=='red' and t.ttype=='king');king.active=True
-    t,hits=beam(g,king,'inferno_dragon','blue',-3.0,4.0)
-    assert [d for at,d,_ in hits if at>3.0] and set(d for at,d,_ in hits if at>3.0)=={422}
+    t,hits=beam(g,king,'inferno_dragon','blue',-3.0,5.0)
+    assert [d for at,d,_ in hits if at>4.05] and set(d for at,d,_ in hits if at>4.05)=={422}
 
 
 def t_ramp_tower_damage_matches_troop_damage_at_every_tier():
     # the same beam against a troop and a tower must deal the same per-hit numbers, since no reduction is sourced
-    g,tw=setup();t,tower_hits=beam(g,tw,'inferno_tower','blue',-2.5,3.6)
+    g,tw=setup();t,tower_hits=beam(g,tw,'inferno_tower','blue',-2.5,4.6)
     assert tw.alive
     g2=Game(p1={'deck':DECK,'drag_del':0},p2={'deck':DECK,'drag_del':0});quiet(g2)
     victim=create('golem',11,'red',9,14);victim.spd=0;victim.dmg=0;g2.deploy('red',victim)
     t2=create('inferno_tower',11,'blue',9,11.5);g2.deploy('blue',t2)
     last=victim.hp;troop_hits=[]
-    for _ in range(int(round(3.6/g2.DT))):
+    for _ in range(int(round(4.6/g2.DT))):
         g2.tick()
         if victim.hp!=last:troop_hits.append(last-victim.hp);last=victim.hp
     assert victim.alive
@@ -118,7 +119,7 @@ def t_evolved_inferno_dragon_fourth_tier_reaches_towers():
     evo=next(c for c in t.components if type(c).__name__=='EvoInfernoDragon')
     assert evo.s4_active
     assert hits[-1][1]==844 and t.ct_dmg==844
-    third=[d for at,d,_ in hits if 3.0<at<19.5]
+    third=[d for at,d,_ in hits if 4.05<at<19.5]
     assert third and set(third)=={422}
     assert tw.alive
 
