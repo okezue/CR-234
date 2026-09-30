@@ -27,7 +27,7 @@ def t_tower_princess_arrow_record_carries_the_recorded_speed():
 
 
 def t_tower_princess_arrow_reaches_a_target_seven_tiles_out_in_two_fifths_of_a_second():
-    # 6.8 tiles from the left tower's centre, in range from the first tick; the export's 600 over 50 flew it in 0.55 s (release tick to hit tick)
+    # 6.8 tiles from the left tower's centre, in range from the first tick; the export's 600 over 50 needs 0.60 s of flight
     g=Game();tr=Dummy('red',3.0,13.3,hp=50000,spd=0);g.deploy('red',tr)
     rel,hit=release_and_hit(g,tr)
     assert rel is not None and hit is not None,(rel,hit)
@@ -49,8 +49,7 @@ def t_fireball_cast_eighteen_tiles_from_the_king_lands_after_one_second():
 
 
 def t_other_projectiles_keep_the_export_value_over_fifty():
-    # the recorded controls of the convention and two unmeasured projectiles stay on the export; the King Tower's record carries no
-    # projectile speed, so its shot has no flight in the engine (an open item, kingBall101.jpg shows the ball airborne)
+    # the recorded controls of the convention and two unmeasured projectiles stay on the export
     assert card('the_log')['skills']['pierce']['speed']==4.0
     assert card('bomber')['projectile']['speed']==8.0
     assert card('giant_snowball')['projectile']['speed']==16.0

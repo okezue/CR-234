@@ -1,7 +1,7 @@
 import math
 import random
 from sim.arena import Arena
-from sim.towers import create as mk_tt,king,lock as tower_lock
+from sim.towers import create as mk_tt,king,load_idle,lock as tower_lock
 from sim.units import Status,hidden,has
 from sim.fx import SplashAttack,RiverJump,DualTarget,BannerBrigade,MKJump,Recoil,LineAttack,SoulCollect,SoulSummoning,SoulContinuation,EvoRoyalGiant
 from sim.path import Pathfinder
@@ -260,7 +260,7 @@ class Game:
                     t.hp=tt.hp;t.max_hp=tt.hp;t.troop=tt;t.rng=tt.RNG;t.spd=tt.spd
                 elif t.ttype=='king':
                     k=king(p.king_lvl)
-                    t.hp=t.max_hp=k['hp'];t.dmg=k['dmg'];t.spd=k['spd'];t.rng=k['rng'];t.proj_spd=k['projSpeed']
+                    t.hp=t.max_hp=k['hp'];t.dmg=k['dmg'];t.spd=k['spd'];t.fspd=k['fspd'];t.rng=k['rng'];t.proj_spd=k['projSpeed']
     def _erate(self):
         if self.t<120:return 1
         if self.t<240:return 2
@@ -497,11 +497,12 @@ class Game:
                         for _ in range(ev[2]):ev[1].level_up()
                         self.log.append(f"[{self.t:.1f}] Chef boost -> lvl {ev[1].lvl}")
             elif t.ttype=='king' and t.active:
-                t.cd=max(0,t.cd-self.DT*rate)
-                if t.cd<=0:
-                    b=tower_lock(t,t,en,t.rng)
-                    if b and t.cd<=0:
+                b=tower_lock(t,t,en,t.rng)
+                if b:
+                    t.cd=max(0,t.cd-self.DT*rate)
+                    if t.cd<=0:
                         self._shoot(t.team,t.cx,t.cy,t.proj_spd,b,lambda g,pr,b=b,dmg=t.dmg,t=t:g._tower_hit(t,b,dmg));t.cd=t.spd
+                else:t.cd=load_idle(t.cd,t.fspd,self.DT*rate)
     def _waypoint(self,tr,tx,ty):
         if getattr(tr,'transport','Ground')=='Air' or getattr(tr,'hovering',False):return tx,ty
         if any(isinstance(c,RiverJump) for c in getattr(tr,'components',[])):return tx,ty
