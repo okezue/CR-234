@@ -20,7 +20,7 @@ CARDS=['knight','archers','fireball','giant','musketeer','valkyrie','big','small
 DAYS=['2026-09-25','2026-09-26','2026-09-27','2026-09-28','2026-09-29','2026-09-30']
 
 
-def synthetic(path,n=6000,seed=0,hero=False,draws=20):
+def synthetic(path,n=6000,seed=0,hero=False,draws=20,draft=0):
     rng=random.Random(seed);rows=[]
     for i in range(n):
         tc=rng.sample(CARDS,4);oc=rng.sample(CARDS,4);tl=rng.choice([11,12,13,14,15]);ol=rng.choice([11,12,13,14,15])
@@ -31,7 +31,8 @@ def synthetic(path,n=6000,seed=0,hero=False,draws=20):
         res='D' if i<draws else ('W' if y else 'L')
         r={c:'' for c in COLS}
         r.update({'replayTag':f'B{i:06d}','player_id':'P','timestamp':f'{day} 12:00:00 UTC','battle_ts':'0','team_tags':'A','opponent_tags':'B',
-                  'gameMode_name':'Ranked','battle_type':'pathOfLegend' if i%3 else 'trail','result':res,'team_crowns':1,'opp_crowns':0,
+                  'gameMode_name':'C.H.A.O.S Chaos_1v1_Draft' if draws<=i<draws+draft else 'Ranked','battle_type':'pathOfLegend' if i%3 else 'trail',
+                  'result':res,'team_crowns':1,'opp_crowns':0,
                   'team_king_lvl':tl,'opp_king_lvl':ol,'team_tower_troop':tt,'opp_tower_troop':ot,'has_replay':False,'one_v_one':True})
         for k,c in enumerate(tc):r[f'team_card_{k}']=c+('-hero' if hero and c=='giant' else '');r[f'team_card_{k}_lvl']=tl
         for k,c in enumerate(oc):r[f'opp_card_{k}']=c;r[f'opp_card_{k}_lvl']=ol
@@ -99,6 +100,12 @@ def t_hero_variants_fold_into_the_base_card(tmp_path):
     assert 'giant-hero' in vocab_of(raw) and 'giant' in vocab_of(raw) and vocab_of(folded)==sorted(CARDS)
     a=arrays(folded,CARDS);heroes=(raw[[f'team_card_{i}' for i in range(8)]]=='giant-hero').any(axis=1).sum()
     assert a['unknown']==0 and heroes>0 and (a['T']==CARDS.index('giant')).any(1).sum()==heroes
+
+
+def t_draft_modes_are_excluded_and_counted(tmp_path):
+    synthetic(tmp_path/'d.csv',n=500,draws=10,draft=40);every=load(tmp_path/'d.csv');std=load(tmp_path/'d.csv',modes=('Ranked','Ladder'))
+    assert len(every)==490 and every.attrs['draws']==10 and len(std)==450 and std.attrs['excluded_modes']=={'C.H.A.O.S Chaos_1v1_Draft':40}
+    assert set(std['gameMode_name'].astype(str))=={'Ranked'}
 
 
 def t_moved_flags_only_the_card_whose_rate_shifted():

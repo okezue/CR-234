@@ -26,18 +26,24 @@ from train.calibratedHead import TOWER_TROOPS,metrics,rows_of,spearman
 
 CARD_COLS=[f'{s}_card_{i}' for s in ('team','opp') for i in range(8)];LVL_COLS=[c+'_lvl' for c in CARD_COLS]
 META=['replayTag','timestamp','battle_type','gameMode_name','result','team_king_lvl','opp_king_lvl','team_tower_troop','opp_tower_troop']
-ND=len(TOWER_TROOPS)+2
+ND=len(TOWER_TROOPS)+2;L2P=(1e-6,1e-5,1e-4,1e-3)
+# standard-rule modes where the players bring their own decks; draft, event-deck and modifier modes are excluded and counted
+MODES=('Ranked','Ladder','Tournament')
 
 
 def base(c):
     return c[:-5] if c.endswith('-hero') else c
 
 
-def load(path,fold_hero=False):
+def load(path,fold_hero=False,modes=None):
     # one battle per row, draws dropped; card names stay strings until the vocabulary is fixed
     cat={c:'category' for c in CARD_COLS+['team_tower_troop','opp_tower_troop','battle_type','gameMode_name']}
     df=pd.read_csv(path,usecols=META+CARD_COLS+LVL_COLS,dtype=cat,low_memory=False)
-    df=df[df['result'].isin(['W','L'])].reset_index(drop=True)
+    n=len(df);df=df[df['result'].isin(['W','L'])];df.attrs['draws']=n-len(df)
+    if modes:
+        keep=df['gameMode_name'].isin(modes);df.attrs['excluded_modes']={str(k):int(v) for k,v in df.loc[~keep,'gameMode_name'].value_counts().items() if v}
+        df=df[keep]
+    df=df.reset_index(drop=True)
     if fold_hero:
         for c in CARD_COLS:df[c]=df[c].astype(object).map(lambda v:base(v) if isinstance(v,str) else v)
     return df
@@ -173,6 +179,13 @@ def moved(stream,replay,z=3.0):
     return dict(sorted(((c,v) for c,v in out.items() if abs(v['z'])>z),key=lambda kv:-abs(kv[1]['z'])))
 
 
+def select_l2(tr,epochs):
+    # the pair penalty is chosen on the last training day, never on the held-out day
+    days=sorted(set(tr['day']));m=tr['day']==days[-1]
+    ll={l2p:score(fit(sub(tr,~m),True,True,epochs=epochs,l2_pairs=l2p),sub(tr,m))['log_loss'] for l2p in L2P}
+    return min(ll,key=ll.get),{'validation_day':days[-1],'validation_games':int(m.sum()),'log_loss_by_l2_pairs':{str(k):v for k,v in ll.items()}}
+
+
 def per_mode(h,a):
     out={}
     for m in sorted(set(a['mode'])):
@@ -181,12 +194,13 @@ def per_mode(h,a):
     return out
 
 
-def run(battles,out,pairs=(),holdout=2,head1=None,holdout_day=None,min_n=2000,epochs=6,persist=None):
-    t0=time.time();df=load(battles);vocab=vocab_of(df);a=arrays(df,vocab);game_modes=df['gameMode_name'].value_counts().head(25);del df
+def run(battles,out,pairs=(),holdout=2,head1=None,holdout_day=None,min_n=2000,epochs=6,persist=None,modes=MODES):
+    t0=time.time();df=load(battles,modes=modes);vocab=vocab_of(df);a=arrays(df,vocab)
+    game_modes=df['gameMode_name'].value_counts().head(25);attrs=dict(df.attrs);del df
     days={d:int(n) for d,n in zip(*np.unique(a['day'],return_counts=True))};modes={m:int(n) for m,n in zip(*np.unique(a['mode'],return_counts=True))}
     tr_m,te_m,hold=day_split(a,holdout_day);frac=te_m.mean()/(tr_m.mean()+te_m.mean())
     rnd=key_hash(a['key'])<frac;both=tr_m|te_m
-    report={'battles':str(battles),'games':int(len(a['y'])),'vocab':len(vocab),'unknown_card_slots':a['unknown'],'team_win_rate':round(float(a['y'].mean()),4),'days':days,'modes':modes,
+    report={'battles':str(battles),'games':int(len(a['y'])),'draws_dropped':int(attrs['draws']),'excluded_modes':attrs.get('excluded_modes',{}),'vocab':len(vocab),'unknown_card_slots':a['unknown'],'team_win_rate':round(float(a['y'].mean()),4),'days':days,'modes':modes,
             'game_modes':{str(k):int(v) for k,v in game_modes.items()},'fit':{'epochs':epochs,'batch':8192,'lr':0.05,'l2':1e-3,'l2_pairs':1e-5},
             'day_split':{'holdout_day':hold,'train_games':int(tr_m.sum()),'test_games':int(te_m.sum()),'dropped_after':int((~both).sum())},
             'random_split':{'test_fraction':round(float(frac),4),'train_games':int((both&~rnd).sum()),'test_games':int((both&rnd).sum())},'models':{}}
@@ -196,7 +210,7 @@ def run(battles,out,pairs=(),holdout=2,head1=None,holdout_day=None,min_n=2000,ep
     if pairs:
         frames=[load(b,fold_hero=True) for _,b in pairs];rdf=pd.concat(frames,ignore_index=True);rep=arrays(rdf,vocab);del frames,rdf
         report['replay_set']={'games':int(len(rep['y'])),'unknown_card_slots':rep['unknown'],'team_win_rate':round(float(rep['y'].mean()),4)}
-    heads={}
+    heads={};l2p,sel=select_l2(splits['day'][0],epochs);report['fit']['l2_pairs']=l2p;print('l2_pairs',l2p,sel,flush=True)
     for name,deck,pr in (('constant',None,None),('levels',False,False),('deck',True,False),('matchup',True,True)):
         report['models'][name]={}
         for sp,(tr,te) in splits.items():
@@ -204,16 +218,18 @@ def run(battles,out,pairs=(),holdout=2,head1=None,holdout_day=None,min_n=2000,ep
                 p=tr['y'].mean();report['models'][name][sp]={'train':constant(p,tr),'test':constant(p,te)}
                 if rep is not None and sp=='day':report['models'][name]['replay_set']=constant(p,rep)
                 continue
-            t1=time.time();h=fit(tr,deck,pr,epochs=epochs);heads[(name,sp)]=h
+            t1=time.time();h=fit(tr,deck,pr,epochs=epochs,l2_pairs=l2p);heads[(name,sp)]=h
             report['models'][name][sp]={'train':score(h,tr),'test':score(h,te),'fit_seconds':round(time.time()-t1,1)}
             if sp=='day':
                 report['models'][name]['test_by_mode']=per_mode(h,te)
                 if rep is not None:report['models'][name]['replay_set']=score(h,rep)
+                if name=='deck':report['models'][name]['seed_repeat']=score(fit(tr,deck,pr,epochs=epochs,seed=1),te)
+        if pr:report['models'][name]['l2_pairs_selection']=sel
         print(name,{sp:v['test'] for sp,v in report['models'][name].items() if sp in splits},flush=True)
     h=heads[('deck','day')];w=h.w.detach().numpy()
     report['deck_weights']={c:round(float(w[i]),4) for i,c in enumerate(vocab)}
     report['dense_weights']=dict(zip(TOWER_TROOPS+['level_diff','king_diff'],[round(float(v),4) for v in h.d.detach().numpy()]))
-    report['intercept']=round(float(h.b),4)
+    report['intercept']=round(h.b.item(),4)
     # per-card recorded holder win rates on the whole stream (day-split rows), against the replay set and against head1's bias
     rates={vocab[c]:v for c,v in holder_rates(sub(a,both)).items() if v['n']>=min_n}
     report['holder_rates']={c:{'n':v['n'],'rate':round(v['rate'],4),'se':round(v['se'],4)} for c,v in sorted(rates.items(),key=lambda kv:-kv[1]['rate'])}
@@ -254,8 +270,9 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser();ap.add_argument('--battles',required=True);ap.add_argument('--out',required=True);ap.add_argument('--persist')
     ap.add_argument('--pairs',nargs='*',default=[],help='jsonl=battles.csv of the replay set, oldest first (the six of head1)')
     ap.add_argument('--holdout',type=int,default=2);ap.add_argument('--head1');ap.add_argument('--holdout_day');ap.add_argument('--min_n',type=int,default=2000)
-    ap.add_argument('--epochs',type=int,default=6)
-    a=ap.parse_args();rep=run(a.battles,a.out,[tuple(p.split('=')) for p in a.pairs],a.holdout,a.head1,a.holdout_day,a.min_n,a.epochs,persist=a.persist)
+    ap.add_argument('--epochs',type=int,default=6);ap.add_argument('--modes',default=','.join(MODES),help='gameMode_name whitelist, empty for all')
+    a=ap.parse_args();modes=tuple(m for m in a.modes.split(',') if m) or None
+    rep=run(a.battles,a.out,[tuple(p.split('=')) for p in a.pairs],a.holdout,a.head1,a.holdout_day,a.min_n,a.epochs,persist=a.persist,modes=modes)
     print('games',rep['games'],'day split',rep['day_split'],'random',rep['random_split'])
     for k,v in rep['models'].items():print(k,{s:v[s]['test'] for s in ('day','random')},v.get('replay_set'))
     if 'stream_vs_replay' in rep:
