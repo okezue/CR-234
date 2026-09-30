@@ -439,11 +439,11 @@ def t_idrag_ramp():
     d=Dummy('red',9,13,hp=50000,spd=0)
     g.deploy('red',d)
     assert idrag.dmg==35
-    g.run(1.0)
-    assert idrag.dmg==35,"Stage 1 in first 1.5s"
+    g.run(1.5)
+    assert idrag.dmg==35,"Stage 1 in first 2s"
     g.run(1.0)
     assert idrag.dmg==120,f"Expected stage 2, got {idrag.dmg}"
-    g.run(1.5)
+    g.run(2.0)
     assert idrag.dmg==422,f"Expected stage 3, got {idrag.dmg}"
     return "Inferno Dragon ramp (35->120->422)"
 def t_idrag_reset():
@@ -453,8 +453,8 @@ def t_idrag_reset():
     d1=Dummy('red',9,13,hp=50000,spd=0)
     d2=Dummy('red',12,13,hp=50000,spd=0)
     g.deploy('red',d1);g.deploy('red',d2)
-    g.run(2.0)
-    assert idrag.dmg==120,f"Expected stage 2 after 2s, got {idrag.dmg}"
+    g.run(2.5)
+    assert idrag.dmg==120,f"Expected stage 2 after 2.5s, got {idrag.dmg}"
     d1.alive=False
     g.players['red'].troops=[t for t in g.players['red'].troops if t.alive]
     g.run(0.2)
@@ -3362,7 +3362,7 @@ def t_mightyminer_stats():
     assert abs(r.hspd-0.4)<0.01
     assert abs(r.rng-1.6)<0.01
     assert r.ramp_stages==[43,204,409]
-    assert r.ramp_durations==[1.5,1.5]
+    assert r.ramp_durations==[2.0,2.0]
     return f"Mighty Miner stats (hp={r.hp} stages={r.ramp_stages})"
 def t_mightyminer_ramp():
     g=Game()
@@ -3371,7 +3371,7 @@ def t_mightyminer_ramp():
     d=Dummy('red',9,11,hp=50000,spd=0)
     g.deploy('red',d)
     assert mm.dmg==43
-    g.run(2.0)
+    g.run(2.5)
     assert mm.dmg==204,f"Expected stage 2 (204), got {mm.dmg}"
     g.run(2.0)
     assert mm.dmg==409,f"Expected stage 3 (409), got {mm.dmg}"
@@ -3383,7 +3383,7 @@ def t_mightyminer_reset():
     d1=Dummy('red',9,11,hp=50000,spd=0)
     d2=Dummy('red',12,11,hp=50000,spd=0)
     g.deploy('red',d1);g.deploy('red',d2)
-    g.run(2.0)
+    g.run(2.5)
     assert mm.dmg==204,f"Expected stage 2, got {mm.dmg}"
     d1.alive=False
     g.players['red'].troops=[t for t in g.players['red'].troops if t.alive]
@@ -4383,7 +4383,8 @@ def t_int_freeze_inferno_reset():
     hp_5s=d.hp
     fz=mk_card('freeze',11,'red',cn.x,cn.y)
     fz.apply(g)
-    g.run(4.5)
+    # the window after the freeze starts when it lifts, the same ramp phase as the first window
+    while any(s.kind=='freeze' for s in cn.statuses):g.tick()
     hp_after_freeze=d.hp
     g.run(5)
     ramp_after=hp_after_freeze-d.hp
@@ -4684,7 +4685,7 @@ def t_mm_escape_resets_ramp():
     g.deploy('blue',mm)
     d=Dummy('red',9,11,hp=50000,spd=0)
     g.deploy('red',d)
-    g.run(2)
+    g.run(2.5)
     assert mm.dmg==204,f"Expected stage 2 (204), got {mm.dmg}"
     g.players['blue'].elixir=10
     mm.ability.cd=0

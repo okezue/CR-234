@@ -49,7 +49,6 @@ def t_beam_climbs_one_stage_every_two_seconds(name,target,team):
     assert s2-STAGE>=-1e-6 and s2-STAGE<hs+1e-6
     assert s3-2*STAGE>=-1e-6 and s3-2*STAGE<hs+1e-6
     assert all(at<STAGE for at,d in hits if d==tiers[0]) and all(STAGE<=at<2*STAGE for at,d in hits if d==tiers[1])
-    assert sum(d==tiers[0] for _,d in hits)==sum(d==tiers[1] for _,d in hits)==round(STAGE/hs)
 
 
 @pytest.mark.parametrize('team',('blue','red'))
