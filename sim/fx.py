@@ -881,26 +881,16 @@ class EvoRoyalGiant(Component):
                 e.take_damage(self.dmg)
                 push(e,tr.x,tr.y,self.kb)
 class EvoIceSpirit(Component):
+    # the jump infuses its target with an Ice Blast: delay seconds after the hit it deals the jump's damage and freeze within radius of the target,
+    # where it fell if it died (wiki Ice Spirit/Evolution; export IceSpiritsAOE_EV1 hitSpeed 3000, radius 2000, buffTime 1100)
     def __init__(self,delay,radius,freeze,dmg):
-        self.delay=delay;self.radius=radius;self.freeze=freeze;self.dmg=dmg;self.boom_pos=None;self.timer=0
-    def on_death(self,tr,g):
-        self.boom_pos=(tr.x,tr.y);self.timer=self.delay
-        g._evo_ice_pending=getattr(g,'_evo_ice_pending',[])
-        g._evo_ice_pending.append(self)
-    def tick_pending(self,dt,g,team):
-        if not self.boom_pos:return True
-        self.timer-=dt
-        if self.timer<=0:
-            x,y=self.boom_pos
-            opp='red' if team=='blue' else 'blue'
-            for e in g.players[opp].troops:
-                if not e.alive:continue
-                d=math.sqrt((e.x-x)**2+(e.y-y)**2)
-                if d<=self.radius:
-                    e.take_damage(self.dmg)
-                    e.statuses.append(Status('freeze',self.freeze))
-            return True
-        return False
+        self.delay=delay;self.radius=radius;self.freeze=freeze;self.dmg=dmg
+    def on_attack(self,tr,tgt,g):
+        def blast(g):
+            for e in near(g,tr.team,*pos(tgt),self.radius):
+                hurt(e,self.dmg,g)
+                if hasattr(e,'statuses'):e.statuses.append(Status('stun',self.freeze))
+        g.spells.append(Timer(self.delay,blast,*pos(tgt),tr.team,tr.name))
 class EvoSkelBarrel(Component):
     def __init__(self,drop_pct):
         self.drop_pct=drop_pct;self.dropped=False
