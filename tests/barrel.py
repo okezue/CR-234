@@ -68,8 +68,9 @@ def t_barrel_delay_does_not_change_other_goblin_spawns():
     for name,skill in (('goblin_drill','periodicSpawn'),('goblin_giant','periodicSpawn')):
         c=card(name);skills=c['evo']['skills'] if name=='goblin_giant' else c['skills']
         assert unit(c,skills[skill],11)['deploy']==1.0
-    for name in ('barbarian_barrel','royal_delivery'):
-        assert create(name,11,'blue',9,10).tcfg['deploy']==1.0
+    assert create('barbarian_barrel',11,'blue',9,10).tcfg['deploy']==1.0
+    # the delivered Recruit has its own 0.25 s (patch 2026-10-01s, tests/royalDeliveryLanding.py)
+    assert create('royal_delivery',11,'blue',9,10).tcfg['deploy']==0.25
     g=Game(p1={'card_levels':{'goblin_barrel':11}})
     mirrored=g._spawn('blue','mirror:goblin_barrel',9,10)
     assert mirrored.tcfg['lvl']==12 and mirrored.tcfg['deploy']==1.1

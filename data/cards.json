@@ -1744,8 +1744,9 @@
    "sightRange": null,
    "skills": {
     "slow": {
-     "duration": 3.0,
+     "duration": 1.0,
      "hitSpeedMultiplier": null,
+     "interval": 0.1,
      "spawnSpeedMultiplier": null,
      "speedMultiplier": -50
     }
@@ -1753,6 +1754,8 @@
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "skills.slow.duration": "gd:debfe1e2 areaEffectObjectData buffTime/hitSpeed",
+    "skills.slow.interval": "gd:debfe1e2 areaEffectObjectData buffTime/hitSpeed",
     "stats.buildingDamage": "gd:debfe1e2 buildingDamagePercent",
     "stats.damage[]": "derived:levelMult",
     "stats.towerDamage": "gd:debfe1e2 (damage at crownTowerDamagePercent -40; cs anchor 53 is stale)",
@@ -7473,15 +7476,18 @@
     },
     "spawn": {
      "character": "Royal Recruit",
-     "count": 1
+     "count": 1,
+     "deployTime": 0.25
     }
    },
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
+    "duration": "gd:debfe1e2 areaEffectObjectData lifeDuration",
     "skills.shield.hitpoints[]": "derived:levelMult",
     "skills.spawn.character": "legacy:spawns",
     "skills.spawn.count": "legacy:spawns",
+    "skills.spawn.deployTime": "patch:2026-10-01s",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -9717,7 +9723,7 @@
     "version": "2.4.0"
    },
    {
-    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed"],
+    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed", "skills.slow.duration/interval (Earthquake)", "duration (Royal Delivery)"],
     "fingerprint": "debfe1e2c24562a36ef753ebca3a0f239e12b4c0",
     "name": "statsroyale game data dump (ClashStrategic's upstream)",
     "tag": "gd:debfe1e2",
@@ -9836,6 +9842,10 @@
    {
     "name": "data/patches/2026-10-01g.json",
     "tag": "patch:2026-10-01g"
+   },
+   {
+    "name": "data/patches/2026-10-01s.json",
+    "tag": "patch:2026-10-01s"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

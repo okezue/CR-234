@@ -1,0 +1,8 @@
+[
+ {
+  "card": "royal_delivery",
+  "path": "skills.spawn.deployTime",
+  "value": 0.25,
+  "note": "The Royal Recruit the box drops deploys in 0.25 s, not the Royal Recruits card's 1 s: RoyaleAPI cr-api-data cards_stats.json projectile RoyalDeliveryProjectile spawn_character DeliveryRecruit with spawn_character_deploy_time 250 (the character's own deploy_time 1000 is overridden); wiki Royal Delivery, Royal Recruit Attributes table, Deploy Time 0.25 sec; the game data export's RoyalDeliveryArea spawnTime 250. The engine used to add the Recruit with no deploy at all. https://github.com/RoyaleAPI/cr-api-data/blob/master/docs/json/cards_stats.json https://clashroyale.fandom.com/wiki/Royal_Delivery"
+ }
+]

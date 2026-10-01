@@ -2371,11 +2371,12 @@ def t_ggiant_v_tower():
     assert rpt.hp<ini
     return f"Goblin Giant hits tower ({ini}->{rpt.hp})"
 def t_rdelivery_dmg():
-    g=Game()
+    # the box lands rd.delay (2 s) after the cast (tests/royalDeliveryLanding.py)
+    g=quiet(Game())
     d=Dummy('red',9,10,hp=5000,spd=0)
     g.deploy('red',d)
     rd=mk_card('royal_delivery',11,'blue',9,10)
-    rd.apply(g)
+    g._cast('blue',rd,9,10);g.run(rd.delay)
     assert d.hp==5000-384,f"Expected 384 dmg, got {5000-d.hp}"
     return f"Royal Delivery damage ({5000-d.hp})"
 def t_gcurse_load():
@@ -4276,11 +4277,11 @@ def t_gcurse_any_source():
     assert len(gobs)>=1,"Kill by external source while cursed should convert"
     return "Goblin Curse converts on any death source"
 def t_rdelivery_dmg_spawn():
-    g=Game()
+    g=quiet(Game())
     d=Dummy('red',9,10,hp=5000,spd=0)
     g.deploy('red',d)
     rd=mk_card('royal_delivery',11,'blue',9,10)
-    rd.apply(g)
+    g._cast('blue',rd,9,10);g.run(rd.delay)
     dmg=5000-d.hp
     assert dmg==384,f"Expected 384 dmg, got {dmg}"
     recruits=[t for t in g.players['blue'].troops if t.alive]
@@ -4289,7 +4290,7 @@ def t_rdelivery_dmg_spawn():
 def t_rdelivery_shield():
     g=Game()
     rd=mk_card('royal_delivery',11,'blue',9,10)
-    rd.apply(g)
+    g._cast('blue',rd,9,10);g.run(rd.delay)
     recruits=[t for t in g.players['blue'].troops if t.alive]
     assert len(recruits)==1
     r=recruits[0]

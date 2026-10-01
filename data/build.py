@@ -275,6 +275,14 @@ def gd_area(card, spell, lo, pct, tag):
     if bp and card["stats"]["damage"]:
         card["stats"]["buildingDamage"] = [None if x is None else x * bp // 100 for x in card["stats"]["damage"]]
         card["src"]["stats.buildingDamage"] = f"{tag} buildingDamagePercent"
+        sl = card["skills"].get("slow")
+        if sl is not None and ae.get("buffTime") and ae.get("hitSpeed"):
+            # the slow is the area's buff, given for buffTime to the enemies inside at every hitSpeed (cs 3.0 was the spell's life)
+            sl["duration"], sl["interval"] = ae["buffTime"] / 1000, ae["hitSpeed"] / 1000
+            card["src"]["skills.slow.duration"] = card["src"]["skills.slow.interval"] = f"{tag} areaEffectObjectData buffTime/hitSpeed"
+    if (ae.get("projectileData") or {}).get("spawnCharacterData") and ae.get("lifeDuration"):
+        # a delivery: the box lands with the area's one hit at the end of its life (Royal Delivery lifeDuration = hitSpeed 2000)
+        card["duration"], card["src"]["duration"] = ae["lifeDuration"] / 1000, f"{tag} areaEffectObjectData lifeDuration"
     for a in (ae.get("onStartingAction") or {}).get("subActions") or []:
         if a.get("classType") != "ActionLaserBall":
             continue
@@ -543,7 +551,8 @@ def main():
             {"tag": gd_tag, "name": "statsroyale game data dump (ClashStrategic's upstream)", "url": GD, "fingerprint": gd["meta"]["fingerprint"],
              "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget",
                         "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius",
-                        "summonDeployDelay", "projectile.speed", "skills.dash.speed"]},
+                        "summonDeployDelay", "projectile.speed", "skills.dash.speed", "skills.slow.duration/interval (Earthquake)",
+                        "duration (Royal Delivery)"]},
             {"tag": "wiki:<page>", "name": "Clash Royale Fandom wiki, MediaWiki API wikitext", "url": wiki.API,
              "fields": ["projectile.speed", "minRange", "towers.king_tower", "towerMult[15]", "skills.areaDamageOnDeath.radius",
                         "tick.count and per-hit damage anchors of ticking spells"]},

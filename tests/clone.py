@@ -21,7 +21,7 @@ def shielded_source(name,team,level):
     g=Game()
     for tower in g.arena.towers:tower.alive=False
     if name=='royal_delivery':
-        create(name,level,team,9,10).apply(g)
+        rd=create(name,level,team,9,10);g._cast(team,rd,9,10);g.run(rd.delay)
         original=g.players[team].troops[0]
     else:
         troops=create(name,level,team,9,10)
