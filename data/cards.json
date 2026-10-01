@@ -5852,7 +5852,8 @@
       "areaDamageOnDeath": {
        "areaEffect": null,
        "damage": [null, null, null, null, null, null, null, null, null, null, 332, 365, 401, 440, 483, 531],
-       "radius": 0.45
+       "fuse": 1.0,
+       "radius": 3.0
       },
       "burrow": {
        "duration": null
@@ -5880,6 +5881,8 @@
     "mass": "legacy:hidden_stats.mass",
     "skills.ability.cooldown": "patch:2026-09-01",
     "skills.ability.skills.areaDamageOnDeath.damage[]": "derived:levelMult",
+    "skills.ability.skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
+    "skills.ability.skills.areaDamageOnDeath.radius": "patch:2026-10-01",
     "skills.ability.skills.pushback.distance": "legacy:ability.effects.bomb",
     "skills.ability.skills.rampingDamage.damageTiers[0][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
@@ -9669,7 +9672,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-30",
+  "built": "2026-10-01",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9711,7 +9714,7 @@
     "version": "2.4.0"
    },
    {
-    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed"],
+    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed"],
     "fingerprint": "debfe1e2c24562a36ef753ebca3a0f239e12b4c0",
     "name": "statsroyale game data dump (ClashStrategic's upstream)",
     "tag": "gd:debfe1e2",
@@ -9822,6 +9825,10 @@
    {
     "name": "data/patches/2026-09-30b.json",
     "tag": "patch:2026-09-30b"
+   },
+   {
+    "name": "data/patches/2026-10-01.json",
+    "tag": "patch:2026-10-01"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

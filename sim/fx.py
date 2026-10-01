@@ -699,22 +699,16 @@ class CloakingCape(Ability):
             if self.orig_hspd is not None:tr.hspd=self.orig_hspd;self.orig_hspd=None
             if self.orig_spd is not None:tr.spd=self.orig_spd;self.orig_spd=None
 class ExplosiveEscape(Ability):
-    def __init__(self,bomb_dmg,bomb_r,kb,cost,cd):
-        super().__init__(cost,cd);self.bomb_dmg=bomb_dmg;self.bomb_r=bomb_r;self.kb=kb
+    # the bomb stays at the miner's old spot and, like the death bombs, blasts air and ground there when its fuse runs out
+    def __init__(self,bomb_dmg,bomb_r,kb,cost,cd,fuse=0):
+        super().__init__(cost,cd);self.bomb_dmg=bomb_dmg;self.bomb_r=bomb_r;self.kb=kb;self.fuse=fuse
     def activate(self,tr,g):
-        ox,oy=tr.x,tr.y
+        ox,oy,team=tr.x,tr.y,tr.team
         tr.x=g.arena.W-tr.x
-        opp=g._opp(tr.team)
-        for e in g.players[opp].troops:
-            if not e.alive:continue
-            d=math.sqrt((e.x-ox)**2+(e.y-oy)**2)
-            if d<=self.bomb_r:e.take_damage(self.bomb_dmg)
-        for tw in g.arena.towers:
-            if tw.team!=opp or not tw.alive:continue
-            d=tw.dist(ox,oy)
-            if d<=self.bomb_r:
-                tw.take_damage(self.bomb_dmg)
-                if not tw.alive:g._tower_down(tw)
+        def blast(g):
+            for e in near(g,team,ox,oy,self.bomb_r):hurt(e,self.bomb_dmg,g)
+        if self.fuse>0:g.spells.append(Timer(self.fuse,blast,ox,oy,team,tr.name))
+        else:blast(g)
         for c in tr.components:
             if hasattr(c,'_reset'):c._reset(tr)
         self.cd=self.max_cd

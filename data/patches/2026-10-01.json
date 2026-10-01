@@ -1,0 +1,8 @@
+[
+ {
+  "card": "mighty_miner",
+  "path": "skills.ability.skills.areaDamageOnDeath.radius",
+  "value": 3.0,
+  "note": "Explosive Escape's bomb blasts 3 tiles around the spot the miner left: RoyaleAPI's extraction of the client data (cr-api-data cards_stats.json, buildings MightyMinerBomb) gives death_damage_radius 3000 beside collision_radius 450, deploy_time 1000 and death_push_back 1800; the same file gives death_damage_radius 3000 and collision_radius 450 for GiantSkeletonBomb, BalloonBomb and BombTowerBomb, whose 3 tile splash radius the wiki's Bomb Attributes confirm (patch 2026-09-03). ClashStrategic cs2.4.0's 0.45 is the bomb building's collisionRadius (game data export MightyMinerBomb collisionRadius 450). The wiki says only 'medium area damage to enemies around it' and its history has no radius change since the extraction (last updated 18 October 2023). https://github.com/RoyaleAPI/cr-api-data/blob/master/docs/json/cards_stats.json https://clashroyale.fandom.com/wiki/Mighty_Miner"
+ }
+]
