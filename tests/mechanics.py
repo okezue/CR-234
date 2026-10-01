@@ -704,7 +704,9 @@ def t_hero_bowler_stone_swish():
     g.run(3);assert bw.rng==4.0 and bw.dmg==289 and 'LineAttack' in _comps(bw) and bw.spd>0
     return "Stone Swish: after a 2.5 s cast the planted Bowler lobs 578 boulders to 11.5 tiles for 7.3 s"
 def t_hero_dark_prince_destructive_dismount():
-    g=_game();dp=mk_card('dark_prince',11,'blue',9,10,hero=True);g.deploy('blue',dp);d,=_dummies(g,(9.5,10.7),hp=5000)
+    # the ability delay is pinned at its 0.15 s mean, so the dismount lands at 1.1 s: draws above 0.25 s missed the 1.2 s read
+    g=_game();g.players['blue'].ability_std=0
+    dp=mk_card('dark_prince',11,'blue',9,10,hero=True);g.deploy('blue',dp);d,=_dummies(g,(9.5,10.7),hp=5000)
     _act(g,dp);g.run(1.2);rh=_named(g,'blue','Rhino')
     assert 5000-d.hp>=307 and len(rh)==1 and rh[0].hp==1356 and rh[0].dmg==179 and rh[0].charge_dmg==358 and rh[0].targets==['Buildings']
     assert any(isinstance(c,fx.Charge) for c in rh[0].components) and not any(isinstance(c,fx.Charge) for c in dp.components)
