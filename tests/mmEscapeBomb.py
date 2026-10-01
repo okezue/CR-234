@@ -43,9 +43,9 @@ def t_escape_bomb_goes_off_one_second_after_the_escape():
 
 
 def t_escape_bomb_reaches_three_tiles_around_the_spot_on_air_and_ground():
-    # air bodies 2.5 and 4 tiles from the spot and a ground body 2.7 tiles out, beyond the miner's 1.6 reach (edge to edge 1.7)
+    # air bodies 2.5 and 4 tiles from the spot and a ground body 2.7 tiles out, beyond the miner's 1.6 reach (edge to edge 1.7), so each
+    # loses exactly the bomb or nothing
     g,mm,(near,far,gnd),te=escape(bodies=[(14.5,9.5,True),(14.5,8.0,True),(17.2,12.0,False)])
-    assert gnd.hp==5000,"The miner should not reach the ground body"
     g.run_to(te+1.05)
     assert near.hp==5000-332 and gnd.hp==5000-332,f"Bodies within 3 tiles should take the bomb: air {near.hp}, ground {gnd.hp}"
     assert far.hp==5000,f"A body 4 tiles out is beyond the blast, hp {far.hp}"
