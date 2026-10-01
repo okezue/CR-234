@@ -363,7 +363,7 @@ class WmArm:
 
 def make_wm(wm_dir,members=MEMBERS):
     # arm factory for train.singleTraj.run_arms: a WmArm for the recipes of ARMS, None for the merged ones
-    wm_dir=Path(wm_dir);queue=load_aux(wm_dir/'aux.npz')['qu'];cache={};lam_p=wm_dir/'lam.json'
+    wm_dir=Path(wm_dir);queue=np.load(wm_dir/'aux.npz')['qu'];cache={};lam_p=wm_dir/'lam.json'
     def get(flip,seed):
         if (flip,seed) not in cache:cache[(flip,seed)]=[load_member(wm_dir/(f'member{i}_flip{seed}.pt' if flip else f'member{i}.pt')) for i in members]
         return cache[(flip,seed)]
