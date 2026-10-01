@@ -706,7 +706,7 @@ class ExplosiveEscape(Ability):
         ox,oy,team=tr.x,tr.y,tr.team
         tr.x=g.arena.W-tr.x
         def blast(g):
-            for e in near(g,team,ox,oy,self.bomb_r):hurt(e,self.bomb_dmg,g)
+            for e in near(g,team,ox,oy,self.bomb_r):hurt(e,self.bomb_dmg,g);push(e,ox,oy,self.kb)
         if self.fuse>0:g.spells.append(Timer(self.fuse,blast,ox,oy,team,tr.name))
         else:blast(g)
         for c in tr.components:

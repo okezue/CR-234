@@ -5883,7 +5883,7 @@
     "skills.ability.skills.areaDamageOnDeath.damage[]": "derived:levelMult",
     "skills.ability.skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
     "skills.ability.skills.areaDamageOnDeath.radius": "patch:2026-10-01",
-    "skills.ability.skills.pushback.distance": "legacy:ability.effects.bomb",
+    "skills.ability.skills.pushback.distance": "patch:2026-10-01",
     "skills.ability.skills.rampingDamage.damageTiers[0][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
