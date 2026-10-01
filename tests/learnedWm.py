@@ -1,3 +1,4 @@
+import copy
 import json
 import math
 from datetime import datetime,timezone
@@ -192,3 +193,20 @@ def t_wmgroup_moves_toward_the_planted_play_and_qgroup_does_not(world):
     st=r['train_stats'];assert lam['lam']>0 and st['wmgroup_mopo:H=2:roots=1']['day244']['disagree']>0
     assert st['wmgroup:H=2:roots=1']['day244']['distill']>0
     assert set(r['arms'])==set(arms) and r['arms']['qgroup:roots=1']['kl_to_bc']>0
+    # the exploitation measure: the two-step model values the moved policy's plays above the clone's, the one-step Q below
+    qu=torch.from_numpy(ax['qu'][rows].astype(np.int64));pw=LW.load_policies(c,[out],32)['wm/wmgroup:H=2:roots=1']
+    v2=LW.model_gain(ms,S,Hh,qu,pw,bc,8,2);v0=LW.model_gain(ms,S,Hh,qu,pw,bc,8,0);assert v2[0]-v2[1]>0.01 and v0[0]-v0[1]<0,(v2,v0)
+
+
+def t_menus_hold_the_recorded_play_and_three_alternatives(world):
+    # full hands give the three other hand cards at the recorded cell; hands cut to two cards fill the menu with the recorded card on
+    # other cells, on the actor's side unless it is a spell
+    c=copy.copy(world['c']);c.a=dict(c.a);c.a['H']=c.a['H'].copy();c.a['H'][1::2,2:]=-1;A=c.a;rows=np.arange(0,2000,7);cards,cells=LW.menus(c,rows)
+    spells={c.vocab.index(x) for x in ('fireball','zap','the_log')};moved=0
+    for j,r in enumerate(rows):
+        assert (cards[j,0],cells[j,0])==(A['card'][r],A['cell'][r]) and len({(a,b) for a,b in zip(cards[j],cells[j])})==4
+        side=range(LW.N_CELLS) if A['card'][r] in spells else own_cells('red' if A['team'][r] else 'blue')
+        for a,b in zip(cards[j,1:],cells[j,1:]):
+            assert (a!=A['card'][r] and a in A['H'][r] and b==A['cell'][r]) or (a==A['card'][r] and b!=A['cell'][r] and b in side);moved+=a==A['card'][r]
+    assert moved>200
+    x=torch.tensor([[1.0,-1.0,0.0,0.0],[0.0,0.0,0.0,0.0]]);assert abs(LW.cos_rows(x,x)-1)<1e-6 and abs(LW.cos_rows(x,-x)+1)<1e-6

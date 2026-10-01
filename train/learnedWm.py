@@ -445,7 +445,7 @@ def predict(c,ax,models,rows,K=4,chunk=4096):
 
 def menus(c,rows,seed=0):
     # the recorded play and three alternatives per record, as train.counterfactual.alternatives builds them: other hand cards at the
-    # recorded cell, then the recorded card at other cells on the actor's side (any cell for spells)
+    # recorded cell, then the recorded card at other distinct cells on the actor's side (any cell for spells)
     from sim.cards import card as card_def,key
     A=c.a;rng=np.random.default_rng(seed);spell=np.zeros(c.n_card,bool)
     for i,name in enumerate(c.vocab):
@@ -455,7 +455,7 @@ def menus(c,rows,seed=0):
     for j,r in enumerate(rows):
         cd,cl=int(A['card'][r]),int(A['cell'][r]);h=[int(x) for x in A['H'][r] if x>=0 and x!=cd];rng.shuffle(h);alts=[(x,cl) for x in h[:3]]
         pool=[k for k in (range(N_CELLS) if spell[cd] else own_cells('red' if A['team'][r] else 'blue')) if k!=cl]
-        while len(alts)<3:alts.append((cd,int(rng.choice(pool))))
+        alts+=[(cd,int(k)) for k in rng.choice(pool,3-len(alts),replace=False)]
         cards[j]=[cd]+[a for a,_ in alts];cells[j]=[cl]+[b for _,b in alts]
     return cards,cells
 
@@ -524,13 +524,13 @@ def favourites(pol,S,H,cnt,ref,chunk=8192):
 
 
 def model_gain(models,S,H_,qu,pol,ref,G=16,H=4,seed=0):
-    # in-model value of the policy's plays minus the clone's at the given states (both sampled, continuation the behaviour)
+    # in-model value of the policy's plays and of the clone's at the given states (both sampled, continuation the behaviour)
     gen=torch.Generator().manual_seed(seed);out=[]
     for p in (pol,ref):
         with torch.no_grad():card,cell=sample(p.menu_logp(S,H_),H_,G,gen)
         rep=lambda x:x.repeat_interleave(G,0);v,_=values(models,rep(S),rep(H_),rep(qu),card.reshape(-1),cell.reshape(-1),H,1,None,gen)
         out.append(float(v.mean()))
-    return out[0]-out[1]
+    return out
 
 
 def load_policies(c,runs,hidden=128):
@@ -572,8 +572,9 @@ def diagnose(pack,prep,wm_dir,runs,out=None,n_pred=20000,n_dir=20000,n_gain=4000
     cnt.index_put_((torch.from_numpy(A['card'][tr].astype(np.int64)),torch.from_numpy(A['cell'][tr].astype(np.int64))),torch.ones(len(tr),dtype=torch.long),accumulate=True)
     gi=torch.from_numpy(rng.choice(len(dr),min(n_gain,len(dr)),replace=False));ex={'bc':favourites(bc,S,Hh,cnt,bc)}
     for k,p in pols.items():
-        ex[k]={**favourites(p,S,Hh,cnt,bc),'gain_train_H4':model_gain(train,S[gi],Hh[gi],qu[gi],p,bc,16,H,seed),'gain_held_out_H4':model_gain([held],S[gi],Hh[gi],qu[gi],p,bc,16,H,seed),
-               'gain_train_H0':model_gain(train,S[gi],Hh[gi],qu[gi],p,bc,16,0,seed)}
+        ex[k]=favourites(p,S,Hh,cnt,bc)
+        for name,ms,h in (('train_H4',train,H),('held_out_H4',[held],H),('train_H1',train,1),('train_H0',train,0)):
+            vp,vb=model_gain(ms,S[gi],Hh[gi],qu[gi],p,bc,16,h,seed);ex[k].update({f'gain_{name}':vp-vb,f'value_{name}':vp,f'value_bc_{name}':vb})
     rep['exploitation']=ex;rep['seconds']=round(time.monotonic()-t0,1);say('exploitation')
     if out:Path(out).parent.mkdir(parents=True,exist_ok=True);Path(out).write_text(json.dumps(rep,indent=1)+'\n')
     return rep
