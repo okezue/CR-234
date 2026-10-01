@@ -4,7 +4,7 @@ class Troop:
         Troop._n+=1;self.id=Troop._n
         self.team=team;self.x=float(x);self.y=float(y)
         self.hp=cfg['hp'];self.max_hp=cfg['hp']
-        self.dmg=cfg['dmg'];self.spd=cfg['spd']
+        self.dmg=cfg['dmg'];self.spd=self.base_spd=cfg['spd']
         self.hspd=cfg['hspd'];self.fhspd=cfg.get('fhspd',cfg['hspd'])
         self.rng=cfg['rng'];self.transport=cfg.get('transport','Ground');self.hovering=cfg.get('hovering',False)
         self.targets=cfg.get('targets',['Ground'])
