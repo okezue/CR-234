@@ -37,8 +37,8 @@ def t_spawned_spirit_jumps_within_a_fifth_of_a_second_of_reaching_range():
     spirit=next(t for t in g.players['blue'].troops if t.name=='Fire Spirit')
     # the Furnace is removed so only the spirit can damage the target
     furnace.hp=0;furnace.alive=False;g._proc_deaths()
-    # the victim stands 3.5 tiles behind the spirit, clear of the river: ahead, the spawn jitter put it on the water for most draws, and
-    # the first tick moved it to a tile centre after range was read, across the river for 38 of 200
+    # the victim stands 3.5 tiles behind the spirit, clear of the river: ahead of it, the spot was on the water for 187 of 200 spawn
+    # draws, and the first tick moved it to a tile centre after range was read, across the river for 66 of them (38 failed)
     victim=create('giant',11,'red',spirit.x,spirit.y-3.5);victim.spd=0;victim.dmg=0;g.deploy('red',victim);hp=victim.hp
     entered=None;launched=None
     for _ in range(int(round(4.0/g.DT))):
