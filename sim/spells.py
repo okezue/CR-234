@@ -296,6 +296,8 @@ class LogSpell:
         if self.front>=self.rng:self.active=False;self.done(game)
     def done(self,game):pass
 class EarthquakeSpell:
+    # the slow is the area's buff: every slow_every s the ground enemies inside take slow_dur s of it, never past the area's life (export
+    # Earthquake areaEffectObjectData hitSpeed 100, buffTime 1000, lifeDuration 3000; RoyaleAPI cr-api-data cap_buff_time_to_area_effect_time)
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
         self.radius=cfg['radius']
@@ -303,35 +305,41 @@ class EarthquakeSpell:
         self.bldg_dmg=cfg['bldg_dmg']
         self.ct_dmg=cfg['ct_dmg']
         self.ticks=cfg['ticks'];self.interval=cfg['interval']
-        self.slow_pct=cfg.get('slow_pct',0)
+        self.slow_pct=cfg.get('slow_pct',0);self.slow_dur=cfg.get('slow_dur',0);self.slow_every=cfg.get('slow_every',0)
+        self.life=cfg.get('dur',0) or self.ticks*self.interval;self.slow_cd=0
         self.active=True;self.applied=False
         self.ticks_left=self.ticks;self.tick_cd=0
         self.name=cfg.get('name','')
     def apply(self,game):
         if self.applied:return
         self.applied=True
+    def _inside(self,game):
+        return [e for e in game.players[game._opp(self.team)].troops
+                if e.alive and getattr(e,'transport','Ground')!='Air' and tdist(e,self.x,self.y)<=self.radius]
     def tick(self,dt,game=None):
-        if not game or self.ticks_left<=0:self.active=False;return
-        self.tick_cd-=dt
-        if self.tick_cd<=0:
-            self.tick_cd=self.interval;self.ticks_left-=1
-            opp=game._opp(self.team)
-            for e in game.players[opp].troops:
-                if not e.alive:continue
-                if getattr(e,'transport','Ground')=='Air':continue
-                d=tdist(e,self.x,self.y)
-                if d<=self.radius:
-                    dm=self.bldg_dmg if getattr(e,'is_building',False) else self.troop_dmg
-                    e.take_damage(dm)
-                    if self.slow_pct>0 and hasattr(e,'statuses'):
-                        e.statuses.append(Status('mslow',self.interval,1.0-self.slow_pct))
-            for tw in game.arena.towers:
-                if tw.team!=opp or not tw.alive:continue
-                d=tw.dist(self.x,self.y)
-                if d<=self.radius:
-                    tw.take_damage(self.ct_dmg)
-                    if not tw.alive:game._tower_down(tw)
-            if self.ticks_left<=0:self.active=False
+        if not game:self.active=False;return
+        if self.slow_pct>0 and self.life>1e-9:
+            if self.slow_cd<=1e-9:
+                self.slow_cd+=self.slow_every;d=min(self.slow_dur,self.life);v=1.0-self.slow_pct
+                for e in self._inside(game):
+                    s=next((s for s in e.statuses if s.kind=='mslow' and s.val==v),None)
+                    if s:s.dur=max(s.dur,d)
+                    else:e.statuses.append(Status('mslow',d,v))
+            self.slow_cd-=dt
+        self.life-=dt
+        if self.ticks_left>0:
+            self.tick_cd-=dt
+            if self.tick_cd<=0:
+                self.tick_cd=self.interval;self.ticks_left-=1
+                for e in self._inside(game):e.take_damage(self.bldg_dmg if getattr(e,'is_building',False) else self.troop_dmg)
+                opp=game._opp(self.team)
+                for tw in game.arena.towers:
+                    if tw.team!=opp or not tw.alive:continue
+                    d=tw.dist(self.x,self.y)
+                    if d<=self.radius:
+                        tw.take_damage(self.ct_dmg)
+                        if not tw.alive:game._tower_down(tw)
+        if self.ticks_left<=0 and self.life<=1e-9:self.active=False
 class TornadoSpell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
@@ -503,17 +511,25 @@ class GoblinCurseSpell:
                 game.players[self.team].troops.append(t)
         if self.ticks_left<=0 and not self.cursed:self.active=False
 class RoyalDeliverySpell:
+    # the box lands, deals its damage and drops the Recruit at the area's single hit, dur after the cast (export RoyalDeliveryArea
+    # lifeDuration and hitSpeed 2000; RoyaleAPI cr-api-data deploy_time 2000); the Recruit then stands through its own deploy time
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
         self.dmg=cfg['dmg'];self.ct_dmg=cfg.get('ct_dmg',0)
         self.radius=cfg['radius']
         self.tcfg=cfg.get('troop_cfg',{})
+        self.delay=cfg.get('dur',0);self.at=None
         self.active=False;self.applied=False
         self.name=cfg.get('name','')
         self.proj_spd=cfg.get('projSpeed',0)
     def apply(self,game):
         if self.applied:return
-        self.applied=True
+        self.applied=True;self.at=game.t+self.delay
+        if self.delay>0:self.active=True
+        else:self.land(game)
+    def tick(self,dt,game=None):
+        if self.active and game and game.t>=self.at-1e-9:self.active=False;self.land(game)
+    def land(self,game):
         opp=game._opp(self.team)
         for e in game.players[opp].troops:
             if not e.alive:continue
@@ -526,11 +542,7 @@ class RoyalDeliverySpell:
                 dm=self.ct_dmg if self.ct_dmg else self.dmg
                 tw.take_damage(dm)
                 if not tw.alive:game._tower_down(tw)
-        if self.tcfg:
-            t=Troop(self.team,self.x,self.y,dict(self.tcfg,components=list(self.tcfg.get('components',[]))))
-            game.players[self.team].troops.append(t)
-        self.active=False
-    def tick(self,dt,game=None):pass
+        if self.tcfg:spawn(game,self.team,self.x,self.y,self.tcfg)
 class BarbarianBarrelSpell(LogSpell):
     def __init__(self,team,x,y,cfg):
         super().__init__(team,x,y,cfg)

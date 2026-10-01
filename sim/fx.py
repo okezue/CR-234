@@ -273,7 +273,7 @@ def tower_tiers(tiers,dmg,ct):
 class RampUp(Component):
     def __init__(self,stages,durations,ct_stages=None):
         self.stages=stages;self.durations=durations;self.ct_stages=ct_stages
-        self.cur_tgt=None;self.elapsed=0
+        self.cur_tgt=None;self.elapsed=0;self.shielded=False
     def _stage(self,tr,i):
         tr.dmg=self.stages[i]
         if self.ct_stages:tr.ct_dmg=self.ct_stages[i]
@@ -284,6 +284,7 @@ class RampUp(Component):
         frz=any(s.kind=='freeze' for s in getattr(tr,'statuses',[]))
         if stn or frz:self._reset(tr);return
         tgt=getattr(tr,'tgt',None)
+        self.shielded=getattr(tgt,'shield_hp',0)>0
         # The evolution has separate retention handling; this guard covers ordinary ramps.
         if not any(isinstance(c,EvoInfernoDragon) for c in tr.components):
             if tgt is None or not tgt.alive or hidden(tgt) or not getattr(tr,'min_rng',0)<=g._dist(tr,tgt)<=tr.rng:
@@ -297,6 +298,12 @@ class RampUp(Component):
             t+=d
             if self.elapsed<t:self._stage(tr,i);return
         self._stage(tr,len(self.stages)-1)
+    def on_attack(self,tr,tgt,g):
+        # the hit that breaks a shield restarts the ramp on the same target (wiki Inferno Tower, Inferno Dragon, Dark Prince, Guards histories
+        # 12/12/2017; Guards: the Mighty Miner too); the evolved dragon keeps its stage (wiki Inferno Dragon/Evolution)
+        if self.shielded and tgt is self.cur_tgt and getattr(tgt,'shield_hp',0)<=0 and not any(isinstance(c,EvoInfernoDragon) for c in tr.components):
+            self.elapsed=0;self._stage(tr,0)
+        self.shielded=getattr(tgt,'shield_hp',0)>0
 class RageDrop(Component):
     def __init__(self,radius,dur,boost):
         self.radius=radius;self.dur=dur;self.boost=boost

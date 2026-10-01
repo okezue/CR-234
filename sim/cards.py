@@ -483,7 +483,8 @@ def spell(c,lvl,team,x,y,evolved,is_hero=False):
     tick={'radius':r,'ticks':ticks,'interval':hs,'name':name,'ct_dmg':ct}
     if pu.get('strength'):return TornadoSpell(team,x,y,{**tick,'tick_dmg':dmg,'pull_str':pu['strength']/100,'dur':dur})
     if not empty(st.get('buildingDamage')):
-        return EarthquakeSpell(team,x,y,{**tick,'troop_dmg':dmg,'bldg_dmg':at(st['buildingDamage'],lvl),'slow_pct':1-mult(sl.get('speedMultiplier') or 0)})
+        return EarthquakeSpell(team,x,y,{**tick,'troop_dmg':dmg,'bldg_dmg':at(st['buildingDamage'],lvl),'slow_pct':1-mult(sl.get('speedMultiplier') or 0),
+                                         'dur':dur,'slow_dur':sl.get('duration') or 0,'slow_every':sl.get('interval') or 0})
     if ticks and c['hitSpeed']:
         return Spell(team,x,y,{**cfg,'dmg':0,'ct_dmg':0,'tick_dmg':dmg,'tick_ct_dmg':ct,'tick_interval':hs,'ticks_left':ticks,
                                'slow_pct':1-mult(sl['speedMultiplier']) if sl.get('speedMultiplier') else 0,'status_kind':None})
