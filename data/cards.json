@@ -4747,7 +4747,7 @@
     "cycles": 2,
     "skills": {
      "poison": {
-      "damage": [17, 18, 20, 22, 24, 27, 29, 32, 36, 39, 43, 47, 52, 57, 63, 69],
+      "damage": [43, 47, 52, 57, 62, 68, 75, 82, 91, 100, 110, 120, 132, 145, 159, 175],
       "duration": 3.0,
       "maxStacks": 1,
       "radius": 2.0,
@@ -4805,7 +4805,7 @@
    "speed": 120,
    "src": {
     "*": "cs2.4.0",
-    "evo.skills.poison.damage[15]": "derived:levelMult (source level16 43 is off the level curve)",
+    "evo.skills.poison.damage": "patch:2026-09-30b",
     "evo.skills.poison.damage[]": "derived:levelMult",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
@@ -9818,6 +9818,10 @@
    {
     "name": "data/patches/2026-09-30.json",
     "tag": "patch:2026-09-30"
+   },
+   {
+    "name": "data/patches/2026-09-30b.json",
+    "tag": "patch:2026-09-30b"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

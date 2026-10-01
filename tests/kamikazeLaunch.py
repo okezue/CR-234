@@ -108,15 +108,19 @@ def t_short_jump_and_electro_spirit_unchanged(card):
     assert t.hp < 5000 and not s.alive
 
 
-def t_spirit_stays_on_the_field_until_impact():
+@pytest.mark.parametrize('card', ('ice_spirit', 'heal_spirit'))
+def t_spirit_leaves_the_field_at_launch(card):
+    # a jumping spirit no longer counts as a troop; it becomes similar to a projectile (wiki Ice Spirit, Heal Spirit)
     g = quiet()
-    s = spirit(g, 'ice_spirit', 'blue', 9.5, 10.5)
+    s = spirit(g, card, 'blue', 9.5, 10.5)
     t = target(g, 'red', 9.5, 13.7)
     while not g.projs and g.t < 2:
         g.tick()
-    assert s.alive and s in g.players['blue'].troops and t.hp == 5000
+    assert not s.alive and t.hp == 5000
+    g._proc_deaths()
+    assert s not in g.players['blue'].troops
     g.run(1)
-    assert not s.alive and t.hp == 5000 - s.dmg
+    assert t.hp == 5000 - s.dmg
 
 
 def t_ordinary_shooter_keeps_firing_while_its_shot_flies():

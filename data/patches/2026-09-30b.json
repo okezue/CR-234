@@ -1,0 +1,8 @@
+[
+ {
+  "card": "ice_spirit",
+  "path": "evo.skills.poison.damage[10]",
+  "value": 110,
+  "note": "The evolved Ice Spirit's Ice Blast deals the jump's damage at every level. The game data export's IceSpiritsAOE_EV1 (spawned by IceSpiritsProjectile_EV1) gives damage 43, the same level 1 base as the jump's projectile (43, 110 at level 11 on the card curve); the evolution page says 'When 3 seconds have passed after it hits an enemy, it will deal the same stun and damage to the enemy for 1.1 seconds' and its statistics table sets Blast_11 110 equal to dmg_11 110. ClashStrategic cs2.4.0 lists the unscaled 43 as both level11 and level16, so the curve fitted through 43 at level 11 gave the blast 17 to 69 instead of 43 to 175. https://clashroyale.fandom.com/wiki/Ice_Spirit/Evolution https://cache.statsroyale.com/gamedata-v5.json"
+ }
+]
