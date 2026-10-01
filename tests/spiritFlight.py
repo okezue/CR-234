@@ -117,7 +117,7 @@ def t_fire_spirit_self_destruction_still_supplies_a_soul():
     g.run(2);assert souls.souls==1
 
 
-@pytest.mark.parametrize('card,evolved',(('electro_spirit',False),('wall_breakers',True),('battle_ram',False)))
+@pytest.mark.parametrize('card,evolved',(('wall_breakers',True),('battle_ram',False)))
 def t_other_suicide_units_keep_existing_release_behavior(card,evolved):
     g=quiet();units=create(card,11,'blue',9.5,10.5,evolved=evolved)
     tr=units[0] if isinstance(units,list) else units;g.deploy('blue',tr)
@@ -129,6 +129,15 @@ def t_other_suicide_units_keep_existing_release_behavior(card,evolved):
         g._fire(tr,t)
         assert t.hp<5000
     assert not getattr(tr,'_self_destructed',False)
+
+
+def t_electro_spirit_release_retires_its_body():
+    # wiki Electro Spirit: a jumping spirit no longer counts as a troop; it becomes similar to a projectile
+    g=quiet();tr=create('electro_spirit',11,'blue',9.5,10.5);g.deploy('blue',tr)
+    t=target(g,'red',9.5,13.4)
+    g._fire(tr,t)
+    assert not tr.alive and tr._self_destructed and len(g.projs)==1 and t.hp==5000
+    g.run(1);assert t.hp==5000-tr.dmg and not g.projs
 
 
 def t_incoming_attack_cannot_destroy_launched_fire_spirit_projectile():
