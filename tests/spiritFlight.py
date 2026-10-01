@@ -117,7 +117,7 @@ def t_fire_spirit_self_destruction_still_supplies_a_soul():
     g.run(2);assert souls.souls==1
 
 
-@pytest.mark.parametrize('card,evolved',(('ice_spirit',False),('ice_spirit',True),('wall_breakers',True),('battle_ram',False)))
+@pytest.mark.parametrize('card,evolved',(('electro_spirit',False),('wall_breakers',True),('battle_ram',False)))
 def t_other_suicide_units_keep_existing_release_behavior(card,evolved):
     g=quiet();units=create(card,11,'blue',9.5,10.5,evolved=evolved)
     tr=units[0] if isinstance(units,list) else units;g.deploy('blue',tr)
