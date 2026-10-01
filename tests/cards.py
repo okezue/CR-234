@@ -5356,7 +5356,7 @@ def t_int_sk_soul_from_combat():
     return f"SK collects souls from combat kills ({sc.souls} souls)"
 def t_int_mm_escape_v_pekka():
     # the ability delay is pinned at its 0.15 s mean (an unseeded draw raced the P.E.K.K.A's 4.1 s kill); cast at 2.5 s, the escape
-    # lands near 3.65 s, after the 2.1 s ramp and with the miner at 566 hp until that kill
+    # lands at 3.6 s. In the centre column the mirror moves the miner 0.4 tiles, so he keeps his target and only the escape resets the ramp
     g=Game(p1={'ability_std':0})
     mm=mk_card('mighty_miner',11,'blue',9,14)
     g.deploy('blue',mm)
@@ -5364,15 +5364,30 @@ def t_int_mm_escape_v_pekka():
     g.deploy('red',pk)
     g.run(2.5)
     assert mm.dmg>=204,"Should ramp up"
-    ini_pk=pk.hp
+    # the bomb hits air as well as ground (wiki); a still air body over the miner is inside the export's 0.45 radius, while the
+    # P.E.K.K.A in contact stands 1.25 tiles off, its edge 0.5 out, so the bomb cannot reach it
+    air=Dummy('red',mm.x,mm.y,hp=5000,spd=0,dmg=0);air.transport='Air';air.targets=[];g.deploy('red',air)
     g.players['blue'].elixir=10;mm.ability.cd=0
     g.activate_ability('blue',mm)
-    g.run(1.3)
-    assert mm.alive and mm.dmg==43,f"Should reset ramp, got {mm.dmg}"
-    bomb_dmg=ini_pk-pk.hp
-    assert bomb_dmg>0,"Bomb should damage PEKKA"
+    ab=mm.ability
+    while ab._pend or ab.casting:php=pk.hp;g.tick()
+    assert air.hp==5000-ab.bomb_dmg,f"Bomb should hit the body over the miner's spot, hp {air.hp}"
+    assert php-pk.hp<=mm.dmg,f"Bomb should miss the P.E.K.K.A, which lost {php-pk.hp} in the escape tick"
+    g.run_to(3.8)
+    assert mm.dmg==43,f"Should reset ramp, got {mm.dmg}"
     assert abs(mm.x-8)<=1,"Should lane swap"
-    return f"MM escape v PEKKA (bomb={bomb_dmg}, ramp reset, lane swap x={mm.x:.0f})"
+    # in a lane the mirror carries him to the other lane, out of the P.E.K.K.A's reach: he outlives the 4.1 s hit that kills him without it
+    g=Game(p1={'ability_std':0})
+    mm=mk_card('mighty_miner',11,'blue',14.5,14)
+    g.deploy('blue',mm)
+    pk=mk_card('pekka',11,'red',14.5,15)
+    g.deploy('red',pk)
+    g.run(2.5)
+    g.players['blue'].elixir=10;mm.ability.cd=0
+    g.activate_ability('blue',mm)
+    g.run(2.0)
+    assert mm.alive,f"Escape should take the miner out of the P.E.K.K.A's reach, x={mm.x:.1f}"
+    return f"MM escape v PEKKA (bomb {ab.bomb_dmg} at his spot, ramp reset, survives in the other lane at x={mm.x:.0f})"
 def t_int_bb_dash_then_grenade():
     g=Game()
     bb=mk_card('boss_bandit',11,'blue',9,10)

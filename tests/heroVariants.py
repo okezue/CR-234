@@ -11,9 +11,11 @@ def snowmen(g,team):return [t for t in g.players[team].troops if t.name=='Snowma
 
 
 def arm(g,tr):
-    tr.ability.cd=0;g.players[tr.team].elixir=10
+    # the activation delay is pinned at its 0.15 s mean: an unseeded draw above about 0.2 s left the hero unarmed after the 1.0 s cast
+    p=g.players[tr.team];p.ability_std=0;p.elixir=10;tr.ability.cd=0
     assert g.activate_ability(tr.team,tr)==(True,'ok')
     g.run(1.2)
+    assert tr.ability.active
 
 
 @pytest.mark.parametrize('team',('blue','red'))

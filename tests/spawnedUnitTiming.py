@@ -1,3 +1,5 @@
+import random
+
 import pytest
 
 from sim.cards import create, load
@@ -30,11 +32,14 @@ def t_spawned_spirit_carries_the_card_spirit_timing_and_range(team):
 
 
 def t_spawned_spirit_jumps_within_a_fifth_of_a_second_of_reaching_range():
+    random.seed(0)
     g=quiet(Game());furnace=create('furnace',11,'blue',9,10);g.deploy('blue',furnace);g.run(1.2)
     spirit=next(t for t in g.players['blue'].troops if t.name=='Fire Spirit')
     # the Furnace is removed so only the spirit can damage the target
     furnace.hp=0;furnace.alive=False;g._proc_deaths()
-    victim=create('giant',11,'red',9,spirit.y+3.5);victim.spd=0;victim.dmg=0;g.deploy('red',victim);hp=victim.hp
+    # the victim stands 3.5 tiles behind the spirit, clear of the river: ahead, the spawn jitter put it on the water for most draws, and
+    # the first tick moved it to a tile centre after range was read, across the river for 38 of 200
+    victim=create('giant',11,'red',spirit.x,spirit.y-3.5);victim.spd=0;victim.dmg=0;g.deploy('red',victim);hp=victim.hp
     entered=None;launched=None
     for _ in range(int(round(4.0/g.DT))):
         # range is read at the start of a tick, the state the swing countdown of that tick sees
