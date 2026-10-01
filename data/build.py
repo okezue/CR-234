@@ -246,6 +246,7 @@ def gd_death(card, spell, tag):
     # deathAreaEffectData radius (Ice Golem) is a blast radius, the rest is left for the wiki and legacy fills
     s = card["skills"].get("areaDamageOnDeath")
     ch = spell.get("summonCharacterData") or {}
+    gd_escape(card, ch, tag)
     if not s or not ch:
         return
     ae = ch.get("deathAreaEffectData") or {}
@@ -257,6 +258,14 @@ def gd_death(card, spell, tag):
         s["radius"], card["src"]["skills.areaDamageOnDeath.radius"] = None, f"{tag} (cs value {s['radius']} is the collision radius, dropped)"
     if bomb.get("source") == "buildings" and bomb.get("deployTime"):
         s["fuse"], card["src"]["skills.areaDamageOnDeath.fuse"] = bomb["deployTime"] / 1000, tag
+
+
+def gd_escape(card, ch, tag):
+    # an ability that leaves a bomb building (the Mighty Miner's MightyMinerBomb): the bomb goes off after its deployTime
+    s = ((card["skills"].get("ability") or {}).get("skills") or {}).get("areaDamageOnDeath")
+    bomb = (ch.get("abilityData") or {}).get("activationSpawnCharacterData") or {}
+    if s and bomb.get("source") == "buildings" and bomb.get("deployTime"):
+        s["fuse"], card["src"]["skills.ability.skills.areaDamageOnDeath.fuse"] = bomb["deployTime"] / 1000, tag
 
 
 def gd_area(card, spell, lo, pct, tag):
@@ -533,8 +542,8 @@ def main():
             {"tag": tag, "name": "ClashStrategic/stats", "url": CS + "data/cards.json", "version": version, "license": "Apache-2.0"},
             {"tag": gd_tag, "name": "statsroyale game data dump (ClashStrategic's upstream)", "url": GD, "fingerprint": gd["meta"]["fingerprint"],
              "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget",
-                        "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay", "projectile.speed",
-                        "skills.dash.speed"]},
+                        "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius",
+                        "summonDeployDelay", "projectile.speed", "skills.dash.speed"]},
             {"tag": "wiki:<page>", "name": "Clash Royale Fandom wiki, MediaWiki API wikitext", "url": wiki.API,
              "fields": ["projectile.speed", "minRange", "towers.king_tower", "towerMult[15]", "skills.areaDamageOnDeath.radius",
                         "tick.count and per-hit damage anchors of ticking spells"]},
@@ -559,7 +568,7 @@ def main():
         "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
         "legacySkills": {
             "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, "
-                     "leader names its unit overrides",
+                     "leader names its unit overrides, holder names the character that carries the champion ability (the leader otherwise)",
             "secondaryAttack": "independent attached attacker (rocket launcher, rider, backpack goblins); character names the unit",
             "areaDamageOnSpawn": "damage and radius dealt where the unit appears",
             "produceElixir": "interval and amount", "teleport": "distance moved backwards on cast",

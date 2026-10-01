@@ -1,0 +1,20 @@
+[
+ {
+  "card": "goblinstein",
+  "path": "units.doctor.damage[10]",
+  "value": 135,
+  "note": "The balance update of 4 August 2026 raised the Doctor's damage from 92 to 135 (+47%): Supercell's August Balance Changes post and the wiki history entry of 4/8/2026; the game data export gives Prj_goblinstein_doctor damage 53 at level 1, 135 at level 11 on the card curve, and the export postdates the change (its Monster hitpoints 875 at level 1 are the 2240 of the 26 August update). Supersedes patch 2026-09-03, whose 92 came from the wiki level table and the legacy snapshot, both older than the update (the table still shows the Monster's 2393 and the snapshot the 17 s cooldown removed on 4 August). https://supercell.com/en/games/clashroyale/blog/news/final-august-balance-changes-826/ https://clashroyale.fandom.com/wiki/Goblinstein"
+ },
+ {
+  "card": "goblinstein",
+  "path": "skills.ability.skills.poison.damage[10]",
+  "value": 94,
+  "note": "The same update cut Lightning Link's damage per second from 214 to 188 (-12%; wiki history 4/8/2026: ability DPS decreased by 12%); 214 is the 107 per 0.5 s tick of the legacy snapshot and the wiki table, so a tick deals 94 at the same 0.5 s interval. Neither source says whether the crown tower damage changed, so it is left as it was. https://supercell.com/en/games/clashroyale/blog/news/final-august-balance-changes-826/ https://clashroyale.fandom.com/wiki/Goblinstein"
+ },
+ {
+  "card": "goblinstein",
+  "path": "skills.group.holder",
+  "value": "Doctor",
+  "note": "The Doctor carries the ability: the game data export lists abilityData Goblinstein_ability on summonCharacterSecondData Goblinstein_doctor, and the wiki says killing the Doctor removes the ability while a fallen Monster drops an antenna that the link then runs to. https://clashroyale.fandom.com/wiki/Goblinstein"
+ }
+]

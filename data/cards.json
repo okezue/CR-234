@@ -4063,7 +4063,7 @@
      "name": "Goblinstein_ability",
      "skills": {
       "poison": {
-       "damage": [null, null, null, null, null, null, null, null, null, null, 107, 118, 129, 142, 156, 171],
+       "damage": [null, null, null, null, null, null, null, null, null, null, 94, 103, 114, 125, 137, 151],
        "duration": 4.0,
        "radius": 2.0,
        "tickInterval": 0.5,
@@ -4082,6 +4082,7 @@
     },
     "group": {
      "characters": ["Doctor"],
+     "holder": "Doctor",
      "leader": "Monster"
     }
    },
@@ -4089,12 +4090,14 @@
    "src": {
     "*": "cs2.4.0",
     "skills.ability.cooldown": "patch:2026-09-01",
-    "skills.ability.skills.poison.damage": "legacy:ability.effects.tick_damage_by_level",
+    "skills.ability.skills.poison.damage": "patch:2026-10-01g",
+    "skills.ability.skills.poison.damage[]": "derived:levelMult",
     "skills.ability.skills.poison.duration": "legacy:ability.effects.link",
     "skills.ability.skills.poison.radius": "legacy:ability.effects.link",
     "skills.ability.skills.poison.tickInterval": "legacy:ability.effects.link",
     "skills.ability.skills.poison.towerDamage": "legacy:ability.effects.tick_damage_by_level",
     "skills.group.characters": "legacy:entities",
+    "skills.group.holder": "patch:2026-10-01g",
     "skills.group.leader": "legacy:entities",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints": "patch:2026-08-26",
@@ -4102,7 +4105,7 @@
     "stats.towerDamage[]": "derived:levelMult",
     "summonRadius": "gd:debfe1e2",
     "units.doctor": "gd:debfe1e2",
-    "units.doctor.damage": "patch:2026-09-03",
+    "units.doctor.damage": "patch:2026-10-01g",
     "units.doctor.damage[]": "derived:levelMult",
     "units.doctor.mass": "legacy:entities.doctor",
     "units.doctor.skills.stun.duration": "legacy:entities.doctor",
@@ -4130,7 +4133,7 @@
      "card": null,
      "collisionRadius": 0.5,
      "count": 1,
-     "damage": [null, null, null, null, null, null, null, null, null, null, 92, 101, 111, 122, 133, 147],
+     "damage": [null, null, null, null, null, null, null, null, null, null, 135, 148, 163, 179, 197, 216],
      "deployTime": 1.0,
      "from": ["gd.summonCharacterSecondData", "legacy:entities.doctor"],
      "hitSpeed": 1.8,
@@ -5852,7 +5855,8 @@
       "areaDamageOnDeath": {
        "areaEffect": null,
        "damage": [null, null, null, null, null, null, null, null, null, null, 332, 365, 401, 440, 483, 531],
-       "radius": 0.45
+       "fuse": 1.0,
+       "radius": 3.0
       },
       "burrow": {
        "duration": null
@@ -5880,7 +5884,9 @@
     "mass": "legacy:hidden_stats.mass",
     "skills.ability.cooldown": "patch:2026-09-01",
     "skills.ability.skills.areaDamageOnDeath.damage[]": "derived:levelMult",
-    "skills.ability.skills.pushback.distance": "legacy:ability.effects.bomb",
+    "skills.ability.skills.areaDamageOnDeath.fuse": "gd:debfe1e2",
+    "skills.ability.skills.areaDamageOnDeath.radius": "patch:2026-10-01",
+    "skills.ability.skills.pushback.distance": "patch:2026-10-01",
     "skills.ability.skills.rampingDamage.damageTiers[0][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[1][]": "derived:levelMult",
     "skills.ability.skills.rampingDamage.damageTiers[2][]": "derived:levelMult",
@@ -9669,7 +9675,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-09-30",
+  "built": "2026-10-01",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9678,7 +9684,7 @@
    "areaDamageOnSpawn": "damage and radius dealt where the unit appears",
    "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; resurfacePercent/resurfaceCount for the evo drill",
    "charging": "loadFirstHit: the unit comes in unloaded and charges the whole hit speed before its first hit, a stun empties the charge (Sparky); every other unit deploys loaded and loads while walking, so its first hit takes hit speed less load time",
-   "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, leader names its unit overrides",
+   "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, leader names its unit overrides, holder names the character that carries the champion ability (the leader otherwise)",
    "hook": "special attack on a ground target between minRange and maxRange: the unit stands for loadTime, the hook flies at speed and drags a troop to the unit's reach at dragSpeed or the unit to a building at selfDragSpeed, slowing the target (Fisherman)",
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince); forcedKnockback: it also ignores the pushes that override ordinary immunity, the Monk combo, the Evolved Mega Knight uppercut and the Log's roll (Monk)",
    "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits, Royal Hogs)",
@@ -9711,7 +9717,7 @@
     "version": "2.4.0"
    },
    {
-    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed"],
+    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed"],
     "fingerprint": "debfe1e2c24562a36ef753ebca3a0f239e12b4c0",
     "name": "statsroyale game data dump (ClashStrategic's upstream)",
     "tag": "gd:debfe1e2",
@@ -9822,6 +9828,14 @@
    {
     "name": "data/patches/2026-09-30b.json",
     "tag": "patch:2026-09-30b"
+   },
+   {
+    "name": "data/patches/2026-10-01.json",
+    "tag": "patch:2026-10-01"
+   },
+   {
+    "name": "data/patches/2026-10-01g.json",
+    "tag": "patch:2026-10-01g"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

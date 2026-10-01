@@ -19,7 +19,7 @@ def enemies(g,team,air=True,towers=True):
         for tw in g.arena.towers:
             if tw.team==opp and tw.alive:yield tw
 def tdist(u,x,y):
-    # area effects reach a body when they touch it: the tower footprint or the troop's collision circle, not only the centre
+    # area effects reach a body when they touch it: the tower's collision circle (Tower.dist) or the troop's, not only the centre
     return u.dist(x,y) if hasattr(u,'ttype') else max(0.0,math.hypot(u.x-x,u.y-y)-K['splash_hitbox']*getattr(u,'collision_r',0))
 def near(g,team,x,y,r,air=True,towers=True):return [e for e in enemies(g,team,air,towers) if tdist(e,x,y)<=r]
 def hurt(u,dmg,g):
@@ -699,47 +699,41 @@ class CloakingCape(Ability):
             if self.orig_hspd is not None:tr.hspd=self.orig_hspd;self.orig_hspd=None
             if self.orig_spd is not None:tr.spd=self.orig_spd;self.orig_spd=None
 class ExplosiveEscape(Ability):
-    def __init__(self,bomb_dmg,bomb_r,kb,cost,cd):
-        super().__init__(cost,cd);self.bomb_dmg=bomb_dmg;self.bomb_r=bomb_r;self.kb=kb
+    # the bomb stays at the miner's old spot and, like the death bombs, blasts air and ground there when its fuse runs out
+    def __init__(self,bomb_dmg,bomb_r,kb,cost,cd,fuse=0):
+        super().__init__(cost,cd);self.bomb_dmg=bomb_dmg;self.bomb_r=bomb_r;self.kb=kb;self.fuse=fuse
     def activate(self,tr,g):
-        ox,oy=tr.x,tr.y
+        ox,oy,team=tr.x,tr.y,tr.team
         tr.x=g.arena.W-tr.x
-        opp=g._opp(tr.team)
-        for e in g.players[opp].troops:
-            if not e.alive:continue
-            d=math.sqrt((e.x-ox)**2+(e.y-oy)**2)
-            if d<=self.bomb_r:e.take_damage(self.bomb_dmg)
-        for tw in g.arena.towers:
-            if tw.team!=opp or not tw.alive:continue
-            d=tw.dist(ox,oy)
-            if d<=self.bomb_r:
-                tw.take_damage(self.bomb_dmg)
-                if not tw.alive:g._tower_down(tw)
+        def blast(g):
+            for e in near(g,team,ox,oy,self.bomb_r):hurt(e,self.bomb_dmg,g);push(e,ox,oy,self.kb)
+        if self.fuse>0:g.spells.append(Timer(self.fuse,blast,ox,oy,team,tr.name))
+        else:blast(g)
         for c in tr.components:
             if hasattr(c,'_reset'):c._reset(tr)
         self.cd=self.max_cd
 class LightningLink(Ability):
+    # the holder (the Doctor) electrifies the link to the Monster, or to the antenna left where the Monster fell, and every tick hits each
+    # enemy body within the radius of that segment (wiki Goblinstein)
     def __init__(self,tick_dmg,tick_ct,radius,dur,ti,cost,cd):
         super().__init__(cost,cd);self.tick_dmg=tick_dmg;self.tick_ct=tick_ct
-        self.radius=radius;self.max_dur=dur;self.ti=ti;self.timer=0
+        self.radius=radius;self.max_dur=dur;self.ti=ti;self.timer=0;self.mon=None;self.ant=None;self.fell=False
+    def bind(self,units):
+        self.mon=next((u for u in units if getattr(u,'ability',None) is not self),None)
+        if self.mon:self.ant=(self.mon.x,self.mon.y)
     def activate(self,tr,g):
         self.active=True;self.dur=self.max_dur;self.timer=0
     def tick(self,dt,tr,g):
+        # the antenna stays where the Monster is first seen fallen, so a corpse moved later does not move it
+        m=self.mon
+        if m and (m.alive or not self.fell):self.ant=(m.x,m.y);self.fell=not m.alive
         if not self.active:super().tick(dt,tr,g);return
         self.dur-=dt;self.timer-=dt
         if self.timer<=0:
-            opp=g._opp(tr.team)
-            for e in g.players[opp].troops:
-                if not e.alive:continue
-                d=math.sqrt((e.x-tr.x)**2+(e.y-tr.y)**2)
-                if d<=self.radius:e.take_damage(self.tick_dmg)
-            for tw in g.arena.towers:
-                if tw.team!=opp or not tw.alive:continue
-                d=tw.dist(tr.x,tr.y)
-                if d<=self.radius:
-                    td=self.tick_ct if self.tick_ct>0 else self.tick_dmg
-                    tw.take_damage(td)
-                    if not tw.alive:g._tower_down(tw)
+            x0,y0=tr.x,tr.y;x1,y1=self.ant or (x0,y0);dx,dy=x1-x0,y1-y0;L2=dx*dx+dy*dy
+            for e in list(enemies(g,tr.team)):
+                ex,ey=pos(e);s=min(1.0,max(0.0,((ex-x0)*dx+(ey-y0)*dy)/L2)) if L2>0 else 0.0
+                if tdist(e,x0+s*dx,y0+s*dy)<=self.radius:hurt(e,self.tick_ct if hasattr(e,'ttype') and self.tick_ct>0 else self.tick_dmg,g)
             self.timer=self.ti
         if self.dur<=0:self.active=False;self.cd=self.max_cd
 class RoyalRescue(Ability):
