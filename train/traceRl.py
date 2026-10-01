@@ -78,7 +78,8 @@ class Policy(nn.Module):
         self.card=nn.Linear(hidden,n_card);self.emb=nn.Embedding(n_card,emb);self.cell=nn.Linear(hidden+emb,N_CELLS)
     def card_logp(self,S,H):
         h=self.trunk(S);logits=self.card(h);mask=torch.zeros_like(logits,dtype=torch.bool)
-        valid=H>=0;mask.scatter_(1,H.clamp(min=0),valid)
+        # empty slots repeat slot 0 (the recorded card): scattering False at index 0 for them could mask a real card 0
+        mask.scatter_(1,torch.where(H>=0,H,H[:,:1]),True)
         return F.log_softmax(logits.masked_fill(~mask,-1e9),1),h
     def cell_logp(self,h,card):
         return F.log_softmax(self.cell(torch.cat([h,self.emb(card)],1)),1)
