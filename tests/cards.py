@@ -3336,7 +3336,8 @@ def t_goblinstein_doctor():
     random.seed(42)
     r=mk_card('goblinstein',11,'blue',5,10)
     doc=[t for t in r if t.name=='Goblinstein_doctor'][0]
-    assert doc.hp==721 and doc.dmg==92
+    # 4 August 2026 update: Doctor damage 92 -> 135 (Supercell blog; export 53 at level 1)
+    assert doc.hp==721 and doc.dmg==135
     assert abs(doc.rng-5.5)<0.01
     assert 'Air' in doc.targets and 'Ground' in doc.targets
     assert abs(doc.stun_dur-0.5)<0.01
@@ -4701,12 +4702,13 @@ def t_mm_escape_resets_ramp():
 def t_gs_ability():
     random.seed(42)
     r=mk_card('goblinstein',11,'blue',5,10)
-    mon=[t for t in r if t.name=='Monster'][0]
-    ab=getattr(mon,'ability',None)
-    assert ab is not None,"Monster should have Lightning Link ability"
+    doc=[t for t in r if t.name=='Goblinstein_doctor'][0]
+    ab=getattr(doc,'ability',None)
+    assert ab is not None,"Doctor should have Lightning Link ability"
     from sim.fx import LightningLink
     assert isinstance(ab,LightningLink)
-    assert ab.tick_dmg==107,f"Tick dmg {ab.tick_dmg}"
+    # 4 August 2026 update: 214 -> 188 damage per second, 94 per 0.5 s tick
+    assert ab.tick_dmg==94,f"Tick dmg {ab.tick_dmg}"
     assert ab.tick_ct==46,f"CT dmg {ab.tick_ct}"
     return f"Goblinstein Lightning Link (tick_dmg={ab.tick_dmg}, ct={ab.tick_ct})"
 def t_lp_ramp():

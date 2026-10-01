@@ -568,7 +568,7 @@ def main():
         "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
         "legacySkills": {
             "group": "characters deployed alongside the card's own unit (units[k].count each); the card stats are the remaining count, "
-                     "leader names its unit overrides",
+                     "leader names its unit overrides, holder names the character that carries the champion ability (the leader otherwise)",
             "secondaryAttack": "independent attached attacker (rocket launcher, rider, backpack goblins); character names the unit",
             "areaDamageOnSpawn": "damage and radius dealt where the unit appears",
             "produceElixir": "interval and amount", "teleport": "distance moved backwards on cast",

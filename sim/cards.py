@@ -419,19 +419,24 @@ def create(name,lvl,team,x,y,evolved=False,hero=False):
     extra=sum(c['units'][snake(ch)]['count'] or 1 for ch in grp.get('characters',[]))
     # a lone leader (Rascal Boy, Goblinstein) stands on the point with the companions side by side the summon radius behind
     if n-extra==1:pts=[(x,y)]+[(px,y-(1 if team=='blue' else -1)*(r or 0)) for px,_ in formation(extra,c['collisionRadius'] or 0.5,x,y,team)]
+    # the character named holder carries the champion ability instead of the leader (Goblinstein's Doctor)
+    hold=grp.get('holder');held={'ability':sk['ability']} if hold and 'ability' in sk else {}
     for ch in grp.get('characters',[]):
         u=c['units'][snake(ch)];n-=u['count'] or 1
         ref=load()['cards'].get(u.get('card')) if u.get('card') else None
         for _ in range(u['count'] or 1):
             px,py=pts.pop()
-            out.append(troop(c,k,lvl,team,px,py,False,False,None,[u]+([ref] if ref else [])+[c],merge(ref['skills'] if ref else {},u.get('skills',{})),
-                             u.get('name') or ch))
+            csk={**merge(ref['skills'] if ref else {},u.get('skills',{})),**(held if ch==hold else {})}
+            out.append(troop(c,k,lvl,team,px,py,False,False,None,[u]+([ref] if ref else [])+[c],csk,u.get('name') or ch))
+    if held:sk={s:v for s,v in sk.items() if s!='ability'}
     name=c['name']
     if grp.get('leader'):
         u=c['units'][snake(grp['leader'])];chain=[u]+chain;sk=merge(sk,u.get('skills',{}));name=u.get('name') or grp['leader']
     if n<=1 and not out:return troop(c,k,lvl,team,x,y,evolved,hero,ev,chain,sk,name)
     out=[troop(c,k,lvl,team,px,py,evolved,hero,ev,chain,sk,name) for px,py in pts[:max(n,0)]]+out
-    for i,t in enumerate(out):t.deploy_at=i*delay
+    for i,t in enumerate(out):
+        t.deploy_at=i*delay
+        if hasattr(getattr(t,'ability',None),'bind'):t.ability.bind(out)
     if hero and c['hero'] and len(out)>1:
         ab=next((t.ability for t in out if getattr(t,'ability',None)),None)
         for t in out:t.ability=ab;t.is_hero=True
