@@ -482,8 +482,9 @@ def batches(c,gs,size):
     return out
 
 
-def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=128,threads=4,prequential=True,log=print,prep_dir=None):
-    # train the given arms side by side on one pass over the chosen stream games (all, last:N, or rolled) and evaluate them
+def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=128,threads=4,prequential=True,log=print,prep_dir=None,make=None):
+    # train the given arms side by side on one pass over the chosen stream games (all, last:N, or rolled) and evaluate them; make,
+    # when given, builds an arm object for a spec (or None to fall back to Arm), as train.learnedWm does for its arms
     torch.set_num_threads(threads);c=Corpus(pack_dir);P=Path(prep_dir or Path(pack_dir)/'prep');A=c.a;t0=time.monotonic()
     bc=Policy(c.n_state,c.n_card,hidden);bc.load_state_dict(torch.load(P/'bc_warm.pt'));bc.eval()
     for p in bc.parameters():p.requires_grad_(False)
@@ -499,7 +500,7 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
         if s!=src:continue
         priv=tuple(x for x in key[2:].split('+') if x);cr=Critic(c.n_state+c.priv_dim(priv),c.n_card,hidden,bounded=key[0]=='b')
         cr.load_state_dict(sd);critics[key]=cr
-    arms=[Arm(s,bc,critics,lr) for s in specs];mus={};flips={}
+    arms=[(make(s,bc,lr) if make else None) or Arm(s,bc,critics,lr) for s in specs];mus={};flips={}
     for a in arms:
         k=f"{a.cfg['mu']}_{a.cfg['T']:g}"
         if k not in mus:mus[k]=np.load(P/f'mu_{k}.npy',mmap_mode='r')
@@ -533,11 +534,12 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
     return rep
 
 
-def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2,hidden=128,threads=4,log=print):
+def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2,hidden=128,threads=4,log=print,prep_dir=None,name='simgroup'):
     # the prior arm with the world model as an environment (train.traceRl simgroup): menus of recorded decisions replayed with one play
     # replaced (train.counterfactual), advantages the simulated return minus the menu mean (normalised), a clipped ratio against the
-    # frozen warm-up clone, evaluated after each epoch count in epochs (rollouts can be reused because the world model can be queried)
-    torch.set_num_threads(threads);c=Corpus(pack_dir);P=Path(pack_dir)/'prep';A=c.a;t0=time.monotonic()
+    # frozen warm-up clone, evaluated after each epoch count in epochs (rollouts can be reused because the world model can be queried);
+    # the policies at those epochs are saved beside the report
+    torch.set_num_threads(threads);c=Corpus(pack_dir);P=Path(prep_dir or Path(pack_dir)/'prep');A=c.a;t0=time.monotonic()
     bc=Policy(c.n_state,c.n_card,hidden);bc.load_state_dict(torch.load(P/'bc_warm.pt'));bc.eval()
     for q in bc.parameters():q.requires_grad_(False)
     Q=Head(c.n_state,c.n_card,hidden=hidden);Q.load_state_dict(torch.load(P/'q.pt'));Q.eval();E=torch.load(P/'evals.pt',weights_only=False)
@@ -558,17 +560,17 @@ def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2
     for q in pol.parameters():q.requires_grad_(True)
     opt=torch.optim.Adam(pol.parameters(),lr=lr);torch.manual_seed(0)
     rep={'rows':len(rows),'decisions':len({x[0] for x in rows}),'games':len({int(A['game'][x[0]]) for x in rows}),'epochs':list(epochs),'arms':{},
-         'train_stats':{}}
+         'train_stats':{}};pols={}
     for e in range(1,max(epochs)+1):
         perm=torch.randperm(len(rows))
         for i in range(0,len(rows),batch_size):
             j=perm[i:i+batch_size];r=torch.exp(pol.logp(S[j],H[j],card[j],cell[j])-old[j])
             loss=-torch.min(r*adv[j],r.clamp(1-clip,1+clip)*adv[j]).mean();opt.zero_grad();loss.backward();nn.utils.clip_grad_norm_(pol.parameters(),1.0);opt.step()
         if e in epochs:
-            pol.eval();rep['arms'][f'simgroup:epochs={e}']=evaluate(pol,bc,Q,ev,sup);pol.train()
-            log(f'[{time.monotonic()-t0:.0f}s] simgroup epoch {e}',flush=True)
+            pol.eval();rep['arms'][f'{name}:epochs={e}']=evaluate(pol,bc,Q,ev,sup);pols[f'{name}:epochs={e}']=copy.deepcopy(pol.state_dict());pol.train()
+            log(f'[{time.monotonic()-t0:.0f}s] {name} epoch {e}',flush=True)
     rep['bc']=evaluate(bc,bc,Q,ev,sup);rep['seconds']=round(time.monotonic()-t0,1)
-    if out:Path(out).write_text(json.dumps(rep,indent=1)+'\n')
+    if out:Path(out).write_text(json.dumps(rep,indent=1)+'\n');torch.save(pols,Path(out).with_suffix('.pt'))
     return rep
 
 
