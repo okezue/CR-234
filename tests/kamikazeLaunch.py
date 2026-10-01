@@ -108,9 +108,9 @@ def t_short_jump_and_electro_spirit_unchanged(card):
     assert t.hp < 5000 and not s.alive
 
 
-@pytest.mark.parametrize('card', ('ice_spirit', 'heal_spirit'))
+@pytest.mark.parametrize('card', ('ice_spirit', 'heal_spirit', 'electro_spirit'))
 def t_spirit_leaves_the_field_at_launch(card):
-    # a jumping spirit no longer counts as a troop; it becomes similar to a projectile (wiki Ice Spirit, Heal Spirit)
+    # a jumping spirit no longer counts as a troop; it becomes similar to a projectile (wiki Ice, Heal and Electro Spirit)
     g = quiet()
     s = spirit(g, card, 'blue', 9.5, 10.5)
     t = target(g, 'red', 9.5, 13.7)

@@ -5355,18 +5355,20 @@ def t_int_sk_soul_from_combat():
     assert sc.souls>=1,f"SK should collect souls from killed skeletons: {sc.souls}"
     return f"SK collects souls from combat kills ({sc.souls} souls)"
 def t_int_mm_escape_v_pekka():
-    g=Game()
+    # the ability delay is pinned at its 0.15 s mean (an unseeded draw raced the P.E.K.K.A's 4.1 s kill); cast at 2.5 s, the escape
+    # lands near 3.65 s, after the 2.1 s ramp and with the miner at 566 hp until that kill
+    g=Game(p1={'ability_std':0})
     mm=mk_card('mighty_miner',11,'blue',9,14)
     g.deploy('blue',mm)
     pk=mk_card('pekka',11,'red',9,15)
     g.deploy('red',pk)
-    g.run(3)
+    g.run(2.5)
     assert mm.dmg>=204,"Should ramp up"
     ini_pk=pk.hp
     g.players['blue'].elixir=10;mm.ability.cd=0
     g.activate_ability('blue',mm)
     g.run(1.3)
-    assert mm.dmg==43,f"Should reset ramp, got {mm.dmg}"
+    assert mm.alive and mm.dmg==43,f"Should reset ramp, got {mm.dmg}"
     bomb_dmg=ini_pk-pk.hp
     assert bomb_dmg>0,"Bomb should damage PEKKA"
     assert abs(mm.x-8)<=1,"Should lane swap"
