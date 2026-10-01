@@ -11,8 +11,9 @@ from train.traceRl import N_CELLS,Head,Policy
 
 # The seed-robust harness on synthetic corpora (tests.singleTraj.packed) and planted per-record arrays: a training seed permutes the games
 # within each stream day and nothing else about the stream, a batch of arbitrary games is the consecutive batch when the games are
-# consecutive, per-record scores rebuild train.singleTraj.evaluate exactly, the game bootstrap is paired, and the registered verdicts use
-# the lower ends of the intervals against mean-plus-two-sd floors.
+# consecutive, per-record scores rebuild train.singleTraj.evaluate to within its rounding, the game bootstrap is paired, and an arm improves
+# only if the lower ends of both its seed interval and its game-bootstrap interval clear its mean-plus-two-sd floor and the support and
+# leave gates pass.
 
 
 def t_scored_records_reproduce_evaluate(tmp_path):
@@ -94,6 +95,31 @@ def t_bootstrap_is_paired_and_verdicts_use_the_lower_ends():
     assert s['F_max']==v['wmgroup']['F'] and not v['wmgroup']['improves']
     q2=s['compare']['Q2'];assert abs(q2['d']['mean']-0.0015)<1e-6 and q2['d']['lo']>0 and q2['boot'][0]>0 and q2['excess']['lo']<0
     assert q2['verdict']=='higher, not beyond the floors' and s['compare']['sao vs bpco']['verdict']=='worse'
+
+
+def t_the_game_bootstrap_lower_end_can_block_improves():
+    # every seed has the same gain pattern over games (+.05 in half of the 12 games, -.03 in the other half, mean .01) and a tiny seed
+    # offset, so the seed interval is narrow and clears the floor while resampling the games puts the bootstrap lower end below it
+    n,G=60,12;spread=np.where(np.repeat(np.arange(G),n//G)%2==0,0.04,-0.04)
+    gains={'bpco':[0.010+o+spread for o in (0.0,0.0002,-0.0002,0.0001,-0.0001)],'bpco:flip':[0.0,0.001,-0.001,0.002,-0.002]}
+    fx,recs=planted(gains,n,G);v=summarise(recs,fx,B=200)['verdicts']['bpco']
+    assert abs(v['gain']-0.010)<1e-6 and v['t_lo']>v['F'] and v['seeds_above_F']==5 and v['support_ok']
+    assert v['boot_lo']<v['F'] and not v['improves']
+
+
+def t_the_support_and_leave_gates_block_improves():
+    # three arms whose seed and bootstrap lower ends all clear their floors: bpco improves; sao loses two points of support mass and
+    # wmgroup's direct Q-eval gain exceeds its pessimistic gain by .003 (f5224's leave flags: support down more than a point, or direct
+    # minus pessimistic above .002), so neither improves
+    flip=[0.0,0.001,-0.001,0.002,-0.002];up=[0.010,0.012,0.008,0.011,0.009]
+    fx,recs=planted({'bpco':up,'bpco:flip':flip,'sao':up,'sao:flip':flip,'wmgroup':up,'wmgroup:flip':flip})
+    for r in recs['sao'].values():r['mass']=np.full_like(r['mass'],0.98)
+    for r in recs['wmgroup'].values():r['qdir']=r['qnum']+np.float32(0.003)
+    s=summarise(recs,fx,B=200);v=s['verdicts'];a=s['arms']
+    assert all(v[k]['t_lo']>v[k]['F'] and v[k]['boot_lo']>v[k]['F'] for k in ('bpco','sao','wmgroup')) and v['bpco']['improves']
+    assert abs(a['sao']['support_drop']-0.02)<1e-6 and a['sao']['leave_flags']==5 and not v['sao']['support_ok'] and not v['sao']['improves']
+    assert abs(a['wmgroup']['support_drop'])<1e-6 and a['wmgroup']['leave_flags']==5 and a['wmgroup']['leave_flag_mean']
+    assert abs(a['wmgroup']['q_direct']['mean']-a['wmgroup']['q_pess']['mean']-0.003)<1e-6 and not v['wmgroup']['support_ok'] and not v['wmgroup']['improves']
 
 
 def t_policies_are_named_by_arm_and_seed():

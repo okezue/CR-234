@@ -317,8 +317,14 @@ def main():
         s=summarise(recs,fx,a.B,exploit=ex)
         if a.cos and Path(a.cos).exists():s['q1_direction']=q1_direction(json.loads(Path(a.cos).read_text()))
         Path(a.out).write_text(json.dumps(s,indent=1)+'\n');print(table(s))
-        for k,v in s['compare'].items():print(k,v['verdict'],{x:round(v['d'][x],5) for x in ('mean','lo','hi')},[round(x,5) for x in v['boot']],
-                                              {x:round(v['excess'][x],5) for x in ('mean','lo','hi')})
+        for k,v in s['compare'].items():
+            # Q1's comparison is only its dq component; the registered Q1 also needs the direction check
+            print(k+(' dq component' if k=='Q1' else ''),v['verdict'],{x:round(v['d'][x],5) for x in ('mean','lo','hi')},[round(x,5) for x in v['boot']],
+                  {x:round(v['excess'][x],5) for x in ('mean','lo','hi')})
+            if k=='Q1' and 'q1_direction' in s:
+                q=s['q1_direction'];e=q['excess']
+                print(f"Q1 direction {'passes' if q['passes'] else 'fails'}: cosine excess {e['mean']:.5f} [{e['lo']:.5f}, {e['hi']:.5f}] against the flipped",
+                      f"floor {q['flipped_floor']:.5f}; Q1 {'yes' if v['d']['lo']>0 and q['passes'] else 'no'}")
 
 
 if __name__=='__main__':main()
