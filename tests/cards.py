@@ -333,7 +333,9 @@ def t_golem_death_dmg():
     d1=Dummy('red',9,15,hp=50000,dmg=500,spd=0,hspd=0.5)
     d2=Dummy('red',10,14,hp=50000,spd=0)
     g.deploy('red',d1);g.deploy('red',d2)
-    g.run(2)
+    # d2 is read in the tick the Golem dies (0.5 s): on 70 of 200 Golemite spawn draws the dummies then kill one at 1.55 s, and its 99
+    # death damage also reaches d2
+    while go.alive and g.t<2:g.tick()
     assert not go.alive
     assert d2.hp<50000,"Death damage not applied"
     assert 50000-d2.hp==225,f"Expected 225 death dmg, got {50000-d2.hp}"
@@ -4682,7 +4684,8 @@ def t_mm_escape_bomb():
     assert abs(mm.x-8)<=1,f"MM should lane swap x={mm.x}"
     return f"MM escape bomb (d hp={d.hp}, mm x={mm.x:.1f})"
 def t_mm_escape_resets_ramp():
-    g=Game()
+    # the ability delay is pinned at its 0.15 s mean, so the escape lands at 3.6 s: the 3.8 s read missed it on draws above 0.35 s
+    g=Game(p1={'ability_std':0})
     mm=mk_card('mighty_miner',11,'blue',9,10)
     g.deploy('blue',mm)
     d=Dummy('red',9,11,hp=50000,spd=0)
@@ -5356,23 +5359,42 @@ def t_int_sk_soul_from_combat():
     return f"SK collects souls from combat kills ({sc.souls} souls)"
 def t_int_mm_escape_v_pekka():
     # the ability delay is pinned at its 0.15 s mean (an unseeded draw raced the P.E.K.K.A's 4.1 s kill); cast at 2.5 s, the escape
-    # lands near 3.65 s, after the 2.1 s ramp and with the miner at 566 hp until that kill
-    g=Game(p1={'ability_std':0})
+    # lands at 3.6 s. In the centre column the mirror moves the miner 0.4 tiles, so he keeps his target and only the escape resets the ramp
+    g=quiet(Game(p1={'ability_std':0}))
     mm=mk_card('mighty_miner',11,'blue',9,14)
     g.deploy('blue',mm)
     pk=mk_card('pekka',11,'red',9,15)
     g.deploy('red',pk)
     g.run(2.5)
     assert mm.dmg>=204,"Should ramp up"
-    ini_pk=pk.hp
+    # the bomb hits air as well as ground (wiki), so a still air body over the miner's spot takes it. Its blast radius is unsourced
+    # (the export's 0.45 is the bomb building's collision radius; the wiki says only "medium area damage"), so nothing is asserted
+    # about the P.E.K.K.A, which stands 1.348 tiles off at the escape
+    air=Dummy('red',mm.x,mm.y,hp=5000,spd=0,dmg=0);air.transport='Air';air.targets=[];g.deploy('red',air)
     g.players['blue'].elixir=10;mm.ability.cd=0
     g.activate_ability('blue',mm)
-    g.run(1.3)
-    assert mm.alive and mm.dmg==43,f"Should reset ramp, got {mm.dmg}"
-    bomb_dmg=ini_pk-pk.hp
-    assert bomb_dmg>0,"Bomb should damage PEKKA"
+    ab=mm.ability
+    while ab._pend or ab.casting:g.tick()
+    te=g.t
+    g.run_to(3.8)
+    assert mm.dmg==43,f"Should reset ramp, got {mm.dmg}"
     assert abs(mm.x-8)<=1,"Should lane swap"
-    return f"MM escape v PEKKA (bomb={bomb_dmg}, ramp reset, lane swap x={mm.x:.0f})"
+    # the bomb goes off 1 s after the escape (wiki; export deployTime 1000), so the body is read just after that; the towers are
+    # quiet, so only the bomb can hit it
+    g.run_to(te+1.05)
+    assert air.hp==5000-ab.bomb_dmg,f"Bomb should hit the body over the miner's spot, hp {air.hp}"
+    # in a lane the mirror carries him to the other lane, out of the P.E.K.K.A's reach: he outlives the 4.1 s hit that kills him without it
+    g=Game(p1={'ability_std':0})
+    mm=mk_card('mighty_miner',11,'blue',14.5,14)
+    g.deploy('blue',mm)
+    pk=mk_card('pekka',11,'red',14.5,15)
+    g.deploy('red',pk)
+    g.run(2.5)
+    g.players['blue'].elixir=10;mm.ability.cd=0
+    g.activate_ability('blue',mm)
+    g.run(2.0)
+    assert mm.alive,f"Escape should take the miner out of the P.E.K.K.A's reach, x={mm.x:.1f}"
+    return f"MM escape v PEKKA (bomb {ab.bomb_dmg} at his spot, ramp reset, survives in the other lane at x={mm.x:.0f})"
 def t_int_bb_dash_then_grenade():
     g=Game()
     bb=mk_card('boss_bandit',11,'blue',9,10)
