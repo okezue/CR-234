@@ -1,7 +1,10 @@
+import random
+
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+import train.corpusStates as CS
 from sim import replay as R
 from train.corpusStates import PrivRecorder,exclusions,extract,select
 from train.decisionStates import Recorder
@@ -30,6 +33,21 @@ def t_rollouts_leave_the_replay_unchanged_and_the_states_match_the_shipped_recor
     # without a horizon the rollout features are zero; with one they are tower shares in (0, 0.5], a crown count and the seconds run
     assert all(r['roll']==(0.0,0.0,0.0,0.0) for r in r1)
     assert all(0<r['roll'][0]<=0.5 and 0<r['roll'][1]<=0.5 and 0<r['roll'][3]<=10.0+1e-6 for r in r2)
+
+
+def t_a_rollout_that_draws_random_numbers_restores_the_random_state(monkeypatch):
+    # a graveyard is still dropping skeletons at random points when red decides, so the forecast consumes random numbers; the replay
+    # must go on from the random state it had before the forecast
+    plays=[row('graveyard','blue',40,x=3,y=26)]+PLAYS[1:];out=dict(OUT,b_deck=['graveyard']+OUT['b_deck'][1:])
+    uni=random.uniform;roll=CS.rollout;draws=[0];seen=[]
+    def count(*a):
+        draws[0]+=1;return uni(*a)
+    def spy(g,team,h):
+        st=random.getstate();n=draws[0];r=roll(g,team,h);seen.append((draws[0]>n,random.getstate()==st));return r
+    monkeypatch.setattr(random,'uniform',count);monkeypatch.setattr(CS,'rollout',spy)
+    g0,r0=extract('synthetic',plays,out,horizon=0.0);g1,r1=extract('synthetic',plays,out,horizon=10.0)
+    assert seen and any(d for d,_ in seen) and all(ok for _,ok in seen),seen
+    assert all(g0[k]==g1[k] for k in g0) and all((a['state']==b['state']).all() for a,b in zip(r0,r1))
 
 
 def t_the_rollout_forecasts_the_board_and_stops_on_an_empty_field():

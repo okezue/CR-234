@@ -4,14 +4,17 @@ import math
 from datetime import datetime,timezone
 
 import numpy as np
+import pytest
 import torch
+import torch.nn.functional as F
 
+import train.singleTraj as ST
 from train.corpusStates import EXTRA
 from train.counterfactual import CELLS,own_cells
 from train.decisionStates import COLS
 from train.feats import FEAT_DIM
-from train.singleTraj import (Corpus,Critic,Policy,batch,dppo_loss,eval_set,evaluate,flash_loss,from_mat,gae,la_lambda,pack,prep,run_arms,sao_loss,
-                              simgroup,to_mat,token_logp)
+from train.singleTraj import (HAND,N_CELLS,Arm,Corpus,Critic,Policy,batch,bern_kl,critic_key,dppo_loss,eval_set,evaluate,flash_loss,from_mat,gae,
+                              la_lambda,pack,parse,prep,run_arms,sao_loss,simgroup,to_mat,token_logp)
 
 # Single-trajectory RL on synthetic production traces through the shipped pack, prep and single-pass functions. Games plant the
 # decision rule of tests/traceRl.py (feature 40 says which of knight and archers is right; the behaviour follows it 60 percent of the
@@ -28,13 +31,14 @@ def right_card(c):
     return 'knight' if c>0 else 'archers'
 
 
-def shards(tmp_path,n_games=900,n_dec=10,follow=0.6,seed=0,per=300):
-    # corpus shards in train.corpusStates format, games spread over 2026-08-30 .. 2026-09-07 in time order
+def shards(tmp_path,n_games=900,n_dec=10,follow=0.6,seed=0,per=300,ids=None):
+    # corpus shards in train.corpusStates format, games spread over 2026-08-30 .. 2026-09-07 in time order; ids maps a game's time rank
+    # to its battle id (default: ids in time order)
     rng=np.random.default_rng(seed);out=tmp_path/'states';out.mkdir(parents=True,exist_ok=True);ts=np.sort(rng.uniform(T0,T0+8*86400,n_games))
     for k in range(0,n_games,per):
         rows={c:[] for c in COLS+EXTRA};X=[];roll=[];games=[]
         for g in range(k,min(k+per,n_games)):
-            bid=f'G{g:05d}';share={'blue':0,'red':0};hid={'blue':rng.random()<0.5,'red':rng.random()<0.5};recs=[]
+            bid=ids(g) if ids else f'G{g:05d}';share={'blue':0,'red':0};hid={'blue':rng.random()<0.5,'red':rng.random()<0.5};recs=[]
             for i in range(n_dec):
                 team='blue' if i%2==0 else 'red';s=np.zeros(FEAT_DIM,np.float32);s[:16]=rng.normal(0,1,16);c=1.0 if rng.random()<0.5 else -1.0;s[40]=c*3.0
                 right=right_card(c);card=right if rng.random()<follow else rng.choice([h for h in HANDS.split('|') if h!=right])
@@ -56,6 +60,25 @@ def shards(tmp_path,n_games=900,n_dec=10,follow=0.6,seed=0,per=300):
 
 def packed(tmp_path,**kw):
     d=tmp_path/'pack';pack(shards(tmp_path,**kw),d);return d
+
+
+def toy(L=(3,2,4,3,2,4),R=None,n_state=8,n_card=6,seed=0):
+    # a batch in the layout of singleTraj.batch with one trajectory per entry of L (decision counts), outcomes alternating won and
+    # lost unless given, the behaviour estimate set to the starting actor's own probabilities
+    torch.manual_seed(seed);pol=Policy(n_state,n_card,16);L=torch.tensor(L);n=len(L);m=int(L.sum())
+    H=torch.stack([torch.randperm(n_card)[:HAND] for _ in range(m)]);card=H[:,0].clone();cell=torch.randint(0,N_CELLS,(m,));S=torch.randn(m,n_state)
+    tr=torch.arange(n).repeat_interleave(L);pos=torch.cat([torch.arange(int(x)) for x in L]);R=torch.arange(n).remainder(2).float() if R is None else R
+    with torch.no_grad():mu=token_logp(pol,S,H,card,cell)
+    return pol,{'S':S,'H':H,'card':card,'cell':cell,'tr':tr,'pos':pos,'L':L,'R':R,'n':n,'Z':None,'mu':mu}
+
+
+def with_critic(spec,lr=1e-4,**kw):
+    pol,b=toy(**kw);cfg=parse(spec)
+    return Arm(spec,pol,{critic_key(cfg):Critic(b['S'].shape[1],pol.card.out_features,16,bounded=cfg['bounded'])},lr),b
+
+
+def params(m):
+    return [p.detach().clone() for p in m.parameters()]
 
 
 def right_rate(pol,c,ev):
@@ -85,6 +108,28 @@ def t_flash_admits_whole_trajectories_and_weights_by_the_detached_ratio():
     lp2=lp.detach().clone().requires_grad_(True);flash_loss(lp2,lmu,A,tr,T,math.inf)[0].backward();assert (lp2.grad[4:]!=0).all()
 
 
+def t_flash_gates_on_the_trajectory_mean_of_the_behaviour_first_divergence():
+    # one token alone above delta, its trajectory's mean below: the whole trajectory is admitted, that token included
+    lmu=torch.log(torch.tensor([0.5,0.5]));lp=torch.log(torch.tensor([0.5,0.545])).requires_grad_(True);T=torch.tensor([2.0]);A=torch.tensor([1.0])
+    kl=bern_kl(lmu,lp.detach());assert kl[1]>3e-3>=kl.mean()
+    loss,st=flash_loss(lp,lmu,A,torch.tensor([0,0]),T,3e-3);loss.backward();rho=(lp.detach()-lmu).exp()
+    assert st['admitted']==1 and lp.grad[1]<0 and torch.allclose(lp.grad,-rho/2,atol=1e-6)
+    # KL(mu || pi): mu .5, pi .01 is 1.61 (rejected at delta 1) although KL(pi || mu) is 0.64; the mirrored trajectory is admitted
+    lmu=torch.log(torch.tensor([0.5,0.01]));lp=torch.log(torch.tensor([0.01,0.5])).requires_grad_(True)
+    assert bern_kl(lmu[:1],lp[:1].detach())>1.0>bern_kl(lp[:1].detach(),lmu[:1])
+    loss,st=flash_loss(lp,lmu,torch.tensor([1.0,1.0]),torch.tensor([0,1]),torch.ones(2),1.0);loss.backward()
+    assert st['admitted']==0.5 and lp.grad[0]==0 and lp.grad[1]<0
+
+
+def t_flash_and_reinforce_centre_the_outcome_on_the_batch_mean():
+    # every trajectory won: the centred advantage is zero everywhere, so the one update leaves the actor exactly where it started
+    for spec in ('flash:mu=warm','flash_nogate:mu=warm','reinforce'):
+        pol,b=toy(R=torch.ones(6));a=Arm(spec,pol,{});w=params(a.pol);a.step(b)
+        assert all(torch.equal(p,q) for p,q in zip(a.pol.parameters(),w)),spec
+        pol,b=toy();a=Arm(spec,pol,{});w=params(a.pol);a.step(b)
+        assert not all(torch.equal(p,q) for p,q in zip(a.pol.parameters(),w)),spec
+
+
 def t_sao_masks_ratios_outside_the_band_and_dppo_masks_probability_moves_with_the_advantage():
     lmu=torch.log(torch.tensor([0.5,0.5,0.5,0.5]));lp=torch.log(torch.tensor([0.5,0.9,0.2,0.4])).requires_grad_(True);A=torch.tensor([1.0,1.0,-1.0,-1.0])
     loss,st=sao_loss(lp,lmu,A,0.3,0.5);loss.backward()
@@ -96,6 +141,37 @@ def t_sao_masks_ratios_outside_the_band_and_dppo_masks_probability_moves_with_th
     assert st['masked']==0.5 and lp.grad[0]==0 and lp.grad[2]==0 and abs(float(lp.grad[1])+0.6)<1e-5 and abs(float(lp.grad[3])-0.45)<1e-5
 
 
+def t_sao_weights_kept_tokens_by_the_detached_ratio():
+    lmu=torch.log(torch.full((4,),0.5));lp=torch.log(torch.tensor([0.6,0.45,0.9,0.3])).requires_grad_(True);A=torch.tensor([1.0,-2.0,0.5,1.0])
+    loss,st=sao_loss(lp,lmu,A,0.3,5.0);loss.backward();r=(lp.detach()-lmu).exp()
+    # ratios 1.2, 0.9, 1.8 inside (0.7, 6), 0.6 outside: the gradient is -A r / m on kept tokens and zero on the masked one
+    assert st['masked']==0.25 and lp.grad[3]==0 and torch.allclose(lp.grad[:3],-(A*r)[:3]/4,rtol=1e-6,atol=0)
+
+
+def t_the_critic_steps_at_five_times_the_actor_rate_and_twice_per_update_for_sao():
+    for spec in ('sao','bpco'):
+        a,b=with_critic(spec);seen=[];step=a.copt.step
+        a.copt.step=lambda *x,**k:(seen.append(a.copt.param_groups[0]['lr']),step(*x,**k))[1]
+        a.step(b);assert seen and seen==pytest.approx([5*a.opt.param_groups[0]['lr']]*len(seen)),(spec,seen)
+        if spec=='sao':assert len(seen)==2
+
+
+def t_critic_targets_are_the_outcome_and_only_sao_whitens_its_advantages(monkeypatch):
+    # the critic regresses both tokens on the recorded outcome (Monte Carlo, lambda_V 1); the policy loss gets the length-adaptive GAE
+    # of the pre-update critic, raw for BPCO (alpha 0.4) and whitened over the batch for SAO (alpha 1.5)
+    mse=F.mse_loss;targets=[];got={}
+    monkeypatch.setattr(F,'mse_loss',lambda x,y,**k:(targets.append(y.detach().clone()),mse(x,y,**k))[1])
+    for name in ('dppo_loss','sao_loss'):
+        f=getattr(ST,name);monkeypatch.setattr(ST,name,lambda lp,lmu,A,*x,f=f,name=name:(got.__setitem__(name,A.detach().clone()),f(lp,lmu,A,*x))[1])
+    for spec,alpha,name in (('bpco',0.4,'dppo_loss'),('sao',1.5,'sao_loss')):
+        a,b=with_critic(spec);targets.clear();tr,pos,L,R=b['tr'],b['pos'],b['L'],b['R'];T=2*L
+        with torch.no_grad():V=a.critic(b['S'],b['card'],None)
+        g=from_mat(gae(to_mat(V,tr,pos,b['n'],L),R,T,la_lambda(T,alpha)),tr,pos).reshape(-1);a.step(b)
+        assert targets and all(torch.equal(y,R[tr][:,None].expand(-1,2)) for y in targets),spec
+        assert la_lambda(T,alpha).max()<1 and not torch.allclose(V+g.reshape(-1,2),R[tr][:,None].expand(-1,2),atol=1e-3)
+        want=g if spec=='bpco' else (g-g.mean())/g.std();assert torch.allclose(got[name],want,atol=1e-5),spec
+
+
 def t_the_bounded_critic_stays_inside_the_reward_range():
     cr=Critic(8,5,hidden=16,bounded=True);S=torch.randn(64,8)*100;v=cr(S,torch.randint(0,5,(64,)))
     assert v.shape==(64,2) and (v>0).all() and (v<1).all()
@@ -104,9 +180,13 @@ def t_the_bounded_critic_stays_inside_the_reward_range():
 
 
 def t_pack_orders_by_battle_time_and_makes_one_trajectory_per_player(tmp_path):
-    d=packed(tmp_path,n_games=60,per=25);c=Corpus(d);A=c.a
+    # battle ids run against time, so only the battle time can give the order
+    d=packed(tmp_path,n_games=60,per=25,ids=lambda g:f'G{59-g:05d}');c=Corpus(d);A=c.a
     assert c.meta['games']==60 and c.meta['trajectories']==120 and c.meta['records']==600 and set(c.meta['split_games'])=={'warm','stream','heldA','heldB'}
-    assert (np.diff(A['g_ts'])>=0).all() and (np.diff(A['t_start'])==10//2).all() and (A['t_len']==5).all()
+    assert (np.diff(A['g_ts'])>=0).all() and (np.diff(A['t_start'])==10//2).all() and (A['t_len']==5).all() and c.meta['bid']!=sorted(c.meta['bid'])
+    # the standardisation statistics are the warm-up games' own, not the whole corpus's
+    Xw=c.X[c.records(c.games('warm'))].astype(np.float64);Xa=np.asarray(c.X,np.float64);assert np.abs(Xa.mean(0)-Xw.mean(0)).max()>1e-2
+    assert np.allclose(c.mu[:FEAT_DIM],Xw.mean(0),atol=1e-5) and np.allclose(c.sd[:FEAT_DIM],Xw.std(0)+1e-6,atol=1e-4)
     # every trajectory is one team's decisions in order, labelled with that team's recorded outcome
     for ti in range(0,120,17):
         r=np.arange(A['t_start'][ti],A['t_start'][ti]+A['t_len'][ti]);assert (A['team'][r]==A['t_team'][ti]).all() and (A['pos'][r]==np.arange(5)).all()
@@ -135,8 +215,11 @@ def t_single_pass_recipes_learn_the_planted_rule_and_flipped_outcomes_do_not(tmp
     assert m['flash_nogate']['kl_to_bc']>=m['flash:mu=warm']['kl_to_bc'] and 'critic_heldB' in m['bpco:mu=warm']
 
 
-def t_privileged_critics_explain_more_of_the_outcome(tmp_path):
-    d=packed(tmp_path);rep=prep(d,hidden=32,bc_epochs=2,critic_epochs=30,q_epochs=2,eval_n=4000,day_n=200,rolled_pre=60,log=lambda *a,**k:None,fit_batch=256)
+def t_privileged_critics_explain_more_of_the_outcome(tmp_path,monkeypatch):
+    d=packed(tmp_path);fit=ST.fit_head;seen=[];monkeypatch.setattr(ST,'fit_head',lambda Q,S,*a,**k:(seen.append(S.clone()),fit(Q,S,*a,**k))[1])
+    rep=prep(d,hidden=32,bc_epochs=2,critic_epochs=30,q_epochs=2,eval_n=4000,day_n=200,rolled_pre=60,log=lambda *a,**k:None,fit_batch=256)
+    # the Q model is fit on the states of held-out half A only (half B is the one scored)
+    c=Corpus(d);assert len(seen)==1 and torch.equal(seen[0],c.S(0,0,c.records(c.games('heldA'))))
     ev=rep['critic_pretrain_heldB']
     # the opponent's hidden hand and the rollout lead carry outcome information the actor's state lacks
     assert ev['warm:b|hidden']['ev']>ev['warm:b|']['ev']+0.01 and ev['rolled:b|sim']['ev']>ev['rolled:b|']['ev']+0.1
