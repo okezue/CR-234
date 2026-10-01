@@ -33,13 +33,15 @@ Diagnostics: teacher-forced one- and multi-step prediction error on held-out gam
 error against marginal baselines, the counterfactual direction (menu advantages against the held-out real-outcome Q model, and
 policy-shift cosines as in train.worldModelBias, against the flipped-outcome floor) and exploitation (support of the favourite
 plays; in-model value gain under the training members and under the held-out member against the held-out real-outcome gain).
-Usage: python -m train.learnedWm aux|fit|refit|lam|arms|menu|diag ... (see main)
+Usage: python -m train.learnedWm prep|aux|fit|refit|lam|arms|menu|diag ... (see main)
 """
 import argparse
 import copy
 import json
 import math
+import shutil
 import time
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -49,7 +51,7 @@ import torch.nn.functional as F
 
 from train.counterfactual import load_groups,own_cells,cell_of
 from train.feats import FLAT_DIM,GAME_FEAT,MAX_UNITS,N_TOWERS,TOWER_FEAT,UNIT_FEAT
-from train.singleTraj import Corpus,run_arms,simgroup,token_logp
+from train.singleTraj import Corpus,behaviour,eval_set,evaluate,run_arms,simgroup,token_logp
 from train.traceRl import HAND,N_CELLS,Head,Policy
 from train.worldModelBias import agreement,shift
 
@@ -577,8 +579,24 @@ def diagnose(pack,prep,wm_dir,runs,out=None,n_pred=20000,n_dir=20000,n_gain=4000
     return rep
 
 
+def restore_prep(c,src,dst,hidden=128):
+    # a persisted train.singleTraj prep (clones, critics, Q model, evaluation rows) copied with its cross-fitted behaviour estimate
+    # recomputed from the saved half clones (records of half-1 games scored by the clone fit on half 0 and the reverse); the clone's
+    # held-out metrics are recomputed so a repacked store can be checked against the original
+    src=Path(src);dst=Path(dst);dst.mkdir(parents=True,exist_ok=True)
+    for f in ('bc_warm.pt','bc_same.pt','bc_cross_a.pt','bc_cross_b.pt','critics.pt','evals.pt','q.pt','prep.json'):shutil.copy(src/f,dst/f)
+    def pol(f):
+        p=Policy(c.n_state,c.n_card,hidden);p.load_state_dict(torch.load(dst/f));p.eval();return p
+    half=np.array([zlib.crc32(b.encode())%2 for b in c.meta['bid']],bool)
+    mu=behaviour(c,{'cross':(pol('bc_cross_b.pt'),pol('bc_cross_a.pt'),half[c.a['game']])},c.records(c.games('stream')))['cross|1'];np.save(dst/'mu_cross_1.npy',mu)
+    bc=pol('bc_warm.pt');Q=Head(c.n_state,c.n_card,hidden=hidden);Q.load_state_dict(torch.load(dst/'q.pt'));Q.eval();E=torch.load(dst/'evals.pt',weights_only=False)
+    return {'recomputed':evaluate(bc,bc,Q,eval_set(c,E['rows']['heldB']),E['sup']['final']),'original':json.loads((dst/'prep.json').read_text())['bc_heldB']}
+
+
 def main():
     ap=argparse.ArgumentParser();sp=ap.add_subparsers(dest='cmd',required=True)
+    a=sp.add_parser('prep');a.add_argument('--pack',required=True);a.add_argument('--src',required=True);a.add_argument('--prep',required=True)
+    a.add_argument('--threads',type=int,default=16);a.add_argument('--wm',default='.')
     a=sp.add_parser('aux');a.add_argument('--pack',required=True);a.add_argument('--wm',required=True);a.add_argument('--K',type=int,default=4)
     a=sp.add_parser('fit');a.add_argument('--pack',required=True);a.add_argument('--wm',required=True);a.add_argument('--member',type=int,required=True)
     a.add_argument('--epochs',type=int,default=1);a.add_argument('--threads',type=int,default=6);a.add_argument('--max_steps',type=int,default=0)
@@ -594,7 +612,8 @@ def main():
     a=sp.add_parser('diag');a.add_argument('--pack',required=True);a.add_argument('--prep',required=True);a.add_argument('--wm',required=True)
     a.add_argument('--runs',nargs='*',default=[]);a.add_argument('--out',required=True);a.add_argument('--cf');a.add_argument('--threads',type=int,default=16)
     a=ap.parse_args();torch.set_num_threads(getattr(a,'threads',8));wm=Path(a.wm);wm.mkdir(parents=True,exist_ok=True)
-    if a.cmd=='aux':
+    if a.cmd=='prep':print(json.dumps(restore_prep(Corpus(a.pack),a.src,a.prep)))
+    elif a.cmd=='aux':
         c=Corpus(a.pack);t0=time.monotonic();d=aux(c,a.K);np.savez(wm/'aux.npz',**d)
         print(json.dumps({'records':int(len(d['oc'])),'opp_play_rate':round(float((d['oc']>=0).mean()),4),'done_rate':round(float(d['done'].mean()),4),
                           'queue_known':round(float((d['qu']>=0).mean()),4),'seconds':round(time.monotonic()-t0,1),'z_mu':dict(zip(SUM,d['z_mu'].round(4).tolist()))}))
@@ -614,7 +633,7 @@ def main():
     elif a.cmd=='menu':
         c=Corpus(a.pack);ax=load_aux(wm/'aux.npz');out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
         cfw=menu_values(c,ax,[load_member(wm/f'member{i}.pt') for i in MEMBERS],a.cf);(out/'cfLearned.json').write_text(json.dumps(cfw)+'\n')
-        for name,cf in (('simgroup',a.cf),('wmmenu',out/'cfLearned.json')):simgroup(a.pack,cf,out/f'{name}.json',threads=a.threads,prep_dir=a.prep,name=name)
+        for name,cf in (('simgroup',a.cf),('wmmenu',out/'cfLearned.json')):simgroup(a.pack,cf,out/f'{name}.json',threads=a.threads,prep_dir=a.prep,label=name)
     else:
         diagnose(a.pack,a.prep,wm,a.runs,a.out,cf=a.cf)
 

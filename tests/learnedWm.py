@@ -174,6 +174,9 @@ def t_wmgroup_moves_toward_the_planted_play_and_qgroup_does_not(world):
     d,c,wm,ax,ms=world['dir'],world['c'],world['wm'],world['ax'],world['models'];log=lambda *a,**k:None
     prep(d,hidden=32,bc_epochs=20,critic_epochs=1,q_epochs=5,eval_n=4000,day_n=200,rolled_pre=0,log=log,fit_batch=256)
     bc=Policy(c.n_state,c.n_card,32);bc.load_state_dict(torch.load(d/'prep'/'bc_warm.pt'));bc.eval()
+    # a persisted prep without its behaviour estimates is restored exactly from the saved half clones
+    rp=LW.restore_prep(c,d/'prep',d/'prep2',hidden=32);assert np.allclose(np.load(d/'prep2'/'mu_cross_1.npy'),np.load(d/'prep'/'mu_cross_1.npy'),atol=1e-5)
+    assert all(abs(rp['recomputed'][k]-rp['original'][k])<1e-4 for k in ('winner_gap','q_support','entropy'))
     lam=LW.calibrate(c,ax,ms,bc,c.records(c.games('warm'))[:600],G=4,H=2);(wm/'lam.json').write_text(json.dumps(lam)+'\n')
     for i,m in enumerate(ms):LW.save_member(LW.refit_outcome(m,c,LW.train_rows(c),LW.flips(c,0)),wm/f'member{i}_flip0.pt')
     arms=('wmgroup:H=2:roots=1','wmgroup_mopo:H=2:roots=1','qgroup:roots=1','wmgroup:H=2:roots=1:flip')
