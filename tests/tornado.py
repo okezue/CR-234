@@ -32,10 +32,10 @@ def t_tornado_skips_building_pull_without_skipping_other_targets():
         g=Game();enemy=g._opp(team)
         building=create('cannon',11,enemy,11,10);g.deploy(enemy,building)
         hidden=create('tesla',11,enemy,11,11);hidden.statuses.append(Status('burrowed',2));g.deploy(enemy,hidden)
-        troop=Dummy(enemy,11,10,hp=5000,spd=0);g.deploy(enemy,troop)
+        troop=Dummy(enemy,11,10,hp=5000,spd=0);troop.base_spd=1.2;g.deploy(enemy,troop)
         hp=troop.hp;spell=create('tornado',11,team,9,10);spell.apply(g);spell.tick(g.DT,g)
         assert (building.x,building.y)==(11,10) and (hidden.x,hidden.y)==(11,11)
-        assert math.isclose(troop.x,11-spell.pull_str*g.DT) and troop.y==10
+        assert math.isclose(troop.x,11-spell.pull_str*1.2*g.DT) and troop.y==10
         assert hp-troop.hp==spell.tick_dmg
 
 
@@ -49,7 +49,7 @@ def t_tornado_keeps_existing_troop_pull(name):
     target=Dummy('blue',11,11);troop.tgt=troop.aggro_tgt=target
     state=(troop.spd,troop.cd,troop.tgt,troop.aggro_tgt,list(troop.statuses));hp=troop.hp
     spell=create('tornado',11,'blue',9,10);spell.apply(g);spell.tick(g.DT,g)
-    assert math.isclose(troop.x,11-spell.pull_str*g.DT) and troop.y==10
+    assert math.isclose(troop.x,11-spell.pull_str*troop.base_spd*g.DT) and troop.y==10
     assert hp-troop.hp==spell.tick_dmg
     assert (troop.spd,troop.cd,troop.tgt,troop.aggro_tgt,troop.statuses)==state
 
@@ -77,15 +77,16 @@ def t_tornado_uses_current_classification_not_hitpoint_threshold():
 def t_tornado_preserves_team_dead_and_range_boundaries():
     g=Game();spell=create('tornado',11,'blue',9,10)
     ally=Dummy('blue',11,10,hp=5000);dead=Dummy('red',11,11,hp=5000);dead.alive=False
-    center=Dummy('red',9,10,hp=5000);outside=Dummy('red',9+spell.radius+0.01,10,hp=5000)
-    edge=Dummy('red',9+spell.radius,10,hp=5000)
+    # the pull reaches the bodies the damage tick reaches: the 0.5 collision circle touching the radius
+    center=Dummy('red',9,10,hp=5000);outside=Dummy('red',9+spell.radius+0.51,10,hp=5000)
+    edge=Dummy('red',9+spell.radius+0.5,10,hp=5000)
     for t in (ally,dead,center,outside,edge):g.deploy(t.team,t)
     spell.apply(g);spell.tick(g.DT,g)
     assert (ally.x,ally.y,ally.hp)==(11,10,5000)
     assert (dead.x,dead.y,dead.hp)==(11,11,5000)
     assert (center.x,center.y)==(9,10) and center.hp==5000-spell.tick_dmg
-    assert outside.x==9+spell.radius+0.01 and outside.hp==5000-spell.tick_dmg
-    assert math.isclose(edge.x,9+spell.radius-spell.pull_str*g.DT)
+    assert outside.x==9+spell.radius+0.51 and outside.hp==5000
+    assert math.isclose(edge.x,9+spell.radius+0.5-spell.pull_str*edge.spd*g.DT) and edge.hp==5000-spell.tick_dmg
 
 
 def t_tornado_crown_damage_activation_and_lifetime_are_unchanged():
@@ -180,7 +181,7 @@ def t_tornado_lethal_building_runs_death_spawn_once():
 
 def t_tornado_full_game_preserves_building_location_and_decay():
     g=quiet(Game());building=create('cannon',11,'red',11,10);g.deploy('red',building)
-    troop=Dummy('red',12,12,hp=5000,spd=0,dmg=0);g.deploy('red',troop)
+    troop=Dummy('red',12,12,hp=5000,spd=0,dmg=0);troop.base_spd=1.2;g.deploy('red',troop)
     hp=building.hp;g._cast('blue',create('tornado',11,'blue',9,10),9,10)
     g.run(1.5)
     assert (building.x,building.y)==(11,10)

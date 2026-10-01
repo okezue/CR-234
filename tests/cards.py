@@ -4146,7 +4146,7 @@ def t_eq_slow():
     return "Earthquake applies movement-only slow"
 def t_tornado_pull():
     g=Game()
-    d=Dummy('red',12,25,hp=50000,spd=0)
+    d=Dummy('red',12,25,hp=50000,spd=0);d.base_spd=1.2
     g.deploy('red',d)
     ox=d.x
     tn=mk_card('tornado',11,'blue',9,25)
@@ -4158,7 +4158,7 @@ def t_tornado_king_act():
     g=Game()
     kt=g.arena.get_tower('blue','king')
     assert not kt.active
-    d=Dummy('red',kt.cx+2,kt.cy,hp=50000,spd=0,dmg=0)
+    d=Dummy('red',kt.cx+2,kt.cy,hp=50000,spd=0,dmg=0);d.base_spd=1.2
     g.deploy('red',d)
     tn=mk_card('tornado',11,'blue',kt.cx,kt.cy)
     tn.apply(g);g.spells.append(tn)
@@ -4397,7 +4397,7 @@ def t_int_tornado_hog_king():
     g=Game()
     kt=g.arena.get_tower('blue','king')
     assert not kt.active
-    d=Dummy('red',kt.cx,kt.cy+8,hp=50000,spd=0)
+    d=Dummy('red',kt.cx,kt.cy+8,hp=50000,spd=0);d.base_spd=1.2
     g.deploy('red',d)
     tn=mk_card('tornado',11,'blue',kt.cx,kt.cy+5)
     tn.apply(g);g.spells.append(tn)

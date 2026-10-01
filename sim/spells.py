@@ -359,8 +359,11 @@ class TornadoSpell:
                 if not e.alive or getattr(e,'is_building',False):continue
                 dx=self.x-e.x;dy=self.y-e.y
                 d=math.sqrt(dx*dx+dy*dy)
-                if d<=self.radius and d>0.1:
-                    mv=self.pull_str*dt
+                # the pull reaches every body its damage tick reaches (the export's Tornado damage belongs to the buff the pull comes from)
+                if d>0.1 and tdist(e,self.x,self.y)<=self.radius:
+                    # 360% of the troop's own walking speed, not of a charge or wind-up (export attract_percentage 360, push_speed_factor 100,
+                    # push_mass_factor 0; wiki and blog: faster troops are pulled further; recorded drill Goblin 7.3 to 7.9 tiles/s), never past the centre
+                    mv=min(d,self.pull_str*getattr(e,'base_spd',e.spd)*dt)
                     e.x+=dx/d*mv;e.y+=dy/d*mv
         if self.ticks_left>0:
             self.tick_cd-=dt
