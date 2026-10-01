@@ -24,9 +24,9 @@ Arms (side by side with the merged recipes in train.singleTraj.run_arms, one pas
   wmgroup       at a quarter of each batch's recorded states, G = 8 plays sampled from the policy, each rolled out H = 4 decisions,
                 advantages the value minus the group mean (scaled by their batch spread), BPCO's binary-TV mask against the frozen
                 warm-up clone on both tokens (anchor=clip: the ppo1/simgroup clipped ratio against it).
-  wmgroup_mopo  the same with the MOPO penalty (Yu et al. 2020): value minus lambda times the ensemble disagreement (the summed
-                largest member distance to the mean predicted summary), lambda set on warm-up states so that the penalty's spread
-                within groups equals the value's.
+  wmgroup_mopo  the same with an ensemble-disagreement penalty in the style of MOPO (Yu et al. 2020, whose penalty is the largest
+                norm of the members' predicted standard deviations): value minus lambda times the summed largest member distance to the
+                mean predicted summary, lambda set on warm-up states so that the penalty's spread within groups equals the value's.
   qgroup        H = 0: the members' one-step Q, no dynamics.
   :flip         V and Q heads refit on outcomes flipped for a random half of the games (both sides): the noise floor.
 Diagnostics: teacher-forced one- and multi-step prediction error on held-out games against persistence, opponent-play and timing

@@ -171,6 +171,64 @@ def t_rollouts_cycle_the_hand_and_share_plays_across_members(world):
     v0,_=LW.rollout(ms,hs,H0,qu,card,cell,0);assert torch.allclose(v0[1],torch.sigmoid(ms[1].qv(hs[1],ms[1].play(card,cell))))
 
 
+def t_rollouts_follow_the_opponents_sampled_play():
+    # planted members whose opponent always plays one card at cell 0: the dynamics move the latent along u when that card is 1 and
+    # against u for any other card or none, V reads P(win) .8 along u and .2 against it, and the game never ends
+    L,E,nc=8,4,4;u=torch.tensor([1.0,-1.0]*(L//2))
+
+    class Dyn(torch.nn.Module):
+        def forward(self,x):return 10*x[:,L+2*E:L+2*E+1]*u
+
+    class V(torch.nn.Module):
+        def forward(self,h):return (h@u/L*math.log(4))[:,None]
+
+    class Never(torch.nn.Module):
+        def forward(self,x):return torch.stack([torch.zeros(len(x)),torch.full((len(x),),-30.0)],1)
+
+    def member(opp):
+        m=LW.WorldModel(3,nc,hidden=8,latent=L,emb=E);m.dyn,m.v,m.tim=Dyn(),V(),Never()
+        with torch.no_grad():
+            m.card.weight.zero_();m.card.weight[:,0]=-1;m.card.weight[1,0]=1;m.cell.weight.zero_()
+            m.oc.weight.zero_();m.oc.bias.fill_(-30);m.oc.bias[opp]=30;m.ocell.weight.zero_();m.ocell.bias.fill_(-30);m.ocell.bias[0]=30
+        return m.eval()
+    n=256;hs=torch.zeros(n,L);hand=torch.tensor([[0,1,2,3]]*n);qu=torch.zeros(n,2,dtype=torch.long);card=torch.full((n,),2)
+    cell=torch.zeros(n,dtype=torch.long)
+    with torch.no_grad():
+        for H in (1,2):
+            for opp,want in ((1,0.8),(2,0.2),(nc,0.2)):
+                v,_=LW.rollout([member(opp)],[hs],hand,qu,card,cell,H,None,torch.Generator().manual_seed(0))
+                assert torch.allclose(v,torch.full_like(v,want),atol=1e-3),(H,opp,v[0,:4])
+        # members that disagree on the opponent's card share one sampled play per row, card 1 in about half the rows
+        v,_=LW.rollout([member(1),member(2)],[hs,hs],hand,qu,card,cell,1,None,torch.Generator().manual_seed(0))
+    assert torch.allclose(v[0],v[1]) and torch.allclose((v-0.5).abs(),torch.full_like(v,0.3),atol=1e-3) and 0.35<float((v[0]>0.5).float().mean())<0.65
+
+
+class Offsets:
+    # a stub member for H = 0: the one-step Q of a play is its state's offset plus its card's effect; S[:, 0] holds the state's id
+    def __init__(self,offset,effect):
+        self.offset=torch.tensor(offset,dtype=torch.float32);self.effect=torch.tensor(effect,dtype=torch.float32)
+    def encode(self,S):return S[:,:1]
+    def play(self,card,cell):return card
+    def qv(self,h,a):return torch.logit(self.offset[h[:,0].long()]+self.effect[a])
+
+
+def t_group_advantages_are_the_value_minus_the_groups_mean(monkeypatch):
+    effect=[0.1,-0.1,0.0,0.2];n=32;S=torch.zeros(n,5);S[:,0]=torch.arange(n);H=torch.tensor([[0,1,2,3]]*n);pol=Policy(5,4,8)
+    # with the policy's own samples every group's advantages sum to zero and stay the same when the states' offsets change
+    out=[LW.WmArm('qgroup',pol,[Offsets(o,effect)],np.zeros((n,2),np.int16)).advantages(S,H,np.arange(n))
+         for o in np.random.default_rng(0).uniform(0.2,0.6,(2,n))]
+    (_,c0,x0,A0),(_,c1,x1,A1)=out
+    assert torch.equal(c0,c1) and torch.equal(x0,x1) and torch.allclose(A0.sum(1),torch.zeros(n),atol=1e-4) and abs(float(A0.std())-1)<1e-3
+    assert torch.allclose(A0,A1,atol=1e-4)
+    # a hand-built pair of groups: offsets .6 and .3, plays 0, 1, 0, 1 (values .7, .5, .7, .5) and 3, 2, 2, 2 (.5, .3, .3, .3), two
+    # members .05 either side of each card's effect
+    card=torch.tensor([[0,1,0,1],[3,2,2,2]]);cell=torch.zeros(2,4,dtype=torch.long);monkeypatch.setattr(LW,'sample',lambda menu,H,G,gen=None:(card,cell))
+    ms=[Offsets([0.6,0.3],[e+d for e in effect]) for d in (0.05,-0.05)]
+    _,c,_,A=LW.WmArm('qgroup:G=4',pol,ms,np.zeros((2,2),np.int16)).advantages(S[:2],H[:2],np.arange(2))
+    # minus the group means (.6, .35) and over the batch spread (.1); the batch mean (.475) or no baseline would not centre each group
+    assert torch.equal(c,card) and torch.allclose(A,torch.tensor([[1.0,-1.0,1.0,-1.0],[1.5,-0.5,-0.5,-0.5]]),atol=1e-4),A
+
+
 def t_wmgroup_moves_toward_the_planted_play_and_qgroup_does_not(world):
     d,c,wm,ax,ms=world['dir'],world['c'],world['wm'],world['ax'],world['models'];log=lambda *a,**k:None
     prep(d,hidden=32,bc_epochs=20,critic_epochs=1,q_epochs=5,eval_n=4000,day_n=200,rolled_pre=0,log=log,fit_batch=256)
