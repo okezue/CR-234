@@ -19,7 +19,7 @@ def enemies(g,team,air=True,towers=True):
         for tw in g.arena.towers:
             if tw.team==opp and tw.alive:yield tw
 def tdist(u,x,y):
-    # area effects reach a body when they touch it: the tower footprint or the troop's collision circle, not only the centre
+    # area effects reach a body when they touch it: the tower's collision circle (Tower.dist) or the troop's, not only the centre
     return u.dist(x,y) if hasattr(u,'ttype') else max(0.0,math.hypot(u.x-x,u.y-y)-K['splash_hitbox']*getattr(u,'collision_r',0))
 def near(g,team,x,y,r,air=True,towers=True):return [e for e in enemies(g,team,air,towers) if tdist(e,x,y)<=r]
 def hurt(u,dmg,g):
