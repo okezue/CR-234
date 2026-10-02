@@ -1516,14 +1516,21 @@ class EvoBattleRam(Component):
         for a in g.players[tr.team].troops:
             if a.alive and a.name=='Barbarian' and math.hypot(a.x-tr.x,a.y-tr.y)<=1.5:a.statuses.append(Status('rage',self.dur,self.boost))
 class EvoCannon(Component):
-    # the deploy barrage: two rows of cannonballs ahead of the cannon; the landing pattern is not published, the rows are 2 tiles apart
-    def __init__(self,n,r,dmg,ct,kb):self.n=n;self.r=r;self.dmg=dmg;self.ct=ct;self.kb=kb;self.done=False
+    # the deploy barrage: n-nfar balls on a row through the cannon's front edge and nfar on a row far tiles ahead, air and ground; an enemy
+    # under several circles takes one ball, the nearest, and its knockback (patch 2026-10-01ec); the x spread is approximate: the sources
+    # say it is fixed and spans the arena but give no positions, so the balls stay 2 tiles apart centred on the cannon
+    def __init__(self,n,r,dmg,ct,kb,nfar,far,air):
+        self.n=n;self.r=r;self.dmg=dmg;self.ct=ct;self.kb=kb;self.nfar=nfar;self.far=far;self.air=air;self.done=False
     def on_tick(self,tr,g):
         if self.done:return
-        self.done=True;dy=1 if tr.team=='blue' else -1;top=(self.n+1)//2
-        pts=[(tr.x+(i-(top-1)/2)*2.0,tr.y+dy*2.5) for i in range(top)]+[(tr.x+(i-(self.n-top-1)/2)*2.0,tr.y+dy*4.5) for i in range(self.n-top)]
-        for x,y in pts:
-            for e in near(g,tr.team,x,y,self.r,air=False):hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g);push(e,x,y,self.kb)
+        self.done=True;dy=1 if tr.team=='blue' else -1;hit={}
+        for k,ahead in ((self.n-self.nfar,tr.collision_r),(self.nfar,self.far)):
+            for i in range(k):
+                x=tr.x+(i-(k-1)/2)*2.0;y=tr.y+dy*ahead
+                for e in near(g,tr.team,x,y,self.r,air=self.air):
+                    ex,ey=pos(e);d=math.hypot(ex-x,ey-y)
+                    if id(e) not in hit or d<hit[id(e)][1]:hit[id(e)]=(e,d,x,y)
+        for e,_,x,y in hit.values():hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g);push(e,x,y,self.kb)
 class EvoEliteBarbarians(Component):
     # a rage-tipped spear at a ground troop between mn and mx tiles every cd seconds (wiki: the spears target only ground troops, so none at
     # a tower or building); rage circles on the target and along the path
