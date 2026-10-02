@@ -175,7 +175,7 @@ def t_compare_applies_the_registered_rule():
 
 def t_estimates_read_the_job_outputs(tmp_path):
     mb=tmp_path/'mb';fq=tmp_path/'fqe';mb.mkdir();fq.mkdir();n=10
-    for name,j in (('bc',0.5),('a',0.6)):
+    for name,j in (('bc',0.5),('a',0.6),('b',0.55)):
         np.savez(mb/f'{name}.npz',rows=np.arange(n),c0_marks=np.array([0,4]),c0_value=np.array([[j]*n,[j+0.01]*n]),c0_disagree=np.array([[0.0]*n,[0.2]*n]),
                  c0_running=np.ones((2,n)))
         (mb/f'{name}.json').write_text(json.dumps({'name':name,'games':70000,'configs':[[0,1]],'menus':'cycle','start':'held'}))
@@ -184,10 +184,18 @@ def t_estimates_read_the_job_outputs(tmp_path):
                                                    'stored|q1':{'is':j,'wis':j,'ess':5.0,'dr':j+0.1,'wdr':j}}))
     (mb/'lam_x.json').write_text(json.dumps({'key':'v70k|M2','lam':0.5}))
     est,per=WO.estimates(mb,fq)
-    e=est['model|v70k|M2|cycle|held|H4|lam0'];assert set(e)=={'bc','a'} and abs(e['bc']-0.51)<1e-9 and abs(e['a']-0.61)<1e-9
+    e=est['model|v70k|M2|cycle|held|H4|lam0'];assert set(e)=={'bc','a','b'} and abs(e['bc']-0.51)<1e-9 and abs(e['a']-0.61)<1e-9
     assert abs(est['model|v70k|M2|cycle|held|H4|lam1']['a']-(0.61-0.5*0.2))<1e-9 and abs(est['model|v70k|M2|cycle|held|H4|lam0.3']['a']-(0.61-0.3*0.5*0.2))<1e-9
     assert 'model|v70k|M2|cycle|held|H0|lam1' not in est and abs(est['fqe|v10k|K1']['a']-0.62)<1e-9 and abs(est['stored|dr|v10k|q1']['a']-0.7)<1e-9
     assert est['stored|wis|v10k']['bc']==0.5 and 'stored|wis|v10k|q1' not in est and len(per['fqe|v10k|K0']['a'])==n
+    # the report reads the ninth step's report layout: true gains against the behaviour and the Q-eval's proxies
+    row=lambda wr,d,dq:{'true':{'behaviour':{'wr':[wr,wr-0.01,wr+0.01],'dwr':[d,d-0.01,d+0.01]}},'proxy':{'kl':0.1,'dq_pess':dq,'dq_support':dq,'dq_direct':dq,
+                                                                                                          'd_winner_gap':0.0}}
+    (tmp_path/'truth.json').write_text(json.dumps({'rows':{'bc':{'true':{'behaviour':{'wr':[0.49,0.48,0.5],'dwr':[0,0,0]}}},'a':row(0.6,0.11,0.01),
+                                                           'b':row(0.52,0.03,0.002)}}))
+    r=WO.report(tmp_path/'truth.json',mb,fq,tmp_path/'rep.json',boots=10)
+    f=r['rows']['fqe|v10k|K1'];assert abs(r['rows']['qeval|dq_pess']['spearman']-1)<1e-9 and f['pick']=='a' and abs(f['mae_gain']-1.5)<1e-6
+    assert abs(f['mae_level']-(3+2+5)/3)<1e-6 and (tmp_path/'rep.md').read_text().count('|')>50 and abs(r['estimates']['fqe|v10k|K1']['b']-0.57)<1e-9
 
 
 # ---- the giant world, end to end

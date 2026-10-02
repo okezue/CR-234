@@ -437,8 +437,16 @@ def report(truth,mb_dir,fqe_dir,out=None,boots=1000,opp='behaviour'):
     for k,e in est.items():
         if not all(a in e for a in names):continue
         rows[k]=compare(e,{a:tr[a] for a in names},kl,per=per.get(k),boots=boots if k in per else 0)
-    model=[k for k in est if k.startswith('model') and 'model' in est[k]]
-    rep={'opponent':opp,'rows':rows,'model_behaviour':{k:est[k]['model'] for k in model},'policies':names,'kl':kl}
+    model=[k for k in est if k.startswith('model') and 'model' in est[k]];fid={};ess={}
+    for p in Path(mb_dir).glob('*.json'):
+        r=json.loads(p.read_text())
+        if 'fidelity' in r:fid.setdefault(f"v{r['games']//1000}k",{})[r['name']]=[float(np.mean(r['fidelity'][k])) for k in ('kl_actor','kl_head')]
+    for p in Path(fqe_dir).glob('*.json'):
+        r=json.loads(p.read_text())
+        for mk in ('stored|q0','estimated|q0'):
+            if mk in r:ess.setdefault(f"v{r['games']//1000}k|{mk.split('|')[0]}",{})[r['name']]=r[mk]['ess']
+    rep={'opponent':opp,'rows':rows,'model_behaviour':{k:est[k]['model'] for k in model},'policies':names,'kl':kl,'estimates':est,'truth':tr,
+         'qeval':qe,'fidelity':fid,'ess':ess}
     if out:Path(out).write_text(json.dumps(rep,indent=1)+'\n');Path(out).with_suffix('.md').write_text(markdown(rep)+'\n')
     return rep
 
