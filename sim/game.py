@@ -588,11 +588,11 @@ class Game:
             is_tower=hasattr(ag,'ttype')
             is_bldg_troop=getattr(tr,'targets',['Ground'])==['Buildings']
             d=self._dist(tr,ag)
-            # a building or tower target holds only while being hit (a closer building pulls; a Giant pushing the attacker out of range makes it retarget);
-            # an engaged troop is followed as long as possible (wiki Basics of Battle), not only while it stays within sight
+            # every target holds only while being hit; out of reach the nearest in sight is taken each tick, so a closer building pulls, a nearer troop
+            # takes over (wiki Mega Knight), a chase ends out of sight (wiki Battle Ram) and a push out of range is a retarget (wiki Giant, Little Prince)
             if is_bldg_troop or is_tower or getattr(tr,'is_building',False):
                 if mr<=d<=tr.rng:return ag,d
-            elif not hidden(ag) and not (K['kite_drop'] and d>sr+K['kite_slack']):return ag,d
+            elif mr<=d<=tr.rng and not hidden(ag):return ag,d
         opp=self._opp(tr.team)
         tgts=getattr(tr,'targets',['Ground'])
         if not tgts:return None,0
