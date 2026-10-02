@@ -1,5 +1,7 @@
+import copy
 import json
 import math
+import types
 
 import numpy as np
 import torch
@@ -142,6 +144,43 @@ def t_rollout_marks_are_shorter_rollouts_and_menus_come_from_nxt():
     assert torch.allclose(tr[4][1],torch.zeros(n),atol=1e-5)
 
 
+class Fixed(torch.nn.Module):
+    # plays hand slot j on cell c
+    def __init__(self,j,c):
+        super().__init__();self.j=j;self.c=c
+    def menu_logp(self,S,H):
+        out=torch.full((len(S),WO.HAND,WO.N_CELLS),-1e9);out[:,self.j,self.c]=0.0;return out
+
+
+def t_model_values_first_play_penalty_weight_and_recorded_menus():
+    torch.manual_seed(0);ms=[LW.WorldModel(5,6,hidden=16,latent=8,emb=4).eval() for _ in range(3)];n=40;S=torch.randn(n,5);H0=torch.tensor([[0,1,2,3]]*n)
+    for m in ms:
+        for p in m.parameters():p.requires_grad_(False)
+    menus=torch.randint(0,6,(n,9,4));nxt=lambda s,r:lambda k,cd,z:menus[s][:,k+1];hs=[m.encode(S) for m in ms];at0={}
+    # the first play is the policy's, not the members' behaviour heads': the value at k = 0 is the members' mean one-step Q of that play
+    for j,c in ((0,0),(3,47)):
+        q=torch.stack([torch.sigmoid(m.qv(h,m.play(H0[:,j],torch.full((n,),c)))) for m,h in zip(ms,hs)]).mean(0).numpy()
+        at0[j]=WO.model_values(ms,None,Fixed(j,c),S,H0,nxt,0,marks=(0,),n_roll=1)['value'][0];assert np.allclose(at0[j],q,atol=1e-6)
+    assert np.abs(at0[0]-at0[3]).max()>1e-3
+    # the penalty weights the disagreement on each predicted decision by the chance that the game reaches it: members whose games
+    # end with probability d at every decision (the draws do not depend on d) weight decision j's disagreement by (1 - d)^(j + 1)
+    def ending(b):
+        out=copy.deepcopy(ms)
+        for m in out:m.tim[3].weight[1]=0.0;m.tim[3].bias[1]=b
+        return out
+    never,half,always=(WO.model_values(ending(b),None,None,S,H0,nxt,4,marks=(1,2,3,4),n_roll=2) for b in (-30.0,0.0,30.0))
+    w=0.5**np.arange(1,5)[:,None];du=np.diff(never['disagree'],axis=0,prepend=0.0)
+    assert np.allclose(never['running'],1) and np.allclose(half['running'],w) and (du>1e-3).all()
+    assert np.allclose(half['disagree'],np.cumsum(w*du,0),atol=1e-5) and np.abs(always['disagree']).max()<1e-6
+    # recorded menus: decision k of a rollout gets the menu of the start's k-th next recorded decision, the trajectory's last after it
+    # ends (trajectories of 3 and 5 decisions, starts at the first decision of one and the second of the other)
+    c=types.SimpleNamespace(a={'traj':np.array([0,0,0,1,1,1,1,1]),'t_start':np.array([0,3]),'t_len':np.array([3,5]),'H':(np.arange(8)[:,None]+np.arange(4))%6})
+    rows=np.array([0,4]);want=[[1,5],[2,6],[2,7],[2,7]];rec=WO.Recorded(c,rows,4)
+    assert all(torch.equal(rec(k,torch.zeros(2,dtype=torch.long)),WO.T(c.a['H'][x])) for k,x in enumerate(want))
+    log=[];WO.model_values(ms,[Seen(log) for _ in ms],None,S[:2],WO.T(c.a['H'][rows]),lambda s,r:WO.Recorded(c,rows[s],4),4,marks=(4,),n_roll=1)
+    assert len(log)==9 and all(torch.equal(log[3*(k-1)+i],WO.T(c.a['H'][want[k-1]])) for k in (1,2,3) for i in range(3))
+
+
 def t_cycle_sends_the_played_card_to_the_back_and_affords_by_elixir():
     cy=WO.Cycle(np.array([[2,5,-1,-1]]),np.array([[0,1,2,3,4,5,6,7]]),seed=0);h=cy.hand[0].tolist();q=cy.queue[0].tolist()
     assert h[:2]==[2,5] and sorted(h+[x for x in q if x>=0])==list(range(8)) and q[4:]==[-1]*4
@@ -267,5 +306,5 @@ def t_model_and_fqe_rank_planted_policies(tmp_path):
     # full model rollouts and fitted-Q evaluation order the policies as the truth does; the model's own behaviour wins about half;
     # with the recorded menus (open loop) the giant, rarely played by the behaviour, stays in hand and is played at every decision
     for e in (est,fq):assert e['always']>e['uniform']>e['never'] and e['always']-e['never']>0.4*(truth['always']-truth['never']),(e,truth)
-    assert rv['always']>est['always'],(rv,est)
+    assert rv['always']>est['always'] and rv['always']>truth['always'],(rv,est,truth)
     assert abs(m0-0.5)<0.08 and abs(fq['always']-truth['always'])<0.1,(m0,fq,truth)
