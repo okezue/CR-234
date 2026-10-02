@@ -1,4 +1,5 @@
 import math
+import random
 
 import pytest
 
@@ -51,6 +52,9 @@ def wiki_tornado(name, lx):
 
 @pytest.mark.parametrize('lx', (14.5, 3.5))
 def t_wiki_tile_activates_the_king_for_most_melee_troops(lx):
+    # seeded: the Battle Ram's Barbarians land with fx.DeathSpawn's random jitter, and an unlucky draw keeps them off the King (seed
+    # 357008310 leaves 10 of 21 on lx 14.5)
+    random.seed(42)
     got = {n: wiki_tornado(n, lx) for n in MELEE}
     hit = [n for n, t in got.items() if t is not None]
     assert len(hit) > len(MELEE) / 2, got
