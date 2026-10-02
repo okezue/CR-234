@@ -101,6 +101,8 @@
     "stats": {
      "damage": [44, 48, 53, 58, 64, 70, 77, 84, 93, 102, 112, 123, 135, 149, 163, 179],
      "hitpoints": [119, 130, 143, 158, 173, 190, 209, 229, 252, 277, 304, 334, 367, 403, 442, 486],
+     "range": 6.0,
+     "sightRange": 6.6,
      "towerDamage": [44, 48, 53, 58, 64, 70, 77, 84, 93, 102, 112, 123, 135, 149, 163, 179]
     }
    },
@@ -132,6 +134,8 @@
     "evo.skills.snipe.maxRange": "legacy:evolution.changes",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
+    "evo.stats.range": "patch:2026-10-02cy",
+    "evo.stats.sightRange": "patch:2026-10-02cy",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
@@ -212,7 +216,7 @@
    "deployTime": 1.0,
    "duration": null,
    "evo": {
-    "cycles": 1,
+    "cycles": 2,
     "skills": {
      "boost": {
       "duration": null,
@@ -262,6 +266,7 @@
    "speed": 90,
    "src": {
     "*": "cs2.4.0",
+    "evo.cycles": "patch:2026-10-02cy",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage": "gd:debfe1e2 (no crownTowerDamagePercent, cs anchor 161 is stale)",
@@ -1104,7 +1109,7 @@
    "deployTime": 1.0,
    "duration": null,
    "evo": {
-    "cycles": 1,
+    "cycles": 2,
     "skills": {
      "pierce": {
       "bounceDelay": null,
@@ -1146,6 +1151,7 @@
    "speed": 60,
    "src": {
     "*": "cs2.4.0",
+    "evo.cycles": "patch:2026-10-02cy",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
@@ -1698,7 +1704,7 @@
    "radius": null,
    "range": 6.5,
    "rarity": "rare",
-   "sightRange": 7.5,
+   "sightRange": 7.0,
    "skills": {},
    "speed": 120,
    "src": {
@@ -1710,7 +1716,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
-    "sightRange": "patch:2026-09-06",
+    "sightRange": "patch:2026-10-02cy",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -5469,7 +5475,7 @@
    "deployTime": 1.0,
    "duration": 0.05,
    "evo": {
-    "cycles": 1,
+    "cycles": 2,
     "skills": {
      "invisibility": {
       "duration": 5.5
@@ -5526,6 +5532,7 @@
    "speed": 120,
    "src": {
     "*": "cs2.4.0",
+    "evo.cycles": "patch:2026-10-02cy",
     "evo.skills.invisibility.duration": "legacy:evolution.ghost_on_death",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
@@ -9872,6 +9879,10 @@
    {
     "name": "data/patches/2026-10-01u.json",
     "tag": "patch:2026-10-01u"
+   },
+   {
+    "name": "data/patches/2026-10-02cy.json",
+    "tag": "patch:2026-10-02cy"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

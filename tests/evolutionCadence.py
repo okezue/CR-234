@@ -87,7 +87,7 @@ def t_equipped_heroes_share_two_slots_with_champions(champions,heroes,valid):
 
 
 @pytest.mark.parametrize('team',['blue','red'])
-@pytest.mark.parametrize('name,cycles',[('bomber',1),('royal_ghost',2),('giant_snowball',2),('barbarians',1)])
+@pytest.mark.parametrize('name,cycles',[('bomber',2),('royal_ghost',2),('giant_snowball',2),('barbarians',1)])
 def t_equipped_cadence_runs_two_complete_cycles(team,name,cycles):
     assert card(name)['evo']['cycles']==cycles
     g=_game(name,evolutions=[name]);p=g.players[team]
