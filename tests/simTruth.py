@@ -99,7 +99,8 @@ def t_a_game_is_reproduced_by_replaying_its_plays_and_groups_start_from_the_reco
     out,recs=w.play(3,{'blue':a,'red':a});out2,recs2=w.play(3,{'blue':a,'red':a})
     assert len(recs)>8 and {r['team'] for r in recs}==set(TEAMS) and out==out2 and all((r['state']==q['state']).all() for r,q in zip(recs,recs2))
     assert [r['idx'] for r in recs]==list(range(len(recs))) and all(r['card'] in r['hand'].split('|') for r in recs)
-    plays=[(r['t'],r['team'],r['card'],cell_of(r['x'],r['y'])) for r in recs]
+    # the packed store keeps times as float32
+    plays=[(float(np.float32(r['t'])),r['team'],r['card'],cell_of(r['x'],r['y'])) for r in recs]
     for k in (0,len(recs)//2,len(recs)-1):
         m=w.replay(3,plays,k);assert (featurize(m.g,recs[k]['team']).astype(np.float16)==recs[k]['state']).all(),k
     k=len(recs)//2;res,ticks=w.branch(3,plays,[k],a,a,3,7);(s,tm,group),=res

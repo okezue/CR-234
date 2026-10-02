@@ -46,7 +46,7 @@ from train.decisionStates import COLS
 from train.feats import FEAT_DIM,featurize
 from train.traceRl import HAND,Policy
 
-TEAMS=('blue','red');COOL=1.0;THR=(3,10);LEVEL=11;HALF=16.0
+TEAMS=('blue','red');COOL=1.0;THR=(3,10);LEVEL=11;HALF=16.0;TOL=1e-3  # TOL: the store keeps times as float32, ticks are 0.05 s apart
 FALLBACK={'blue':(8,7),'red':(8,24)}
 DAY=86400.0;T0=datetime(2026,8,30,tzinfo=timezone.utc).timestamp()
 
@@ -215,11 +215,11 @@ class SimWorld:
         m=Match(self.deal(seed),seed);n=len(plays) if stop is None else stop
         for k in range(n):
             t,tm,name,c=plays[k]
-            while abs(t-m.g.t)>1e-6 and not m.g.ended:m.tick()
+            while abs(t-m.g.t)>TOL and not m.g.ended:m.tick()
             if not m.play(tm,name,c):raise RuntimeError(f'replayed play {k} of game {seed} failed')
             m.n+=1
         if stop is not None and stop<len(plays):
-            while abs(plays[stop][0]-m.g.t)>1e-6 and not m.g.ended:m.tick()
+            while abs(plays[stop][0]-m.g.t)>TOL and not m.g.ended:m.tick()
         return m
     def branch(self,seed,plays,stops,actor,opponent,G,rseed):
         # GRPO groups: for each stop, G continuations from the recorded state; the actor (the team of that record) plays its current
@@ -228,11 +228,11 @@ class SimWorld:
         m=Match(self.deal(seed),seed);k=0;out=[]
         for s in sorted(stops):
             while k<s:
-                while abs(plays[k][0]-m.g.t)>1e-6 and not m.g.ended:m.tick()
+                while abs(plays[k][0]-m.g.t)>TOL and not m.g.ended:m.tick()
                 t,tm,name,c=plays[k]
                 if not m.play(tm,name,c):raise RuntimeError(f'replayed play {k} of game {seed} failed')
                 m.n+=1;k+=1
-            while abs(plays[s][0]-m.g.t)>1e-6 and not m.g.ended:m.tick()
+            while abs(plays[s][0]-m.g.t)>TOL and not m.g.ended:m.tick()
             tm=plays[s][1];group=[]
             for j in range(G):
                 h=m.copy();h.ticks=0;rng=np.random.default_rng([int(rseed),s,j]);random.seed(int(rseed)*100003+s*1009+j);recs=[]
@@ -418,10 +418,9 @@ def _branch(args):
     for s,tm,group in out:
         for recs,R,_ in group:
             X=np.stack([r['state'] for r in recs]) if recs else np.zeros((0,FEAT_DIM),np.float16)
-            H=np.array([[vi[c] for c in r['hand'].split('|') if c in vi][:HAND]+[-1]*HAND for r in recs],np.int64).reshape(-1,2*HAND)[:,:HAND]
-            for row,r in zip(H,recs):
-                # the menu as the store writes it: the played card first
-                o=[vi[r['card']]]+[x for x in row if x>=0 and x!=vi[r['card']]];row[:]=(o+[-1]*HAND)[:HAND]
+            # the menu as the store writes it: the played card first
+            H=np.array([([vi[r['card']]]+[vi[c] for c in r['hand'].split('|') if c in vi and c!=r['card']]+[-1]*HAND)[:HAND] for r in recs],np.int64)
+            H=H.reshape(-1,HAND)
             res.append((s,X,H,np.array([vi[r['card']] for r in recs],np.int64),np.array([cell_of(r['x'],r['y']) for r in recs],np.int64),
                         np.array([r['mu'] for r in recs],np.float32).reshape(-1,2),R))
     return seed,res,ticks,time.monotonic()-t0
