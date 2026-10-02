@@ -244,7 +244,7 @@ def t_model_and_fqe_rank_planted_policies(tmp_path):
     for k,v in pg.items():
         w=[x=='blue' for x in giant_games(3000,{'blue':v,'red':beh},seed=11)]+[x=='red' for x in giant_games(3000,{'blue':beh,'red':v},seed=12)]
         truth[k]=float(np.mean(w))
-    assert truth['always']>truth['uniform']+0.1>truth['never']+0.15,truth
+    assert truth['always']>truth['uniform']+0.05 and truth['uniform']>truth['never']+0.1,truth
     rows=WO.starts(c);S=c.S(0,0,rows);H=WO.T(c.a['H'][rows]);dk=WO.decks(st,c,rows);tg=c.records(WO.train_games(c,10**6));est={};fq={};rv={}
     Q0=WO.fit_q0(c,tg,steps=1500,batch=512,hidden=64)
     for k,b in (('never',-8.0),('uniform',0.0),('always',8.0)):
