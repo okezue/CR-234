@@ -12,7 +12,7 @@ from sim import knobs
 _BASE=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META=os.path.join(_BASE,'data','raw','eval','battles.csv');WORK=os.path.join(_BASE,'data','raw','eval','placements.csv')
 LOG=os.path.join(_BASE,'data','raw','calib.jsonl');CACHE=os.path.join(_BASE,'data','raw','eval','parsed.pkl')
-# one coordinate per knob (kiting is one coordinate: the drop flag with its slack); the sweep values bracket the engine's value
+# one coordinate per knob; the sweep values bracket the engine's value
 GRID=[('sight_slack',[{'sight_slack':v} for v in (-1.0,-0.5,0.5,1.0,2.0)]),
       ('load_carry',[{'load_carry':v} for v in (0.0,0.25,0.5,0.75)]),
       ('sep_strength',[{'sep_strength':v} for v in (0.0,0.25,0.5,0.75)]),
@@ -22,8 +22,7 @@ GRID=[('sight_slack',[{'sight_slack':v} for v in (-1.0,-0.5,0.5,1.0,2.0)]),
       ('kb_scale',[{'kb_scale':v} for v in (0.5,0.75,1.25,1.5)]),
       ('death_stagger',[{'death_stagger':v} for v in (0.1,0.2,0.35,0.5)]),
       ('detour_look',[{'detour_look':v} for v in (2.0,3.0,5.0,8.0,12.0)]),
-      ('charge_scale',[{'charge_scale':v} for v in (0.6,0.8,1.2,1.5)]),
-      ('kite',[{'kite_drop':1,'kite_slack':v} for v in (0.0,0.5,1.0,2.0)])]
+      ('charge_scale',[{'charge_scale':v} for v in (0.6,0.8,1.2,1.5)])]
 COORD={n:sorted({k for o in c for k in o}) for n,c in GRID}
 
 def _digest(paths):
@@ -79,8 +78,7 @@ def summarize(infos):
     return s
 
 def pkey(ov):
-    # the slack is meaningless while kiting is off, so it is dropped from the key
-    return json.dumps({k:round(v,4) for k,v in sorted(ov.items()) if v!=knobs.D[k] and (k!='kite_slack' or ov.get('kite_drop'))})
+    return json.dumps({k:round(v,4) for k,v in sorted(ov.items()) if v!=knobs.D[k]})
 
 class Evaluator:
     def __init__(self,jobs,log=LOG):
@@ -106,11 +104,11 @@ def fmt(s):
 
 def refine(ev,name,best_ov):
     # candidates for the next pass: the coordinate's best value so far and the midpoints toward its nearest values tried before (the step halves each round)
-    k='kite_slack' if name=='kite' else COORD[name][0]
-    tried={json.loads(kk).get(k,knobs.D[k]) for kk in ev.seen if name!='kite' or json.loads(kk).get('kite_drop')}
+    k=COORD[name][0]
+    tried={json.loads(kk).get(k,knobs.D[k]) for kk in ev.seen}
     b=best_ov.get(k,knobs.D[k]);vs=sorted(tried|{b});i=vs.index(b);mids=[] if k=='sep_iters' else [(vs[i]+vs[j])/2 for j in (i-1,i+1) if 0<=j<len(vs)]
     out=[{k:v} for v in [b]+mids if knobs.B[k][0]<=v<=knobs.B[k][1]]
-    return [{'kite_drop':1,**o} for o in out]+[{'kite_drop':0,'kite_slack':0.0}] if name=='kite' else out
+    return out
 
 def search(ev,budget,eps,fixed=()):
     base=ev({});x={};gain={};grid=[(n,c) for n,c in GRID if n not in fixed]
