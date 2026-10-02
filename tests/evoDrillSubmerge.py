@@ -58,9 +58,10 @@ def t_submerges_deal_no_damage_or_pushback():
 
 
 def t_goblins_are_left_behind_and_deploy():
-    g,gd=surfaced('blue',9,20)
+    # they stand where the drill went down (two born touching are pushed apart), not where it comes back at (15, 23)
+    g,gd=surfaced('blue',12,25)
     gd.hp=int(gd.max_hp*0.6);g.tick();first=goblins(g,'blue')
-    assert len(first)==2 and all(has(t,'deploying') and math.hypot(t.x-9,t.y-20)<=0.75 for t in first)
+    assert len(first)==2 and all(has(t,'deploying') and math.hypot(t.x-12,t.y-25)<=1.5 for t in first),[(t.x,t.y) for t in first]
     while has(gd,'burrowed'):g.tick()
     gd.hp=int(gd.max_hp*0.3);g.tick();second=[t for t in goblins(g,'blue') if t not in first]
     assert len(second)==1 and has(second[0],'deploying')
