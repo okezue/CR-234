@@ -1355,7 +1355,9 @@
       "damage": [110, 121, 133, 146, 160, 176, 193, 212, 233, 256, 282, 309, 339, 372, 409, 449],
       "farRowCount": 5,
       "farRowDistance": 7.0,
+      "farRowX": [1.0, 5.0, 9.0, 13.0, 17.0],
       "knockback": 1,
+      "nearRowX": [1.5, 6.5, 11.5, 16.5],
       "projectileCount": 9,
       "radius": 2.0,
       "targets": ["air", "ground"],
@@ -1396,6 +1398,8 @@
     "evo.skills.volley.damage[]": "derived:levelMult",
     "evo.skills.volley.farRowCount": "patch:2026-10-01ec",
     "evo.skills.volley.farRowDistance": "patch:2026-10-01ec",
+    "evo.skills.volley.farRowX": "patch:2026-10-01ex",
+    "evo.skills.volley.nearRowX": "patch:2026-10-01ex",
     "evo.skills.volley.targets": "patch:2026-10-01ec",
     "evo.skills.volley.towerDamage": "patch:2026-09-01",
     "evo.skills.volley.towerDamage[]": "derived:levelMult",
@@ -9691,7 +9695,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-10-01",
+  "built": "2026-10-02",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9852,6 +9856,10 @@
    {
     "name": "data/patches/2026-10-01ec.json",
     "tag": "patch:2026-10-01ec"
+   },
+   {
+    "name": "data/patches/2026-10-01ex.json",
+    "tag": "patch:2026-10-01ex"
    },
    {
     "name": "data/patches/2026-10-01g.json",

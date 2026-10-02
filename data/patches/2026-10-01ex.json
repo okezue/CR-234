@@ -1,0 +1,14 @@
+[
+ {
+  "card": "cannon",
+  "path": "evo.skills.volley.nearRowX",
+  "value": [1.5, 6.5, 11.5, 16.5],
+  "note": "The near row's 4 balls land on fixed arena columns x 1.5, 6.5, 11.5 and 16.5 whatever the cannon's x. RoyaleAPI's Cannon Evolution post (via search summaries) says the horizontal spread is fixed and covers the arena's full width but gives no positions; the columns are read from the wiki's preview animation (Evolved Cannon Preview.gif, frames 232 to 237 and 366 to 375), calibrated per frame on the lane path and bridge (x 3.5) and the two bridges' facing edges (14.2 to 14.3 px per tile depending on how the bridges' shadow pixels are counted; the river pillar's centre then sits within 0.03 tile of column 0's centre): 1.45 to 1.47, 6.56, 11.58 to 11.60 in both barrages while the cannon moved 1.0 tile between them; the fourth ring is off frame and 16.5 is its mirror image about the arena centre, which the read rings fit within 0.1 tile (local/evoCannonRound2/findings.md, ringRead.py). https://clashroyale.fandom.com/wiki/Cannon/Evolution https://royaleapi.com/blog/cannon-evolution-new-card-2024-november"
+ },
+ {
+  "card": "cannon",
+  "path": "evo.skills.volley.farRowX",
+  "value": [1.0, 5.0, 9.0, 13.0, 17.0],
+  "note": "The far row's 5 balls land on fixed arena columns x 1, 5, 9, 13 and 17 whatever the cannon's x (same sources and calibrated preview read as nearRowX): 0.95 to 0.99, 4.97 to 5.02, 9.02 to 9.08 in both barrages and 12.96 from one ring edge at the frame border in the second; the fifth ring is off frame and 17 is the mirror image of 1 about the arena centre (local/evoCannonRound2/findings.md). https://clashroyale.fandom.com/wiki/Cannon/Evolution https://royaleapi.com/blog/cannon-evolution-new-card-2024-november"
+ }
+]
