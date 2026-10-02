@@ -320,9 +320,10 @@ def fit_volume(pack,aux,out,games,member,max_steps=4079,threads=3,log=print):
 
 
 def mb_job(pack,states,wms,configs,spec,name,games,out,Hmax=64,marks=MARKS,n_roll=2,distil_steps=1500,menus='cycle',start='held',n_starts=0,
-           seed=0,log=print):
-    # one policy (spec, or 'model' for the members' own behaviour) in one volume's members: distil it into every member, then roll it out
-    # from the starts under each ensemble configuration (lists of member indices into wms); per-start arrays to out (npz) and a json
+           seed=0,actors=None,log=print):
+    # one policy (spec, or 'model' for the members' own behaviour) in one volume's members: distil it into every member (or load the
+    # actors file a previous job saved), then roll it out from the starts under each ensemble configuration (lists of member indices
+    # into wms); per-start arrays to out (npz) and a json
     c=Corpus(pack);t0=time.monotonic();A=c.a;models=[LW.load_member(p) for p in wms]
     say=lambda m:log(f'[mb {time.monotonic()-t0:.0f}s] {m}',flush=True)
     # held: every held-out trajectory's first decision; mid: decisions drawn from held-out B (the behaviour's state distribution)
@@ -331,10 +332,14 @@ def mb_job(pack,states,wms,configs,spec,name,games,out,Hmax=64,marks=MARKS,n_rol
     S=c.S(0,0,rows);H=T(A['H'][rows]);rep={'name':name,'spec':spec,'games':games,'starts':int(len(rows)),'start':start,'menus':menus,'Hmax':Hmax,'n_roll':n_roll,
                                            'members':[str(p) for p in wms],'configs':configs}
     pol=None if spec=='model' else load_policy(spec,c);acts=None
-    if pol is not None:
+    if pol is not None and actors and Path(actors).exists():
+        d=torch.load(actors,weights_only=False);acts=[copy.deepcopy(m.actor) for m in models];rep['fidelity']=d['fidelity']
+        for a,x in zip(acts,d['state']):a.load_state_dict(x)
+    elif pol is not None:
         tg=c.records(train_games(c,games));acts=distil(models,pol,c,tg,distil_steps,seed=seed)
-        fr=np.sort(np.random.default_rng(seed+1).choice(rows,min(4000,len(rows)),replace=False));rep['fidelity']=fidelity(models,acts,pol,c.S(0,0,fr),T(A['H'][fr]))
+        fr=np.sort(np.random.default_rng(seed+1).choice(starts(c),4000,replace=False));rep['fidelity']=fidelity(models,acts,pol,c.S(0,0,fr),T(A['H'][fr]))
         say(f"distilled: KL actor {np.mean(rep['fidelity']['kl_actor']):.4f} head {np.mean(rep['fidelity']['kl_head']):.4f}")
+        if actors:Path(actors).parent.mkdir(parents=True,exist_ok=True);torch.save({'state':[a.state_dict() for a in acts],'fidelity':rep['fidelity']},actors)
     if menus=='cycle':
         dk=decks(states,c,rows);cost=costs(c.vocab);el=own_elixir(c,ahead(c,rows,Hmax));nxt=lambda s,r:Cycle(A['H'][rows[s]],dk[s],seed*1000+r,cost,el[s])
     else:nxt=lambda s,r:Recorded(c,rows[s],Hmax)
@@ -373,12 +378,18 @@ def fqe_job(pack,spec,name,games,q0,out,K=32,steps=300,batch=2048,keep=(0,8,32),
     Q0=Head(c.n_state,c.n_card,hidden=128);Q0.load_state_dict(torch.load(q0,weights_only=False)['state']);Q0.eval()
     res,kept=fqe(c,pol,rows,S0,H0,Q0,K,steps,batch,seed=seed,keep=keep,sampled=sampled);say(f"J {[round(x,4) for x in res['J']]}")
     rep={'name':name,'spec':spec,'games':games,'K':K,'steps':steps,'batch':batch,'sampled':sampled,'J':res['J']}
-    gs=np.concatenate([c.games('heldA'),c.games('heldB')]);hr=c.records(gs);S=c.S(0,0,hr);H=T(A['H'][hr]);cd=T(A['card'][hr]);cl=T(A['cell'][hr])
+    gs=np.concatenate([c.games('heldA'),c.games('heldB')]);hr=c.records(gs);n_r=len(hr)
     tr=A['traj'][hr].astype(np.int64);_,tr=np.unique(tr,return_inverse=True);pos=A['pos'][hr].astype(np.int64);last=pos==A['t_len'][A['traj'][hr]]-1
-    y=np.zeros(int(tr.max())+1);y[tr[last]]=A['y'][hr][last];lp=play_logp(pol,S,H,cd,cl).numpy().astype(np.float64)
-    P=Path(pack)/'prep';mus={'stored':np.load(P/'mu_true_1.npy',mmap_mode='r')[hr].sum(1).astype(np.float64)}
-    if mu_est:mus['estimated']=play_logp(load_policy(mu_est,c),S,H,cd,cl).numpy().astype(np.float64)
-    qv={k:q_and_v(Q,pol,S,H,cd,cl) for k,Q in kept.items()};rng=np.random.default_rng(seed);n=len(y)
+    y=np.zeros(int(tr.max())+1);y[tr[last]]=A['y'][hr][last];P=Path(pack)/'prep';est=load_policy(mu_est,c) if mu_est else None
+    lp=np.zeros(n_r);le=np.zeros(n_r);qv={k:(np.zeros(n_r),np.zeros(n_r)) for k in kept}
+    # held-out records in chunks, so a job never holds every held-out state
+    for i in range(0,n_r,50000):
+        r=hr[i:i+50000];j=slice(i,i+len(r));S=c.S(0,0,r);H=T(A['H'][r]);cd=T(A['card'][r]);cl=T(A['cell'][r]);lp[j]=play_logp(pol,S,H,cd,cl).numpy()
+        if est is not None:le[j]=play_logp(est,S,H,cd,cl).numpy()
+        for k,Q in kept.items():qv[k][0][j],qv[k][1][j]=q_and_v(Q,pol,S,H,cd,cl)
+    mus={'stored':np.load(P/'mu_true_1.npy',mmap_mode='r')[hr].sum(1).astype(np.float64)}
+    if est is not None:mus['estimated']=le
+    rng=np.random.default_rng(seed);n=len(y)
     for mk,lm in mus.items():
         for k,(q,v) in qv.items():
             e=trajectory_ope(tr,pos,lp-lm,y,q,v);rep[f'{mk}|q{k}']=e
@@ -457,7 +468,7 @@ def main():
     a.add_argument('--agents',nargs='+')
     a.add_argument('--policy',required=True);a.add_argument('--games',type=int,required=True);a.add_argument('--out',required=True);a.add_argument('--H',type=int,default=64)
     a.add_argument('--n_roll',type=int,default=2);a.add_argument('--distil_steps',type=int,default=1500);a.add_argument('--menus',default='cycle')
-    a.add_argument('--start',default='held');a.add_argument('--n_starts',type=int,default=0);a.add_argument('--threads',type=int,default=1)
+    a.add_argument('--start',default='held');a.add_argument('--n_starts',type=int,default=0);a.add_argument('--threads',type=int,default=1);a.add_argument('--actors')
     a=sp.add_parser('lam');a.add_argument('--pack',required=True);a.add_argument('--prep',required=True);a.add_argument('--aux',required=True)
     a.add_argument('--wm',nargs='+',required=True);a.add_argument('--key',required=True);a.add_argument('--out',required=True);a.add_argument('--threads',type=int,default=4)
     a=sp.add_parser('q0');a.add_argument('--pack',required=True);a.add_argument('--games',type=int,required=True);a.add_argument('--out',required=True)
@@ -473,7 +484,7 @@ def main():
     elif a.cmd=='mb':
         spec='model' if a.policy=='model' else registry(a.agents)[a.policy]
         r=mb_job(a.pack,a.states,a.wm,json.loads(a.configs),spec,a.policy,a.games,a.out,a.H,n_roll=a.n_roll,distil_steps=a.distil_steps,menus=a.menus,
-                 start=a.start,n_starts=a.n_starts)
+                 start=a.start,n_starts=a.n_starts,actors=a.actors)
         print(json.dumps({k:v for k,v in r.items() if k.startswith('c') or k in ('seconds','fidelity')}))
     elif a.cmd=='lam':print(json.dumps(lam_job(a.pack,a.prep,a.aux,a.wm,a.key,a.out)))
     elif a.cmd=='q0':q0_job(a.pack,a.games,a.out,a.steps)

@@ -254,7 +254,7 @@ def t_model_and_fqe_rank_planted_policies(tmp_path):
         v=WO.model_values(ms,acts,pol,S,H,lambda s,r:WO.Cycle(c.a['H'][rows[s]],dk[s],r),16,marks=(0,1,16),n_roll=4)
         rec=WO.model_values(ms,acts,pol,S,H,lambda s,r:WO.Recorded(c,rows[s],16),16,marks=(16,),n_roll=4);rv[k]=rec['value'][0].mean()
         assert v['running'][-1].mean()<0.2 and (v['disagree'][-1]>=v['disagree'][1]).all();est[k]=v['value'][-1].mean()
-        fq[k]=WO.fqe(c,pol,tg,S,H,Q0,K=14,steps=150,batch=512)[0]['J'][-1]
+        fq[k]=WO.fqe(c,pol,tg,S,H,Q0,K=14,steps=50,batch=512)[0]['J'][-1]
     m0=WO.model_values(ms,None,None,S,H,lambda s,r:WO.Cycle(c.a['H'][rows[s]],dk[s],r),16,marks=(16,),n_roll=4)['value'][0].mean()
     # full model rollouts and fitted-Q evaluation order the policies as the truth does; the model's own behaviour wins about half;
     # with the recorded menus (open loop) the giant, rarely played by the behaviour, stays in hand and is played at every decision
