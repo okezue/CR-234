@@ -156,3 +156,13 @@ def t_in_a_planted_world_training_on_traces_raises_the_true_win_rate_and_flipped
     assert 0<d['bpco:mu=true:flip'][1] and d['bpco:mu=true:flip'][0]<d['bpco:mu=true'][0],(d,wr)
     json.dumps(r)
     assert load_agent(spec(tmp_path/'grpo.pt','grpo_1')).pol.trunk[0].weight.shape[0]==32
+
+
+def t_win_rates_pair_games_across_agents_and_resume_from_a_partial_file(tmp_path):
+    w=ToyWorld();ag={'oracle':'py:tests.simTruth:Oracle','behaviour':BEH};out=tmp_path/'w.json'
+    r=wins(w,ag,{'behaviour':BEH},200,jobs=0,chunk=20,out=out,log=quiet,every=1);o=r['outcomes']['behaviour']
+    # game s is the same game for every agent: the behaviour against itself gives the same outcomes as its own duel on that seed
+    ref=[w.duel(s,ToyBehaviour(),ToyBehaviour())[0] for s in range(10**7,10**7+200)]
+    assert (tmp_path/'w.json.partial').exists() and len(o['oracle'])==200 and o['behaviour']==ref
+    assert np.mean(o['oracle'])>0.7 and abs(np.mean(o['behaviour'])-0.5)<0.1
+    again=wins(w,ag,{'behaviour':BEH},200,jobs=0,chunk=20,out=out,log=quiet);assert again['outcomes']==r['outcomes'] and again['ticks']==0

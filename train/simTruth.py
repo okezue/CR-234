@@ -495,17 +495,22 @@ def _wins(args):
     return spec,ospec,seeds,res,ticks,time.monotonic()-t0
 
 
-def wins(world,agents,opponents,n,jobs=2,seed0=10**7,chunk=50,out=None,log=print):
+def wins(world,agents,opponents,n,jobs=2,seed0=10**7,chunk=50,out=None,log=print,every=400):
     # every agent against every opponent over the same n games (game s: decks dealt by seed s, the agent holding the first deck and
     # playing blue on even s, red on odd s, the sim's random seeded by s), so results pair across agents; agents and opponents map a
-    # name to a load_agent spec
-    seeds=list(range(seed0,seed0+n));tasks=[(a,o,seeds[i:i+chunk]) for a in agents.values() for o in opponents.values() for i in range(0,n,chunk)]
-    inv={v:k for k,v in agents.items()};oinv={v:k for k,v in opponents.items()};res={};ticks=0;t0=time.monotonic();done=0
+    # name to a load_agent spec; finished games go to out.partial every that many tasks, and a rerun skips the games found there
+    seeds=list(range(seed0,seed0+n));inv={v:k for k,v in agents.items()};oinv={v:k for k,v in opponents.items()};res={};ticks=0;t0=time.monotonic();done=0
+    part=Path(str(out)+'.partial') if out else None
+    if part and part.exists():
+        res={o:{a:{int(s):r for s,r in d.items()} for a,d in v.items()} for o,v in json.loads(part.read_text())['res'].items()}
+    have=lambda a,o,ss:all(s in res.get(oinv[o],{}).get(inv[a],{}) for s in ss)
+    tasks=[(a,o,seeds[i:i+chunk]) for a in agents.values() for o in opponents.values() for i in range(0,n,chunk) if not have(a,o,seeds[i:i+chunk])]
     with Workers(jobs,(world,{})) as W:
         for a,o,ss,r,tk,_ in W.map(_wins,tasks,False):
             d=res.setdefault(oinv[o],{}).setdefault(inv[a],{});d.update(zip(ss,r));ticks+=tk;done+=1
             if done%200==0:log(json.dumps({'tasks':done,'of':len(tasks),'wall_s':round(time.monotonic()-t0,1)}),flush=True)
-    outcomes={o:{a:[d[s] for s in seeds] for a,d in v.items()} for o,v in res.items()}
+            if part and done%every==0:part.write_text(json.dumps({'res':res})+'\n')
+    outcomes={o:{a:[d[s] for s in seeds] for a,d in v.items() if a in agents} for o,v in res.items() if o in opponents}
     rep={'n':n,'seed0':seed0,'agents':agents,'opponents':opponents,'ticks':int(ticks),'seconds':round(time.monotonic()-t0,1),'outcomes':outcomes}
     if out:Path(out).parent.mkdir(parents=True,exist_ok=True);Path(out).write_text(json.dumps(rep)+'\n')
     return rep
