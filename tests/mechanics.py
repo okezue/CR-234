@@ -551,12 +551,14 @@ def t_goblin_drill_surfaces_and_spawns():
     assert tw.hp==ini,"the drill itself never attacks, even sitting on the tower"
     return "Goblin Drill travels at 300, deploys 1 s on arrival with 84 spawn damage (none to towers), a Goblin 1 s later then every 3 s"
 def t_evo_goblin_drill_resurfaces_twice():
+    # export GoblinDrill_EV1_relocate hides it 1 s at each threshold; the submerges lost their damage on 8/10/2024 (wiki history)
     g=_game();gd=mk_card('goblin_drill',11,'blue',9,20,evolved=True);g.deploy('blue',gd);d,=_dummies(g,(9,21));g.run(4.0)
     n0=len(_named(g,'blue','Goblin'));h0=50000-d.hp
     gd.hp=int(gd.max_hp*0.6);g.run(0.1);n1=len(_named(g,'blue','Goblin'))
-    gd.hp=int(gd.max_hp*0.3);g.run(0.1);n2=len(_named(g,'blue','Goblin'))
-    assert (n1-n0,n2-n1)==(2,1) and 50000-d.hp==h0+2*84
-    return "Evo Goblin Drill resurfaces at 66% and 33% leaving 2 then 1 Goblins and repeating its spawn damage"
+    assert has(gd,'burrowed') and 50000-d.hp==h0==84
+    g.run(1.0);gd.hp=int(gd.max_hp*0.3);g.run(0.1);n2=len(_named(g,'blue','Goblin'))
+    assert (n1-n0,n2-n1)==(2,1) and has(gd,'burrowed')
+    return "Evo Goblin Drill submerges for 1 s at 66% and 33% leaving 2 then 1 Goblins, with no spawn damage"
 def t_mother_witch_cursed_hog():
     g=_game();mw=mk_card('mother_witch',11,'blue',9,10);g.deploy('blue',mw);d,=_dummies(g,(9,13),hp=150)
     g.run(3);hogs=_named(g,'blue','Cursed Hog')

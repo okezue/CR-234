@@ -596,7 +596,8 @@ def main():
             "hook": "special attack on a ground target between minRange and maxRange: the unit stands for loadTime, the hook flies at speed and "
                     "drags a troop to the unit's reach at dragSpeed or the unit to a building at selfDragSpeed, slowing the target (Fisherman)",
             "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; "
-                      "resurfacePercent/resurfaceCount for the evo drill",
+                      "resurfacePercent/resurfaceCount for the evo drill, which hides hideTime seconds at each and comes back a quarter turn "
+                      "around an enemy Crown Tower within relocateRange tiles",
             "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "
                       "periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy "
                       "unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, "
