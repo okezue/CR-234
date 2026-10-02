@@ -528,6 +528,113 @@ def rank_corr(a,b):
     return sp,float(num/den) if den>0 else 0.0
 
 
+def proxies(pack,pt,out=None,prep_dir=None):
+    # the real rounds' held-out measures (train.singleTraj.evaluate on half B with the half-A Q model and both support masks) of saved
+    # policies (a .pt of state dicts by name), beside the clone's, in run_arms's report layout
+    from train.singleTraj import Corpus,Head,eval_set,evaluate,support
+    c=Corpus(pack);P=Path(prep_dir or Path(pack)/'prep');bc=Policy(c.n_state,c.n_card,128);bc.load_state_dict(torch.load(P/'bc_warm.pt'));bc.eval()
+    Q=Head(c.n_state,c.n_card,hidden=128);Q.load_state_dict(torch.load(P/'q.pt'));Q.eval();E=torch.load(P/'evals.pt',weights_only=False)
+    ev=eval_set(c,E['rows']['heldB']);strict=support(c,np.concatenate([c.records(c.games('warm')),c.records(c.games('stream'))]),100)
+    rep={'arms':{},'train_stats':{},'bc':evaluate(bc,bc,Q,ev,E['sup']['final'],strict=strict)}
+    for k,sd in torch.load(pt,weights_only=False).items():
+        q=Policy(c.n_state,c.n_card,sd['trunk.0.weight'].shape[0]);q.load_state_dict(sd);q.eval();rep['arms'][k]=evaluate(q,bc,Q,ev,E['sup']['final'],strict=strict)
+    if out:Path(out).write_text(json.dumps(rep,indent=1)+'\n')
+    return rep
+
+
+def proxy_row(m,b):
+    # changes against the clone on held-out B, as the real rounds report them
+    return {'dq_pess':m['q_pess']-b['q_pess'],'dq_support':m['q_support']-b['q_support'],'dq_direct':m['q_direct']-b['q_direct'],
+            'd_winner_gap':m['winner_gap']-b['winner_gap'],'kl':m['kl_to_bc'],'entropy':m['entropy'],'d_support':m['support_mass']-b['support_mass'],
+            'd_support100':(m.get('support_mass_strict') or 0)-(b.get('support_mass_strict') or 0),'top_q':m.get('q_top_mass')}
+
+
+def ratio(x,y,base,z=1.96):
+    # mean(x - base) / mean(y - base) paired by game, with a delta-method interval
+    a=np.asarray(x,np.float64)-np.asarray(base,np.float64);g=np.asarray(y,np.float64)-np.asarray(base,np.float64);n=len(a);r=a.mean()/g.mean()
+    v=(a.var(ddof=1)+r*r*g.var(ddof=1)-2*r*np.cov(a,g)[0,1])/(n*g.mean()**2);h=z*float(np.sqrt(max(v,0)));return float(r),float(r-h),float(r+h)
+
+
+PAIRS=(('cross/flash','true/flash:mu=true'),('cross/flash_nogate','true/flash_nogate:mu=true'),('cross/sao','true/sao:mu=true'),('cross/bpco','true/bpco:mu=true'))
+VOLUME=(('bpco',('vol6k/bpco','vol20k/bpco','cross/bpco')),('sao',('vol6k/sao','vol20k/sao','cross/sao')),
+        ('flash:mu=true',('vol6k/flash:mu=true','vol20k/flash:mu=true','true/flash:mu=true')))
+
+
+def report(runs,wins_files,out=None,ref='bc',top='grpo/grpo_1',boots=1000,seed=0):
+    # true win rates against every opponent beside the proxies of the registered plan (f5369): verdicts, rank agreement (with a game
+    # bootstrap of Spearman's correlation over the games every policy played), recovery of the GRPO gain, stored against estimated
+    # behaviour probabilities and trace volume; agent names stem/spec take their proxies from runs/stem.json
+    reps={Path(p).stem:json.loads(Path(p).read_text()) for p in runs};W={}
+    for f in wins_files:
+        for o,v in json.loads(Path(f).read_text())['outcomes'].items():
+            for a,x in v.items():
+                if len(x)>len(W.setdefault(o,{}).get(a,[])):W[o][a]=x
+    opps=list(W);rows={}
+    for a in W[opps[0]]:
+        r={'true':{}}
+        for o in opps:
+            x=W[o][a];b=W[o][ref];n=min(len(x),len(b));r['true'][o]={'n':len(x),'wr':paired(x),'dwr':paired(x[:n],b[:n])}
+        if '/' in a:
+            stem,spec=a.split('/',1)
+            if stem in reps and spec in reps[stem]['arms']:r['proxy']=proxy_row(reps[stem]['arms'][spec],reps[stem]['bc'])
+        rows[a]=r
+    trained=[a for a,r in rows.items() if 'proxy' in r]
+    F=max([0.0005]+[rows[a]['proxy']['dq_pess'] for a in trained if a.endswith(':flip')])
+    for a in trained:
+        p=rows[a]['proxy'];p['verdict']='improves' if p['dq_pess']>2*F and p['d_support']>=-0.01 and p['dq_direct']-p['dq_pess']<=0.002 else 'no'
+    for a,r in rows.items():
+        for o,t in r['true'].items():t['verdict']='improves' if t['dwr'][1]>0 else 'hurts' if t['dwr'][2]<0 else 'no change'
+    rng=np.random.default_rng(seed);rank={}
+    for o in opps:
+        n=min(len(W[o][a]) for a in trained+[ref]);X=np.array([W[o][a][:n] for a in trained],np.float64)-np.array(W[o][ref][:n],np.float64)
+        idx=rng.integers(n,size=(boots,n));D=np.array([X[:,i].mean(1) for i in idx]);dm=np.array([rows[a]['true'][o]['dwr'][0] for a in trained])
+        best=int(np.argmax(dm));lo=rows[trained[best]]['true'][o]['dwr'][1]
+        for k in ('dq_pess','dq_support','d_winner_gap'):
+            pv=np.array([rows[a]['proxy'][k] for a in trained]);sp,tau=rank_corr(pv,dm);bs=np.array([rank_corr(pv,d)[0] for d in D])
+            ptop=trained[int(np.argmax(pv))]
+            rank[f'{o}|{k}']={'spearman':sp,'kendall':tau,'spearman_boot':[float(np.percentile(bs,2.5)),float(np.percentile(bs,97.5))],
+                              'proxy_top':ptop,'true_top':trained[best],'ranks_correctly':bool(sp>=0.7 and rows[ptop]['true'][o]['dwr'][0]>=lo),
+                              'policies':len(trained),'games':n}
+        rank[f'{o}|agreement']=sum((rows[a]['proxy']['verdict']=='improves')==(rows[a]['true'][o]['verdict']=='improves') for a in trained)
+    rec={}
+    if top in rows:
+        for o in opps:
+            g=W[o][top];b=W[o][ref]
+            if rows[top]['true'][o]['verdict']!='improves':continue
+            for a in trained:
+                if a==top:continue
+                x=W[o][a];n=min(len(x),len(g),len(b));rec[f'{o}|{a}']=ratio(x[:n],g[:n],b[:n])
+    mu={f'{o}|{c}->{t}':paired(W[o][t][:min(len(W[o][t]),len(W[o][c]))],W[o][c][:min(len(W[o][t]),len(W[o][c]))]) for c,t in PAIRS for o in opps
+        if c in W[o] and t in W[o]}
+    vol={f'{o}|{k}':[rows[a]['true'][o]['dwr'] if a in rows else None for a in names] for k,names in VOLUME for o in opps}
+    rep={'F':F,'rows':rows,'rank':rank,'recovery':rec,'stored_vs_estimated':mu,'volume':vol,'opponents':opps,'reference':ref}
+    if out:Path(out).write_text(json.dumps(rep,indent=1)+'\n')
+    return rep
+
+
+def markdown(rep):
+    # the report's main table and summaries as markdown
+    o0,o1=(rep['opponents']+[None])[:2];f=lambda v,d=4:'' if v is None else f'{v:+.{d}f}';ci=lambda t:f"{t[0]:+.3f} [{t[1]:+.3f}, {t[2]:+.3f}]"
+    out=[f"F (largest flipped dq_pess, min .0005) = {rep['F']:.4f}",'',
+         '| policy | n | WR vs '+o0+' | dWR vs '+o0+' | true | '+(f'WR vs {o1} | dWR vs {o1} | ' if o1 else '')
+         +'dq pess | dq support | d winner gap | KL | entropy | d support | proxy |',
+         '|'+'---|'*(13 if o1 else 10)]
+    for a,r in rep['rows'].items():
+        t=r['true'][o0];p=r.get('proxy',{});u=r['true'].get(o1) if o1 else None
+        cells=[a,str(t['n']),f"{t['wr'][0]:.3f}",ci(t['dwr']),t['verdict']]+([f"{u['wr'][0]:.3f}",ci(u['dwr'])] if u else [])
+        cells+=[f(p.get('dq_pess')),f(p.get('dq_support')),f(p.get('d_winner_gap'),3),'' if 'kl' not in p else f"{p['kl']:.3f}",
+                '' if 'entropy' not in p else f"{p['entropy']:.3f}",f(p.get('d_support')),p.get('verdict','')]
+        out.append('| '+' | '.join(cells)+' |')
+    out+=['','Rank agreement (Spearman [game bootstrap 95%], Kendall; ranks correctly by the registered rule):']
+    for k,v in rep['rank'].items():
+        out.append(f'- {k}: {v}' if not isinstance(v,dict) else f"- {k}: {v['spearman']:+.3f} [{v['spearman_boot'][0]:+.3f}, {v['spearman_boot'][1]:+.3f}], "
+                   f"tau {v['kendall']:+.3f}; proxy top {v['proxy_top']}, true top {v['true_top']}; ranks correctly {v['ranks_correctly']}")
+    out+=['','Recovery of the GRPO gain (ratio [delta 95%]):']+[f'- {k}: {v[0]:+.3f} [{v[1]:+.3f}, {v[2]:+.3f}]' for k,v in rep['recovery'].items()]
+    out+=['','Stored minus estimated behaviour probabilities (paired dWR):']+[f'- {k}: {ci(v)}' for k,v in rep['stored_vs_estimated'].items()]
+    out+=['','Volume (dWR at 6k / 20k / 60k stream games):']+[f"- {k}: "+' / '.join('' if v is None else ci(v) for v in vs) for k,vs in rep['volume'].items()]
+    return '\n'.join(out)
+
+
 def main():
     ap=argparse.ArgumentParser();sp=ap.add_subparsers(dest='cmd',required=True)
     a=sp.add_parser('decks');a.add_argument('--dataset',required=True);a.add_argument('--behaviour',required=True);a.add_argument('--out',required=True)
@@ -550,6 +657,8 @@ def main():
     a=sp.add_parser('wins');a.add_argument('--decks',required=True);a.add_argument('--agents',required=True,help='json file: name -> agent spec')
     a.add_argument('--opponents',required=True,help='json file: name -> agent spec');a.add_argument('--n',type=int,required=True)
     a.add_argument('--jobs',type=int,default=2);a.add_argument('--out',required=True);a.add_argument('--seed0',type=int,default=10**7)
+    a=sp.add_parser('proxies');a.add_argument('--pack',required=True);a.add_argument('--pt',required=True);a.add_argument('--out',required=True)
+    a=sp.add_parser('report');a.add_argument('--runs',nargs='+',required=True);a.add_argument('--wins',nargs='+',required=True);a.add_argument('--out',required=True)
     a=ap.parse_args()
     if a.cmd=='decks':print(len(build_decks(a.dataset,torch.load(a.behaviour,weights_only=False)['vocab'],a.out,a.n)))
     elif a.cmd=='behaviour':print(export_behaviour(a.prep,a.meta,a.states,a.out))
@@ -559,7 +668,10 @@ def main():
         from train.singleTraj import prep
         prep(a.pack,threads=a.threads,rolled_pre=a.rolled_pre);stored(a.states,a.pack)
     elif a.cmd=='grpo':grpo(a.pack,SimWorld(a.decks),a.behaviour,a.out,a.frac*trace_ticks(a.states,a.pack)[0],a.G,a.batch,steps=a.steps,jobs=a.jobs,seed=a.seed)
-    else:wins(SimWorld(a.decks),json.loads(Path(a.agents).read_text()),json.loads(Path(a.opponents).read_text()),a.n,a.jobs,a.seed0,out=a.out)
+    elif a.cmd=='wins':wins(SimWorld(a.decks),json.loads(Path(a.agents).read_text()),json.loads(Path(a.opponents).read_text()),a.n,a.jobs,a.seed0,out=a.out)
+    elif a.cmd=='proxies':torch.set_num_threads(8);proxies(a.pack,a.pt,a.out)
+    else:
+        r=report(a.runs,a.wins,a.out);md=markdown(r);Path(a.out).with_suffix('.md').write_text(md+'\n');print(md)
 
 
 if __name__=='__main__':main()
