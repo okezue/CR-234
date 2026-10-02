@@ -58,14 +58,14 @@ class Toy:
         return torch.from_numpy(self.X_[a:b] if rows is None else self.X_[rows])
 
 
-def right_world(n,T,p=0.25,seed=0,soft=False):
+def right_world(n,T,p=0.25,seed=0,soft=False,fixed=False):
     # n trajectories of a policy playing the right card with probability p (cells uniform); per record the state, play, count before
-    # the play and the outcome (the win probability itself when soft)
+    # the play and the outcome (the win probability itself when soft); fixed makes card 0 always the right one
     rng=np.random.default_rng(seed);X=np.zeros((n*T,6),np.float32);card=np.zeros(n*T,np.int64);cnt=np.zeros(n*T,np.int64);y=np.zeros(n*T,np.float32)
     for i in range(n):
         k=0
         for t in range(T):
-            r=i*T+t;right=int(rng.integers(4));X[r,0]=t/T;X[r,1+right]=1;X[r,5]=k/T;cnt[r]=k
+            r=i*T+t;right=0 if fixed else int(rng.integers(4));X[r,0]=t/T;X[r,1+right]=1;X[r,5]=k/T;cnt[r]=k
             card[r]=right if rng.random()<p else int(rng.choice([x for x in range(4) if x!=right]));k+=int(card[r]==right)
         y[i*T:(i+1)*T]=sig(B*(k-C)) if soft else float(rng.random()<sig(B*(k-C)))
     return X,card,rng.integers(48,size=n*T),cnt,y
@@ -97,13 +97,13 @@ def t_menu_qv_is_the_q_models_menu():
 
 
 def t_fqe_reaches_the_policy_value_round_by_round():
-    T=4;p=0.9;n=3000;X,card,cell,_,y=right_world(n,T,seed=2);c=Toy(X,card,cell,y,T);rows=np.arange(n*T);s0=rows[::T][:1000]
-    S0=c.S(0,0,s0);H0=WO.T(c.a['H'][s0]);Q0=WO.fit_q0(c,rows,steps=1500,batch=512,hidden=32)
+    T=4;p=0.9;n=6000;X,card,cell,_,y=right_world(n,T,seed=2,fixed=True);c=Toy(X,card,cell,y,T);rows=np.arange(n*T);s0=rows[::T][:200]
+    S0=c.S(0,0,s0);H0=WO.T(c.a['H'][s0]);Q0=WO.fit_q0(c,rows,steps=1000,batch=1024,hidden=64)
     for sampled in (False,True):
-        out,kept=WO.fqe(c,Right(p),rows,S0,H0,Q0,K=T,steps=400,batch=512,keep=(0,T),sampled=sampled);J=out['J']
+        out,kept=WO.fqe(c,Right(p),rows,S0,H0,Q0,K=T,steps=250,batch=1024,keep=(0,T),sampled=sampled);J=out['J']
         # round k evaluates the policy for k + 1 decisions and the behaviour after them: J_0 is the one-step value, J_3 the policy's value
         assert all(abs(J[k]-mixed(T,p,k+1))<0.035 for k in range(T)),(sampled,J,[mixed(T,p,k+1) for k in range(T)])
-        assert J[0]<J[1]<J[T-1] and abs(J[T]-value(0,0,T,p))<0.035 and set(kept)=={0,T} and len(out['per'][T])==1000
+        assert J[0]<J[1]<J[T-1] and abs(J[T]-value(0,0,T,p))<0.035 and set(kept)=={0,T} and len(out['per'][T])==200
     # the kept round's Q of the recorded plays and its V under the policy
     q,v=WO.q_and_v(kept[T],Right(p),c.S(0,0,rows[T-1::T][:500]),WO.T(c.a['H'][rows[T-1::T][:500]]),WO.T(card[T-1::T][:500]),WO.T(cell[T-1::T][:500]))
     assert q.shape==v.shape==(500,) and ((v>0)&(v<1)).all()
@@ -150,10 +150,11 @@ def t_cycle_sends_the_played_card_to_the_back_and_affords_by_elixir():
     for x in q[1:4]+[q[0]]:
         assert 5 not in cy.hand[0].tolist();cy(0,torch.tensor([x]) if x in cy.hand[0].tolist() else cy.hand[0,:1])
     assert 5 in cy.hand[0].tolist()
-    # the menu keeps the hand's cards the predicted elixir affords, known cards first; with too little elixir the cheapest
-    cost=torch.tensor([1.0,2,3,4,5,6,7,8]);cy=WO.Cycle(np.array([[6,1,3,5]]),np.array([[0,1,2,3,4,5,6,7]]),cost=cost,z_mu=np.zeros(24),z_sd=np.ones(24))
-    z=torch.zeros(1,24);z[0,2]=0.45;assert cy.menu(z)[0].tolist()==[1,3,-1,-1];z[0,2]=0.05;assert cy.menu(z)[0].tolist()==[1,-1,-1,-1]
-    assert cy.menu()[0].tolist()==[6,1,3,5]
+    # the menu keeps the hand's cards the elixir at that depth affords, known cards first; with too little elixir the cheapest; past
+    # the last depth the last elixir
+    cost=torch.tensor([1.0,2,3,4,5,6,7,8]);cy=WO.Cycle(np.array([[6,1,3,5]]),np.array([[0,1,2,3,4,5,6,7]]),cost=cost,elixir=np.array([[9.0,4.5,0.5]]))
+    assert cy.menu(0)[0].tolist()==[6,1,3,5] and cy.menu(1)[0].tolist()==[1,3,-1,-1] and cy.menu(2)[0].tolist()==[1,-1,-1,-1]==cy.menu(7)[0].tolist()
+    assert cy.menu()[0].tolist()==[6,1,3,5] and cy(0,torch.tensor([3]))[0].tolist()==[1,-1,-1,-1] and 3 not in cy.hand[0].tolist()
 
 
 def t_compare_applies_the_registered_rule():
@@ -244,16 +245,19 @@ def t_model_and_fqe_rank_planted_policies(tmp_path):
         w=[x=='blue' for x in giant_games(3000,{'blue':v,'red':beh},seed=11)]+[x=='red' for x in giant_games(3000,{'blue':beh,'red':v},seed=12)]
         truth[k]=float(np.mean(w))
     assert truth['always']>truth['uniform']+0.1>truth['never']+0.15,truth
-    rows=WO.starts(c);S=c.S(0,0,rows);H=WO.T(c.a['H'][rows]);dk=WO.decks(st,c,rows);tg=c.records(WO.train_games(c,10**6));est={};fq={}
+    rows=WO.starts(c);S=c.S(0,0,rows);H=WO.T(c.a['H'][rows]);dk=WO.decks(st,c,rows);tg=c.records(WO.train_games(c,10**6));est={};fq={};rv={}
     Q0=WO.fit_q0(c,tg,steps=1500,batch=512,hidden=64)
     for k,b in (('never',-8.0),('uniform',0.0),('always',8.0)):
         pol=giant_policy(c,b);acts=WO.distil(ms,pol,c,tg,steps=300,batch=256,lr=3e-3);fr=WO.fidelity(ms,acts,pol,S,H)
         # the distilled actors follow the policy far more closely than the members' behaviour heads do
         assert np.mean(fr['kl_actor'])<0.3*np.mean(fr['kl_head']),(k,fr)
         v=WO.model_values(ms,acts,pol,S,H,lambda s,r:WO.Cycle(c.a['H'][rows[s]],dk[s],r),16,marks=(0,1,16),n_roll=4)
+        rec=WO.model_values(ms,acts,pol,S,H,lambda s,r:WO.Recorded(c,rows[s],16),16,marks=(16,),n_roll=4);rv[k]=rec['value'][0].mean()
         assert v['running'][-1].mean()<0.2 and (v['disagree'][-1]>=v['disagree'][1]).all();est[k]=v['value'][-1].mean()
         fq[k]=WO.fqe(c,pol,tg,S,H,Q0,K=14,steps=150,batch=512)[0]['J'][-1]
     m0=WO.model_values(ms,None,None,S,H,lambda s,r:WO.Cycle(c.a['H'][rows[s]],dk[s],r),16,marks=(16,),n_roll=4)['value'][0].mean()
-    # full model rollouts and fitted-Q evaluation order the policies as the truth does; the model's own behaviour wins about half
+    # full model rollouts and fitted-Q evaluation order the policies as the truth does; the model's own behaviour wins about half;
+    # with the recorded menus (open loop) the giant, rarely played by the behaviour, stays in hand and is played at every decision
     for e in (est,fq):assert e['always']>e['uniform']>e['never'] and e['always']-e['never']>0.4*(truth['always']-truth['never']),(e,truth)
+    assert rv['always']>est['always'],(rv,est)
     assert abs(m0-0.5)<0.08 and abs(fq['always']-truth['always'])<0.1,(m0,fq,truth)

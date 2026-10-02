@@ -13,9 +13,11 @@ Estimators:
          the policy's play distribution on encoded training states), the opponent's plays, the delays and the game's end from the
          model; the value after k decisions is the ended games' one-step Q plus the running games' V (k = 0 the one-step Q, the
          largest k the full rollout); the penalised value subtracts lambda times the members' disagreement on each predicted decision
-         state weighted by the chance that the game reaches it (MOPO's penalty, Yu et al. 2020). The hand cycles the actor's recorded
-         deck and the menu is the hand's cards the predicted elixir affords (cycle), or the menus follow the recorded trajectory
-         (recorded).
+         state weighted by the chance that the game reaches it (MOPO's penalty, Yu et al. 2020). The world model has no hand: in
+         cycle the hand cycles the actor's recorded deck and the menu is the hand's cards affordable at the own elixir of the recorded
+         trajectory's decision at the same depth (in this world a player decides once its elixir reaches a threshold redrawn after
+         every play, or under threat, so the elixir at a decision barely depends on the policy; the model's own elixir prediction is
+         far less accurate); in recorded the menus are the recorded trajectory's (open loop: a card the policy favours can recur).
   fqe    fitted-Q evaluation (Le, Voloshin and Yue 2019) on the same traces: Q_0 the outcome model of the play, then rounds
          Q_{k+1}(s, a) <- the outcome at the trajectory's last decision, else the policy's expected Q_k at the actor's next decision;
          J_k is the policy's expected Q_k at the starts (the policy for k + 1 decisions, then the behaviour).
@@ -97,34 +99,45 @@ def costs(vocab):
 class Cycle:
     # the actor's hand in a rollout: the start's menu filled to HAND with the deck's other cards in a seeded random order, the rest of
     # the deck queued behind them in that order; a play sends its card to the back of the queue and the queue's front takes its slot;
-    # the menu is the hand, or with cost the hand's cards the members' mean predicted own elixir covers (the cheapest when none is, as
-    # the world waits until one is affordable), known cards first as the store writes menus
-    def __init__(self,menu,deck,seed=0,cost=None,z_mu=None,z_sd=None):
+    # the menu of decision k is the hand, or with cost and elixir (n, depth) the hand's cards whose cost elixir[:, k] covers (the last
+    # column after the depth; the cheapest card when none is, as the world waits until one is affordable), known cards first as the
+    # store writes menus
+    def __init__(self,menu,deck,seed=0,cost=None,elixir=None):
         rng=np.random.default_rng(seed);n=len(menu);hand=np.full((n,HAND),-1,np.int64);queue=np.full((n,8),-1,np.int64)
         for j in range(n):
             m=[int(x) for x in menu[j] if x>=0];rest=[int(x) for x in deck[j] if x>=0 and x not in m];rest=[rest[i] for i in rng.permutation(len(rest))]
             k=max(HAND-len(m),0);h=(m+rest[:k])[:HAND];q=rest[k:][:8];hand[j,:len(h)]=h;queue[j,:len(q)]=q
         self.hand=torch.from_numpy(hand);self.queue=torch.from_numpy(queue);self.cost=cost
-        self.z_mu=None if z_mu is None else torch.as_tensor(z_mu);self.z_sd=None if z_sd is None else torch.as_tensor(z_sd)
+        self.el=None if elixir is None else torch.as_tensor(elixir,dtype=torch.float32)
     def __call__(self,k,card,z=None):
         n=len(card);ar=torch.arange(n);hit=self.hand==card[:,None];row=hit.any(1);j=hit.float().argmax(1);front=self.queue[:,0].clone()
         q=torch.cat([self.queue[:,1:],torch.full((n,1),-1,dtype=torch.long)],1);q[ar,(q>=0).sum(1).clamp(max=q.shape[1]-1)]=card
         self.hand=torch.where(row[:,None]&(torch.arange(HAND)[None,:]==j[:,None]),front[:,None],self.hand);self.queue=torch.where(row[:,None],q,self.queue)
-        return self.menu(z)
-    def menu(self,z=None):
+        return self.menu(k+1)
+    def menu(self,k=None):
         h=self.hand
-        if self.cost is not None and z is not None:
-            el=(z[:,2]*self.z_sd[2]+self.z_mu[2])*10;cc=torch.where(h>=0,self.cost[h.clamp(min=0)],torch.full(h.shape,1e9))
+        if self.cost is not None and self.el is not None and k is not None:
+            el=self.el[:,min(k,self.el.shape[1]-1)];cc=torch.where(h>=0,self.cost[h.clamp(min=0)],torch.full(h.shape,1e9))
             ok=cc<=el[:,None]+1e-6;ok[torch.arange(len(h)),cc.argmin(1)]=True;h=torch.where(ok&(h>=0),h,torch.full_like(h,-1))
         return h.gather(1,torch.argsort((h<0).int(),dim=1,stable=True))
+
+
+def ahead(c,rows,H):
+    # the record of each start's trajectory at depths 0..H (the trajectory's last record after it ends)
+    A=c.a;tr=A['traj'][rows];end=A['t_start'][tr].astype(np.int64)+A['t_len'][tr].astype(np.int64)-1
+    return np.minimum(np.asarray(rows)[:,None]+np.arange(H+1)[None,:],end[:,None])
+
+
+def own_elixir(c,idx):
+    # the actor's own elixir at the given records (train.feats keeps it over 10 at index 8)
+    return np.asarray(c.X[idx.reshape(-1)][:,8],np.float32).reshape(idx.shape)*10
 
 
 class Recorded:
     # the menus of the recorded trajectory: decision k + 1 of a rollout gets the menu of the start's (k + 1)-th next recorded decision,
     # the trajectory's last menu after it ends
     def __init__(self,c,rows,H):
-        A=c.a;tr=A['traj'][rows];end=A['t_start'][tr].astype(np.int64)+A['t_len'][tr].astype(np.int64)-1
-        self.m=T(A['H'][np.minimum(np.asarray(rows)[:,None]+np.arange(H+1)[None,:],end[:,None])])
+        self.m=T(c.a['H'][ahead(c,rows,H)])
     def __call__(self,k,card,z=None):
         return self.m[:,k+1]
 
@@ -306,11 +319,11 @@ def fit_volume(pack,aux,out,games,member,max_steps=4079,threads=3,log=print):
     LW.save_member(m,out,hist=hist,K=K,games=games,records=int(len(rows)),epochs=ep,seconds=round(time.monotonic()-t0,1))
 
 
-def mb_job(pack,states,aux,wms,configs,spec,name,games,out,Hmax=64,marks=MARKS,n_roll=2,distil_steps=1500,menus='cycle',start='held',n_starts=0,
+def mb_job(pack,states,wms,configs,spec,name,games,out,Hmax=64,marks=MARKS,n_roll=2,distil_steps=1500,menus='cycle',start='held',n_starts=0,
            seed=0,log=print):
     # one policy (spec, or 'model' for the members' own behaviour) in one volume's members: distil it into every member, then roll it out
     # from the starts under each ensemble configuration (lists of member indices into wms); per-start arrays to out (npz) and a json
-    c=Corpus(pack);ax=LW.load_aux(aux);t0=time.monotonic();A=c.a;models=[LW.load_member(p) for p in wms]
+    c=Corpus(pack);t0=time.monotonic();A=c.a;models=[LW.load_member(p) for p in wms]
     say=lambda m:log(f'[mb {time.monotonic()-t0:.0f}s] {m}',flush=True)
     # held: every held-out trajectory's first decision; mid: decisions drawn from held-out B (the behaviour's state distribution)
     rows=starts(c) if start=='held' else c.records(c.games('heldB'))
@@ -323,7 +336,7 @@ def mb_job(pack,states,aux,wms,configs,spec,name,games,out,Hmax=64,marks=MARKS,n
         fr=np.sort(np.random.default_rng(seed+1).choice(rows,min(4000,len(rows)),replace=False));rep['fidelity']=fidelity(models,acts,pol,c.S(0,0,fr),T(A['H'][fr]))
         say(f"distilled: KL actor {np.mean(rep['fidelity']['kl_actor']):.4f} head {np.mean(rep['fidelity']['kl_head']):.4f}")
     if menus=='cycle':
-        dk=decks(states,c,rows);cost=costs(c.vocab);nxt=lambda s,r:Cycle(A['H'][rows[s]],dk[s],seed*1000+r,cost,ax['z_mu'],ax['z_sd'])
+        dk=decks(states,c,rows);cost=costs(c.vocab);el=own_elixir(c,ahead(c,rows,Hmax));nxt=lambda s,r:Cycle(A['H'][rows[s]],dk[s],seed*1000+r,cost,el[s])
     else:nxt=lambda s,r:Recorded(c,rows[s],Hmax)
     res={}
     for ci,cfg in enumerate(configs):
@@ -439,7 +452,7 @@ def main():
     a=sp.add_parser('fit');a.add_argument('--pack',required=True);a.add_argument('--aux',required=True);a.add_argument('--out',required=True)
     a.add_argument('--games',type=int,required=True);a.add_argument('--member',type=int,required=True);a.add_argument('--max_steps',type=int,default=4079)
     a.add_argument('--threads',type=int,default=3)
-    a=sp.add_parser('mb');a.add_argument('--pack',required=True);a.add_argument('--states',required=True);a.add_argument('--aux',required=True)
+    a=sp.add_parser('mb');a.add_argument('--pack',required=True);a.add_argument('--states',required=True)
     a.add_argument('--wm',nargs='+',required=True);a.add_argument('--configs',required=True,help='json list of member index lists')
     a.add_argument('--agents',nargs='+')
     a.add_argument('--policy',required=True);a.add_argument('--games',type=int,required=True);a.add_argument('--out',required=True);a.add_argument('--H',type=int,default=64)
@@ -459,7 +472,7 @@ def main():
     if a.cmd=='fit':fit_volume(a.pack,a.aux,a.out,a.games,a.member,a.max_steps,a.threads)
     elif a.cmd=='mb':
         spec='model' if a.policy=='model' else registry(a.agents)[a.policy]
-        r=mb_job(a.pack,a.states,a.aux,a.wm,json.loads(a.configs),spec,a.policy,a.games,a.out,a.H,n_roll=a.n_roll,distil_steps=a.distil_steps,menus=a.menus,
+        r=mb_job(a.pack,a.states,a.wm,json.loads(a.configs),spec,a.policy,a.games,a.out,a.H,n_roll=a.n_roll,distil_steps=a.distil_steps,menus=a.menus,
                  start=a.start,n_starts=a.n_starts)
         print(json.dumps({k:v for k,v in r.items() if k.startswith('c') or k in ('seconds','fidelity')}))
     elif a.cmd=='lam':print(json.dumps(lam_job(a.pack,a.prep,a.aux,a.wm,a.key,a.out)))
