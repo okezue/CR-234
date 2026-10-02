@@ -630,10 +630,12 @@ def markdown(rep):
         cells+=[f(p.get('dq_pess')),f(p.get('dq_support')),f(p.get('d_winner_gap'),3),'' if 'kl' not in p else f"{p['kl']:.3f}",
                 '' if 'entropy' not in p else f"{p['entropy']:.3f}",f(p.get('d_support')),p.get('verdict','')]
         out.append('| '+' | '.join(cells)+' |')
-    out+=['','Rank agreement (Spearman [game bootstrap 95%], Kendall; ranks correctly by the registered rule):']
+    out+=['',"Rank agreement (Spearman over each policy's full evaluation, its 95% game bootstrap over the games every policy played, Kendall; "
+          'ranks correctly by the registered rule):']
     for k,v in rep['rank'].items():
-        out.append(f'- {k}: {v}' if not isinstance(v,dict) else f"- {k}: {v['spearman']:+.3f} [{v['spearman_boot'][0]:+.3f}, {v['spearman_boot'][1]:+.3f}], "
-                   f"tau {v['kendall']:+.3f}; proxy top {v['proxy_top']}, true top {v['true_top']}; ranks correctly {v['ranks_correctly']}")
+        out.append(f'- {k}: {v}' if not isinstance(v,dict) else f"- {k}: {v['spearman']:+.3f}, bootstrap over {v['games']} games "
+                   f"[{v['spearman_boot'][0]:+.3f}, {v['spearman_boot'][1]:+.3f}], tau {v['kendall']:+.3f}; proxy top {v['proxy_top']}, "
+                   f"true top {v['true_top']}; ranks correctly {v['ranks_correctly']}")
     out+=['','Recovery of the GRPO gain (ratio [delta 95%]):']+[f'- {k}: {v[0]:+.3f} [{v[1]:+.3f}, {v[2]:+.3f}]' for k,v in rep['recovery'].items()]
     out+=['','Stored minus estimated behaviour probabilities (paired dWR):']+[f'- {k}: {ci(v)}' for k,v in rep['stored_vs_estimated'].items()]
     out+=['','Volume (dWR at 6k / 20k / 60k stream games):']+[f"- {k}: "+' / '.join('' if v is None else ci(v) for v in vs) for k,vs in rep['volume'].items()]

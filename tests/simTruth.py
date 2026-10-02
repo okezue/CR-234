@@ -5,19 +5,21 @@ import numpy as np
 import torch
 
 import train.simTruth as STr
+from sim.cards import create,key
 from sim.game import Game
 from train.counterfactual import GH,GW,cell_of
 from train.feats import FEAT_DIM,featurize
-from train.simTruth import (TEAMS,Agent,SimWorld,cell_tile,generate,group_adv,grpo,grpo_loss,load_agent,paired,place,rank_corr,stored,
-                            trace_ticks,wins)
+from train.simTruth import (LEVEL,TEAMS,Agent,SimWorld,cell_tile,generate,group_adv,grpo,grpo_loss,load_agent,markdown,paired,place,rank_corr,
+                            report,stored,trace_ticks,wins)
 from train.singleTraj import Corpus,Policy,pack,prep,run_arms,token_logp
 
-# The simulator as a known world. Two kinds of test: the real world's rules (cells correspond across sides and land on deployable
-# tiles, a game is reproduced by replaying its plays, a GRPO group starts from the recorded state) on short sim.game games, and a
-# planted world in which the best policy is known (the right card is written in the state; the winner is drawn from the two sides'
-# shares of right plays) driven through the shipped generation, pack, prep, stored probabilities, run_arms, GRPO and win-rate
-# functions: outcome-driven training must raise the true win rate, flipped outcomes must not, and the stored probabilities must be
-# the behaviour's.
+# The simulator as a known world. Three kinds of test: the real world's rules (cells correspond across sides and land on deployable
+# tiles, a game is reproduced by replaying its plays, a GRPO group starts from the recorded state, an evaluation game seats the policy
+# by its seed) on short sim.game games; a planted world in which the best policy is known (the right card is written in the state;
+# the winner is drawn from the two sides' shares of right plays) driven through the shipped generation, pack, prep, stored
+# probabilities, run_arms, GRPO and win-rate functions: outcome-driven training must raise the true win rate, flipped outcomes must
+# not, and the stored probabilities must be the behaviour's; and the registered decision rules applied by report to hand-built win
+# files and run reports with known answers.
 
 DECKS=[{'cards':['knight','archers','fireball','giant','musketeer','valkyrie','bomber','arrows']},
        {'cards':['hog_rider','minions','zap','goblins','skeletons','mini_pekka','baby_dragon','cannon']}]
@@ -25,8 +27,8 @@ VOC=('knight','archers','fireball','giant');N_DEC=8;BEH='py:tests.simTruth:ToyBe
 quiet=lambda *a,**k:None
 
 
-def short(monkeypatch):
-    monkeypatch.setattr(Game,'REG',20.0);monkeypatch.setattr(Game,'OT',10.0);monkeypatch.setattr(Game,'END',30.0)
+def short(monkeypatch,reg=20.0):
+    monkeypatch.setattr(Game,'REG',reg);monkeypatch.setattr(Game,'OT',10.0);monkeypatch.setattr(Game,'END',reg+10.0)
 
 
 def random_agent(seed=0):
@@ -52,6 +54,28 @@ class ToyBehaviour:
 class Oracle:
     def act(self,x,menu,rng,g=None,team=None):
         return right(x),0,0.0,0.0
+
+
+class Spy:
+    # an agent that records the sides it is asked to play
+    def __init__(self,a):
+        self.a=a;self.teams=set()
+    def act(self,x,menu,rng,g=None,team=None):
+        self.teams.add(team);return self.a.act(x,menu,rng,g,team)
+
+
+class Seat:
+    # plays its first menu card on cell 0 and records the side and the deck it plays
+    def __init__(self):
+        self.seen=set()
+    def act(self,x,menu,rng,g=None,team=None):
+        self.seen.add((team,tuple(sorted(g.players[team].deck.all))));return menu[0],0,0.0,0.0
+
+
+class Who:
+    # a world whose branch records the actor and opponent GRPO's worker passes it
+    def branch(self,seed,plays,stops,actor,opponent,G,rseed):
+        self.got=(actor,opponent);return [],0
 
 
 class ToyWorld:
@@ -81,7 +105,7 @@ class ToyWorld:
         tm=TEAMS[int(seed)%2];o,_=self.play(seed,{tm:agent,STr.opp(tm):other},());return STr.score(o['winner'],tm),N_DEC
 
 
-def t_cells_correspond_across_sides_and_land_on_deployable_tiles():
+def t_cells_correspond_across_sides_land_on_deployable_tiles_and_an_enemy_troop_on_its_half_makes_a_player_decide():
     g=Game(p1=STr.side_cfg(DECKS[0]),p2=STr.side_cfg(DECKS[1]))
     for c in range(GW*GH):
         gy,gx=divmod(c,GW);m=(GH-1-gy)*GW+gx;bx,by=cell_tile(c,'blue');rx,ry=cell_tile(m,'red')
@@ -92,23 +116,40 @@ def t_cells_correspond_across_sides_and_land_on_deployable_tiles():
     # with every enemy tower up a troop sent to an enemy cell lands on the mirrored cell of its own half; a felled princess opens its pocket
     c=4*GW+1;x,y=place(g,'blue','knight',c);assert cell_of(x+0.5,y+0.5)==3*GW+1
     t=g.arena.get_tower('red','princess','left');t.take_damage(t.hp);assert place(g,'blue','knight',c)==cell_tile(c,'blue')
+    # below its elixir threshold a player decides only when an enemy troop stands on its own half
+    m=STr.Match(DECKS,5);m.st['blue']['thr']=m.st['red']['thr']=10;assert m.menu('blue') is None and m.menu('red') is None
+    k=create('knight',LEVEL,'red',9,10);m.g.deploy('red',k);assert m.menu('blue')==m.g.players['blue'].deck.hand and m.menu('red') is None
+    k.y=25.0;assert m.menu('blue') is None
 
 
 def t_a_game_is_reproduced_by_replaying_its_plays_and_groups_start_from_the_recorded_state(monkeypatch):
-    short(monkeypatch);w=SimWorld(DECKS);a=random_agent()
+    # games of up to 50 s: past 32 s the store's float32 times can be more than 1e-6 off the tick times
+    short(monkeypatch,40.0);w=SimWorld(DECKS);a=random_agent()
     out,recs=w.play(3,{'blue':a,'red':a});out2,recs2=w.play(3,{'blue':a,'red':a})
     assert len(recs)>8 and {r['team'] for r in recs}==set(TEAMS) and out==out2 and all((r['state']==q['state']).all() for r,q in zip(recs,recs2))
     assert [r['idx'] for r in recs]==list(range(len(recs))) and all(r['card'] in r['hand'].split('|') for r in recs)
     # the packed store keeps times as float32
     plays=[(float(np.float32(r['t'])),r['team'],r['card'],cell_of(r['x'],r['y'])) for r in recs]
-    for k in (0,len(recs)//2,len(recs)-1):
+    err=[abs(p[0]-r['t']) for p,r in zip(plays,recs)];kf=int(np.argmax(err));assert err[kf]>1e-6,max(err)
+    for k in (0,len(recs)//2,kf,len(recs)-1):
         m=w.replay(3,plays,k);assert (featurize(m.g,recs[k]['team']).astype(np.float16)==recs[k]['state']).all(),k
-    k=len(recs)//2;res,ticks=w.branch(3,plays,[k],a,a,3,7);(s,tm,group),=res
+    k=len(recs)//2;ac,op=Spy(a),Spy(a);res,ticks=w.branch(3,plays,[k],ac,op,3,7);(s,tm,group),=res
     assert s==k and tm==recs[k]['team'] and len(group)==3 and ticks>sum(x[2] for x in group)>0
     for rs,R,_ in group:
         assert (rs[0]['state']==recs[k]['state']).all() and rs[0]['hand']==recs[k]['hand'] and all(r['team']==tm for r in rs) and R in (0.0,0.5,1.0)
     again,_=w.branch(3,plays,[k],a,a,3,7);assert [x[1] for x in again[0][2]]==[x[1] for x in group]
     assert all(len(x[0])==len(y[0]) and all((p['state']==q['state']).all() for p,q in zip(x[0],y[0])) for x,y in zip(again[0][2],group))
+    # the actor plays the prompt's side, the opponent the other; GRPO's worker passes the behaviour as the opponent, not the actor
+    assert ac.teams=={tm} and op.teams=={STr.opp(tm)}
+    who=Who();STr._init(who,{'behaviour':BEH});STr._W['cache']['actor']=a;STr._branch((3,plays,[k],a.pol.state_dict(),3,7))
+    assert who.got[0] is a and type(who.got[1]).__name__=='ToyBehaviour'
+
+
+def t_an_evaluation_game_seats_the_policy_blue_with_the_first_deck_on_even_seeds_and_red_with_it_on_odd_seeds(monkeypatch):
+    short(monkeypatch);w=SimWorld(DECKS);dk=lambda d:tuple(sorted(key(c) or c for c in d['cards']))
+    for p in (0,1):
+        s=next(s for s in range(p,60,2) if w.deal(s)[0] is not w.deal(s)[1]);a,b=Seat(),Seat();r,ticks=w.duel(s,a,b);d0,d1=map(dk,w.deal(s));tm=TEAMS[p]
+        assert a.seen=={(tm,d0)} and b.seen=={(STr.opp(tm),d1)} and r in (0.0,0.5,1.0) and ticks>0,(s,a.seen,b.seen)
 
 
 def t_group_advantages_and_the_grpo_surrogate():
@@ -123,9 +164,41 @@ def t_group_advantages_and_the_grpo_surrogate():
     # the log-probabilities (continuations of three, two and one decisions)
     lp=token_logp(pol,S,H,card,cell).sum(1);ref=-torch.stack([A[i]*lp[tr==i].sum()/(2*int((tr==i).sum())) for i in range(3)]).mean();ref.backward()
     assert abs(loss.item()+float(A.mean()))<1e-6 and all(torch.allclose(x,p.grad,atol=1e-6) for x,p in zip(g,pol.parameters()))
-    m,lo,hi=paired([1,0,1,1],[0,0,1,0]);assert abs(m-0.5)<1e-9 and lo<m<hi
+    # a normal 95% interval: 1.96 standard errors of the paired differences (1, 0, 0, 1) either side
+    m,lo,hi=paired([1,0,1,1],[0,0,1,0]);assert abs(m-0.5)<1e-9 and abs(hi-m-0.98*math.sqrt(1/3))<1e-12 and abs(m-lo-0.98*math.sqrt(1/3))<1e-12
     sp,tau=rank_corr([1,2,3,4],[10,20,30,40]);assert sp==1 and tau==1
     sp,tau=rank_corr([1,2,3,4],[4,3,2,1]);assert sp==-1 and tau==-1
+
+
+def t_the_report_applies_the_registered_rules_to_hand_built_win_files_and_run_reports(tmp_path):
+    # six trained policies and bc over 400 paired games (the flipped copy over 200, from a second file): gains of 80, 40, 32, 20, -24
+    # and 0 games over bc; the flipped copy's dq pess .001 sets F; bpco clears 2F but loses two points of support; flash clears F but
+    # not 2F; dq support has the true top at Spearman 1/7, the winner gap Spearman 33/35 with another top
+    up=lambda k:[int(i%2==0 or i<2*k) for i in range(400)];bc=up(0);tr=lambda a:R[a]['true']['behaviour']
+    arm=lambda q,s,wg,sup=0.0:{'q_pess':0.5+q,'q_support':0.5+s,'q_direct':0.5+q,'winner_gap':wg,'kl_to_bc':0.1,'entropy':3.5,'support_mass':0.99+sup}
+    runs={'grpo':{'grpo_1':arm(.006,.006,.05)},'flip':{'sao:flip':arm(.001,.003,.02)},
+          'cross':{'sao':arm(.003,.001,.06),'bpco':arm(.004,.0005,.04,-.02),'flash':arm(.0015,.004,.03),'flash_nogate':arm(-.001,.002,.01)}}
+    for k,v in runs.items():(tmp_path/f'{k}.json').write_text(json.dumps({'bc':arm(0,0,0),'arms':v}))
+    core={'bc':bc,'grpo/grpo_1':up(80),'cross/sao':up(40),'cross/bpco':up(32),'cross/flash':up(20),
+          'cross/flash_nogate':[int(i%2==0 and i>=48) for i in range(400)],'true/sao:mu=true':up(48)}
+    (tmp_path/'core.json').write_text(json.dumps({'outcomes':{'behaviour':core}}))
+    (tmp_path/'sec.json').write_text(json.dumps({'outcomes':{'behaviour':{'bc':bc[:200],'flip/sao:flip':bc[:200]}}}))
+    files=[tmp_path/f'{k}.json' for k in runs],[tmp_path/'core.json',tmp_path/'sec.json']
+    rep=report(*files,out=tmp_path/'rep.json',boots=200);R=rep['rows'];pol=('grpo/grpo_1','cross/sao','cross/bpco','cross/flash','cross/flash_nogate','flip/sao:flip')
+    assert abs(rep['F']-0.001)<1e-12 and [R[a]['proxy']['verdict'] for a in pol]==['improves','improves','no','no','no','no']
+    assert [tr(a)['verdict'] for a in pol]==['improves']*4+['hurts','no change'] and tr('bc')['n']==400 and tr('flip/sao:flip')['n']==200
+    m,lo,hi=tr('cross/sao')['dwr'];assert abs(m-0.1)<1e-12 and abs(hi-m-0.588/math.sqrt(399))<1e-12 and abs(m-lo-0.588/math.sqrt(399))<1e-12
+    rk=rep['rank'];p,s,g=(rk[f'behaviour|{k}'] for k in ('dq_pess','dq_support','d_winner_gap'))
+    assert rk['behaviour|agreement']==4 and p['games']==200 and p['policies']==6 and -1<=p['spearman_boot'][0]<=p['spearman_boot'][1]<=1
+    assert abs(p['spearman']-33/35)<1e-12 and p['proxy_top']==p['true_top']=='grpo/grpo_1' and p['ranks_correctly']
+    assert abs(s['spearman']-1/7)<1e-12 and s['proxy_top']=='grpo/grpo_1' and not s['ranks_correctly']
+    assert abs(g['spearman']-33/35)<1e-12 and g['proxy_top']=='cross/sao' and not g['ranks_correctly']
+    # recovery is the gain over bc as a share of GRPO's gain over bc, here 40/80, with a delta-method interval
+    r,lo,hi=rep['recovery']['behaviour|cross/sao'];assert abs(r-0.5)<1e-12 and abs(hi-r-1.96*math.sqrt(20/399/16))<1e-12 and abs(r-lo-(hi-r))<1e-12
+    assert len(rep['recovery'])==5 and report(*files,top='flip/sao:flip',boots=10)['recovery']=={}
+    (k,v),=rep['stored_vs_estimated'].items();assert k=='behaviour|cross/sao->true/sao:mu=true' and abs(v[0]-0.02)<1e-12
+    assert rep['volume']['behaviour|bpco']==[None,None,tr('cross/bpco')['dwr']] and json.loads((tmp_path/'rep.json').read_text())['F']==rep['F']
+    assert 'bootstrap over 200 games' in markdown(rep)
 
 
 def t_in_a_planted_world_training_on_traces_raises_the_true_win_rate_and_flipped_outcomes_do_not(tmp_path):
