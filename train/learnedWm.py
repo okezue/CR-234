@@ -347,7 +347,8 @@ class WmArm:
         return menu,card,cell,A
     def step(self,b):
         cfg=self.cfg;n=len(b['S']);k=max(1,int(round(cfg['roots']*n)));sel=torch.randperm(n,generator=self.gen)[:k].sort().values
-        S=b['S'][sel];H=b['H'][sel];rows=np.arange(*b['rows'])[sel.numpy()];G=cfg['G'];menu,card,cell,A=self.advantages(S,H,rows)
+        ri=np.arange(*b['rows']) if isinstance(b['rows'],tuple) else np.asarray(b['rows'])
+        S=b['S'][sel];H=b['H'][sel];rows=ri[sel.numpy()];G=cfg['G'];menu,card,cell,A=self.advantages(S,H,rows)
         Sg=S.repeat_interleave(G,0);Hg=H.repeat_interleave(G,0);cg=card.reshape(-1);xg=cell.reshape(-1);Ag=A.reshape(-1)
         lp=token_logp(self.pol,Sg,Hg,cg,xg)
         with torch.no_grad():lb=token_logp(self.bc,Sg,Hg,cg,xg)
@@ -608,8 +609,9 @@ def main():
     a.add_argument('--n',type=int,default=2000);a.add_argument('--threads',type=int,default=8)
     a=sp.add_parser('arms');a.add_argument('--pack',required=True);a.add_argument('--prep',required=True);a.add_argument('--wm',required=True)
     a.add_argument('--arms',nargs='+',required=True);a.add_argument('--out',required=True);a.add_argument('--threads',type=int,default=8);a.add_argument('--slice',default='all')
+    a.add_argument('--order',type=int,default=0)
     a=sp.add_parser('menu');a.add_argument('--pack',required=True);a.add_argument('--wm',required=True);a.add_argument('--cf',required=True)
-    a.add_argument('--out',required=True);a.add_argument('--prep');a.add_argument('--threads',type=int,default=8)
+    a.add_argument('--out',required=True);a.add_argument('--prep');a.add_argument('--threads',type=int,default=8);a.add_argument('--seed',type=int,default=0)
     a=sp.add_parser('diag');a.add_argument('--pack',required=True);a.add_argument('--prep',required=True);a.add_argument('--wm',required=True)
     a.add_argument('--runs',nargs='*',default=[]);a.add_argument('--out',required=True);a.add_argument('--cf');a.add_argument('--threads',type=int,default=16)
     a=ap.parse_args();torch.set_num_threads(getattr(a,'threads',8));wm=Path(a.wm);wm.mkdir(parents=True,exist_ok=True)
@@ -629,12 +631,13 @@ def main():
         rows=np.sort(np.random.default_rng(0).choice(c.records(c.games('warm')),a.n,replace=False))
         r=calibrate(c,ax,[load_member(wm/f'member{i}.pt') for i in MEMBERS],bc,rows);(wm/'lam.json').write_text(json.dumps(r)+'\n');print(json.dumps(r))
     elif a.cmd=='arms':
-        r=run_arms(a.pack,a.arms,a.slice,a.out,threads=a.threads,prep_dir=a.prep,make=make_wm(wm))
+        r=run_arms(a.pack,a.arms,a.slice,a.out,threads=a.threads,prep_dir=a.prep,make=make_wm(wm),order=a.order)
         print(json.dumps({k:{x:v[x] for x in ('winner_gap','kl_to_bc','entropy','support_mass','q_support','q_pess','q_direct')} for k,v in r['arms'].items()}))
     elif a.cmd=='menu':
         c=Corpus(a.pack);ax=load_aux(wm/'aux.npz');out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
-        cfw=menu_values(c,ax,[load_member(wm/f'member{i}.pt') for i in MEMBERS],a.cf);(out/'cfLearned.json').write_text(json.dumps(cfw)+'\n')
-        for name,cf in (('simgroup',a.cf),('wmmenu',out/'cfLearned.json')):simgroup(a.pack,cf,out/f'{name}.json',threads=a.threads,prep_dir=a.prep,label=name)
+        cfw=menu_values(c,ax,[load_member(wm/f'member{i}.pt') for i in MEMBERS],a.cf,seed=a.seed);(out/'cfLearned.json').write_text(json.dumps(cfw)+'\n')
+        for name,cf in (('simgroup',a.cf),('wmmenu',out/'cfLearned.json')):
+            simgroup(a.pack,cf,out/f'{name}.json',threads=a.threads,prep_dir=a.prep,label=name,seed=a.seed)
     else:
         diagnose(a.pack,a.prep,wm,a.runs,a.out,cf=a.cf)
 

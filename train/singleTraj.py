@@ -179,12 +179,27 @@ def batch(c,g0,g1):
             'R':torch.from_numpy(A['t_R'][ta:tb].astype(np.float32)),'n':tb-ta,'rows':(a,b),'trajs':(ta,tb),'Z':None}
 
 
+def batch_of(c,gs):
+    # one batch of the given games in the given order (consecutive or not): batch's layout with row and trajectory index arrays
+    gs=np.asarray(gs,np.int64);A=c.a;rows=np.concatenate([np.arange(c.gr[g],c.gr[g+1]) for g in gs])
+    trajs=np.concatenate([np.arange(c.gt[g],c.gt[g+1]) for g in gs]);o=np.argsort(trajs);tr=o[np.searchsorted(trajs[o],A['traj'][rows])]
+    return {'S':c.S(0,0,rows),'H':torch.from_numpy(A['H'][rows].astype(np.int64)),'card':torch.from_numpy(A['card'][rows].astype(np.int64)),
+            'cell':torch.from_numpy(A['cell'][rows].astype(np.int64)),'tr':torch.from_numpy(tr.astype(np.int64)),
+            'pos':torch.from_numpy(A['pos'][rows].astype(np.int64)),'L':torch.from_numpy(A['t_len'][trajs].astype(np.int64)),
+            'R':torch.from_numpy(A['t_R'][trajs].astype(np.float32)),'n':len(trajs),'rows':rows,'trajs':trajs,'Z':None}
+
+
+def index(x):
+    # a batch's rows or trajectories as an index: (start, end) of a consecutive batch or the index array of batch_of
+    return slice(*x) if isinstance(x,tuple) else x
+
+
 def extend(c,base,priv=(),mu=None,flip=None):
     # an arm's view of a batch: its critic-only inputs, its behaviour estimate and, for the noise floor, its flipped outcomes
-    (a,b),(ta,tb)=base['rows'],base['trajs'];out=dict(base)
-    if priv:out['Z']=c.priv(priv,np.arange(a,b))
-    if mu is not None:out['mu']=torch.from_numpy(np.array(mu[a:b],np.float32))
-    if flip is not None:out['R']=torch.where(torch.from_numpy(flip[c.a['t_game'][ta:tb]]),1-base['R'],base['R'])
+    rows,trajs=index(base['rows']),index(base['trajs']);out=dict(base)
+    if priv:out['Z']=c.priv(priv,np.arange(rows.start,rows.stop) if isinstance(rows,slice) else rows)
+    if mu is not None:out['mu']=torch.from_numpy(np.array(mu[rows],np.float32))
+    if flip is not None:out['R']=torch.where(torch.from_numpy(flip[c.a['t_game'][trajs]]),1-base['R'],base['R'])
     return out
 
 
@@ -482,9 +497,19 @@ def batches(c,gs,size):
     return out
 
 
-def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=128,threads=4,prequential=True,log=print,prep_dir=None,make=None):
+def day_batches(c,gs,size,order):
+    # the training seed's data order: days in time order, the games of each day permuted by the seed, size games per batch within a day
+    rng=np.random.default_rng(1000+order);gs=np.asarray(gs);out=[]
+    for d in sorted(set(c.day[gs].tolist())):
+        g=gs[c.day[gs]==d];g=g[rng.permutation(len(g))];out+=[g[i:i+size] for i in range(0,len(g),size)]
+    return out
+
+
+def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=128,threads=4,prequential=True,log=print,prep_dir=None,make=None,
+             order=0):
     # train the given arms side by side on one pass over the chosen stream games (all, last:N, or rolled) and evaluate them; make,
-    # when given, builds an arm object for a spec (or None to fall back to Arm), as train.learnedWm does for its arms
+    # when given, builds an arm object for a spec (or None to fall back to Arm), as train.learnedWm does for its arms; order > 0
+    # permutes the games within each day (day_batches), order 0 keeps the recorded time order
     torch.set_num_threads(threads);c=Corpus(pack_dir);P=Path(prep_dir or Path(pack_dir)/'prep');A=c.a;t0=time.monotonic()
     bc=Policy(c.n_state,c.n_card,hidden);bc.load_state_dict(torch.load(P/'bc_warm.pt'));bc.eval()
     for p in bc.parameters():p.requires_grad_(False)
@@ -505,11 +530,11 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
         k=f"{a.cfg['mu']}_{a.cfg['T']:g}"
         if k not in mus:mus[k]=np.load(P/f'mu_{k}.npy',mmap_mode='r')
         if a.cfg['flip']:flips.setdefault(a.cfg['seed'],np.random.default_rng(100+a.cfg['seed']).random(len(c.split))<0.5)
-    rep={'slice':slice_,'games':int(len(gs)),'records':int(sum(c.gr[g+1]-c.gr[g] for g in gs)),'batch_games':batch_games,'lr':lr,'arms':{},
+    rep={'slice':slice_,'games':int(len(gs)),'records':int(sum(c.gr[g+1]-c.gr[g] for g in gs)),'batch_games':batch_games,'lr':lr,'order':order,'arms':{},
          'prequential':{a.spec:{} for a in arms},'train_stats':{a.spec:{} for a in arms}}
-    bl=batches(c,gs,batch_games);cur=None
-    for nb,(g0,g1) in enumerate(bl):
-        d=int(c.day[g0])
+    bl=day_batches(c,gs,batch_games,order) if order else batches(c,gs,batch_games);cur=None
+    for nb,bb in enumerate(bl):
+        d=int(c.day[bb[0]])
         if d!=cur:
             if cur is not None:
                 for a in arms:rep['train_stats'][a.spec][f'day{cur}']=a.take_stats()
@@ -520,7 +545,7 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
                 gaps=' '.join(f"{a.spec}:{rep['prequential'][a.spec][f'day{d}']['winner_gap']}" for a in arms)
                 log(f'[{time.monotonic()-t0:.0f}s] prequential day{d} {gaps}',flush=True)
             cur=d
-        base=batch(c,g0,g1)
+        base=batch(c,*bb) if isinstance(bb,tuple) else batch_of(c,bb)
         for a in arms:
             cfg=a.cfg;a.step(extend(c,base,cfg.get('priv',()),mus[f"{cfg['mu']}_{cfg['T']:g}"],flips.get(cfg['seed']) if cfg['flip'] else None))
         if (nb+1)%500==0:log(f'[{time.monotonic()-t0:.0f}s] batch {nb+1}/{len(bl)}',flush=True)
@@ -534,11 +559,11 @@ def run_arms(pack_dir,specs,slice_='all',out=None,batch_games=64,lr=1e-4,hidden=
     return rep
 
 
-def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2,hidden=128,threads=4,log=print,prep_dir=None,label='simgroup'):
+def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2,hidden=128,threads=4,log=print,prep_dir=None,label='simgroup',seed=0):
     # the prior arm with the world model as an environment (train.traceRl simgroup): menus of recorded decisions replayed with one play
     # replaced (train.counterfactual), advantages the simulated return minus the menu mean (normalised), a clipped ratio against the
     # frozen warm-up clone, evaluated after each epoch count in epochs (rollouts can be reused because the world model can be queried);
-    # the policies at those epochs are saved beside the report
+    # the policies at those epochs are saved beside the report; seed sets the minibatch permutations
     torch.set_num_threads(threads);c=Corpus(pack_dir);P=Path(prep_dir or Path(pack_dir)/'prep');A=c.a;t0=time.monotonic()
     bc=Policy(c.n_state,c.n_card,hidden);bc.load_state_dict(torch.load(P/'bc_warm.pt'));bc.eval()
     for q in bc.parameters():q.requires_grad_(False)
@@ -558,9 +583,9 @@ def simgroup(pack_dir,cf,out=None,epochs=(1,30),batch_size=2048,lr=1e-4,clip=0.2
     with torch.no_grad():old=bc.logp(S,H,card,cell)
     pol=copy.deepcopy(bc)
     for q in pol.parameters():q.requires_grad_(True)
-    opt=torch.optim.Adam(pol.parameters(),lr=lr);torch.manual_seed(0)
+    opt=torch.optim.Adam(pol.parameters(),lr=lr);torch.manual_seed(seed)
     rep={'rows':len(rows),'decisions':len({x[0] for x in rows}),'games':len({int(A['game'][x[0]]) for x in rows}),'epochs':list(epochs),'arms':{},
-         'train_stats':{}};pols={}
+         'train_stats':{},'seed':seed};pols={}
     for e in range(1,max(epochs)+1):
         perm=torch.randperm(len(rows))
         for i in range(0,len(rows),batch_size):
@@ -601,16 +626,16 @@ def main():
     a.add_argument('--critic_epochs',type=int,default=2)
     a=sp.add_parser('arms');a.add_argument('--pack',required=True);a.add_argument('--arms',nargs='+',required=True);a.add_argument('--slice',default='all')
     a.add_argument('--out',required=True);a.add_argument('--threads',type=int,default=4);a.add_argument('--batch_games',type=int,default=64)
-    a.add_argument('--lr',type=float,default=1e-4)
+    a.add_argument('--lr',type=float,default=1e-4);a.add_argument('--order',type=int,default=0)
     a=sp.add_parser('simgroup');a.add_argument('--pack',required=True);a.add_argument('--cf',required=True);a.add_argument('--out',required=True)
-    a.add_argument('--threads',type=int,default=4)
+    a.add_argument('--threads',type=int,default=4);a.add_argument('--seed',type=int,default=0)
     a=sp.add_parser('table');a.add_argument('runs',nargs='+');a=ap.parse_args()
     if a.cmd=='pack':print(json.dumps(pack(a.states,a.out,a.warm_end,a.held_start),indent=1))
     elif a.cmd=='prep':prep(a.pack,threads=a.threads,bc_epochs=a.bc_epochs,critic_epochs=a.critic_epochs)
     elif a.cmd=='table':print(table(a.runs))
-    elif a.cmd=='simgroup':simgroup(a.pack,a.cf,a.out,threads=a.threads)
+    elif a.cmd=='simgroup':simgroup(a.pack,a.cf,a.out,threads=a.threads,seed=a.seed)
     else:
-        r=run_arms(a.pack,a.arms,a.slice,a.out,a.batch_games,a.lr,threads=a.threads)
+        r=run_arms(a.pack,a.arms,a.slice,a.out,a.batch_games,a.lr,threads=a.threads,order=a.order)
         keys=('winner_gap','top1_won','top1_lost','kl_to_bc','entropy','support_mass','q_support','q_pess','q_direct')
         print('arm',*keys);print('bc',*(r['bc'][k] for k in keys))
         for m,row in r['arms'].items():print(m,*(row[k] for k in keys))
