@@ -1427,7 +1427,7 @@ class Resurface(Component):
     # evo drill (export GoblinDrill_EV1_relocate): at each hp threshold it leaves its Goblins, deploying, and hides for hideTime with no
     # damage or pushback (wiki history 8/10/2024); deployed within reach of an enemy princess tower it comes back a quarter turn around it,
     # else in place; the King Tower does not count (recorded: in place beside it). The first turn heads for the tower's river side, from
-    # straight in front or behind (within a tile of its centre line) for its outer side, and the second keeps the sense, so the drill ends
+    # straight in front or behind (centre within the tower's width) for its outer side, and the second keeps the sense, so the drill ends
     # mirrored through the tower (LCQ 09YP9UPGQ2YU and public recordings, local/drillRelocateRound). One blow past both thresholds submerges once.
     def __init__(self,thresholds,counts,cfg,hide,reach):
         self.th=list(thresholds);self.counts=list(counts);self.cfg=cfg;self.hide=hide;self.reach=reach;self.n=0;self.tw=None;self.s=1
@@ -1449,7 +1449,7 @@ class Resurface(Component):
             if self.tw:
                 # u toward the arena's centre line, w toward the river; s=1 turns u into w
                 ix,fy=(1 if self.tw.cx<Arena.W/2 else -1),(1 if self.tw.cy<Arena.H/2 else -1);u,w=(x-self.tw.cx)*ix,(y-self.tw.cy)*fy
-                self.s=(1 if (u>0 if abs(u)>=1 else w>0) else -1)*ix*fy
+                self.s=(1 if (u>0 if abs(u)>=self.tw.w/2 else w>0) else -1)*ix*fy
         if self.tw and self.tw.alive:
             vx,vy=x-self.tw.cx,y-self.tw.cy
             tr.x=min(max(self.tw.cx-self.s*vy,0.5),Arena.W-0.5);tr.y=min(max(self.tw.cy+self.s*vx,0.5),Arena.H-0.5)

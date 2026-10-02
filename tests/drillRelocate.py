@@ -7,7 +7,8 @@ from tests.util import quiet
 # soon as the drill surfaces (LCQ 09YP9UPGQ2YU, September 2026) and while the card is dragged (Abdod, youtube sPN0NLE9akg). The last spot
 # is always the first mirrored through the tower; the middle one is the quarter turn toward the river (inner start: front, LCQ x3 and
 # Rolex 2026-09; outer start: front, D2 preview; inner-back start: inner-front, 118 s preview); straight in front or behind it goes to
-# the outer side (front: Abdod 2024-12, Epsilon and Boss_CR 2026-02; behind: Abdod 130 s demo). Beside the King alone it comes back in
+# the outer side (front: Abdod 2024-12, Epsilon and Boss_CR 2026-02; behind: Abdod 130 s demo), taken as the drill's centre within the
+# tower's 3-tile width (the readings put that edge between 0.5 and 2 tiles off its centre line). Beside the King alone it comes back in
 # place (Abdod youtube -T95U-EoAvg 1896 to 1901 s: "King Tower doesn't count as a crown Tower so it doesn't circle around him").
 # Blue drills attack the red towers: right princess (14.5, 25.5), left princess (3.5, 25.5), King (9, 29); river side is down (-y).
 
@@ -26,6 +27,8 @@ def t_from_the_outer_side_it_turns_toward_the_river_then_to_the_inner_side():
 def t_from_behind_it_turns_toward_the_outer_side_then_to_the_front():
     assert path('blue',15,28)==((17.0,25.0),(14.0,23.0))
     assert path('blue',3,28)==((1.0,25.0),(4.0,23.0))
+    # behind counts while the drill's centre is within the tower's width, here a tile to its inner side
+    assert path('blue',4.5,28.5)==((0.5,26.5),(2.5,22.5))
 
 
 def t_beside_the_king_alone_it_comes_back_in_place():
@@ -44,5 +47,6 @@ def t_controls_recorded_paths_unchanged():
     # front start half a tile off the centre line on either side (Abdod D1 was outer of it): front -> outer -> behind
     assert path('blue',15,22.5)==((17.5,26.0),(14.0,28.5))
     assert path('blue',14,22.5)==((17.5,25.0),(15.0,28.5))
+    assert path('blue',15.5,22.5)==((17.5,26.5),(13.5,28.5))
     # inner-front corner (Rolex 2026-09, Abdod demo): -> outer-front -> outer-back
     assert path('blue',12,23.5)==((16.5,23.0),(17.0,27.5))
