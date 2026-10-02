@@ -1516,17 +1516,17 @@ class EvoBattleRam(Component):
         for a in g.players[tr.team].troops:
             if a.alive and a.name=='Barbarian' and math.hypot(a.x-tr.x,a.y-tr.y)<=1.5:a.statuses.append(Status('rage',self.dur,self.boost))
 class EvoCannon(Component):
-    # the deploy barrage: n-nfar balls on a row through the cannon's front edge and nfar on a row far tiles ahead, air and ground; an enemy
-    # under several circles takes one ball, the nearest, and its knockback (patch 2026-10-01ec); the x spread is approximate: the sources
-    # say it is fixed and spans the arena but give no positions, so the balls stay 2 tiles apart centred on the cannon
-    def __init__(self,n,r,dmg,ct,kb,nfar,far,air):
-        self.n=n;self.r=r;self.dmg=dmg;self.ct=ct;self.kb=kb;self.nfar=nfar;self.far=far;self.air=air;self.done=False
+    # the deploy barrage: a ball on each nearX column on a row through the cannon's front edge and on each farX column on a row far tiles
+    # ahead, air and ground; an enemy under several circles takes one ball, the nearest, and its knockback (patch 2026-10-01ec); the
+    # columns are fixed arena x, the same whatever the cannon's x (patch 2026-10-02cx, read from the wiki's preview animation)
+    def __init__(self,nearX,farX,r,dmg,ct,kb,far,air):
+        self.nearX=nearX;self.farX=farX;self.r=r;self.dmg=dmg;self.ct=ct;self.kb=kb;self.far=far;self.air=air;self.done=False
     def on_tick(self,tr,g):
         if self.done:return
         self.done=True;dy=1 if tr.team=='blue' else -1;hit={}
-        for k,ahead in ((self.n-self.nfar,tr.collision_r),(self.nfar,self.far)):
-            for i in range(k):
-                x=tr.x+(i-(k-1)/2)*2.0;y=tr.y+dy*ahead
+        for xs,ahead in ((self.nearX,tr.collision_r),(self.farX,self.far)):
+            for x in xs:
+                y=tr.y+dy*ahead
                 for e in near(g,tr.team,x,y,self.r,air=self.air):
                     ex,ey=pos(e);d=math.hypot(ex-x,ey-y)
                     if id(e) not in hit or d<hit[id(e)][1]:hit[id(e)]=(e,d,x,y)

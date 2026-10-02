@@ -9,7 +9,7 @@
   "card": "cannon",
   "path": "evo.skills.volley.farRowDistance",
   "value": 7.0,
-  "note": "The far row of 5 lands 7 tiles in front of the cannon and the near row of 4 is aligned with the front of the cannon; the rows move with the cannon's y (RoyaleAPI's Cannon Evolution post, via search summaries). The export names the action Cannon_EV1_barrage with no geometry and RoyaleAPI cr-api-data predates the card, so no game file gives the rows. The post says the x positions are fixed and span the arena's width whatever the cannon's x but gives none, so the engine keeps its approximate spread (2 tiles apart, centred on the cannon). https://royaleapi.com/blog/cannon-evolution-new-card-2024-november"
+  "note": "The far row of 5 lands 7 tiles in front of the cannon and the near row of 4 is aligned with the front of the cannon; the rows move with the cannon's y (RoyaleAPI's Cannon Evolution post, via search summaries). The export names the action Cannon_EV1_barrage with no geometry and RoyaleAPI cr-api-data predates the card, so no game file gives the rows. The post says the x positions are fixed and span the arena's width whatever the cannon's x but gives none; patch 2026-10-02cx sets them from a calibrated read of the wiki's preview animation. https://royaleapi.com/blog/cannon-evolution-new-card-2024-november"
  },
  {
   "card": "cannon",

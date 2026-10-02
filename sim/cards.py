@@ -320,8 +320,8 @@ def evolve(c,k,s,lvl,tr):
     iv=s.get('invincible',{});vo=s.get('volley',{});bu=s.get('burrow',{});rd=s.get('rampingDamage',{})
     E={'knight':lambda:fx.EvoKnight(s['shield']['damageReductionPercent']/100),
        'battle_ram':lambda:fx.EvoBattleRam(pb.get('strength') or 0,at(pb.get('damage'),lvl) or 0,mult(b.get('speedMultiplier') or 0)-1,b.get('duration') or 0),
-       'cannon':lambda:fx.EvoCannon(vo['projectileCount'],vo.get('radius') or 0,at(vo['damage'],lvl),at(vo.get('towerDamage'),lvl) or 0,
-                                    vo.get('knockback') or 0,vo['farRowCount'],vo['farRowDistance'],'air' in vo['targets']),
+       'cannon':lambda:fx.EvoCannon(vo['nearRowX'],vo['farRowX'],vo.get('radius') or 0,at(vo['damage'],lvl),at(vo.get('towerDamage'),lvl) or 0,
+                                    vo.get('knockback') or 0,vo['farRowDistance'],'air' in vo['targets']),
        'elite_barbarians':lambda:fx.EvoEliteBarbarians(at(sn['damage'],lvl),sn.get('minRange') or 0,sn['range'],sn.get('cooldown') or 0,b.get('radius') or 0,
                                                        b['duration'],mult(b.get('speedMultiplier') or 0)-1),
        'furnace':lambda:fx.EvoFurnace(mult(b['spawnSpeedMultiplier'])),
