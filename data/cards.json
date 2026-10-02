@@ -1353,9 +1353,12 @@
     "skills": {
      "volley": {
       "damage": [110, 121, 133, 146, 160, 176, 193, 212, 233, 256, 282, 309, 339, 372, 409, 449],
+      "farRowCount": 5,
+      "farRowDistance": 7.0,
       "knockback": 1,
       "projectileCount": 9,
       "radius": 2.0,
+      "targets": ["air", "ground"],
       "towerDamage": [35, 38, 42, 46, 51, 56, 61, 67, 74, 81, 89, 98, 108, 118, 130, 143]
      }
     },
@@ -1391,6 +1394,9 @@
    "src": {
     "*": "cs2.4.0",
     "evo.skills.volley.damage[]": "derived:levelMult",
+    "evo.skills.volley.farRowCount": "patch:2026-10-01ec",
+    "evo.skills.volley.farRowDistance": "patch:2026-10-01ec",
+    "evo.skills.volley.targets": "patch:2026-10-01ec",
     "evo.skills.volley.towerDamage": "patch:2026-09-01",
     "evo.skills.volley.towerDamage[]": "derived:levelMult",
     "evo.stats.damage[]": "derived:levelMult",
@@ -9842,6 +9848,10 @@
    {
     "name": "data/patches/2026-10-01.json",
     "tag": "patch:2026-10-01"
+   },
+   {
+    "name": "data/patches/2026-10-01ec.json",
+    "tag": "patch:2026-10-01ec"
    },
    {
     "name": "data/patches/2026-10-01g.json",

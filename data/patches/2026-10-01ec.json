@@ -1,0 +1,20 @@
+[
+ {
+  "card": "cannon",
+  "path": "evo.skills.volley.farRowCount",
+  "value": 5,
+  "note": "The barrage's 9 cannonballs land in 2 rows, 5 on the top (far) row and 4 on the bottom (near) row (wiki Cannon/Evolution); RoyaleAPI's Cannon Evolution post puts the row of 5 farther from the cannon and the row of 4 at its front. The post refuses automated fetches (403), so its content is from web-search summaries of it; Theria Games' guide gives five rings in front of the Cannon and four more aligned on its sides. https://clashroyale.fandom.com/wiki/Cannon/Evolution https://royaleapi.com/blog/cannon-evolution-new-card-2024-november https://theriagames.com/guide/clash-royale-cannon-evolution/"
+ },
+ {
+  "card": "cannon",
+  "path": "evo.skills.volley.farRowDistance",
+  "value": 7.0,
+  "note": "The far row of 5 lands 7 tiles in front of the cannon and the near row of 4 is aligned with the front of the cannon; the rows move with the cannon's y (RoyaleAPI's Cannon Evolution post, via search summaries). The export names the action Cannon_EV1_barrage with no geometry and RoyaleAPI cr-api-data predates the card, so no game file gives the rows. The post says the x positions are fixed and span the arena's width whatever the cannon's x but gives none, so the engine keeps its approximate spread (2 tiles apart, centred on the cannon). https://royaleapi.com/blog/cannon-evolution-new-card-2024-november"
+ },
+ {
+  "card": "cannon",
+  "path": "evo.skills.volley.targets",
+  "value": ["air", "ground"],
+  "note": "The barrage hits both air and ground units, while the cannon's own shots stay ground only, and a unit where several blast circles overlap takes damage once (Theria Games' guide; RoyaleAPI's Cannon Evolution post via search summaries). https://theriagames.com/guide/clash-royale-cannon-evolution/ https://royaleapi.com/blog/cannon-evolution-new-card-2024-november"
+ }
+]
