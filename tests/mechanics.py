@@ -129,7 +129,8 @@ def t_spawn_projectile_override_precedence():
 def t_unmodified_ranged_spawn_metadata_is_preserved():
     from sim.cards import unit
     c=card('musketeer');turret=unit(c,c['hero']['ability']['skills']['spawn'],11)
-    assert turret['projSpeed']==20 and turret['dmg']==66 and turret['rng']==5.5
+    # turret range 4 since Supercell's February and March 2026 notes (data/patches/2026-10-02hm.json)
+    assert turret['projSpeed']==20 and turret['dmg']==66 and turret['rng']==4.0
     expected={'goblin_gang':[('Goblin',0)]*3+[('SpearGoblin',10)]*3,
               'goblinstein':[('Monster',0),('Goblinstein_doctor',10)],
               'rascals':[('Rascal Boy',0)]+[('RascalGirl',16)]*2}

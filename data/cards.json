@@ -6577,7 +6577,7 @@
        "interval": null,
        "lifetime": 10,
        "radius": null,
-       "range": 5.5,
+       "range": 4.0,
        "targets": ["air", "ground"]
       }
      }
@@ -6612,6 +6612,7 @@
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "hero.ability.cooldown": "patch:2026-09-01",
+    "hero.ability.skills.spawn.range": "patch:2026-10-02hm",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
     "stats.damage[]": "derived:levelMult",
@@ -6639,7 +6640,7 @@
      "hitpoints": [null, null, 343, 377, 414, 454, 499, 548, 602, 661, 727, 798, 877, 962, 1056, 1161],
      "lifetime": 10,
      "name": "AutoTurret",
-     "range": 5.5,
+     "range": 4.0,
      "targets": ["air", "ground"]
     }
    }
@@ -7708,7 +7709,7 @@
     "cycles": 2,
     "skills": {
      "jump": {
-      "damage": [null, null, 39, 43, 48, 52, 58, 63, 69, 76, 84, 92, 101, 111, 122, 134],
+      "damage": [null, null, 20, 22, 24, 27, 29, 32, 36, 39, 43, 47, 52, 57, 63, 69],
       "height": 4.0,
       "radius": 2.0,
       "speed": 0.16
@@ -7750,7 +7751,8 @@
    "speed": 120,
    "src": {
     "*": "cs2.4.0",
-    "evo.skills.jump.damage": "legacy:evolution.changes.landing_damage",
+    "evo.skills.jump.damage": "patch:2026-10-02hm",
+    "evo.skills.jump.damage[]": "derived:levelMult",
     "evo.skills.jump.radius": "legacy:evolution.changes.landing_radius_tiles",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
@@ -9872,6 +9874,10 @@
    {
     "name": "data/patches/2026-10-01u.json",
     "tag": "patch:2026-10-01u"
+   },
+   {
+    "name": "data/patches/2026-10-02hm.json",
+    "tag": "patch:2026-10-02hm"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
