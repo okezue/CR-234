@@ -1,7 +1,7 @@
 import math
 import random
 from copy import copy
-from sim.units import Status,Troop
+from sim.units import Status,Troop,has
 from sim.fx import strip,hurt,push,tdist,Stealth,Fade,EvoRoyalGhost,SpawnTimer
 class Spell:
     def __init__(self,team,x,y,cfg):
@@ -207,8 +207,9 @@ class LightningSpell:
         self.applied=True
         opp=game._opp(self.team)
         cands=[]
+        # spells strike invisible troops (wiki Royal Ghost, Lightning on a cloaked Archer Queen) but not one underground (wiki Tesla)
         for e in game.players[opp].troops:
-            if not e.alive:continue
+            if not e.alive or has(e,'burrowed'):continue
             d=tdist(e,self.x,self.y)
             if d<=self.radius:cands.append((-getattr(e,'max_hp',e.hp),e,'troop'))
         for tw in game.arena.towers:
@@ -444,7 +445,7 @@ class VinesSpell:
         opp=game._opp(self.team)
         cands=[]
         for e in game.players[opp].troops:
-            if not e.alive:continue
+            if not e.alive or has(e,'burrowed'):continue
             if getattr(e,'is_building',False):continue
             d=tdist(e,self.x,self.y)
             if d<=self.radius:cands.append((-getattr(e,'max_hp',e.hp),e))

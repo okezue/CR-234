@@ -590,9 +590,11 @@ class Game:
             d=self._dist(tr,ag)
             # a building or tower target holds only while being hit (a closer building pulls; a Giant pushing the attacker out of range makes it retarget);
             # an engaged troop is followed as long as possible (wiki Basics of Battle), not only while it stays within sight
+            # a target that hides is dropped by every attacker (wiki Royal Ghost: not targeted by opposing units while invisible)
             if is_bldg_troop or is_tower or getattr(tr,'is_building',False):
-                if mr<=d<=tr.rng:return ag,d
+                if mr<=d<=tr.rng and not hidden(ag):return ag,d
             elif not hidden(ag) and not (K['kite_drop'] and d>sr+K['kite_slack']):return ag,d
+            if hidden(ag):tr.aggro_tgt=None
         opp=self._opp(tr.team)
         tgts=getattr(tr,'targets',['Ground'])
         if not tgts:return None,0

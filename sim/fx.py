@@ -320,7 +320,7 @@ class DualTarget(Component):
         opp=g._opp(tr.team)
         cands=[]
         for e in g.players[opp].troops:
-            if not e.alive or e is tgt:continue
+            if not e.alive or e is tgt or hidden(e):continue
             d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
             if d<=tr.rng:cands.append((d,e))
         for tw in g.arena.towers:
@@ -337,10 +337,11 @@ class DualTarget(Component):
             tgt.take_damage(tr.dmg)
             if hasattr(tgt,'ttype') and not tgt.alive:g._tower_down(tgt)
 def bounce(g,opp,prev,r,skip):
-    # the bolt jumps to the nearest body within r of the last one hit, measured between centres (a crown tower does not chain into the king tower)
+    # the bolt jumps to the nearest body within r of the last one hit, measured between centres (a crown tower does not chain into the king tower);
+    # a jump picks its target, so a hidden unit is passed over
     px,py=pos(prev);best=None;bd=r
     for e in g.players[opp].troops:
-        if not e.alive or e in skip:continue
+        if not e.alive or e in skip or hidden(e):continue
         d=math.hypot(e.x-px,e.y-py)
         if d<=bd:bd=d;best=e
     for tw in g.arena.towers:
@@ -408,7 +409,7 @@ class RocketLauncher(Component):
         opp=g._opp(tr.team)
         best=None;bd=999
         for e in g.players[opp].troops:
-            if not e.alive:continue
+            if not e.alive or hidden(e):continue
             d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
             if self.rng_min<=d<=self.rng_max and d<bd:bd=d;best=e
         for tw in g.arena.towers:
@@ -477,6 +478,8 @@ class BanditDash(Component):
         if self.mn<=g._dist(tr,tgt)<=self.mx and not self.charging:
             self.charging=True;self.timer=self.ct;self.osp=tr.spd;tr.spd=0;self.dtgt=tgt
         if self.charging:
+            # a target that hides during the wind-up is dropped; a dash already under way still lands, like a fired projectile
+            if hidden(self.dtgt):self._end(tr);return
             self.timer-=g.DT
             if self.timer<=0:
                 self.charging=False;self.dashing=True;self.to=pos(self.dtgt);tr.statuses.append(Status('invincible',2.0))
@@ -617,7 +620,7 @@ class DashingDash(Ability):
         opp=g._opp(tr.team)
         best=None;bd=999
         for e in g.players[opp].troops:
-            if not e.alive or e in self.hit or getattr(e,'transport','Ground')=='Air':continue
+            if not e.alive or e in self.hit or getattr(e,'transport','Ground')=='Air' or hidden(e):continue
             d=math.sqrt((tr.x-e.x)**2+(tr.y-e.y)**2)
             if d<=self.sr and d<bd:bd=d;best=e
         for tw in g.arena.towers:
@@ -750,7 +753,8 @@ class RoyalRescue(Ability):
     def activate(self,tr,g):
         gt=Troop(tr.team,tr.x,tr.y,dict(self.gcfg,components=list(self.gcfg.get('components',[]))))
         g.players[tr.team].troops.append(gt)
-        c=[(math.hypot(e.x-tr.x,e.y-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False,towers=False))]
+        # an underground or invisible troop is not a target (wiki Little Prince: a fix stopped Royal Rescue hitting troops underground)
+        c=[(math.hypot(e.x-tr.x,e.y-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False,towers=False)) if not hidden(e)]
         c=[x for x in c if x[0]<=self.rng]
         if c:
             best=min(c)[2];gt.x,gt.y=best.x,best.y;best.take_damage(self.cdmg);push(best,tr.x,tr.y,self.kb)
@@ -1006,7 +1010,7 @@ class EvoGoblinCage(Component):
         cx=tr.x if hasattr(tr,'x') else tr.cx
         cy=tr.y if hasattr(tr,'y') else tr.cy
         for e in g.players[opp].troops:
-            if not e.alive or getattr(e,'transport','Ground')!='Ground':continue
+            if not e.alive or getattr(e,'transport','Ground')!='Ground' or hidden(e):continue
             d=math.sqrt((e.x-cx)**2+(e.y-cy)**2)
             if d<=self.pr:
                 self.trapped=e;break
@@ -1018,7 +1022,7 @@ class HeroicHurl(Ability):
         opp=g._opp(tr.team)
         best=None;bhp=0
         for e in g.players[opp].troops:
-            if not e.alive:continue
+            if not e.alive or hidden(e):continue
             d=g._dist(tr,e)
             if d<=2.0 and e.max_hp>bhp:bhp=e.max_hp;best=e
         if not best:self.cd=0;return
@@ -1104,7 +1108,7 @@ class WoundingWarp(Ability):
         opp=g._opp(tr.team)
         best=None;bmhp=999999
         for e in g.players[opp].troops:
-            if not e.alive:continue
+            if not e.alive or hidden(e):continue
             if e.max_hp<bmhp:bmhp=e.max_hp;best=e
         if not best:return
         tr.x=best.x;tr.y=best.y
@@ -1596,7 +1600,7 @@ class CoffinCadets(Ability):
     def __init__(self,cfg,dmg,ct,rng,cost,cd):
         super().__init__(cost,cd);self.cfg=cfg;self.dmg=dmg;self.ct=ct;self.rng=rng
     def activate(self,tr,g):
-        c=[(math.hypot(pos(e)[0]-tr.x,pos(e)[1]-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False))]
+        c=[(math.hypot(pos(e)[0]-tr.x,pos(e)[1]-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False)) if not hidden(e)]
         c=[x for x in c if x[0]<=self.rng];best=min(c)[2] if c else None
         x,y=pos(best) if best else (tr.x,tr.y)
         if best:hurt(best,self.ct if hasattr(best,'ttype') else self.dmg,g)
@@ -1677,7 +1681,7 @@ class WildWhirlwind(Ability):
     def __init__(self,dash,dur,hs,dmg,ctm,r,sp,red,cost,cd):
         super().__init__(cost,cd);self.dash=dash;self.max_dur=dur;self.hs=hs;self.dmg=dmg;self.ctm=ctm;self.r=r;self.sp=sp;self.red=red
     def activate(self,tr,g):
-        c=[(math.hypot(e.x-tr.x,e.y-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False,towers=False))]
+        c=[(math.hypot(e.x-tr.x,e.y-tr.y),i,e) for i,e in enumerate(enemies(g,tr.team,air=False,towers=False)) if not hidden(e)]
         c=[x for x in c if x[0]<=self.dash]
         if c:
             e=min(c)[2];d=min(c)[0]
