@@ -551,12 +551,14 @@ def t_goblin_drill_surfaces_and_spawns():
     assert tw.hp==ini,"the drill itself never attacks, even sitting on the tower"
     return "Goblin Drill travels at 300, deploys 1 s on arrival with 84 spawn damage (none to towers), a Goblin 1 s later then every 3 s"
 def t_evo_goblin_drill_resurfaces_twice():
+    # export GoblinDrill_EV1_relocate hides it 1 s at each threshold; the submerges lost their damage on 8/10/2024 (wiki history)
     g=_game();gd=mk_card('goblin_drill',11,'blue',9,20,evolved=True);g.deploy('blue',gd);d,=_dummies(g,(9,21));g.run(4.0)
     n0=len(_named(g,'blue','Goblin'));h0=50000-d.hp
     gd.hp=int(gd.max_hp*0.6);g.run(0.1);n1=len(_named(g,'blue','Goblin'))
-    gd.hp=int(gd.max_hp*0.3);g.run(0.1);n2=len(_named(g,'blue','Goblin'))
-    assert (n1-n0,n2-n1)==(2,1) and 50000-d.hp==h0+2*84
-    return "Evo Goblin Drill resurfaces at 66% and 33% leaving 2 then 1 Goblins and repeating its spawn damage"
+    assert has(gd,'burrowed') and 50000-d.hp==h0==84
+    g.run(1.0);gd.hp=int(gd.max_hp*0.3);g.run(0.1);n2=len(_named(g,'blue','Goblin'))
+    assert (n1-n0,n2-n1)==(2,1) and has(gd,'burrowed')
+    return "Evo Goblin Drill submerges for 1 s at 66% and 33% leaving 2 then 1 Goblins, with no spawn damage"
 def t_mother_witch_cursed_hog():
     g=_game();mw=mk_card('mother_witch',11,'blue',9,10);g.deploy('blue',mw);d,=_dummies(g,(9,13),hp=150)
     g.run(3);hogs=_named(g,'blue','Cursed Hog')
@@ -627,11 +629,12 @@ def t_evo_battle_ram_bulldozes_and_rages_barbarians():
     return f"The charging evo ram hits troops in its path for 212 and pushes them ({d.y-21.5:.1f} tiles); its Barbarians drop raged"
 def t_evo_cannon_barrage():
     g=_game();cn=mk_card('cannon',11,'blue',9,14,evolved=True);g.deploy('blue',cn)
-    front=_dummies(g,(7,16.5),(11,16.5),(9,18.5));behind,=_dummies(g,(9,11));g.run(0.1)
+    # near row of 4 through the cannon's front (y 14.6), far row of 5 seven tiles ahead (y 21); patch 2026-10-01ec
+    front=_dummies(g,(7,16.5),(11,16.5),(9,21));behind,=_dummies(g,(9,11));g.run(0.1)
     assert all(d.hp<50000 for d in front) and behind.hp==50000
-    g=Game();cn=mk_card('cannon',11,'blue',3.5,22,evolved=True);g.deploy('blue',cn);tw=g.arena.get_tower('red','princess','left');ini=tw.hp;g.run(0.1)
-    assert (ini-tw.hp)%89==0 and ini>tw.hp
-    return f"Evo Cannon barrage lands 9 balls in two rows ahead (tower takes {ini-tw.hp} at 89 per ball)"
+    g=Game();cn=mk_card('cannon',11,'blue',3.5,18.5,evolved=True);g.deploy('blue',cn);tw=g.arena.get_tower('red','princess','left');ini=tw.hp;g.run(0.1)
+    assert ini-tw.hp==89
+    return f"Evo Cannon barrage lands 9 balls in two rows ahead (tower takes {ini-tw.hp}: one ball at 89)"
 def t_evo_furnace_hot_spawns():
     g=_game();fu=mk_card('furnace',11,'blue',9,10,evolved=True);g.deploy('blue',fu);st=[c for c in fu.components if isinstance(c,fx.SpawnTimer)][0]
     g.run(0.2);cold=st.interval;_dummies(g,(9,13));g.run(0.2);hot=st.interval

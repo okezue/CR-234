@@ -5860,7 +5860,8 @@ def t_evo_goblin_drill_resurface():
     g.deploy('blue',gd)
     from sim.fx import Resurface
     assert any(isinstance(c,Resurface) for c in gd.components)
-    g.run(1.1);ini=len(g.players['blue'].troops)
+    # 11 tiles from the King Tower at 6 tiles/s, then the 1 s surfacing deploy
+    g.run(2.9);ini=len(g.players['blue'].troops)
     gd.hp=int(gd.max_hp*0.6)
     g.run(0.2)
     spawned=len(g.players['blue'].troops)-ini

@@ -1419,16 +1419,34 @@ class Burrow(Component):
             tr.statuses=[s for s in tr.statuses if s.kind!='burrowed']
             if self.surface>0:tr.statuses.append(Status('deploying',self.surface))
 class Resurface(Component):
-    # evo drill: at each hp threshold it submerges, pops back up with its spawn damage and leaves goblins behind
-    def __init__(self,thresholds,counts,cfg):self.th=list(thresholds);self.counts=list(counts);self.cfg=cfg;self.done=set()
+    # evo drill (export GoblinDrill_EV1_relocate): at each hp threshold it leaves its Goblins, deploying, and hides for hideTime with no
+    # damage or pushback (wiki history 8/10/2024); deployed within reach of an enemy Crown Tower it comes back a quarter turn around it,
+    # else in place. The turn takes the tower's inner side toward the river and keeps that sense (LCQ 09YP9UPGQ2YU: inner, front, outer);
+    # by the King Tower the drill's own side counts as inner. One blow past both thresholds submerges once.
+    def __init__(self,thresholds,counts,cfg,hide,reach):
+        self.th=list(thresholds);self.counts=list(counts);self.cfg=cfg;self.hide=hide;self.reach=reach;self.n=0;self.tw=None;self.s=1
     def on_tick(self,tr,g):
-        for i,th in enumerate(self.th):
-            if i in self.done or tr.hp>tr.max_hp*th:continue
-            self.done.add(i)
-            for _ in range(self.counts[i] if i<len(self.counts) else self.counts[-1]):
-                g.players[tr.team].troops.append(Troop(tr.team,tr.x+random.uniform(-1,1),tr.y+random.uniform(-1,1),dict(self.cfg,components=list(self.cfg['components']))))
-            z=next((c for c in tr.components if isinstance(c,SpawnZap)),None)
-            if z:z.fire(tr,g)
+        if not has(tr,'burrowed'):self.submerge(tr,g)
+        # hidden, its lifetime runs on (the game loop skips a burrowed building's decay)
+        if self.n and has(tr,'burrowed'):
+            tr.hp-=getattr(tr,'decay',0)*g.DT
+            if tr.hp<=0:tr.hp=0;tr.alive=False
+    def submerge(self,tr,g):
+        hit=[i for i in range(self.n,len(self.th)) if tr.hp<=tr.max_hp*self.th[i]]
+        if not hit:return
+        i=hit[-1];self.n=i+1;x,y,team=tr.x,tr.y,tr.team
+        for _ in range(self.counts[min(i,len(self.counts)-1)]):
+            g._place(team,spawned_child(tr,x+random.uniform(-0.5,0.5),y+random.uniform(-0.5,0.5),self.cfg),self.cfg.get('deploy',0))
+        if self.tw is None:
+            near=[t for t in g.arena.towers if t.team!=team and t.alive and g._dist(tr,t)<=self.reach]
+            self.tw=min(near,key=lambda t:g._dist(tr,t)) if near else False
+            if self.tw:
+                inner=(1 if x>=self.tw.cx else -1) if self.tw.ttype=='king' else (1 if self.tw.cx<Arena.W/2 else -1)
+                self.s=inner*(1 if self.tw.cy<Arena.H/2 else -1)
+        if self.tw and self.tw.alive:
+            vx,vy=x-self.tw.cx,y-self.tw.cy
+            tr.x=min(max(self.tw.cx-self.s*vy,0.5),Arena.W-0.5);tr.y=min(max(self.tw.cy+self.s*vx,0.5),Arena.H-0.5)
+        tr.statuses.append(Status('burrowed',self.hide))
 class RocketRide(Component):
     # below pct of hp he mounts the rocket: very fast, buildings only, the explosion is his death damage on contact or when the fuse runs out
     def __init__(self,pct,spd,rng,life):self.pct=pct;self.spd=spd;self.rng=rng;self.life=life;self.on=False
@@ -1516,14 +1534,21 @@ class EvoBattleRam(Component):
         for a in g.players[tr.team].troops:
             if a.alive and a.name=='Barbarian' and math.hypot(a.x-tr.x,a.y-tr.y)<=1.5:a.statuses.append(Status('rage',self.dur,self.boost))
 class EvoCannon(Component):
-    # the deploy barrage: two rows of cannonballs ahead of the cannon; the landing pattern is not published, the rows are 2 tiles apart
-    def __init__(self,n,r,dmg,ct,kb):self.n=n;self.r=r;self.dmg=dmg;self.ct=ct;self.kb=kb;self.done=False
+    # the deploy barrage: n-nfar balls on a row through the cannon's front edge and nfar on a row far tiles ahead, air and ground; an enemy
+    # under several circles takes one ball, the nearest, and its knockback (patch 2026-10-01ec); the x spread is approximate: the sources
+    # say it is fixed and spans the arena but give no positions, so the balls stay 2 tiles apart centred on the cannon
+    def __init__(self,n,r,dmg,ct,kb,nfar,far,air):
+        self.n=n;self.r=r;self.dmg=dmg;self.ct=ct;self.kb=kb;self.nfar=nfar;self.far=far;self.air=air;self.done=False
     def on_tick(self,tr,g):
         if self.done:return
-        self.done=True;dy=1 if tr.team=='blue' else -1;top=(self.n+1)//2
-        pts=[(tr.x+(i-(top-1)/2)*2.0,tr.y+dy*2.5) for i in range(top)]+[(tr.x+(i-(self.n-top-1)/2)*2.0,tr.y+dy*4.5) for i in range(self.n-top)]
-        for x,y in pts:
-            for e in near(g,tr.team,x,y,self.r,air=False):hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g);push(e,x,y,self.kb)
+        self.done=True;dy=1 if tr.team=='blue' else -1;hit={}
+        for k,ahead in ((self.n-self.nfar,tr.collision_r),(self.nfar,self.far)):
+            for i in range(k):
+                x=tr.x+(i-(k-1)/2)*2.0;y=tr.y+dy*ahead
+                for e in near(g,tr.team,x,y,self.r,air=self.air):
+                    ex,ey=pos(e);d=math.hypot(ex-x,ey-y)
+                    if id(e) not in hit or d<hit[id(e)][1]:hit[id(e)]=(e,d,x,y)
+        for e,_,x,y in hit.values():hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g);push(e,x,y,self.kb)
 class EvoEliteBarbarians(Component):
     # a rage-tipped spear at a ground troop between mn and mx tiles every cd seconds (wiki: the spears target only ground troops, so none at
     # a tower or building); rage circles on the target and along the path
