@@ -1518,7 +1518,7 @@ class EvoBattleRam(Component):
 class EvoCannon(Component):
     # the deploy barrage: a ball on each nearX column on a row through the cannon's front edge and on each farX column on a row far tiles
     # ahead, air and ground; an enemy under several circles takes one ball, the nearest, and its knockback (patch 2026-10-01ec); the
-    # columns are fixed arena x, the same whatever the cannon's x (patch 2026-10-02cx, read from the wiki's preview animation)
+    # columns are fixed arena x, the same whatever the cannon's x (patch 2026-10-01ex, read from the wiki's preview animation)
     def __init__(self,nearX,farX,r,dmg,ct,kb,far,air):
         self.nearX=nearX;self.farX=farX;self.r=r;self.dmg=dmg;self.ct=ct;self.kb=kb;self.far=far;self.air=air;self.done=False
     def on_tick(self,tr,g):

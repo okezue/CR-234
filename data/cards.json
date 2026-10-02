@@ -1398,8 +1398,8 @@
     "evo.skills.volley.damage[]": "derived:levelMult",
     "evo.skills.volley.farRowCount": "patch:2026-10-01ec",
     "evo.skills.volley.farRowDistance": "patch:2026-10-01ec",
-    "evo.skills.volley.farRowX": "patch:2026-10-02cx",
-    "evo.skills.volley.nearRowX": "patch:2026-10-02cx",
+    "evo.skills.volley.farRowX": "patch:2026-10-01ex",
+    "evo.skills.volley.nearRowX": "patch:2026-10-01ex",
     "evo.skills.volley.targets": "patch:2026-10-01ec",
     "evo.skills.volley.towerDamage": "patch:2026-09-01",
     "evo.skills.volley.towerDamage[]": "derived:levelMult",
@@ -9854,16 +9854,16 @@
     "tag": "patch:2026-10-01ec"
    },
    {
+    "name": "data/patches/2026-10-01ex.json",
+    "tag": "patch:2026-10-01ex"
+   },
+   {
     "name": "data/patches/2026-10-01g.json",
     "tag": "patch:2026-10-01g"
    },
    {
     "name": "data/patches/2026-10-01s.json",
     "tag": "patch:2026-10-01s"
-   },
-   {
-    "name": "data/patches/2026-10-02cx.json",
-    "tag": "patch:2026-10-02cx"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

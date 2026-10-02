@@ -39,7 +39,7 @@ def t_evo_cannon_record_carries_the_fixed_ball_columns():
     v=card('cannon')['evo']['skills']['volley'];src=card('cannon')['src']
     assert v['nearRowX']==[1.5,6.5,11.5,16.5] and v['farRowX']==[1.0,5.0,9.0,13.0,17.0],v
     assert len(v['nearRowX'])+len(v['farRowX'])==v['projectileCount'] and len(v['farRowX'])==v['farRowCount'],v
-    for f in ('nearRowX','farRowX'):assert src[f'evo.skills.volley.{f}']=='patch:2026-10-02cx',src
+    for f in ('nearRowX','farRowX'):assert src[f'evo.skills.volley.{f}']=='patch:2026-10-01ex',src
     for x in (3.5,9.0,14.5):
         ev=next(c for c in create('cannon',11,'blue',x,8,evolved=True).components if type(c).__name__=='EvoCannon')
         assert (ev.nearX,ev.farX)==(v['nearRowX'],v['farRowX']),vars(ev)
