@@ -222,7 +222,7 @@ def _cage(g,kind):
     cg.on_tick(c,g);return hid,vis,cg.trapped is vis
 
 
-PICKERS={'electro_wizard_second':_ewiz,'chain_bounce':_chain,'goblin_machine_rocket':_rocket,'golden_knight_dash':_dash,
+PICKERS={'electro_wizard_second':_ewiz,'goblin_machine_rocket':_rocket,'golden_knight_dash':_dash,
          'little_prince_rescue':_rescue,'giant_hero_hurl':_hurl,'mega_minion_hero_warp':_warp,'balloon_hero_cadets':_cadets,
          'valkyrie_hero_whirlwind':_whirl,'evolved_goblin_cage':_cage}
 
@@ -235,6 +235,15 @@ def t_attacks_that_pick_their_own_target_pass_over_hidden_units(who,kind):
         hid,vis,ok=r;assert ok and hid.hp==hid.max_hp and not has(hid,'stun'),who
     else:
         hid,vis=r;assert hid.hp==hid.max_hp and vis.hp<vis.max_hp and not has(hid,'stun'),(who,hid.hp,vis.hp)
+
+
+@pytest.mark.parametrize('kind',KINDS)
+def t_chain_bounce_reaches_invisible_units_but_not_underground_ones(kind):
+    # wiki Royal Ghost: "An Electro Dragon or Electro Spirit's attack can also chain onto him"; wiki Tesla: underground it "cannot be
+    # targeted by any troops". The chain goes on to the visible unit either way.
+    hid,vis=_chain(arena(),kind)
+    if kind=='invisible':assert hid.hp<hid.max_hp and has(hid,'stun') and vis.hp<vis.max_hp,(hid.hp,vis.hp)
+    else:assert hid.hp==hid.max_hp and not has(hid,'stun') and vis.hp<vis.max_hp,(hid.hp,vis.hp)
 
 
 @pytest.mark.parametrize('kind',KINDS)

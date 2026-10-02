@@ -338,10 +338,11 @@ class DualTarget(Component):
             if hasattr(tgt,'ttype') and not tgt.alive:g._tower_down(tgt)
 def bounce(g,opp,prev,r,skip):
     # the bolt jumps to the nearest body within r of the last one hit, measured between centres (a crown tower does not chain into the king tower);
-    # a jump picks its target, so a hidden unit is passed over
+    # it still jumps onto an invisible unit (wiki Royal Ghost: "An Electro Dragon or Electro Spirit's attack can also chain onto him") but
+    # not onto one underground (wiki Tesla: it "cannot be targeted by any troops" underground)
     px,py=pos(prev);best=None;bd=r
     for e in g.players[opp].troops:
-        if not e.alive or e in skip or hidden(e):continue
+        if not e.alive or e in skip or has(e,'burrowed'):continue
         d=math.hypot(e.x-px,e.y-py)
         if d<=bd:bd=d;best=e
     for tw in g.arena.towers:
