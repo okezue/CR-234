@@ -1,0 +1,14 @@
+[
+ {
+  "card": "goblin_drill",
+  "path": "evo.skills.burrow.hideTime",
+  "value": 1.0,
+  "note": "At each resurface threshold the Evolved Goblin Drill is underground for 1 s: game data export GoblinDrill_EV1 onStartingActionData GoblinDrill_EV1_start, sub-action GoblinDrill_EV1_relocate hideTime 1000 with hideHpThresholds [66, 33] (the thresholds already in resurfacePercent). The LCQ recording 09YP9UPGQ2YU shows the drill gone 295.75 to 296.75 s and 241.2 to 242.2 s. https://cache.statsroyale.com/gamedata-v5.json"
+ },
+ {
+  "card": "goblin_drill",
+  "path": "evo.skills.burrow.relocateRange",
+  "value": 2.0,
+  "note": "Reach within which the Evolved Goblin Drill counts as deployed next to an enemy Crown Tower and resurfaces 90 degrees around it (wiki Goblin Drill/Evolution: same spot otherwise). Interpretation: the export gives the evolved building alone a range of 2000 (GoblinDrill_EV1 range 2000; the base GoblinDrill record has none and the drill never attacks), taken as this reach, edge to edge like every engine range. The recorded evolved placements 1.05 tiles from a princess tower's edge relocate. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Goblin_Drill/Evolution"
+ }
+]
