@@ -65,6 +65,21 @@ def t_defender_building_drops_the_royal_ghost_when_he_turns_invisible(name):
     assert has(gh,'invisible') and not any(held) and gh.hp==hp,(held.count(True),hp-gh.hp)
 
 
+@pytest.mark.parametrize('name,xy',(('cannon',(9,23)),('inferno_tower',(9,23)),('giant',(9,22)),('knight',(9,21.5))))
+def t_defenders_drop_the_evolved_goblin_drill_while_it_is_submerged(name,xy):
+    # review t2032 finding 6: a Cannon, an Inferno Tower and a Giant held the submerged drill for the whole 1 s hide; a Knight turned away
+    g=arena();d=create(name,11,'red',*xy);d.decay=0;g._place('red',d,0)
+    gd=create('goblin_drill',11,'blue',9,20,evolved=True);g._place('blue',gd,1.0)
+    while has(gd,'burrowed') or has(gd,'deploying'):g.tick()
+    while d.tgt is not gd and g.t<30:gd.hp=gd.max_hp;g.tick()
+    assert d.tgt is gd
+    gd.hp=int(gd.max_hp*0.6);g.tick()
+    assert has(gd,'burrowed')
+    held=[]
+    while has(gd,'burrowed'):held.append(d.tgt is gd);g.tick()
+    assert len(held)>=19 and not any(held),(len(held),held.count(True))
+
+
 @pytest.mark.parametrize('kind',KINDS)
 def t_troop_drops_a_target_that_hides(kind):
     g=arena();k=create('knight',11,'red',9,22);g.deploy('red',k)
