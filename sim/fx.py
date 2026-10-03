@@ -272,6 +272,9 @@ class SpawnZap(Component):
         # the blast lands on arrival, before the surfacing deploy (recording: the burst shows with the deploy clock)
         if self.fired or has(tr,'burrowed'):return
         self.fired=True;self.fire(tr,g)
+    # a Clone copy never blasts (wiki Clone: the troop cloned has already spawned, so cloned Ice Wizards, Electro Wizards and Mega
+    # Knights do not inflict spawn damage), even when the original is still deploying
+    def reset(self,cfg):self.fired=True
     def fire(self,tr,g):
         # spawn_zap_ct None means towers take the troop damage, 0 means they are not hit at all
         dmg=getattr(tr,'spawn_zap_dmg',0);ct=getattr(tr,'spawn_zap_ct',None);sd=getattr(tr,'stun_dur',0);sld=getattr(tr,'slow_dur',0)
@@ -570,6 +573,10 @@ class MonkCombo(Component):
     # after the second hit so shields and reductions see one hit
     def __init__(self,cycle,kb,combo=0):
         self.cycle=cycle;self.kb=kb;self.combo=combo;self.cnt=0;self.base=None
+    # a Clone copy starts the combo afresh at the resting damage (wiki Clone: the copy does not inherit the troop's current status)
+    def reset(self,cfg):
+        if self.base is not None:cfg['dmg'],cfg['ct_dmg']=self.base
+        self.cnt=0;self.base=None
     def on_attack(self,tr,tgt,g):
         self.cnt+=1
         if self.cnt==self.cycle-1 and self.combo:
@@ -588,6 +595,8 @@ class LPRamp(Component):
     def __init__(self,stages,per):
         self.stages=stages;self.per=per;self.hits=0;self.si=0
         self.px=None;self.py=None
+    # a Clone copy starts at the first hit-speed tier (wiki Clone: the copy does not inherit the troop's current status)
+    def reset(self,cfg):cfg['hspd']=self.stages[0];self.hits=self.si=0;self.px=self.py=None
     def on_tick(self,tr,g):
         if self.px is not None:
             dx=tr.x-self.px;dy=tr.y-self.py

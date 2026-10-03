@@ -679,9 +679,10 @@ class Game:
         for c in getattr(tr,'components',[]):
             if isinstance(c,(Recoil,EvoRoyalGiant)):c.on_attack(tr,tgt,self)
     def _walkable(self,x,y,rj):
-        a=self.arena
-        if int(y) in a.RIVER:return rj or a.on_bridge(x)
-        return not a.blocked(int(x),int(y))
+        # floor, not int(): a point up to 1 tile outside the left or back edge is off the arena, not on row or column 0
+        a=self.arena;tx,ty=math.floor(x),math.floor(y)
+        if ty in a.RIVER:return rj or a.on_bridge(x)
+        return not a.blocked(tx,ty)
     def _move(self,tr,spd,tx,ty,tgt=None):
         a=self.arena;gnd=getattr(tr,'transport','Ground')!='Air'
         rj=getattr(tr,'hovering',False) or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))

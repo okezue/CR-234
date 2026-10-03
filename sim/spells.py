@@ -224,7 +224,8 @@ class LightningSpell:
         self.active=False
     def tick(self,dt,game=None):pass
 # the copy packs the original's punch (wiki Clone: "Cloned troops are fragile, but pack the same punch as the original!"): its charge, jump,
-# chain, stun, slow and spawn-blast attributes come along; only its hitpoints and shield drop to 1
+# chain, stun and slow attributes come along and only its hitpoints and shield drop to 1; the spawn-blast stats are copied too, but a copy
+# never blasts (SpawnZap.reset; the same page: cloned Ice Wizards, Electro Wizards and Mega Knights do not inflict spawn damage)
 PUNCH=('card','charge_dmg','jump_dmg','stun_dur','slow_dur','slow_val','chain_count','chain_range','chain_stun','chain_period',
        'spawn_zap_dmg','spawn_zap_r','spawn_zap_ct')
 class CloneSpell:

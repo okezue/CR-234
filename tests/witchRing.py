@@ -56,9 +56,13 @@ def t_witch_wave_faces_her_target():
     assert abs(front[0]-1.6)<1e-6 and abs(front[1]-1.2)<1e-6
 
 
-def t_ring_skeleton_off_the_arena_is_settled_inside():
-    w,off=first_wave('witch',x=0.6,y=8)
-    assert len(off)==4 and all(0<=w.x+dx<=18 for dx,_ in off)
+@pytest.mark.parametrize('team,x,y',[('blue',0.6,8),('blue',1.2,8),('blue',1.5,8),('blue',9,1.2),('red',1.2,24)])
+def t_ring_skeleton_off_the_arena_is_settled_inside(team,x,y,monkeypatch):
+    # births up to 1 tile outside the left or back edge are off the arena too; the old front jitter is pinned so a wave in front (code
+    # without the ring) lands inside on every run
+    monkeypatch.setattr(fx.random,'uniform',lambda a,b:0.0)
+    w,off=first_wave('witch',team,x=x,y=y)
+    assert len(off)==4 and all(0<=w.x+dx<18 and 0<=w.y+dy<32 for dx,dy in off)
 
 
 @pytest.mark.parametrize('name',('goblin_hut','tombstone','barbarian_hut','furnace'))

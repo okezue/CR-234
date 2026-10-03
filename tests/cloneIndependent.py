@@ -122,3 +122,33 @@ def t_mother_witch_mark_made_before_the_clone_gives_one_hog():
     while not comp(m,fx.CurseOnHit).marks:g.tick()
     clone(g,m);v.hp=1;v.take_damage(1);g.run(0.5)
     assert len([t for t in g.players['blue'].troops if t.alive and 'Hog' in t.name])==1
+
+
+@pytest.mark.parametrize('name,at',[('mega_knight',0.0),('mega_knight',0.3),('electro_wizard',0.3),('ice_wizard',0.3)])
+def t_clone_of_a_deploying_spawn_blaster_does_not_blast(name,at):
+    # wiki Clone: "Since the troop cloned will have already spawned, cloned Ice Wizards, Electro Wizards, and Mega Knights do not inflict
+    # spawn damage". The original deploys for 1 s and blasts as it lands; the copy's own attack is zeroed so only blasts hit the dummy.
+    g=bare();t=create(name,11,'blue',9,8);t=t[0] if isinstance(t,list) else t;g._place('blue',t,1.0);d=target(g,9,9);hits=[];cl=None
+    while g.t<1.3:
+        if cl is None and g.t>=at-1e-9:cl=clone(g,t);cl.dmg=0
+        hp=d.hp;g.tick()
+        if d.hp<hp:hits.append((round(g.t,2),hp-d.hp))
+    assert len(hits)==1 and hits[0][0]>=1.0 and hits[0][1]==t.spawn_zap_dmg>0
+
+
+def t_cloned_little_prince_starts_at_the_first_hit_speed_tier():
+    g=bare();p=unit(g,'little_prince',9,8);p.spd=0;target(g,9,11);ramp=comp(p,fx.LPRamp)
+    while ramp.si<2 and g.t<20:g.tick()
+    assert ramp.si==2 and abs(p.hspd-ramp.stages[2])<1e-9
+    cl=clone(g,p,True);cl.spd=0
+    assert abs(cl.hspd-ramp.stages[0])<1e-9 and comp(cl,fx.LPRamp).si==comp(cl,fx.LPRamp).hits==0
+    assert ramp.si==2 and abs(p.hspd-ramp.stages[2])<1e-9
+
+
+def t_cloned_monk_starts_the_combo_afresh_at_the_resting_damage():
+    g=bare();m=unit(g,'monk',9,8);m.spd=0;target(g,9,9.6);combo=comp(m,fx.MonkCombo);rest=m.dmg
+    while combo.base is None and g.t<20:g.tick()
+    assert m.dmg==combo.combo>rest and combo.cnt==combo.cycle-1
+    cl=clone(g,m,True)
+    assert cl.dmg==cl.ct_dmg==rest and comp(cl,fx.MonkCombo).cnt==0 and comp(cl,fx.MonkCombo).base is None
+    assert m.dmg==combo.combo and combo.cnt==combo.cycle-1
