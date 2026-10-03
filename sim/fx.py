@@ -1171,7 +1171,7 @@ class WoundingWarp(Ability):
             if not e.alive or hidden(e):continue
             if e.max_hp<bmhp:bmhp=e.max_hp;best=e
         if not best:return
-        tr.x=best.x;tr.y=best.y;g._free_spot(tr)
+        tr.x=best.x;tr.y=best.y
         bonus=int(tr.dmg*self.bonus_pct)
         best.take_damage(tr.dmg+bonus)
 class EvoBabyDragon(Component):
