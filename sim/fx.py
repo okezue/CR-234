@@ -143,8 +143,8 @@ class Recoil(Component):
         dx=tr.x-tx;dy=tr.y-ty
         d=math.sqrt(dx*dx+dy*dy)
         if d<0.01:return
-        tr.x+=dx/d*self.dist;tr.y+=dy/d*self.dist
-        tr.x=max(0.3,min(17.7,tr.x));tr.y=max(0.3,min(31.7,tr.y))
+        x0,y0=tr.x,tr.y;tr.x+=dx/d*self.dist;tr.y+=dy/d*self.dist
+        tr.x=max(0.3,min(17.7,tr.x));tr.y=max(0.3,min(31.7,tr.y));g._hold_in(tr,x0,y0)
 class RiverJump(Component):
     # marker: movement treats river tiles as walkable at normal speed instead of detouring to a bridge
     pass
@@ -507,7 +507,7 @@ class BanditDash(Component):
             dx=self.to[0]-tr.x;dy=self.to[1]-tr.y;d=math.hypot(dx,dy);st=self.spd*g.DT
             if d>st and not (t is not None and getattr(t,'alive',True) and g._dist(tr,t)<=tr.rng):tr.x+=dx/d*st;tr.y+=dy/d*st;return
             if t is not None and getattr(t,'alive',True):hurt(t,getattr(tr,'dash_dmg',tr.dmg*2),g)
-            self._end(tr);return
+            self._end(tr);g._free_spot(tr);return
         tgt=getattr(tr,'tgt',None)
         if not tgt:
             if self.charging:self._end(tr)
@@ -544,7 +544,11 @@ class Hook(Component):
     def on_tick(self,tr,g):
         if self.pull is not None:
             t,mine=self.pull
-            if not t.alive or g._dist(tr,t)<=tr.rng:self.pull=None;return
+            if not t.alive or g._dist(tr,t)<=tr.rng:
+                # the drag may cross the river but it ends on standable ground
+                self.pull=None;a=tr if mine else t
+                if a.alive:g._free_spot(a)
+                return
             a=tr if mine else t;bx,by=pos(tr if not mine else t);dx=bx-a.x;dy=by-a.y;d=math.hypot(dx,dy)
             if d>0:st=min(d,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
             return
@@ -590,7 +594,8 @@ class MonkCombo(Component):
             if hasattr(tgt,'x') and hasattr(tgt,'y'):
                 dx=tgt.x-tr.x;dy=tgt.y-tr.y
                 d=math.sqrt(dx*dx+dy*dy)
-                if d>0:tgt.x+=dx/d*self.kb;tgt.y+=dy/d*self.kb
+                # the shove stops at the arena's edge, a tower footprint, a fence or water
+                if d>0:x0,y0=tgt.x,tgt.y;tgt.x+=dx/d*self.kb;tgt.y+=dy/d*self.kb;g._hold_in(tgt,x0,y0)
 class LPRamp(Component):
     def __init__(self,stages,per):
         self.stages=stages;self.per=per;self.hits=0;self.si=0
@@ -681,6 +686,8 @@ class DashingDash(Ability):
         self.hit.add(best)
         if hasattr(best,'cx'):tr.x=best.cx;tr.y=best.cy
         else:tr.x=best.x;tr.y=best.y
+        # he comes down on standable ground next to a tower or a troop he cannot stand on (a tower's footprint, water)
+        g._free_spot(tr)
         if hasattr(best,'ttype'):
             if not best.alive:g._tower_down(best)
             self.dashing=False;return
@@ -733,6 +740,7 @@ class GetawayGrenade(Ability):
         tr.statuses.append(Status('invisible',self.invis_dur))
         if tr.team=='blue':tr.y=max(0,tr.y-self.dist)
         else:tr.y=min(31,tr.y+self.dist)
+        g._free_spot(tr)
     def tick(self,dt,tr,g):
         if not self.active:super().tick(dt,tr,g);return
         self.dur-=dt
@@ -760,7 +768,8 @@ class ExplosiveEscape(Ability):
         super().__init__(cost,cd);self.bomb_dmg=bomb_dmg;self.bomb_r=bomb_r;self.kb=kb;self.fuse=fuse
     def activate(self,tr,g):
         ox,oy,team=tr.x,tr.y,tr.team
-        tr.x=g.arena.W-tr.x
+        # the mirrored spot is settled like a deploy (a tower still standing on that side covers it when his own side's is down)
+        tr.x=g.arena.W-tr.x;g._free_spot(tr)
         def blast(g):
             for e in near(g,team,ox,oy,self.bomb_r):hurt(e,self.bomb_dmg,g);push(e,ox,oy,self.kb)
         if self.fuse>0:g.spells.append(Timer(self.fuse,blast,ox,oy,team,tr.name))
@@ -995,7 +1004,7 @@ class EvoValkyrie(Component):
                 dd=math.sqrt(dx*dx+dy*dy)
                 if dd>0:
                     pull=min(1.5,dd)*0.5
-                    e.x+=dx/dd*pull;e.y+=dy/dd*pull
+                    x0,y0=e.x,e.y;e.x+=dx/dd*pull;e.y+=dy/dd*pull;g._hold_in(e,x0,y0)
 class EvoMusketeer(Component):
     def __init__(self,ammo,rng,dmg_m,min_rng):
         self.ammo=ammo;self.rng=rng;self.dmg_m=dmg_m;self.min_rng=min_rng
@@ -1078,6 +1087,7 @@ class HeroicHurl(Ability):
         if not best:self.cd=0;return
         if tr.x<9:best.x=min(17,best.x+self.throw_rng)
         else:best.x=max(0,best.x-self.throw_rng)
+        g._free_spot(best)
         best.take_damage(self.impact_dmg)
         best.statuses.append(Status('stun',self.stun_dur))
         self.active=False;self.cd=self.max_cd
@@ -1161,7 +1171,7 @@ class WoundingWarp(Ability):
             if not e.alive or hidden(e):continue
             if e.max_hp<bmhp:bmhp=e.max_hp;best=e
         if not best:return
-        tr.x=best.x;tr.y=best.y
+        tr.x=best.x;tr.y=best.y;g._free_spot(tr)
         bonus=int(tr.dmg*self.bonus_pct)
         best.take_damage(tr.dmg+bonus)
 class EvoBabyDragon(Component):
@@ -1271,7 +1281,7 @@ class RowdyReroll(Ability):
             if abs(tw.cx-tr.x)<=1.3 and min(tr.y,tr.y+dy)<=tw.cy<=max(tr.y,tr.y+dy):
                 tw.take_damage(self.roll_dmg if self.roll_dmg else tr.dmg)
                 if not tw.alive:g._tower_down(tw)
-        tr.y+=dy
+        y0=tr.y;tr.y+=dy;g._hold_in(tr,tr.x,y0)
         lost=tr.max_hp-tr.hp
         tr.hp=min(tr.max_hp,tr.hp+int(lost*self.heal_pct))
 class MKJump(Component):
@@ -1313,7 +1323,7 @@ class MKJump(Component):
                         edge=min(best.w*d/(2*abs(jx-ax)) if jx!=ax else math.inf,
                                  best.h*d/(2*abs(jy-ay)) if jy!=ay else math.inf)
                         gap=max(gap,edge+1e-6)
-                    tr.x,tr.y=jx-(jx-ax)/d*min(gap,d),jy-(jy-ay)/d*min(gap,d)
+                    tr.x,tr.y=jx-(jx-ax)/d*min(gap,d),jy-(jy-ay)/d*min(gap,d);g._free_spot(tr)
                     # the knockback origin sits a hair behind the landing so a troop under him is thrown forward
                     for e in near(g,tr.team,tr.x,tr.y,self.sr,air='Air' in getattr(tr,'targets',['Ground'])):
                         hurt(e,jd,g);push(e,tr.x-(jx-ax)/d*0.01,tr.y-(jy-ay)/d*0.01,self.kb)
@@ -1346,7 +1356,7 @@ class EvoMegaKnight(Component):
         if self.n%self.every or getattr(tgt,'kb_immune_all',False):return
         twy=g.arena.get_tower(getattr(tgt,'team','red'),'king').cy
         dy=twy-tgt.y
-        if abs(dy)>0.1:tgt.y+=dy/abs(dy)*min(self.kb,abs(dy))
+        if abs(dy)>0.1:y0=tgt.y;tgt.y+=dy/abs(dy)*min(self.kb,abs(dy));g._hold_in(tgt,tgt.x,y0)
 class EvoInfernoDragon(Component):
     def __init__(self,s4_dmg,retain_sec,s4_time,s4_ct=0):
         self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg;self.s4_ct=s4_ct
@@ -1407,7 +1417,7 @@ class TripleThreat(Ability):
         self.triple_rng=triple_rng;self.max_dur=dur;self.empowered=False
     def activate(self,tr,g):
         dy=-self.dash_dist if tr.team=='blue' else self.dash_dist
-        tr.y=max(0,min(31,tr.y+dy))
+        tr.y=max(0,min(31,tr.y+dy));g._free_spot(tr)
         dcfg={'hp':self.decoy_hp,'dmg':0,'hspd':99,'fhspd':99,'spd':0,
               'rng':0,'targets':['Ground'],'transport':'Ground',
               'atk_type':'single_target','splash_r':0,'ct_dmg':0,
@@ -1761,7 +1771,7 @@ class WildWhirlwind(Ability):
         c=[x for x in c if x[0]<=self.dash]
         if c:
             e=min(c)[2];d=min(c)[0]
-            if d>1:tr.x+=(e.x-tr.x)*(d-1)/d;tr.y+=(e.y-tr.y)*(d-1)/d
+            if d>1:tr.x+=(e.x-tr.x)*(d-1)/d;tr.y+=(e.y-tr.y)*(d-1)/d;g._free_spot(tr)
         self.active=True;self.dur=self.max_dur;self.o=(tr.hspd,tr.dmg,tr.ct_dmg,tr.splash_r,tr.spd,getattr(tr,'_dmg_reduction',0))
         tr.hspd=self.hs or tr.hspd;tr.dmg=self.dmg or tr.dmg;tr.ct_dmg=int(tr.dmg*self.ctm);tr.splash_r=self.r;tr.spd=tr.spd*self.sp
         tr._dmg_reduction=self.red;tr.cd=min(tr.cd,tr.hspd)

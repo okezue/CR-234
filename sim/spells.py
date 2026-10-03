@@ -290,7 +290,7 @@ class LogSpell:
             # knockback (wiki The Log: pushes back all ground troops, resetting the Prince's and Dark Prince's charges; the Barbarian Barrel
             # lost its pushback); a troop immune to any knockback (the Monk) only takes the damage
             if self.pushback>0 and not hasattr(e,'ttype') and not getattr(e,'is_building',False) and not getattr(e,'kb_immune_all',False):
-                e.y+=d*self.pushback;e.statuses.append(Status('knockback',0.05))
+                y0=e.y;e.y+=d*self.pushback;game._hold_in(e,e.x,y0);e.statuses.append(Status('knockback',0.05))
     def apply(self,game):
         if self.applied:return
         self.applied=True
@@ -378,7 +378,7 @@ class TornadoSpell:
                     # 360% of the troop's own walking speed, not of a charge or wind-up (export attract_percentage 360, push_speed_factor 100,
                     # push_mass_factor 0; wiki and blog: faster troops are pulled further; recorded drill Goblin 7.3 to 7.9 tiles/s), never past the centre
                     mv=min(d,self.pull_str*getattr(e,'base_spd',e.spd)*dt)
-                    e.x+=dx/d*mv;e.y+=dy/d*mv
+                    x0,y0=e.x,e.y;e.x+=dx/d*mv;e.y+=dy/d*mv;game._hold_in(e,x0,y0)
         if self.ticks_left>0:
             self.tick_cd-=dt
             if self.tick_cd<=0:
@@ -617,6 +617,6 @@ class EvoSnowballSpell:
         spd=self.roll_dist/self.roll_dur
         self.ry+=self.dir_y*spd*dt
         for e in self.captured:
-            if e.alive:e.x=self.rx;e.y=self.ry
+            if e.alive:x0,y0=e.x,e.y;e.x=self.rx;e.y=self.ry;game._hold_in(e,x0,y0)
         if self.roll_t>=self.roll_dur:
             self.rolling=False;self.active=False
