@@ -152,6 +152,14 @@ def t_golden_knight_dash_onto_a_tower_ends_beside_it_on_his_side(team):
     assert tw.hp < tw.max_hp and stands(g, gk) and (gk.x, gk.y) == (14.5, 23.5 if team == 'blue' else 8.5), (gk.x, gk.y)
 
 
+def t_wizard_hero_flight_lands_on_standable_ground():
+    # Fiery Flight lifts the hero Wizard for 5 s; a flight that ends over the fence beside the river lands him on walkable ground
+    g = quiet(Game());w = unit('wizard', 'blue', 16.5, 13.5, g, hero=True);ab = w.ability
+    ab.activate(w, g);w.x, w.y = 17.15, 17.1
+    while ab.active:ab.tick(g.DT, w, g)
+    assert w.transport == 'Ground' and stands(g, w), (w.x, w.y)
+
+
 def t_valkyrie_hero_dash_ends_on_standable_ground():
     # the dash stops 1 tile short of the nearest ground enemy: from y 13 to a troop at y 17.2 that is y 16.2, in the river
     g = quiet(Game());v = unit('valkyrie', 'blue', 8.5, 13.0, g, hero=True);unit('knight', 'red', 8.5, 17.2, g)

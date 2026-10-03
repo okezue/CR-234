@@ -1166,7 +1166,8 @@ class FieryFlight(Ability):
         if self.dur<=0:
             self.active=False;self.cd=self.max_cd
             if tr and self.orig_spd:tr.spd=self.orig_spd
-            if tr and self.orig_transport:tr.transport=self.orig_transport
+            # a flight that ends over a fence, a footprint or water lands on the nearest walkable tile centre
+            if tr and self.orig_transport:tr.transport=self.orig_transport;g._free_spot(tr)
 class WoundingWarp(Ability):
     def __init__(self,bonus_dmg_pct,cost):
         super().__init__(cost,0,delay=999);self.bonus_pct=bonus_dmg_pct;self.uses=1
