@@ -290,7 +290,7 @@ class LogSpell:
             # knockback (wiki The Log: pushes back all ground troops, resetting the Prince's and Dark Prince's charges; the Barbarian Barrel
             # lost its pushback); a troop immune to any knockback (the Monk) only takes the damage
             if self.pushback>0 and not hasattr(e,'ttype') and not getattr(e,'is_building',False) and not getattr(e,'kb_immune_all',False):
-                e.y+=d*self.pushback;e.statuses.append(Status('knockback',0.05))
+                y0=e.y;e.y+=d*self.pushback;game._hold_in(e,e.x,y0);e.statuses.append(Status('knockback',0.05))
     def apply(self,game):
         if self.applied:return
         self.applied=True
@@ -357,7 +357,7 @@ class TornadoSpell:
         self.dur=cfg['dur']
         self.active=True;self.applied=False
         self.ticks_left=self.ticks;self.tick_cd=0
-        self.dur_left=self.dur;self.pull_cd=0
+        self.dur_left=self.dur;self.pull_cd=0;self.pulled={}
         self.name=cfg.get('name','')
     def apply(self,game):
         if self.applied:return
@@ -378,7 +378,7 @@ class TornadoSpell:
                     # 360% of the troop's own walking speed, not of a charge or wind-up (export attract_percentage 360, push_speed_factor 100,
                     # push_mass_factor 0; wiki and blog: faster troops are pulled further; recorded drill Goblin 7.3 to 7.9 tiles/s), never past the centre
                     mv=min(d,self.pull_str*getattr(e,'base_spd',e.spd)*dt)
-                    e.x+=dx/d*mv;e.y+=dy/d*mv
+                    self.pulled.setdefault(id(e),(e,e.x,e.y));e.x+=dx/d*mv;e.y+=dy/d*mv
         if self.ticks_left>0:
             self.tick_cd-=dt
             if self.tick_cd<=0:
@@ -393,7 +393,13 @@ class TornadoSpell:
                     if d<=self.radius:
                         tw.take_damage(self.ct_dmg)
                         if not tw.alive:game._tower_down(tw)
-        if self.dur_left<=0 and self.ticks_left<=0:self.active=False
+        if self.dur_left<=0 and self.ticks_left<=0:
+            self.active=False
+            # the pull may carry a troop over water or past a tower's corner (recorded: LCQ 09YP9UPGQ2YU, a Goblin pulled from in front of a
+            # princess tower to the centre, a path that clips the tower's tile footprint but not its collision circle); when it ends, a troop
+            # left on water, a footprint or a fence is settled like a deploy
+            for e,x0,y0 in self.pulled.values():
+                if e.alive:game._free_spot(e,x0,y0)
 class VoidSpell:
     # damage per strike drops by target count: tiers[i] applies while count<=max_units[i], the last tier beyond
     def __init__(self,team,x,y,cfg):
@@ -591,7 +597,7 @@ class EvoSnowballSpell:
         self.slow_dur=cfg['slow_duration'];self.slow_val=cfg['status_val']
         self.active=False;self.name=cfg.get('name','')
         self.proj_spd=cfg.get('projSpeed',0)
-        self.captured=[];self.rolling=False;self.roll_t=0
+        self.captured=[];self.came={};self.rolling=False;self.roll_t=0
         self.rx=self.x;self.ry=self.y;self.dir_y=0
     def apply(self,game):
         opp='red' if self.team=='blue' else 'blue'
@@ -602,7 +608,7 @@ class EvoSnowballSpell:
             if d<=self.radius:
                 e.take_damage(self.dmg)
                 if hasattr(e,'statuses'):e.statuses.append(Status('slow',self.slow_dur,self.slow_val))
-                self.captured.append(e)
+                self.captured.append(e);self.came[id(e)]=(e.x,e.y)
         for tw in game.arena.towers:
             if tw.team!=opp or not tw.alive:continue
             d=tw.dist(self.x,self.y)
@@ -617,6 +623,10 @@ class EvoSnowballSpell:
         spd=self.roll_dist/self.roll_dur
         self.ry+=self.dir_y*spd*dt
         for e in self.captured:
-            if e.alive:e.x=self.rx;e.y=self.ry
+            if e.alive:e.x=self.rx;e.y=min(max(self.ry,0.3),game.arena.H-0.3)
         if self.roll_t>=self.roll_dur:
+            # the roll holds what it carries 0.3 inside the edge, like a knockback; at the end a troop left on a footprint, a fence or
+            # water is settled like a deploy
             self.rolling=False;self.active=False
+            for e in self.captured:
+                if e.alive:game._free_spot(e,*self.came[id(e)])

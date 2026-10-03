@@ -388,19 +388,38 @@ class Game:
         else:
             mlvl=p.card_levels.get(actual,p.king_lvl)
         return mk_card(actual,mlvl,team,x,y,evolved=evolved,hero=hero)
-    def _free_spot(self,tr):
+    def _free_spot(self,tr,x0=None,y0=None):
         # a ground unit born on a tower footprint, a fence or open water (a spawner's forward spot behind the King Tower) cannot walk
-        # off it; it takes the nearest walkable tile centre instead
+        # off it; it takes the nearest walkable tile centre instead; a unit set down after a move from (x0,y0) takes, of equally near
+        # centres, the one toward where it came from (a dash onto a tower's centre has four)
         rj=getattr(tr,'hovering',False) or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))
         if getattr(tr,'transport','Ground')=='Air' or getattr(tr,'is_building',False) or has(tr,'burrowed') or self._walkable(tr.x,tr.y,rj):return
+        a=self.arena;best=self._nearest_tile(tr,int(tr.x),int(tr.y),rj,x0,y0)
+        if best:tr.x,tr.y=best[1],best[2]
+    def _nearest_tile(self,tr,ix,iy,rj,x0=None,y0=None):
         a=self.arena;best=None
-        for ty in range(max(0,int(tr.y)-3),min(a.H,int(tr.y)+4)):
-            for tx in range(max(0,int(tr.x)-3),min(a.W,int(tr.x)+4)):
+        for ty in range(max(0,iy-3),min(a.H,iy+4)):
+            for tx in range(max(0,ix-3),min(a.W,ix+4)):
                 cx,cy=tx+0.5,ty+0.5
                 if not self._walkable(cx,cy,rj):continue
-                d=math.hypot(cx-tr.x,cy-tr.y)
-                if best is None or d<best[0]:best=(d,cx,cy)
-        if best:tr.x,tr.y=best[1],best[2]
+                d=math.hypot(cx-tr.x,cy-tr.y);k=(d,) if x0 is None else (round(d,9),math.hypot(cx-x0,cy-y0))
+                if best is None or k<best[0]:best=(k,cx,cy)
+        return best
+    def _stands(self,tr,x,y):
+        # a ground unit can stand on a point of the 18 by 32 arena that _walkable accepts for it (the river only for hovering and jumping units)
+        rj=getattr(tr,'hovering',False) or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))
+        return 0<=x<self.arena.W and 0<=y<self.arena.H and self._walkable(x,y,rj)
+    def _hold_in(self,tr,x0,y0):
+        # a ground unit shoved, pulled or rolled from (x0,y0) onto a point it cannot stand on (off the arena, a tower footprint, a fence or
+        # water) stops where its path leaves standable ground, in quarter-tile steps held 0.3 inside the edges like a knockback (fx.push);
+        # a unit with no standable step is settled like a deploy
+        if getattr(tr,'transport','Ground')=='Air' or getattr(tr,'is_building',False) or has(tr,'burrowed') or self._stands(tr,tr.x,tr.y):return
+        a=self.arena;x1,y1=tr.x,tr.y;n=max(1,int(math.hypot(x1-x0,y1-y0)*4));tr.x,tr.y=x0,y0
+        for i in range(1,n+1):
+            nx=min(max(x0+(x1-x0)*i/n,0.3),a.W-0.3);ny=min(max(y0+(y1-y0)*i/n,0.3),a.H-0.3)
+            if not self._stands(tr,nx,ny):break
+            tr.x,tr.y=nx,ny
+        self._free_spot(tr,x0,y0)
     def _place(self,team,tr,dep):
         # a deploying unit stands on the field, targetable and damageable, and acts only when its deploy time is over; a burrowing unit
         # is governed by its Burrow instead (the deploy is folded into the travel, or follows it for the Goblin Drill)

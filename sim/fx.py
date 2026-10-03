@@ -143,8 +143,8 @@ class Recoil(Component):
         dx=tr.x-tx;dy=tr.y-ty
         d=math.sqrt(dx*dx+dy*dy)
         if d<0.01:return
-        tr.x+=dx/d*self.dist;tr.y+=dy/d*self.dist
-        tr.x=max(0.3,min(17.7,tr.x));tr.y=max(0.3,min(31.7,tr.y))
+        x0,y0=tr.x,tr.y;tr.x+=dx/d*self.dist;tr.y+=dy/d*self.dist
+        tr.x=max(0.3,min(17.7,tr.x));tr.y=max(0.3,min(31.7,tr.y));g._hold_in(tr,x0,y0)
 class RiverJump(Component):
     # marker: movement treats river tiles as walkable at normal speed instead of detouring to a bridge
     pass
@@ -995,7 +995,7 @@ class EvoValkyrie(Component):
                 dd=math.sqrt(dx*dx+dy*dy)
                 if dd>0:
                     pull=min(1.5,dd)*0.5
-                    e.x+=dx/dd*pull;e.y+=dy/dd*pull
+                    x0,y0=e.x,e.y;e.x+=dx/dd*pull;e.y+=dy/dd*pull;g._hold_in(e,x0,y0)
 class EvoMusketeer(Component):
     def __init__(self,ammo,rng,dmg_m,min_rng):
         self.ammo=ammo;self.rng=rng;self.dmg_m=dmg_m;self.min_rng=min_rng
@@ -1271,7 +1271,7 @@ class RowdyReroll(Ability):
             if abs(tw.cx-tr.x)<=1.3 and min(tr.y,tr.y+dy)<=tw.cy<=max(tr.y,tr.y+dy):
                 tw.take_damage(self.roll_dmg if self.roll_dmg else tr.dmg)
                 if not tw.alive:g._tower_down(tw)
-        tr.y+=dy
+        y0=tr.y;tr.y+=dy;g._hold_in(tr,tr.x,y0)
         lost=tr.max_hp-tr.hp
         tr.hp=min(tr.max_hp,tr.hp+int(lost*self.heal_pct))
 class MKJump(Component):
@@ -1346,7 +1346,7 @@ class EvoMegaKnight(Component):
         if self.n%self.every or getattr(tgt,'kb_immune_all',False):return
         twy=g.arena.get_tower(getattr(tgt,'team','red'),'king').cy
         dy=twy-tgt.y
-        if abs(dy)>0.1:tgt.y+=dy/abs(dy)*min(self.kb,abs(dy))
+        if abs(dy)>0.1:y0=tgt.y;tgt.y+=dy/abs(dy)*min(self.kb,abs(dy));g._hold_in(tgt,tgt.x,y0)
 class EvoInfernoDragon(Component):
     def __init__(self,s4_dmg,retain_sec,s4_time,s4_ct=0):
         self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg;self.s4_ct=s4_ct
