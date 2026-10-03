@@ -359,7 +359,8 @@ def evolve(c,k,s,lvl,tr):
        'inferno_dragon':lambda:fx.EvoInfernoDragon(at(rd['damageTiers'][-1],lvl),rd.get('retainTime') or 0,rd.get('finalStageTime') or 0,
                                                    (fx.tower_tiers([at(rd['damageTiers'][-1],lvl)],tr.dmg,tr.ct_dmg) or [0])[0]),
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
-       'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
+       'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'],at(sd.get('towerDamage'),lvl) or 0,b['radius'],b['linger'],
+                                            mult(b['speedMultiplier'])-1)}
     if k in E:tr.components.append(E[k]())
     if k=='inferno_dragon':
         # The evolution owns the final stage; the ordinary ramp stops at tier three.

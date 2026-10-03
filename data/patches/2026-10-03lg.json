@@ -1,0 +1,14 @@
+[
+ {
+  "card": "lumberjack",
+  "path": "evo.skills.spawnOnDeath.towerDamage[10]",
+  "value": 128,
+  "note": "The Evolved Lumberjack's ghost (the evolution's death spawn) hits Crown Towers for 128 at level 11, half its 256: Supercell June 2026 balance changes 'Lumberjack Evolution, Crown Tower Damage: 256 -> 128 (-50%) ... his Ghost often comes back to haunt the poor Princess Towers'; wiki Lumberjack/Evolution ghost_crown_11 128 (ghost_dmg_11 256) and history 1/6/2026 'decreased the Ghost's Tower Damage by 50%'; no later note changes it before the games (31 August to 6 September 2026). The game data export carries no ghost record. https://supercell.com/en/games/clashroyale/blog/release-notes/june-balance-changes-2026/ https://clashroyale.fandom.com/wiki/Lumberjack/Evolution"
+ },
+ {
+  "card": "lumberjack",
+  "path": "skills.boost.linger",
+  "value": 1.0,
+  "note": "A unit keeps the Lumberjack's Rage 1 s after it leaves the radius: the export's BarbarianRage area (lifeDuration 5500, radius 3000, hitSpeed 300) gives its Rage buff for buffTime 1000 ms at each hit; wiki Lumberjack and Lumberjack/Evolution history 4/3/2025 'decreased the Rage's duration after leaving the radius to 1 second (from 2 seconds)'. The evolution's ghost disappears when it loses its own Rage ('will disappear after a short time outside of the initial Rage'). https://clashroyale.fandom.com/wiki/Lumberjack/Evolution"
+ }
+]

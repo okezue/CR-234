@@ -1407,17 +1407,30 @@ class EvoRoyalGhost(Component):
                 ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5);cfg=self.mk()
                 g._place(tr.team,Troop(tr.team,tr.x+ox,tr.y+oy,cfg),cfg.get('deploy',0))
         self.was_invis=is_invis
+class GhostLife(Component):
+    # the ghost is raged inside its own Rage and disappears when that Rage ends or linger seconds after it leaves the radius; other Rages
+    # neither extend nor keep it (wiki Lumberjack/Evolution: "will disappear after a short time outside of the initial Rage", histories 11/2/2025
+    # and 4/3/2025: 1 s after leaving the radius; export BarbarianRage buffTime 1000)
+    def __init__(self,x,y,r,life,linger,boost):self.x=x;self.y=y;self.r=r;self.life=life;self.linger=linger;self.boost=boost;self.out=0
+    def on_tick(self,tr,g):
+        self.life-=g.DT
+        if math.hypot(tr.x-self.x,tr.y-self.y)<=self.r:self.out=0;refresh(tr,'rage',self.linger,self.boost)
+        else:self.out+=g.DT
+        if self.life<=1e-9 or self.out>=self.linger-1e-9:tr.alive=False
 class EvoLumberjack(Component):
-    def __init__(self,ghost_dur):
-        self.ghost_dur=ghost_dur
+    # the ghost hits like the Lumberjack, at ct to Crown Towers, and cannot be targeted or damaged (wiki Lumberjack/Evolution: unlimited health,
+    # "can't be targeted by troops, buildings and towers", ghost_crown_11 128; Supercell June 2026 note: Crown Tower Damage 256 -> 128)
+    def __init__(self,ghost_dur,ct,r,linger,boost):
+        self.ghost_dur=ghost_dur;self.ct=ct;self.r=r;self.linger=linger;self.boost=boost
     def on_death(self,tr,g):
         cfg={'hp':1,'dmg':tr.dmg,'hspd':tr.hspd,'fhspd':tr.fhspd,
              'spd':tr.spd,'rng':tr.rng,'targets':tr.targets,'transport':'Ground',
-             'atk_type':'single_target','splash_r':0,'ct_dmg':0,
-             'components':[],'lvl':tr.lvl,'name':'Lumberjack Ghost','card':tr.card}
+             'atk_type':'single_target','splash_r':0,'ct_dmg':self.ct,
+             'components':[GhostLife(tr.x,tr.y,self.r,self.ghost_dur,self.linger,self.boost)],'lvl':tr.lvl,'name':'Lumberjack Ghost','card':tr.card}
         ghost=Troop(tr.team,tr.x,tr.y,cfg)
-        ghost.max_hp=1;ghost.hp=1
-        ghost.statuses.append(Status('invisible',self.ghost_dur))
+        # it disappears rather than dies, so it leaves no soul
+        ghost.max_hp=1;ghost.hp=1;ghost.no_soul=True
+        ghost.statuses+=[Status('invisible',self.ghost_dur+1),Status('invincible',self.ghost_dur+1),Status('rage',self.linger,self.boost)]
         g.players[tr.team].troops.append(ghost)
 class TripleThreat(Ability):
     def __init__(self,dash_dist,decoy_hp,triple_rng,dur,cost,cd):

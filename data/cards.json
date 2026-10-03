@@ -5487,7 +5487,8 @@
       "count": null,
       "damage": null,
       "deployTime": null,
-      "radius": null
+      "radius": null,
+      "towerDamage": [null, null, null, null, null, null, null, null, 106, 116, 128, 140, 154, 169, 186, 204]
      }
     },
     "stats": {
@@ -5525,6 +5526,7 @@
      "enemyHitSpeedMultiplier": null,
      "enemySpeedMultiplier": null,
      "hitSpeedMultiplier": 130,
+     "linger": 1.0,
      "radius": 3.0,
      "rangeMultiplier": null,
      "spawnSpeedMultiplier": 130,
@@ -5536,11 +5538,14 @@
     "*": "cs2.4.0",
     "evo.cycles": "patch:2026-10-02cy",
     "evo.skills.invisibility.duration": "legacy:evolution.ghost_on_death",
+    "evo.skills.spawnOnDeath.towerDamage": "patch:2026-10-03lg",
+    "evo.skills.spawnOnDeath.towerDamage[]": "derived:levelMult",
     "evo.stats.damage[]": "derived:levelMult",
     "evo.stats.hitpoints[]": "derived:levelMult",
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
+    "skills.boost.linger": "patch:2026-10-03lg",
     "skills.boost.radius": "legacy:death_mechanic.rage",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9714,7 +9719,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-10-02",
+  "built": "2026-10-03",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9903,6 +9908,10 @@
    {
     "name": "data/patches/2026-10-02hm.json",
     "tag": "patch:2026-10-02hm"
+   },
+   {
+    "name": "data/patches/2026-10-03lg.json",
+    "tag": "patch:2026-10-03lg"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
