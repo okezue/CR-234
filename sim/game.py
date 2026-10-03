@@ -737,7 +737,10 @@ class Game:
             if self._walkable(nx,tr.y,rj):ny=tr.y
             elif self._walkable(tr.x,ny,rj):nx=tr.x
             else:
-                if int(ny) in a.RIVER and not rj:ny=a.RIVER[0]-0.1 if tr.y<16 else a.RIVER[-1]+1
+                if int(ny) in a.RIVER and not rj:
+                    ny=a.RIVER[0]-0.1 if tr.y<16 else a.RIVER[-1]+1
+                    # beside a side fence the bank point is a fence tile: the unit takes the nearest walkable tile centre instead
+                    if not self._walkable(tr.x,ny,rj):x0,y0=tr.x,tr.y;tr.y=ny;self._free_spot(tr,x0,y0);return
                 else:ny=tr.y
                 nx=tr.x
         tr.x=nx;tr.y=ny
