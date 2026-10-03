@@ -1852,7 +1852,7 @@
    "sightRange": 5.5,
    "skills": {
     "pierce": {
-     "bounceDelay": 0.15,
+     "bounceDelay": null,
      "bounceDistance": 4.0,
      "bounceMode": "nearest",
      "bounces": 2,
@@ -1879,6 +1879,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.pierce.bounceDelay": "patch:2026-10-02cw",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1994,7 +1995,7 @@
    "sightRange": 5.5,
    "skills": {
     "pierce": {
-     "bounceDelay": 0.1,
+     "bounceDelay": 0.25,
      "bounceDistance": 3.0,
      "bounceMode": "nearest",
      "bounces": 8,
@@ -2016,6 +2017,7 @@
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.pierce.bounceDelay": "patch:2026-10-02cw",
     "skills.pierce.bounceDistance": "patch:2026-08-26",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9881,6 +9883,10 @@
    {
     "name": "data/patches/2026-10-01u.json",
     "tag": "patch:2026-10-01u"
+   },
+   {
+    "name": "data/patches/2026-10-02cw.json",
+    "tag": "patch:2026-10-02cw"
    },
    {
     "name": "data/patches/2026-10-02cy.json",

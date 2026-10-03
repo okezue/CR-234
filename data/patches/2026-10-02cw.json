@@ -1,0 +1,14 @@
+[
+ {
+  "card": "electro_spirit",
+  "path": "skills.pierce.bounceDelay",
+  "value": 0.25,
+  "note": "Electro Spirit chain: one bounce every 0.25 s after the first target. Supercell December 2025 balance changes (1 December 2025): 'Electro Spirit Chain Speed: 0.2s -> 0.25 (+25%) ... Its Chain Speed is being rewired to make it less efficient at handling swarm units'; wiki Electro Spirit history 1/12/2025, the Heroes Update, 'increased it's Shock Chain Period to 0.25 seconds (from 0.2 seconds)'; no later note changes it before the games (31 August to 6 September 2026). ClashStrategic cs2.4.0 gave 0.1, which the engine never read (every bounce landed in one tick); the game data export carries no chain period. https://supercell.com/en/games/clashroyale/blog/release-notes/december-balance-changes/ https://clashroyale.fandom.com/wiki/Electro_Spirit"
+ },
+ {
+  "card": "electro_dragon",
+  "path": "skills.pierce.bounceDelay",
+  "value": null,
+  "note": "No source gives the base Electro Dragon's chain period (wiki Electro Dragon and Electro Dragon/Evolution pages, Supercell notes, game data export), so its three hits keep landing together, the evolved dragon's first three too: the ClashStrategic cs2.4.0 template value 0.15, unread until the engine began to read bounceDelay as the chain period (the Electro Spirit's cs2.4.0 0.1 was not the game's 0.2 or 0.25 either), is dropped. The evolution's own record (evo.skills.pierce.bounceDelay 0.15) still paces its bounces after the third, unchanged. https://clashroyale.fandom.com/wiki/Electro_Dragon"
+ }
+]
