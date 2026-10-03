@@ -121,6 +121,89 @@ def t_loaders_align_starts_and_labels(tmp_path):
     assert np.allclose(num,[0.4,0.5]) and np.allclose(den,[1,1]) and np.allclose(pn,[0.2+0.5*0.2,0.5])
 
 
+def t_overrating_threshold_and_games_of_unequal_size():
+    # the anchors' slope is through the origin: anchors of true gain 1 and 2 rated 2 and 2 give 6/5, so a policy rated 3 at true gain 1
+    # has ratio 2.5 (a ratio of sums would give 2.25)
+    s=np.array([0,2.0,2,3]);t=np.array([0,1.0,2,1]);an=np.array([1,2])
+    assert math.isclose(C.overrating(s,t,an,3),2.5) and np.allclose(C.overrating(np.stack([s,2*s]),t,an,3),[2.5,2.5])
+    # certification at 1.645 bootstrap sd: a1 (score .01) is certified with sd .0055 (1.645 sd = .0090, 1.96 sd = .0108) but not with .0065
+    tt,G=toy_gains();tr=truth_of(tt);s=G['M.H1'];sb=np.tile(s,(1000,1))
+    for sd,ok in ((0.0055,True),(0.0065,False)):
+        sb[:,1]=s[1]+sd*np.tile([1.0,-1.0],500);r=C.judge(s,sb,tr,NAMES,np.array([1,2,3]))
+        assert math.isclose(sb[:,1].std(),sd) and ('a1' in r['certified'])==ok
+    # a resample's mean is over the starts of the games it draws, whatever their number of starts (three, one and two here)
+    game=np.array([0,0,0,1,2,2]);per={'E':{'bc':np.zeros(6),'a':np.array([0.1,0.2,0.3,0.6,0.0,0.4])}};W=np.array([[0.0,3,0],[3,0,0],[2,1,0],[1,1,1]])
+    pt,bt,_=C.gains(per,game,['bc','a'],W);assert math.isclose(pt['E'][1],1.6/6) and np.allclose(bt['E'][:,1],[0.6,0.2,1.8/7,1.6/6])
+
+
+# ---- the registered rule set (hive f5520, transcribed) and assess() on planted gains
+
+def marks(m,f):
+    return [f'{m}.H{k}' for k in (0,1,2,4,8,16,32,64)]+[f'{f}.K{k}' for k in (0,1,2,4,8,16,32)]
+
+
+REGISTERED={'primary':{'kind':'one','e':'M70.H64'},'onestep':{'kind':'one','e':'M70.H0'},'same_mean':{'kind':'mean','bank':marks('M70','F70'),'excl':None},
+            'horizon_ne':{'kind':'mean','bank':marks('M70','F70'),'excl':'ne'},'horizon_class':{'kind':'mean','bank':marks('M70','F70'),'excl':'class'},
+            'split_model':{'kind':'one','e':'MA.H64'},'split_fqe':{'kind':'one','e':'FA.K32'},'split_mean':{'kind':'mean','bank':marks('MA','FA'),'excl':None},
+            'seed_model':{'kind':'one','e':'M70n.H64'},'class_min':{'kind':'min','families':[['M70.H0','F70.K0'],['M70.H64'],['F70.K32']]},
+            'class_median':{'kind':'median','families':[['M70.H0','F70.K0'],['M70.H64'],['F70.K32']]},'lower_min':{'kind':'lower','of':'class_min'},
+            'ensemble_min':{'kind':'min_raw','bank':['M70x1.H64','M70m1.H64','M70m2.H64','M70m3.H64']},
+            'bank_min':{'kind':'min','families':[[e] for e in marks('M70','F70')]},
+            'split_class_min':{'kind':'min','families':[['MA.H0','FA.K0','QE.support'],['MA.H64'],['FA.K32']]},
+            'split_ensemble_min':{'kind':'min_raw','bank':['MA0.H64','MA1.H64','MA2.H64','MA3.H64']},
+            'qeval_support':{'kind':'one','e':'QE.support'},'qeval_pess':{'kind':'one','e':'QE.pess'}}
+
+
+def t_registered_rules_are_pinned():
+    # the rule set as registered before the first fit; the replication swaps the split sources and has no Q-eval; the exploratory set
+    # reads the early-stopped split fits
+    assert C.rules()==REGISTERED and C.Z==1.645 and C.TRAIN_H=={'wm/qgroup':0,'wm/wmgroup':4}
+    swap=lambda x,a,b:json.loads(json.dumps(x).replace('"MA','"'+a).replace('"FA','"'+b))
+    rep={k:swap(r,'MB','FB') for k,r in REGISTERED.items() if not k.startswith('qeval')};rep['split_class_min']['families'][0]=['MB.H0','FB.K0']
+    assert C.rules(sm='MB',sf='FB',qe=False,sens=('MB0','MB1','MB2','MB3'))==rep
+    assert C.explore()=={f'{k}_e':swap(REGISTERED[k],'MAe','FAe') for k in ('split_model','split_fqe','split_mean','split_class_min','split_ensemble_min')}
+
+
+# evaluator: (scale, wmgroup factor, qgroup factor) for the 15 same-data evaluators; every other evaluator has scale .01 and factors 1
+PLANT={'M70.H0':(0.009,1.2,2.6),'M70.H1':(0.004,1.6,2.3),'M70.H2':(0.006,2.0,2.0),'M70.H4':(0.006,3.2,1.7),'M70.H8':(0.011,3.6,1.5),
+       'M70.H16':(0.021,3.4,1.2),'M70.H32':(0.030,3.5,1.1),'M70.H64':(0.030,3.8,1.3),'F70.K0':(0.0095,1.4,2.8),'F70.K1':(0.010,1.8,3.2),
+       'F70.K2':(0.0106,2.1,3.0),'F70.K4':(0.010,2.7,3.0),'F70.K8':(0.0099,3.7,2.6),'F70.K16':(0.013,4.9,2.4),'F70.K32':(0.023,3.4,1.1)}
+
+
+def planted(evals,B=200,seed=0):
+    # 24 anchors with true gains -1 to +6 points and the two trained arms (qgroup +20, wmgroup +7) placed among them; every evaluator rates
+    # the anchors in proportion to their true gain and each arm its factor times its share; resamples rescale and add a little noise
+    names=['bc','wm/qgroup']+[f'p{i}' for i in range(12)]+['wm/wmgroup']+[f'p{i}' for i in range(12,24)];a=np.linspace(-0.01,0.06,24)
+    t=np.r_[0,0.20,a[:12],0.07,a[12:]];rng=np.random.default_rng(seed);c=1+0.1*np.tile([1.0,-1.0],B//2);pt={};bt={}
+    for e in evals:
+        s,w,q=PLANT.get(e,(0.01,1.0,1.0));g=s*t;g[1]*=q;g[13]*=w;n=rng.normal(0,0.002*s,(B,len(t)));n[:,0]=0;pt[e]=g;bt[e]=c[:,None]*g+n
+    tr={x:{'dwr':(float(v),float(v)-0.01,float(v)+0.01),'verdict':'improves' if v>0.01 else 'no change'} for x,v in zip(names,t)}
+    return names,pt,bt,tr
+
+
+def t_assess_scores_the_registered_rules_against_the_anchors():
+    rs=C.rules();names,pt,bt,tr=planted(sorted(C.needs(rs)));msgs=[];log=lambda m,**k:msgs.append(m)
+    out,diag,sc=C.assess(pt,bt,tr,names,rs,log=log);r=lambda k,a:out[k][f'rho|wm/{a}']
+    # the anchors are the 24 policies without a learned evaluator wherever the arms stand, so an evaluator's ratio is its planted factor
+    assert not msgs and not any('missing' in o for o in out.values()) and len(out)==18
+    d=diag['M70.H1'];assert math.isclose(diag['F70.K16']['rho|wm/wmgroup'],4.9) and math.isclose(d['rho|wm/qgroup'],2.3) and math.isclose(d['unit'],0.004*0.025)
+    # primary reads the H64 rollouts and picks wmgroup at 13 points of regret
+    assert math.isclose(r('primary','wmgroup'),3.8) and math.isclose(r('primary','qgroup'),1.3) and out['primary']['pick']=='wm/wmgroup'
+    assert math.isclose(out['primary']['regret'],13)
+    # class_min and class_median over the one-step family (1.3, 2.7), the H64 rollouts (3.8, 1.3) and FQE K32 (3.4, 1.1)
+    assert math.isclose(r('class_min','wmgroup'),1.3) and math.isclose(r('class_min','qgroup'),1.1)
+    assert math.isclose(r('class_median','wmgroup'),3.4) and math.isclose(r('class_median','qgroup'),1.3)
+    # bank_min is the minimum of the 15 normalised evaluators (M70.H0 for wmgroup, K32 and H32 for qgroup), not of their raw gains
+    assert math.isclose(r('bank_min','wmgroup'),1.2) and math.isclose(r('bank_min','qgroup'),1.1) and out['bank_min']['pick']=='wm/qgroup'
+    # lower_min is class_min minus 1.645 of its bootstrap sd; an unbiased evaluator rates both arms like the anchors
+    s,sb=sc['class_min'];assert np.allclose(sc['lower_min'][0],s-1.645*sb.std(0)) and math.isclose(r('split_model','wmgroup'),1)
+    # an evaluator whose anchor mean gain is not positive is left out of a mean rule with a notice; a minimum over it has no score
+    pt['X']=-pt['M70.H0'];bt['X']=-bt['M70.H0'];o,_,_=C.assess(pt,bt,tr,names,{'m':{'kind':'mean','bank':['M70.H0','X'],'excl':None}},log=log)
+    assert len(msgs)==1 and msgs[0].startswith('notice: m leaves out X where') and '200 of 200' in msgs[0] and math.isclose(o['m']['rho|wm/wmgroup'],1.2)
+    an=np.array([i for i,x in enumerate(names) if x[0]=='p']);n=C.unit_notices(pt,bt,{'n':{'kind':'min','families':[['X'],['M70.H0']]}},an)
+    assert len(n)==1 and n[0].startswith('notice: n has no score where the anchor mean gain of X is not positive')
+
+
 # ---- the planted world, end to end through train.wmOpe's FQE and this module's rules
 
 T=3;SPUR=4

@@ -8,14 +8,15 @@ one-step Q of the 70k members 0-3, about 2.5 times by one-step evaluators; wmgro
 the truth from the held-out B starts:
   horizon  a policy is scored only by evaluators whose horizon differs from its training evaluator's (horizon_ne), or whose class
            differs (one-step against multi-step, horizon_class);
-  split    evaluators fit on a trace half no policy, critic or model saw: world-model members with new seeds and FQE fit on held-out A
-           (split_model, split_fqe, split_mean); the control seed_model is the 70k members 4-7 (same traces, new seeds);
+  split    evaluators fit on a trace half no policy, critic or training-time evaluator saw: world-model members with new seeds and FQE
+           fit on held-out A (split_model, split_fqe, split_mean); the control seed_model is the 70k members 4-7 (same traces, new seeds);
   class    the minimum or the median over evaluator families: one-step outcome models, multi-step model rollouts, FQE;
   lower    conservative bounds: the family minimum minus 1.645 bootstrap standard deviations, the minimum over the members of the
            training ensemble, the minimum over the evaluator bank;
   qeval    the support-restricted Q-eval (Q fit on held-out A, scored on held-out B records), the baseline.
 A gain is J(pi) - J(bc) under one evaluator; to combine evaluators of different scale each gain is divided by the evaluator's mean gain
-over the anchors, the 24 policies trained without a learned evaluator (this uses no truth). Per rule: Spearman's correlation with the
+over the anchors, the 24 policies trained without a learned evaluator (this uses no truth; where that mean is not positive the mean rules
+leave the evaluator out and the minimum and median rules have no score, with a notice). Per rule: Spearman's correlation with the
 true gains, the pick (largest score) and its regret, the overrating ratio of wmgroup and qgroup (score over the anchors' through-origin
 slope of score on true gain, times the true gain; 1 is rated like the anchors), and certification (score minus 1.645 bootstrap
 standard deviations above zero) against the ninth step's true verdicts, with a paired bootstrap over held-out B games (a game's two
@@ -164,10 +165,25 @@ def gains(per,game,names,W,ratio=None):
     return pt,bt,dropped
 
 
-def assess(pt,bt,truth,names,rs):
+def unit_notices(pt,bt,rs,anchors):
+    # the normalised rules reading an evaluator whose anchor mean gain is not positive on the full sample or in a resample, where
+    # normalise() gives it nan
+    out=[]
+    for k,r in rs.items():
+        if r['kind'] not in ('mean','min','median') or not needs({k:r})<=set(pt):continue
+        for e in sorted(needs({k:r})):
+            u=float(pt[e][anchors].mean());nb=int((~(bt[e][:,anchors].mean(-1)>0)).sum())
+            if u>0 and not nb:continue
+            what=f'{k} leaves out {e}' if r['kind']=='mean' else f'{k} has no score'
+            out.append(f'notice: {what} where the anchor mean gain of {e} is not positive (full sample {u:.4f}; {nb} of {len(bt[e])} resamples)')
+    return out
+
+
+def assess(pt,bt,truth,names,rs,log=print):
     # every rule's point and bootstrap scores and its judgement; per evaluator the overrating ratios and Spearman as a diagnostic
     P=[a for a in names if a!='bc'];anchors=np.array([i for i,a in enumerate(names) if a!='bc' and a not in TRAIN_H]);out={};sc={}
     t=np.array([truth[a]['dwr'][0] for a in names])
+    for m in unit_notices(pt,bt,rs,anchors):log(m,flush=True)
     for k,r in rs.items():
         if not needs({k:r})<=set(pt) and r['kind']!='lower':out[k]={'missing':sorted(needs({k:r})-set(pt))};continue
         if r['kind']=='lower':
@@ -245,7 +261,7 @@ def report(pack,truth,wmope,cert,out,B=2000,seed=0,split='heldB',rep=False,log=p
     tr=truth_of(truth);names=['bc']+[a for a in tr if a not in ('bc','behaviour','clone_T1')]
     rs=rules(sm='MB',sf='FB',qe=False,sens=('MB0','MB1','MB2','MB3')) if rep else rules();ex={} if rep else explore()
     per={**tenth(c,rows,wmope),**ours(rows,cert)};ratio=qeval_ratio(Path(cert)/'qeval',gidx) if not rep and Path(cert,'qeval','fixed.npz').exists() else {}
-    W=boot_weights(len(ug),B,seed);pt,bt,dropped=gains(per,gi,names,W,ratio);res,diag,_=assess(pt,bt,tr,names,rs);xres=assess(pt,bt,tr,names,ex)[0]
+    W=boot_weights(len(ug),B,seed);pt,bt,dropped=gains(per,gi,names,W,ratio);res,diag,_=assess(pt,bt,tr,names,rs,log=log);xres=assess(pt,bt,tr,names,ex,log=log)[0]
     o={'split':split,'replication':rep,'B':B,'games':int(len(ug)),'starts':int(len(rows)),'policies':names,'dropped':dropped,'rules':rs,'results':res,'explore':ex,'exploratory':xres,'evaluators':diag,
        'truth':{a:tr[a] for a in names},'gains':{e:{a:float(x) for a,x in zip(names,v)} for e,v in pt.items()}}
     Path(out).parent.mkdir(parents=True,exist_ok=True);Path(out).write_text(json.dumps(o,indent=1)+'\n');Path(out).with_suffix('.md').write_text(markdown(o)+'\n')
