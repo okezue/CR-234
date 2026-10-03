@@ -985,18 +985,22 @@ class EvoDartGoblin(Component):
                 d=math.sqrt((e.x-tx)**2+(e.y-ty)**2)
                 if d<=self.radius:e.take_damage(dmg)
 class EvoRoyalHogs(Component):
+    # a flying hog falls to the ground when hurt or on its first attack (export RoyalHog_EV1 onStartingActionData and onAttackActionData
+    # both run RoyalHog_EV1_Fall_To_Ground_Group; wiki Royal Hogs/Evolution: "Upon attacking, or getting hurt, the hogs will fall")
     def __init__(self,ldmg,lr):
         self.ldmg=ldmg;self.lr=lr;self.flying=True
+    def land(self,tr,g):
+        # a hog that lands over a fence corner or a footprint is settled like a born unit, or it would stand there for the game
+        self.flying=False;tr.transport='Ground';g._free_spot(tr)
+        opp=g._opp(tr.team)
+        for e in g.players[opp].troops:
+            if not e.alive:continue
+            d=math.sqrt((e.x-tr.x)**2+(e.y-tr.y)**2)
+            if d<=self.lr:e.take_damage(self.ldmg)
     def on_tick(self,tr,g):
-        if not self.flying:return
-        if tr.hp<tr.max_hp:
-            # a hog that lands over a fence corner or a footprint is settled like a born unit, or it would stand there for the game
-            self.flying=False;tr.transport='Ground';g._free_spot(tr)
-            opp=g._opp(tr.team)
-            for e in g.players[opp].troops:
-                if not e.alive:continue
-                d=math.sqrt((e.x-tr.x)**2+(e.y-tr.y)**2)
-                if d<=self.lr:e.take_damage(self.ldmg)
+        if self.flying and tr.hp<tr.max_hp:self.land(tr,g)
+    def on_attack(self,tr,tgt,g):
+        if self.flying:self.land(tr,g)
 class EvoGoblinCage(Component):
     def __init__(self,pr):
         self.pr=pr;self.trapped=None;self.trap_timer=0

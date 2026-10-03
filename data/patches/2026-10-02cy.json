@@ -1,0 +1,38 @@
+[
+ {
+  "card": "baby_dragon",
+  "path": "evo.cycles",
+  "value": 2,
+  "note": "The Baby Dragon Evolution needs 2 cycles, so every third play is evolved: wiki Baby Dragon/Evolution infobox CycleCost 2 and history, 6/10/2025 a Balance Update increased the cycles required to 2 (from 1). ClashStrategic cs2.4.0 still gives 1; the game data export carries no cycle field. The replay data marks no individual play as evolved (placements card_type 'evo' is the deck slot's, on every play of the card), so the cycle count decides which plays are evolved. https://clashroyale.fandom.com/wiki/Baby_Dragon/Evolution"
+ },
+ {
+  "card": "bomber",
+  "path": "evo.cycles",
+  "value": 2,
+  "note": "The Bomber Evolution needs 2 cycles: wiki Bomber/Evolution infobox CycleCost 2 and history, 14/5/2024 a Balance Update increased the cycles required to 2 (from 1). ClashStrategic cs2.4.0 still gives 1; the export carries no cycle field. https://clashroyale.fandom.com/wiki/Bomber/Evolution"
+ },
+ {
+  "card": "lumberjack",
+  "path": "evo.cycles",
+  "value": 2,
+  "note": "The Lumberjack Evolution needs 2 cycles: wiki Lumberjack/Evolution infobox CycleCost 2 and history, 9/4/2025 a Balance Update increased the cycles required to 2 (from 1). ClashStrategic cs2.4.0 still gives 1; the export carries no cycle field. https://clashroyale.fandom.com/wiki/Lumberjack/Evolution"
+ },
+ {
+  "card": "archers",
+  "path": "evo.stats.range",
+  "value": 6.0,
+  "note": "Evolved Archers shoot from 6 tiles, one further than the base card's 5: game data export Archers evolvedSpellsData Archer_EV1 range 6000 (base Archer 5000); wiki Archers/Evolution attribute table range 6, card text 'a range 1 tile further than the originals', history 3/1/2024 decreased the Evolved Archers' range to 6 tiles (from 6.5 tiles). Without it the 4 to 6 tile Power Shot band could only fire from 4 to 5 tiles. https://cache.statsroyale.com/gamedata-v5.json https://clashroyale.fandom.com/wiki/Archers/Evolution"
+ },
+ {
+  "card": "archers",
+  "path": "evo.stats.sightRange",
+  "value": 6.6,
+  "note": "Evolved Archers' sight range 6.6 tiles: game data export Archer_EV1 sightRange 6600 (base Archer 5500). The wiki gives no sight range. https://cache.statsroyale.com/gamedata-v5.json"
+ },
+ {
+  "card": "dart_goblin",
+  "path": "sightRange",
+  "value": 7.0,
+  "note": "Dart Goblin sight range 7 tiles, evolved too: Supercell March 2026 balance changes (2 March 2026), 'Dart Goblin, Sight Range: 7.5 tiles -> 7 tiles (-7%)'; game data export BlowdartGoblin sightRange 7000 (BlowdartGoblin_EV1 the same); ClashStrategic cs2.4.0 7.0. The 2026-09-06 patch's 7.5 followed the wiki Dart Goblin history line for 2/3/2026, which states the change the other way round. https://supercell.com/en/games/clashroyale/blog/release-notes/march-balance-changes-2026/ https://cache.statsroyale.com/gamedata-v5.json"
+ }
+]

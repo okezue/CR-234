@@ -618,6 +618,11 @@ class Game:
                 # princess towers are the default target while they stand; the king is only picked when in sight
                 if d<=sr:near_c.append((d,tw))
                 if not(ks and tw.ttype=='king'):all_c.append((d,tw))
+        elif getattr(tr,'name','')=='AutoTurret':
+            # the hero Musketeer's turret locks on to a Crown Tower within its range (Supercell February 2026 note: "making it harder for
+            # Turret to lock on to Crown Towers"; March 2026: range 4 so that it reaches King Towers again)
+            for tw in self.arena.towers:
+                if tw.team==opp and tw.alive and mr<=self._dist(tr,tw)<=tr.rng:near_c.append((self._dist(tr,tw),tw))
         if near_c:
             cands=near_c
         else:

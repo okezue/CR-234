@@ -1,0 +1,14 @@
+[
+ {
+  "card": "royal_hogs",
+  "path": "evo.skills.jump.damage[10]",
+  "value": 43,
+  "note": "Evolved Royal Hogs landing damage 43 at level 11, not the legacy 84 (data/legacy, unverified January 2026 snapshot, 115 before the March note): Supercell May 2026 balance changes 'Royal Hogs Evolution, Landing Damage: 84 -> 43 (-48%) ... it'll now take the landing of two Evolved Royal Hogs to take out Skeletons' (Skeletons 81 at level 11); Supercell March 2026 balance changes '115 -> 84 (-27%)'; no later note changes it before the games (31 August to 6 September 2026); wiki Royal Hogs/Evolution history 2/3/2026 and 4/5/2026. The game data export has no landing value. https://supercell.com/en/games/clashroyale/blog/release-notes/may-balance-changes-2026/ https://supercell.com/en/games/clashroyale/blog/release-notes/march-balance-changes-2026/"
+ },
+ {
+  "card": "musketeer",
+  "path": "hero.ability.skills.spawn.range",
+  "value": 4.0,
+  "note": "Hero Musketeer's Trusty Turret range 4 tiles, not ClashStrategic's 5.5: Supercell February 2026 balance changes 'Hero Musketeer, Turret Range: 5.5 tiles -> 3.5 tiles (-36%), Deploy Time: 2s -> 1s' and March 2026 balance changes 'Turret Range: 3.5 tiles -> 4 tiles (+14%)'; no later note changes it before the games (31 August to 6 September 2026); wiki Musketeer/Hero turret range 4.0. The turret hitpoints, damage and deploy splash of the wiki and Liquipedia (1536, 140, 204 at level 11) have no primary source (no Supercell note gives them and the export has no turret character), so the legacy values stay. https://supercell.com/en/games/clashroyale/blog/news/february-balance-changes-26/ https://supercell.com/en/games/clashroyale/blog/release-notes/march-balance-changes-2026/"
+ }
+]

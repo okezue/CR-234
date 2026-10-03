@@ -5986,7 +5986,8 @@ def t_evo_rghost_souldiers_fade():
     g.deploy('blue',rg)
     g.run(0.1)
     assert any(s.kind=='invisible' for s in rg.statuses) and not [t for t in g.players['blue'].troops if t.name=='Souldier']
-    d=Dummy('red',9,12,hp=50000,spd=0)
+    # dmg=0: the Souldiers spawn at random offsets, and a 100-damage Dummy one-shots one that lands within its reach
+    d=Dummy('red',9,12,hp=50000,spd=0,dmg=0)
     g.deploy('red',d)
     g.run(3)
     sd=[t for t in g.players['blue'].troops if t.name=='Souldier']

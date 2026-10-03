@@ -268,12 +268,15 @@ def sample(menu,H,G,gen=None):
     i=torch.multinomial(menu.flatten(1).exp()+1e-12,G,replacement=True,generator=gen);return H.gather(1,i//N_CELLS),i%N_CELLS
 
 
-def rollout(models,hs,hand,queue,card,cell,H,actors=None,gen=None):
+def rollout(models,hs,hand,queue,card,cell,H,actors=None,gen=None,nxt=None,trace=None):
     # (M, n) values of the plays (card, cell) at root latents hs (one per member) after H decisions of the models, and (n,) the
-    # disagreement: summed over steps, the largest member distance to the mean predicted summary over the root of its size
+    # disagreement: summed over steps, the largest member distance to the mean predicted summary over the root of its size; nxt, when
+    # given, replaces the queue: nxt(k, card, z) is the menu of decision k + 1 after the play of card at decision k (z the members'
+    # mean predicted summary of decision k + 1); trace, a dict with a set of marks, receives for each mark k the value after k
+    # decisions, the disagreement weighted by the chance that the game reaches each predicted decision, and that chance
     M=len(models);n=len(card);u=torch.zeros(n)
     if H==0:return torch.stack([torch.sigmoid(m.qv(h,m.play(card,cell))) for m,h in zip(models,hs)]),u
-    ret=torch.zeros(M,n);alive=torch.ones(M,n);hand=hand.clone();hs=list(hs);ar=torch.arange(n);nc=models[0].n_card;acts=actors or [None]*M
+    ret=torch.zeros(M,n);alive=torch.ones(M,n);hand=hand.clone();hs=list(hs);ar=torch.arange(n);nc=models[0].n_card;acts=actors or [None]*M;ua=torch.zeros(n)
     for k in range(H):
         if k:
             menu=torch.stack([(a if a is not None else m.actor).menu_logp(h,hand) for m,h,a in zip(models,hs,acts)]).exp().mean(0)
@@ -285,8 +288,12 @@ def rollout(models,hs,hand,queue,card,cell,H,actors=None,gen=None):
         for i_,(m,h,x) in enumerate(zip(models,hs,a)):
             o=m.play(oc,ocl);d=torch.sigmoid(m.tim(torch.cat([h,x,o],1))[:,1]);ret[i_]+=alive[i_]*d*torch.sigmoid(m.qv(h,x));alive[i_]=alive[i_]*(1-d)
             hs[i_]=m.step(h,x,o);zp.append(m.dec(hs[i_]))
-        zp=torch.stack(zp);u=u+(zp-zp.mean(0)).norm(dim=2).max(0).values/math.sqrt(zp.shape[2])
-        if k<H-1:
+        zp=torch.stack(zp);du=(zp-zp.mean(0)).norm(dim=2).max(0).values/math.sqrt(zp.shape[2]);u=u+du
+        if trace is not None:
+            ua=ua+alive.mean(0)*du
+            if k+1 in trace['marks']:trace[k+1]=(ret+alive*torch.stack([torch.sigmoid(m.v(h)[:,0]) for m,h in zip(models,hs)]),ua.clone(),alive.mean(0))
+        if k<H-1 and nxt is not None:hand=nxt(k,card,zp.mean(0))
+        elif k<H-1:
             hit=hand==card[:,None];hr=hit.any(1);nx=queue[:,k] if k<queue.shape[1] else torch.full((n,),-1,dtype=hand.dtype)
             hand[ar[hr],hit.float().argmax(1)[hr]]=nx[hr]
     return ret+alive*torch.stack([torch.sigmoid(m.v(h)[:,0]) for m,h in zip(models,hs)]),u
