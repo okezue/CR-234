@@ -388,19 +388,23 @@ class Game:
         else:
             mlvl=p.card_levels.get(actual,p.king_lvl)
         return mk_card(actual,mlvl,team,x,y,evolved=evolved,hero=hero)
-    def _free_spot(self,tr):
+    def _free_spot(self,tr,x0=None,y0=None):
         # a ground unit born on a tower footprint, a fence or open water (a spawner's forward spot behind the King Tower) cannot walk
-        # off it; it takes the nearest walkable tile centre instead
+        # off it; it takes the nearest walkable tile centre instead; a unit set down after a move from (x0,y0) takes, of equally near
+        # centres, the one toward where it came from (a dash onto a tower's centre has four)
         rj=getattr(tr,'hovering',False) or any(isinstance(c,RiverJump) for c in getattr(tr,'components',[]))
         if getattr(tr,'transport','Ground')=='Air' or getattr(tr,'is_building',False) or has(tr,'burrowed') or self._walkable(tr.x,tr.y,rj):return
+        a=self.arena;best=self._nearest_tile(tr,int(tr.x),int(tr.y),rj,x0,y0)
+        if best:tr.x,tr.y=best[1],best[2]
+    def _nearest_tile(self,tr,ix,iy,rj,x0=None,y0=None):
         a=self.arena;best=None
-        for ty in range(max(0,int(tr.y)-3),min(a.H,int(tr.y)+4)):
-            for tx in range(max(0,int(tr.x)-3),min(a.W,int(tr.x)+4)):
+        for ty in range(max(0,iy-3),min(a.H,iy+4)):
+            for tx in range(max(0,ix-3),min(a.W,ix+4)):
                 cx,cy=tx+0.5,ty+0.5
                 if not self._walkable(cx,cy,rj):continue
-                d=math.hypot(cx-tr.x,cy-tr.y)
-                if best is None or d<best[0]:best=(d,cx,cy)
-        if best:tr.x,tr.y=best[1],best[2]
+                d=math.hypot(cx-tr.x,cy-tr.y);k=(d,) if x0 is None else (round(d,9),math.hypot(cx-x0,cy-y0))
+                if best is None or k<best[0]:best=(k,cx,cy)
+        return best
     def _place(self,team,tr,dep):
         # a deploying unit stands on the field, targetable and damageable, and acts only when its deploy time is over; a burrowing unit
         # is governed by its Burrow instead (the deploy is folded into the travel, or follows it for the Goblin Drill)
