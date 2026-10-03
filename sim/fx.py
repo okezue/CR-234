@@ -287,6 +287,9 @@ def tower_tiers(tiers,dmg,ct):
     # Crown Tower damage follows the ramp at the card's sourced tier-one ratio; the game data carries no crownTowerDamagePercent on the
     # Inferno Dragon, Inferno Tower or Mighty Miner, so their towerDamage equals damage and every tier lands in full
     return [t*ct//dmg for t in tiers] if ct and dmg else None
+def beaming(tr,g):
+    t=getattr(tr,'tgt',None)
+    return t is not None and t.alive and not hidden(t) and getattr(tr,'min_rng',0)<=g._dist(tr,t)<=tr.rng
 class RampUp(Component):
     def __init__(self,stages,durations,ct_stages=None):
         self.stages=stages;self.durations=durations;self.ct_stages=ct_stages
@@ -306,13 +309,18 @@ class RampUp(Component):
         if stn or frz:self._reset(tr);return
         tgt=getattr(tr,'tgt',None)
         self.shielded=getattr(tgt,'shield_hp',0)>0
-        # The evolution has separate retention handling; this guard covers ordinary ramps.
-        if not any(isinstance(c,EvoInfernoDragon) for c in tr.components):
-            if tgt is None or not tgt.alive or hidden(tgt) or not getattr(tr,'min_rng',0)<=g._dist(tr,tgt)<=tr.rng:
-                self._reset(tr);return
-        if tgt is not self.cur_tgt or (self.cur_tgt and not getattr(self.cur_tgt,'alive',True)):
-            self.cur_tgt=tgt;self.elapsed=0;self._stage(tr,0)
-            return
+        if any(isinstance(c,EvoInfernoDragon) for c in tr.components):
+            # the evolution's stage advances only while its beam is on a target and carries over to the next target; EvoInfernoDragon drops it
+            # after the retain time without a beam (export InfernoDragon_EV1: IncrementAttackCount on each attack, ResetDecayCounter on starting
+            # one; wiki Inferno Dragon/Evolution)
+            if not beaming(tr,g):return
+            if self.cur_tgt is None:self.cur_tgt=tgt;self._stage(tr,0);return
+            self.cur_tgt=tgt
+        else:
+            if not beaming(tr,g):self._reset(tr);return
+            if tgt is not self.cur_tgt or (self.cur_tgt and not getattr(self.cur_tgt,'alive',True)):
+                self.cur_tgt=tgt;self.elapsed=0;self._stage(tr,0)
+                return
         self.elapsed+=g.DT
         t=0
         for i,d in enumerate(self.durations):
@@ -1366,17 +1374,17 @@ class EvoMegaKnight(Component):
         dy=twy-tgt.y
         if abs(dy)>0.1:y0=tgt.y;tgt.y+=dy/abs(dy)*min(self.kb,abs(dy));g._hold_in(tgt,tgt.x,y0)
 class EvoInfernoDragon(Component):
+    # the fourth stage comes after 20 s of beam and a stage is kept retain seconds without a beam, flying included (wiki Inferno
+    # Dragon/Evolution: "After 20 seconds of damage", the stage kept after a kill while it does not hit; Supercell June 2026 retention 9 -> 7 s)
     def __init__(self,s4_dmg,retain_sec,s4_time,s4_ct=0):
         self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg;self.s4_ct=s4_ct
-        self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
-    def reset(self,cfg):self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
+        self.idle_timer=0;self.total_beam=0;self.s4_active=False
+    def reset(self,cfg):self.idle_timer=0;self.total_beam=0;self.s4_active=False
     def on_tick(self,tr,g):
         if has(tr,'stun','freeze'):
             self.total_beam=0;self.s4_active=False;return
-        tgt=getattr(tr,'tgt',None)
-        if tgt:
+        if beaming(tr,g):
             self.idle_timer=0
-            if tgt is not self.last_tgt:self.last_tgt=tgt
             self.total_beam+=g.DT
             if self.total_beam>=self.s4_time:self.s4_active=True
             if self.s4_active:
