@@ -141,7 +141,8 @@ def attach(cfg,c,sk,lvl,chain=None):
         sl=sk['slow'];cfg['slow_dur']=sl['duration'];cfg['slow_val']=mult(sl.get('speedMultiplier') or 0)
     if ps.get('character') and ps.get('pauseTime') and not ps.get('hpPercent') and not egg:
         fd=ps.get('firstDelay');cs.append(fx.SpawnTimer(unit(c,ps,lvl),ps['pauseTime'],count(ps.get('count')),ps['pauseTime'] if fd is None else fd,
-                                                            ps.get('spawnInterval') or 0,ps.get('range') or 0))
+                                                            ps.get('spawnInterval') or 0,ps.get('range') or 0,ps.get('spawnRadius') or 0,
+                                                            ps.get('angleShift') or 0))
     az=sk.get('areaDamageOnSpawn',{})
     if not empty(az.get('damage')):
         cs.append(fx.SpawnZap(kb if 'dash' in sk else 0));cfg['spawn_zap_dmg']=at(az['damage'],lvl);cfg['spawn_zap_r']=az.get('radius') or 0
@@ -172,6 +173,7 @@ def attach(cfg,c,sk,lvl,chain=None):
         if pi.get('bounces'):
             cs.append(fx.SuicideChain() if cfg['is_suicide'] else fx.ChainAttack())
             cfg['chain_count']=pi['bounces']+1;cfg['chain_range']=pi.get('bounceDistance') or 0;cfg['chain_stun']=st['duration']
+            cfg['chain_period']=pi.get('bounceDelay') or 0
         elif st.get('targets')==2:
             cfg['atk_type']='single_target';cfg['splash_r']=0;cfg['components']=[x for x in cs if not isinstance(x,fx.SplashAttack)];cs=cfg['components']
             cs.append(fx.DualTarget());cfg['stun_dur']=st['duration']
@@ -370,8 +372,9 @@ def evolve(c,k,s,lvl,tr):
     # its base character Barbarian and put a full Barbarian beside the ghost
     DUP={'royal_recruits':fx.Charge,'bats':fx.HealPulse,'lumberjack':fx.DeathSpawn}
     if k in DUP:tr.components=[x for x in tr.components if type(x) is not DUP[k]]
-    # the evolved bolt stuns and deals full damage on the base card's three targets; the bounces after them are the evolution
-    if k=='electro_dragon':tr.chain_count=c['skills']['pierce']['bounces']+1
+    # the evolved bolt stuns and deals full damage on the base card's three targets, at the base card's pace; the bounces after them are the
+    # evolution
+    if k=='electro_dragon':tr.chain_count=c['skills']['pierce']['bounces']+1;tr.chain_period=c['skills']['pierce'].get('bounceDelay') or 0
     if k=='skeleton_barrel':tr.death_dmg=at(sd['damage'],lvl)
     if k=='royal_hogs':tr.transport='Air'
     if k=='battle_ram':tr.is_suicide=False

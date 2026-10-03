@@ -1,5 +1,6 @@
 import math
 import random
+from copy import copy
 from sim.units import Status,Troop,Building,has,hidden
 from sim.arena import Arena
 from sim.knobs import K
@@ -10,6 +11,12 @@ class Component:
     def on_take_damage(self,tr,d,g):pass
     def on_death(self,tr,g):pass
     def modify_target(self,tr,c,g):return c
+    def own(self,cfg):
+        # a Clone copy gets its own component: the current state copied, an attack in progress restarted by reset, which also puts the
+        # troop's resting stats in the copy's cfg (wiki Clone: the cloned unit does not inherit the troop's current status, 13/3/2017 clones
+        # spawn without being charged, and cloning does not interrupt the original's actions)
+        c=copy(self);c.__dict__.update({k:copy(v) for k,v in vars(self).items() if isinstance(v,(list,dict,set))});c.reset(cfg);return c
+    def reset(self,cfg):pass
 def pos(u):return (u.cx,u.cy) if hasattr(u,'cx') else (u.x,u.y)
 def enemies(g,team,air=True,towers=True):
     opp=g._opp(team)
@@ -168,6 +175,9 @@ class Charge(Component):
         if self.orig_spd is not None:tr.spd=self.orig_spd
         if hasattr(self,'_ofh'):tr.fhspd=self._ofh
         self.charged=False;self.moved=0
+    def reset(self,cfg):
+        if self.charged:cfg.update(spd=self.orig_spd,fhspd=self._ofh)
+        self.moved=0;self.charged=False;self.px=self.py=self.orig_spd=None
 def spawned_child(parent,x,y,cfg):
     child=Troop(parent.team,x,y,dict(cfg,components=list(cfg.get('components',[]))))
     if getattr(parent,'is_clone',False):
@@ -176,9 +186,11 @@ def spawned_child(parent,x,y,cfg):
     return child
 class SpawnTimer(Component):
     # a wave appears in front of the spawner (toward its target, else toward the enemy side), its units stagger seconds apart; a spawner with a
-    # spawn range (Goblin Hut) sleeps until an enemy is within it and then spawns its first unit after the first delay
-    def __init__(self,cfg,interval,count,first_delay,stagger=0,rng=0):
-        self.cfg=cfg;self.interval=interval;self.count=count;self.stagger=stagger;self.rng=rng
+    # spawn radius stands its wave evenly on that circle around itself, the first shift degrees from the front (wiki Witch and Night Witch:
+    # a group surrounding her; RoyaleAPI cr-api-data spawn_radius, spawn_angle_shift); a spawner with a spawn range (Goblin Hut) sleeps until
+    # an enemy is within it and then spawns its first unit after the first delay
+    def __init__(self,cfg,interval,count,first_delay,stagger=0,rng=0,radius=0,shift=0):
+        self.cfg=cfg;self.interval=interval;self.count=count;self.stagger=stagger;self.rng=rng;self.radius=radius;self.shift=shift
         self.timer=self.first=first_delay
     def on_tick(self,tr,g):
         if has(tr,'burrowed','deploying'):return
@@ -192,13 +204,15 @@ class SpawnTimer(Component):
                 tx,ty=pos(tgt);dx=tx-tr.x;dy=ty-tr.y;ds=math.hypot(dx,dy)
                 if ds>0:dx/=ds;dy/=ds
             x,y,team=tr.x+dx*2.0,tr.y+dy*2.0,tr.team
-            def one(g):
+            ring=[(tr.x+self.radius*(dx*math.cos(a)-dy*math.sin(a)),tr.y+self.radius*(dx*math.sin(a)+dy*math.cos(a)))
+                  for a in (math.radians(self.shift+360*i/self.count) for i in range(self.count))] if self.radius else None
+            def one(g,i=0):
                 if not tr.alive:return
-                t=spawned_child(tr,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),self.cfg)
+                t=spawned_child(tr,*(ring[i] if ring else (x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0))),self.cfg)
                 t._spawner=tr;tr._spawned=t._spawn_no=getattr(tr,'_spawned',0)+1;g._place(team,t,self.cfg.get('deploy',0))
             for i in range(self.count):
-                if i and self.stagger:g.spells.append(Timer(i*self.stagger,one,x,y,team))
-                else:one(g)
+                if i and self.stagger:g.spells.append(Timer(i*self.stagger,lambda g,i=i:one(g,i),x,y,team))
+                else:one(g,i)
             self.timer=self.interval
 class DeathDamage(Component):
     # a fuse (Balloon, Giant Skeleton, Bomb Tower: 3 s) leaves the bomb where the body fell and blasts whoever is there when it goes off
@@ -279,6 +293,10 @@ class RampUp(Component):
         if self.ct_stages:tr.ct_dmg=self.ct_stages[i]
     def _reset(self,tr):
         self.cur_tgt=None;self.elapsed=0;self._stage(tr,0)
+    def reset(self,cfg):
+        cfg['dmg']=self.stages[0]
+        if self.ct_stages:cfg['ct_dmg']=self.ct_stages[0]
+        self.cur_tgt=None;self.elapsed=0;self.shielded=False
     def on_tick(self,tr,g):
         stn=any(s.kind=='stun' for s in getattr(tr,'statuses',[]))
         frz=any(s.kind=='freeze' for s in getattr(tr,'statuses',[]))
@@ -350,19 +368,31 @@ def bounce(g,opp,prev,r,skip):
         d=math.hypot(tw.cx-px,tw.cy-py)
         if d<=bd:bd=d;best=tw
     return best
-def chain(tr,tgt,g):
-    cc=getattr(tr,'chain_count',1);cr=getattr(tr,'chain_range',0);cs=getattr(tr,'chain_stun',0)
-    opp=g._opp(tr.team)
-    if cs>0 and hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',cs))
-    hit=[tgt]
-    for _ in range(cc-1):
-        best=bounce(g,opp,hit[-1],cr,hit)
-        if not best:break
-        best.take_damage(tr.dmg)
-        if cs>0 and hasattr(best,'statuses'):best.statuses.append(Status('stun',cs))
+class Chain:
+    # the bounces after the first target land one every period (wiki Electro Spirit 1/12/2025: Shock Chain Period 0.25 s), each from the
+    # last body hit; the chain runs on after the caster is gone
+    def __init__(self,team,hit,n,dmg,r,stun,period,name=''):
+        self.team=team;self.hit=hit;self.n=n;self.dmg=dmg;self.radius=r;self.stun=stun;self.period=period;self.t=period
+        self.active=True;self.name=name;self.x,self.y=pos(hit[-1])
+    def jump(self,g):
+        best=bounce(g,g._opp(self.team),self.hit[-1],self.radius,self.hit)
+        if not best:return False
+        best.take_damage(self.dmg)
+        if self.stun>0 and hasattr(best,'statuses'):best.statuses.append(Status('stun',self.stun))
         if hasattr(best,'ttype') and not best.alive:g._tower_down(best)
-        hit.append(best)
-    tr.chain_hit=hit
+        self.hit.append(best);self.x,self.y=pos(best);return True
+    def tick(self,dt,g):
+        self.t-=dt
+        if self.t>1e-9:return
+        self.t=self.period
+        if not self.jump(g) or len(self.hit)>=self.n:self.active=False
+def chain(tr,tgt,g):
+    cc=getattr(tr,'chain_count',1);cs=getattr(tr,'chain_stun',0);p=getattr(tr,'chain_period',0)
+    if cs>0 and hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',cs))
+    c=Chain(tr.team,[tgt],cc,tr.dmg,getattr(tr,'chain_range',0),cs,p,tr.name)
+    if p>0 and cc>1:g.spells.append(c)
+    while p<=0 and len(c.hit)<cc and c.jump(g):pass
+    tr.chain_hit=c.hit
 class SuicideChain(Component):
     def on_attack(self,tr,tgt,g):
         chain(tr,tgt,g);tr.is_suicide=True
@@ -464,6 +494,9 @@ class BanditDash(Component):
     def _end(self,tr):
         if self.osp is not None:tr.spd=self.osp;self.osp=None
         self.charging=self.dashing=False;self.dtgt=None;tr.statuses=[s for s in tr.statuses if s.kind!='invincible']
+    def reset(self,cfg):
+        if self.osp is not None:cfg['spd']=self.osp
+        self.charging=self.dashing=False;self.timer=0;self.osp=self.dtgt=self.to=None
     def on_tick(self,tr,g):
         if self.dashing:
             t=self.dtgt
@@ -494,6 +527,9 @@ class Hook(Component):
     def _end(self,tr):
         if self.osp is not None:tr.spd=self.osp;self.osp=None
         self.charging=False;self.htgt=None
+    def reset(self,cfg):
+        if self.osp is not None:cfg['spd']=self.osp
+        self.charging=self.flying=False;self.timer=0;self.osp=self.htgt=self.pull=None
     def _hit(self,tr,t,g):
         self.flying=False
         if not t.alive or not tr.alive:return
@@ -1238,6 +1274,9 @@ class MKJump(Component):
         self.osp=None;self.jtgt=None;self.jdist=0
     def _valid_target(self,tr,tgt):
         return tgt is not None and tgt.alive and tgt.team!=tr.team and not hidden(tgt) and getattr(tgt,'transport','Ground')=='Ground'
+    def reset(self,cfg):
+        if self.osp is not None:cfg['spd']=self.osp
+        self.charging=self.airborne=False;self.timer=0;self.osp=self.jtgt=None;self.jdist=0
     def on_tick(self,tr,g):
         if self.airborne:
             # stun and freeze persist through a normal landing (wiki Mega Knight)
@@ -1303,6 +1342,7 @@ class EvoInfernoDragon(Component):
     def __init__(self,s4_dmg,retain_sec,s4_time,s4_ct=0):
         self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg;self.s4_ct=s4_ct
         self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
+    def reset(self,cfg):self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
     def on_tick(self,tr,g):
         if has(tr,'stun','freeze'):
             self.total_beam=0;self.s4_active=False;return
@@ -1487,6 +1527,8 @@ class Hatch(Component):
 class CurseOnHit(Component):
     # every hit marks the troop for dur seconds; a marked troop that dies leaves a hog for the witch's side
     def __init__(self,cfg,dur):self.cfg=cfg;self.dur=dur;self.marks={}
+    # a copy has marked nobody, so a troop marked by the original leaves one hog
+    def reset(self,cfg):self.marks={}
     def on_attack(self,tr,tgt,g):
         if not hasattr(tgt,'ttype') and not getattr(tgt,'is_building',False):self.marks[id(tgt)]=(tgt,g.t+self.dur)
     def on_tick(self,tr,g):

@@ -1,0 +1,38 @@
+[
+ {
+  "card": "electro_spirit",
+  "path": "skills.pierce.bounceDelay",
+  "value": 0.25,
+  "note": "Electro Spirit chain: one bounce every 0.25 s after the first target. Supercell December 2025 balance changes (1 December 2025): 'Electro Spirit Chain Speed: 0.2s -> 0.25 (+25%) ... Its Chain Speed is being rewired to make it less efficient at handling swarm units'; wiki Electro Spirit history 1/12/2025, the Heroes Update, 'increased it's Shock Chain Period to 0.25 seconds (from 0.2 seconds)'; no later note changes it before the games (31 August to 6 September 2026). ClashStrategic cs2.4.0 gave 0.1, which the engine never read (every bounce landed in one tick); the game data export carries no chain period. https://supercell.com/en/games/clashroyale/blog/release-notes/december-balance-changes/ https://clashroyale.fandom.com/wiki/Electro_Spirit"
+ },
+ {
+  "card": "electro_dragon",
+  "path": "skills.pierce.bounceDelay",
+  "value": null,
+  "note": "No source gives the base Electro Dragon's chain period (wiki Electro Dragon and Electro Dragon/Evolution pages, Supercell notes, game data export), so its three hits keep landing together, the evolved dragon's first three too: the ClashStrategic cs2.4.0 template value 0.15, unread until the engine began to read bounceDelay as the chain period (the Electro Spirit's cs2.4.0 0.1 was not the game's 0.2 or 0.25 either), is dropped. The evolution's own record (evo.skills.pierce.bounceDelay 0.15) still paces its bounces after the third, unchanged. https://clashroyale.fandom.com/wiki/Electro_Dragon"
+ },
+ {
+  "card": "witch",
+  "path": "skills.periodicSpawn.spawnRadius",
+  "value": 2.0,
+  "note": "Each wave of four Skeletons stands on a 2-tile circle around the Witch (the evolved Witch inherits it): wiki Witch 'Every 7 seconds, the Witch will passively summon a group of four Skeletons surrounding her'; wiki Witch/Evolution 'the Skeletons spawned around her'; RoyaleAPI cr-api-data characters Witch spawn_radius 2000, spawn_number 4. The engine stood the wave 2 tiles ahead with a 1-tile jitter. The game data export carries no spawn radius. https://clashroyale.fandom.com/wiki/Witch https://github.com/RoyaleAPI/cr-api-data"
+ },
+ {
+  "card": "witch",
+  "path": "skills.periodicSpawn.angleShift",
+  "value": 0,
+  "note": "The first Skeleton of a wave at the front, the others 90 degrees apart: RoyaleAPI cr-api-data characters Witch has no spawn_angle_shift (0), where Night Witch has 90. Wiki Witch: 'Placing the Witch behind the King Tower will have 1 of the Skeletons spawn in the other lane', one Skeleton to a side. https://github.com/RoyaleAPI/cr-api-data https://clashroyale.fandom.com/wiki/Witch"
+ },
+ {
+  "card": "night_witch",
+  "path": "skills.periodicSpawn.spawnRadius",
+  "value": 1.5,
+  "note": "Each pair of Bats stands on a 1.5-tile circle around the Night Witch: wiki Night Witch 'Every 5 seconds, the Night Witch will passively summon a group of two Bats surrounding her'; RoyaleAPI cr-api-data characters DarkWitch spawn_radius 1500, spawn_number 2 (death_spawn_radius 500 is the spawnOnDeath radius 0.5 already in the data). The game data export carries no spawn radius. https://clashroyale.fandom.com/wiki/Night_Witch https://github.com/RoyaleAPI/cr-api-data"
+ },
+ {
+  "card": "night_witch",
+  "path": "skills.periodicSpawn.angleShift",
+  "value": 90,
+  "note": "The two Bats at her sides, 90 degrees from the front: RoyaleAPI cr-api-data characters DarkWitch spawn_angle_shift 90. https://github.com/RoyaleAPI/cr-api-data"
+ }
+]

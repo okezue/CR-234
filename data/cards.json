@@ -1852,7 +1852,7 @@
    "sightRange": 5.5,
    "skills": {
     "pierce": {
-     "bounceDelay": 0.15,
+     "bounceDelay": null,
      "bounceDistance": 4.0,
      "bounceMode": "nearest",
      "bounces": 2,
@@ -1879,6 +1879,7 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.pierce.bounceDelay": "patch:2026-10-02cw",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult"
@@ -1994,7 +1995,7 @@
    "sightRange": 5.5,
    "skills": {
     "pierce": {
-     "bounceDelay": 0.1,
+     "bounceDelay": 0.25,
      "bounceDistance": 3.0,
      "bounceMode": "nearest",
      "bounces": 8,
@@ -2016,6 +2017,7 @@
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.pierce.bounceDelay": "patch:2026-10-02cw",
     "skills.pierce.bounceDistance": "patch:2026-08-26",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -6680,10 +6682,12 @@
    "sightRange": 5.5,
    "skills": {
     "periodicSpawn": {
+     "angleShift": 90,
      "character": "Bat",
      "count": 2,
      "firstDelay": 1.0,
-     "pauseTime": 5
+     "pauseTime": 5,
+     "spawnRadius": 1.5
     },
     "spawnOnDeath": {
      "character": "Bat",
@@ -6697,7 +6701,9 @@
    "src": {
     "*": "cs2.4.0",
     "mass": "legacy:hidden_stats.mass",
+    "skills.periodicSpawn.angleShift": "patch:2026-10-02cw",
     "skills.periodicSpawn.firstDelay": "legacy:spawn",
+    "skills.periodicSpawn.spawnRadius": "patch:2026-10-02cw",
     "skills.spawnOnDeath.count": "legacy:death_spawn",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9360,6 +9366,7 @@
    "sightRange": 5.5,
    "skills": {
     "periodicSpawn": {
+     "angleShift": 0,
      "character": "Skeleton",
      "count": 4,
      "firstDelay": 1.0,
@@ -9367,7 +9374,8 @@
      "projectile": {
       "count": 1,
       "speed": 0
-     }
+     },
+     "spawnRadius": 2.0
     }
    },
    "speed": 60,
@@ -9383,8 +9391,10 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "projectile.speed": "gd:debfe1e2",
+    "skills.periodicSpawn.angleShift": "patch:2026-10-02cw",
     "skills.periodicSpawn.firstDelay": "legacy:spawn",
     "skills.periodicSpawn.projectile": "patch:2026-09-08",
+    "skills.periodicSpawn.spawnRadius": "patch:2026-10-02cw",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
     "stats.towerDamage[]": "derived:levelMult",
@@ -9718,7 +9728,7 @@
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince); forcedKnockback: it also ignores the pushes that override ordinary immunity, the Monk combo, the Evolved Mega Knight uppercut and the Log's roll (Monk)",
    "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits, Royal Hogs)",
    "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
-   "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, shield.damage/radius/pushbackDistance (blast when the shield breaks), poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
+   "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it)/spawnRadius (the wave stands evenly on a circle of this radius around the spawner)/angleShift (degrees from the spawner's front to the first unit of that circle), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, shield.damage/radius/pushbackDistance (blast when the shield breaks), poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, pierce.bounceDelay (seconds between chain bounces; null: they land together), jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
    "produceElixir": "interval and amount",
    "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still",
    "recoil": "self knockback per shot",
@@ -9881,6 +9891,10 @@
    {
     "name": "data/patches/2026-10-01u.json",
     "tag": "patch:2026-10-01u"
+   },
+   {
+    "name": "data/patches/2026-10-02cw.json",
+    "tag": "patch:2026-10-02cw"
    },
    {
     "name": "data/patches/2026-10-02cy.json",
