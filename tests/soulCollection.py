@@ -68,9 +68,10 @@ def t_cloned_collector_does_not_double_credit_original():
     g,king,sc=setup();g.run(2.2)
     create('clone',11,'blue',king.x,king.y).apply(g)
     clone=next(t for t in g.players['blue'].troops if getattr(t,'is_clone',False))
-    assert next(c for c in clone.components if isinstance(c,SoulCollect)) is sc
+    # the copy owns its collector (wiki Clone: an independent copy), which a cloned king never fills
+    own=next(c for c in clone.components if isinstance(c,SoulCollect));assert own is not sc
     t=deploy(g,'knight','red');t.take_damage(t.hp);g._proc_deaths()
-    assert sc.souls==1
+    assert sc.souls==1 and own.souls==0
 
 
 def t_two_living_kings_collect_each_eligible_death():

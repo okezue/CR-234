@@ -85,14 +85,19 @@ def t_retired_electro_spirit_cannot_launch_again():
 
 
 def t_retired_electro_spirit_chains_nine_targets_from_the_impact():
-    # the target and a line of enemies 1 tile apart: the jump strikes nine of them, each for the full damage with a 0.5 s stun
+    # the target and a line of enemies 1 tile apart: the jump strikes nine of them, one every 0.25 s (Supercell December 2025 Chain Speed
+    # 0.25 s), each for the full damage with a 0.5 s stun from its own hit
     g=quiet();s=spirit(g,'blue',4,10.5)
     line=[target(g,'red',4+i,13.7) for i in range(10)]
     launch(g)
     assert not s.alive and all(u.hp==5000 for u in line)
-    impact(g,line[0])
+    impact(g,line[0]);seen={}
+    while len(seen)<9 and g.t<6:
+        seen.update({i:[st.dur for st in stuns(u)] for i,u in enumerate(line) if u.hp<5000 and i not in seen})
+        if len(seen)<9:g.tick()
+    g.run(0.5)
     assert [5000-u.hp for u in line]==[s.dmg]*9+[0]
-    assert all(len(stuns(u))==1 and 0.4<stuns(u)[0].dur<=0.5 for u in line[:9]) and not stuns(line[9])
+    assert all(len(seen[i])==1 and 0.4<seen[i][0]<=0.5 for i in range(9)) and not stuns(line[9])
 
 
 def t_retired_electro_spirit_chain_reach_is_measured_from_the_target():
