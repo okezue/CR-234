@@ -326,9 +326,12 @@ class RampUp(Component):
             self.elapsed=0;self._stage(tr,0)
         self.shielded=getattr(tgt,'shield_hp',0)>0
 class RageDrop(Component):
-    def __init__(self,radius,dur,boost):
-        self.radius=radius;self.dur=dur;self.boost=boost
+    # the Lumberjack's Rage hits enemies in its radius once, Crown Towers at ct (export BarbarianRageDamage 70 at level 1, crownTowerDamagePercent
+    # -70; wiki Lumberjack rage_dmg_11 179, rage_crown_11 54)
+    def __init__(self,radius,dur,boost,dmg=0,ct=0):
+        self.radius=radius;self.dur=dur;self.boost=boost;self.dmg=dmg;self.ct=ct
     def on_death(self,tr,g):
+        for e in near(g,tr.team,tr.x,tr.y,self.radius) if self.dmg else ():hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g)
         for ally in g.players[tr.team].troops:
             if not ally.alive or ally is tr:continue
             d=math.sqrt((ally.x-tr.x)**2+(ally.y-tr.y)**2)

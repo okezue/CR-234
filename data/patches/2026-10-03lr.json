@@ -1,0 +1,8 @@
+[
+ {
+  "card": "lumberjack",
+  "path": "skills.areaDamageOnDeath.towerDamage[10]",
+  "value": 54,
+  "note": "The Lumberjack's death Rage deals 54 to Crown Towers at level 11 (179 to troops): the game data export's BarbarianRageDamage (spawned by the BarbarianRage area of the RageBarbarianBottle) has damage 70 at level 1 (179.2 at level 11) and crownTowerDamagePercent -70 (53.8); wiki Lumberjack and Lumberjack/Evolution rage_dmg_11 179, rage_crown_11 54. https://clashroyale.fandom.com/wiki/Lumberjack"
+ }
+]

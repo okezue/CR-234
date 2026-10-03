@@ -5518,7 +5518,8 @@
     "areaDamageOnDeath": {
      "areaEffect": "BarbarianRage",
      "damage": [null, null, null, null, null, null, null, null, 148, 163, 179, 196, 216, 237, 260, 286],
-     "radius": 3.0
+     "radius": 3.0,
+     "towerDamage": [null, null, null, null, null, null, null, null, 44, 48, 54, 59, 64, 71, 78, 85]
     },
     "boost": {
      "duration": 5.5,
@@ -5541,6 +5542,8 @@
     "evo.stats.towerDamage[]": "derived:levelMult",
     "mass": "legacy:hidden_stats.mass",
     "skills.areaDamageOnDeath.damage[]": "derived:levelMult",
+    "skills.areaDamageOnDeath.towerDamage": "patch:2026-10-03lr",
+    "skills.areaDamageOnDeath.towerDamage[]": "derived:levelMult",
     "skills.boost.radius": "legacy:death_mechanic.rage",
     "stats.damage[]": "derived:levelMult",
     "stats.hitpoints[]": "derived:levelMult",
@@ -9714,7 +9717,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-10-02",
+  "built": "2026-10-03",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9903,6 +9906,10 @@
    {
     "name": "data/patches/2026-10-02hm.json",
     "tag": "patch:2026-10-02hm"
+   },
+   {
+    "name": "data/patches/2026-10-03lr.json",
+    "tag": "patch:2026-10-03lr"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",

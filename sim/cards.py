@@ -134,7 +134,8 @@ def attach(cfg,c,sk,lvl,chain=None):
         cfg['death_dmg']=at(dd['damage'],lvl);cfg['death_splash_r']=dd.get('radius') or 0
         sl=sk.get('slow',{})
         if 'boost' in sk:
-            b=sk['boost'];cs.append(fx.RageDrop(b.get('radius') or dd.get('radius') or 0,b.get('duration') or 0,mult(b.get('speedMultiplier') or 0)-1))
+            b=sk['boost'];cs.append(fx.RageDrop(b.get('radius') or dd.get('radius') or 0,b.get('duration') or 0,mult(b.get('speedMultiplier') or 0)-1,
+                                                cfg['death_dmg'],at(dd.get('towerDamage'),lvl) or 0))
         elif sl.get('duration') and cfg['atk_type']!='area':cs.append(fx.DeathNova(-(sl.get('speedMultiplier') or 0),sl['duration']))
         else:cs.append(fx.DeathDamage(kb,dd.get('fuse') or 0))
     elif sk.get('slow',{}).get('duration') and 'secondaryAttack' not in sk:
