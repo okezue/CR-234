@@ -174,9 +174,9 @@ def planted(evals,B=200,seed=0):
     # 24 anchors with true gains -1 to +6 points and the two trained arms (qgroup +20, wmgroup +7) placed among them; every evaluator rates
     # the anchors in proportion to their true gain and each arm its factor times its share; resamples rescale and add a little noise
     names=['bc','wm/qgroup']+[f'p{i}' for i in range(12)]+['wm/wmgroup']+[f'p{i}' for i in range(12,24)];a=np.linspace(-0.01,0.06,24)
-    t=np.r_[0,0.20,a[:12],0.07,a[12:]];rng=np.random.default_rng(seed);c=1+0.1*np.tile([1.0,-1.0],B//2);pt={};bt={}
+    t=np.r_[0,0.20,a[:12],0.07,a[12:]];rng=np.random.default_rng(seed);c=1+0.1*np.tile([1.0,-1.0],B//2);pt={};bt={};iq,iw=1,names.index('wm/wmgroup')
     for e in evals:
-        s,w,q=PLANT.get(e,(0.01,1.0,1.0));g=s*t;g[1]*=q;g[13]*=w;n=rng.normal(0,0.002*s,(B,len(t)));n[:,0]=0;pt[e]=g;bt[e]=c[:,None]*g+n
+        s,w,q=PLANT.get(e,(0.01,1.0,1.0));g=s*t;g[iq]*=q;g[iw]*=w;n=rng.normal(0,0.002*s,(B,len(t)));n[:,0]=0;pt[e]=g;bt[e]=c[:,None]*g+n
     tr={x:{'dwr':(float(v),float(v)-0.01,float(v)+0.01),'verdict':'improves' if v>0.01 else 'no change'} for x,v in zip(names,t)}
     return names,pt,bt,tr
 
@@ -198,10 +198,10 @@ def t_assess_scores_the_registered_rules_against_the_anchors():
     # lower_min is class_min minus 1.645 of its bootstrap sd; an unbiased evaluator rates both arms like the anchors
     s,sb=sc['class_min'];assert np.allclose(sc['lower_min'][0],s-1.645*sb.std(0)) and math.isclose(r('split_model','wmgroup'),1)
     # an evaluator whose anchor mean gain is not positive is left out of a mean rule with a notice; a minimum over it has no score
-    pt['X']=-pt['M70.H0'];bt['X']=-bt['M70.H0'];o,_,_=C.assess(pt,bt,tr,names,{'m':{'kind':'mean','bank':['M70.H0','X'],'excl':None}},log=log)
-    assert len(msgs)==1 and msgs[0].startswith('notice: m leaves out X where') and '200 of 200' in msgs[0] and math.isclose(o['m']['rho|wm/wmgroup'],1.2)
-    an=np.array([i for i,x in enumerate(names) if x[0]=='p']);n=C.unit_notices(pt,bt,{'n':{'kind':'min','families':[['X'],['M70.H0']]}},an)
-    assert len(n)==1 and n[0].startswith('notice: n has no score where the anchor mean gain of X is not positive')
+    pt['FX.K8']=-pt['M70.H0'];bt['FX.K8']=-bt['M70.H0'];o,_,_=C.assess(pt,bt,tr,names,{'m':{'kind':'mean','bank':['M70.H0','FX.K8'],'excl':None}},log=log)
+    assert len(msgs)==1 and msgs[0].startswith('notice: m leaves out FX.K8 where') and '200 of 200' in msgs[0] and math.isclose(o['m']['rho|wm/wmgroup'],1.2)
+    an=np.array([i for i,x in enumerate(names) if x[0]=='p']);n=C.unit_notices(pt,bt,{'n':{'kind':'min','families':[['FX.K8'],['M70.H0']]}},an)
+    assert len(n)==1 and n[0].startswith('notice: n has no score where the anchor mean gain of FX.K8 is not positive')
 
 
 # ---- the planted world, end to end through train.wmOpe's FQE and this module's rules
