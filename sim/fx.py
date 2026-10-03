@@ -176,9 +176,11 @@ def spawned_child(parent,x,y,cfg):
     return child
 class SpawnTimer(Component):
     # a wave appears in front of the spawner (toward its target, else toward the enemy side), its units stagger seconds apart; a spawner with a
-    # spawn range (Goblin Hut) sleeps until an enemy is within it and then spawns its first unit after the first delay
-    def __init__(self,cfg,interval,count,first_delay,stagger=0,rng=0):
-        self.cfg=cfg;self.interval=interval;self.count=count;self.stagger=stagger;self.rng=rng
+    # spawn radius stands its wave evenly on that circle around itself, the first shift degrees from the front (wiki Witch and Night Witch:
+    # a group surrounding her; RoyaleAPI cr-api-data spawn_radius, spawn_angle_shift); a spawner with a spawn range (Goblin Hut) sleeps until
+    # an enemy is within it and then spawns its first unit after the first delay
+    def __init__(self,cfg,interval,count,first_delay,stagger=0,rng=0,radius=0,shift=0):
+        self.cfg=cfg;self.interval=interval;self.count=count;self.stagger=stagger;self.rng=rng;self.radius=radius;self.shift=shift
         self.timer=self.first=first_delay
     def on_tick(self,tr,g):
         if has(tr,'burrowed','deploying'):return
@@ -192,13 +194,15 @@ class SpawnTimer(Component):
                 tx,ty=pos(tgt);dx=tx-tr.x;dy=ty-tr.y;ds=math.hypot(dx,dy)
                 if ds>0:dx/=ds;dy/=ds
             x,y,team=tr.x+dx*2.0,tr.y+dy*2.0,tr.team
-            def one(g):
+            ring=[(tr.x+self.radius*(dx*math.cos(a)-dy*math.sin(a)),tr.y+self.radius*(dx*math.sin(a)+dy*math.cos(a)))
+                  for a in (math.radians(self.shift+360*i/self.count) for i in range(self.count))] if self.radius else None
+            def one(g,i=0):
                 if not tr.alive:return
-                t=spawned_child(tr,x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0),self.cfg)
+                t=spawned_child(tr,*(ring[i] if ring else (x+random.uniform(-1.0,1.0),y+random.uniform(-1.0,1.0))),self.cfg)
                 t._spawner=tr;tr._spawned=t._spawn_no=getattr(tr,'_spawned',0)+1;g._place(team,t,self.cfg.get('deploy',0))
             for i in range(self.count):
-                if i and self.stagger:g.spells.append(Timer(i*self.stagger,one,x,y,team))
-                else:one(g)
+                if i and self.stagger:g.spells.append(Timer(i*self.stagger,lambda g,i=i:one(g,i),x,y,team))
+                else:one(g,i)
             self.timer=self.interval
 class DeathDamage(Component):
     # a fuse (Balloon, Giant Skeleton, Bomb Tower: 3 s) leaves the bomb where the body fell and blasts whoever is there when it goes off

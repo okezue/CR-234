@@ -1,0 +1,26 @@
+[
+ {
+  "card": "witch",
+  "path": "skills.periodicSpawn.spawnRadius",
+  "value": 2.0,
+  "note": "Each wave of four Skeletons stands on a 2-tile circle around the Witch (the evolved Witch inherits it): wiki Witch 'Every 7 seconds, the Witch will passively summon a group of four Skeletons surrounding her'; wiki Witch/Evolution 'the Skeletons spawned around her'; RoyaleAPI cr-api-data characters Witch spawn_radius 2000, spawn_number 4. The engine stood the wave 2 tiles ahead with a 1-tile jitter. The game data export carries no spawn radius. https://clashroyale.fandom.com/wiki/Witch https://github.com/RoyaleAPI/cr-api-data"
+ },
+ {
+  "card": "witch",
+  "path": "skills.periodicSpawn.angleShift",
+  "value": 0,
+  "note": "The first Skeleton of a wave at the front, the others 90 degrees apart: RoyaleAPI cr-api-data characters Witch has no spawn_angle_shift (0), where Night Witch has 90. Wiki Witch: 'Placing the Witch behind the King Tower will have 1 of the Skeletons spawn in the other lane', one Skeleton to a side. https://github.com/RoyaleAPI/cr-api-data https://clashroyale.fandom.com/wiki/Witch"
+ },
+ {
+  "card": "night_witch",
+  "path": "skills.periodicSpawn.spawnRadius",
+  "value": 1.5,
+  "note": "Each pair of Bats stands on a 1.5-tile circle around the Night Witch: wiki Night Witch 'Every 5 seconds, the Night Witch will passively summon a group of two Bats surrounding her'; RoyaleAPI cr-api-data characters DarkWitch spawn_radius 1500, spawn_number 2 (death_spawn_radius 500 is the spawnOnDeath radius 0.5 already in the data). The game data export carries no spawn radius. https://clashroyale.fandom.com/wiki/Night_Witch https://github.com/RoyaleAPI/cr-api-data"
+ },
+ {
+  "card": "night_witch",
+  "path": "skills.periodicSpawn.angleShift",
+  "value": 90,
+  "note": "The two Bats at her sides, 90 degrees from the front: RoyaleAPI cr-api-data characters DarkWitch spawn_angle_shift 90. https://github.com/RoyaleAPI/cr-api-data"
+ }
+]
