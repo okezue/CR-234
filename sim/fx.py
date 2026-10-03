@@ -590,7 +590,8 @@ class MonkCombo(Component):
             if hasattr(tgt,'x') and hasattr(tgt,'y'):
                 dx=tgt.x-tr.x;dy=tgt.y-tr.y
                 d=math.sqrt(dx*dx+dy*dy)
-                if d>0:tgt.x+=dx/d*self.kb;tgt.y+=dy/d*self.kb
+                # the shove stops at the arena's edge, a tower footprint, a fence or water
+                if d>0:x0,y0=tgt.x,tgt.y;tgt.x+=dx/d*self.kb;tgt.y+=dy/d*self.kb;g._hold_in(tgt,x0,y0)
 class LPRamp(Component):
     def __init__(self,stages,per):
         self.stages=stages;self.per=per;self.hits=0;self.si=0
