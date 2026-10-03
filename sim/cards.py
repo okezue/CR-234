@@ -134,7 +134,8 @@ def attach(cfg,c,sk,lvl,chain=None):
         cfg['death_dmg']=at(dd['damage'],lvl);cfg['death_splash_r']=dd.get('radius') or 0
         sl=sk.get('slow',{})
         if 'boost' in sk:
-            b=sk['boost'];cs.append(fx.RageDrop(b.get('radius') or dd.get('radius') or 0,b.get('duration') or 0,mult(b.get('speedMultiplier') or 0)-1))
+            b=sk['boost'];cs.append(fx.RageDrop(b.get('radius') or dd.get('radius') or 0,b.get('duration') or 0,mult(b.get('speedMultiplier') or 0)-1,
+                                                cfg['death_dmg'],at(dd.get('towerDamage'),lvl) or 0))
         elif sl.get('duration') and cfg['atk_type']!='area':cs.append(fx.DeathNova(-(sl.get('speedMultiplier') or 0),sl['duration']))
         else:cs.append(fx.DeathDamage(kb,dd.get('fuse') or 0))
     elif sk.get('slow',{}).get('duration') and 'secondaryAttack' not in sk:
@@ -359,7 +360,8 @@ def evolve(c,k,s,lvl,tr):
        'inferno_dragon':lambda:fx.EvoInfernoDragon(at(rd['damageTiers'][-1],lvl),rd.get('retainTime') or 0,rd.get('finalStageTime') or 0,
                                                    (fx.tower_tiers([at(rd['damageTiers'][-1],lvl)],tr.dmg,tr.ct_dmg) or [0])[0]),
        'royal_ghost':lambda:fx.EvoRoyalGhost(count(sp.get('count')),lambda:unit(c,sp,lvl)),
-       'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'])}
+       'lumberjack':lambda:fx.EvoLumberjack(s['invisibility']['duration'],at(sd.get('towerDamage'),lvl) or 0,b['radius'],b['linger'],
+                                            mult(b['speedMultiplier'])-1)}
     if k in E:tr.components.append(E[k]())
     if k=='inferno_dragon':
         # The evolution owns the final stage; the ordinary ramp stops at tier three.

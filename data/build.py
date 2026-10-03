@@ -599,6 +599,7 @@ def main():
                       "resurfacePercent/resurfaceCount for the evo drill, which hides hideTime seconds at each and comes back a quarter turn "
                       "around an enemy Crown Tower within relocateRange tiles",
             "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "
+                      "spawnOnDeath.towerDamage (the evolved Lumberjack ghost's Crown Tower damage), "
                       "periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy "
                       "unit is within it)/spawnRadius (the wave stands evenly on a circle of this radius around the spawner)/angleShift (degrees from "
                       "the spawner's front to the first unit of that circle), spawn.interval/firstDelay/kind, pull.strength/damage/distance, "
@@ -608,7 +609,8 @@ def main():
                       "(seconds between chain bounces; null: they land together), "
                       "jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, "
                       "rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, "
-                      "boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent, invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), "
+                      "boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent/linger (seconds a unit keeps the boost after leaving its area), "
+                      "invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), areaDamageOnDeath.towerDamage, "
                       "ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
         },
     }

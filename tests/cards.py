@@ -4864,10 +4864,16 @@ def t_evo_knight_dmg_red():
     assert any(isinstance(c,EvoKnight) for c in k.components)
     d=Dummy('red',9,14.5,hp=50000,dmg=500,spd=0,hspd=0.4,rng=1.5)
     g.deploy('red',d)
-    ini=k.hp;g.run(1)
-    raw_dmg=500*2;actual=ini-k.hp
-    assert actual<raw_dmg*0.6,f"60% reduction: took {actual}, raw ~{raw_dmg}"
-    return f"Evo Knight damage reduction ({actual} vs ~{raw_dmg} raw)"
+    hp=k.hp;dhp=d.hp;first=None;taken=[]
+    while g.t<1:
+        g.tick()
+        if d.hp<dhp and first is None:first=g.t
+        dhp=d.hp
+        if k.hp<hp:taken.append((g.t,hp-k.hp));hp=k.hp
+    # 60% less until he deals damage, full while he attacks (wiki Knight/Evolution; t2126)
+    before=[x for t,x in taken if t<=first];after=[x for t,x in taken if t>first]
+    assert before==[200] and after==[500],(first,taken)
+    return f"Evo Knight damage reduction ({before} before his first hit, {after} after)"
 def t_evo_knight_no_red_attacking():
     g=Game()
     k=mk_card('knight',11,'blue',9,10)
