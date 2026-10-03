@@ -879,11 +879,17 @@ class BannerBrigade(Ability):
             self.banner_timer-=dt
             if self.banner_timer<=0:self.banner_pos=None
 class EvoKnight(Component):
-    def __init__(self,red):self.red=red;self.attacking=False
+    # the reduction holds from his deploy until he deals damage and returns once he stops attacking that target: it dies, he takes another or
+    # it leaves his reach (wiki Knight/Evolution: "staying active until the Evolved Knight deals damage to something", "will lose the damage reduction once
+    # he starts attacking", 16/12/2024 fix of full damage while chasing after attacking; export Knight_EV1 buffWhenNotAttacking 60)
+    def __init__(self,red):self.red=red;self.engaged=None
+    def reset(self,cfg):self.engaged=None
+    def on_deploy(self,tr,g):tr._dmg_reduction=self.red
     def on_tick(self,tr,g):
-        self.attacking=getattr(tr,'tgt',None) is not None and tr.cd<=0.01
-        tr._dmg_reduction=0 if self.attacking else self.red
-    def on_attack(self,tr,tgt,g):tr._dmg_reduction=0
+        e=self.engaged
+        if e is not None and (getattr(tr,'tgt',None) is not e or not e.alive or g._dist(tr,e)>tr.rng):self.engaged=None
+        tr._dmg_reduction=0 if self.engaged is not None else self.red
+    def on_attack(self,tr,tgt,g):self.engaged=tgt;tr._dmg_reduction=0
 class EvoBomber(Component):
     def __init__(self,bounces,br):self.bounces=bounces;self.br=br
     def on_attack(self,tr,tgt,g):
