@@ -9714,7 +9714,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-10-02",
+  "built": "2026-10-03",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"

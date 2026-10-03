@@ -506,7 +506,7 @@ class BanditDash(Component):
             if t is not None and getattr(t,'alive',True):self.to=pos(t)
             dx=self.to[0]-tr.x;dy=self.to[1]-tr.y;d=math.hypot(dx,dy);st=self.spd*g.DT
             if d>st and not (t is not None and getattr(t,'alive',True) and g._dist(tr,t)<=tr.rng):tr.x+=dx/d*st;tr.y+=dy/d*st;return
-            if t is not None and getattr(t,'alive',True):hurt(t,getattr(tr,'dash_dmg',tr.dmg*2),g)
+            if t is not None and getattr(t,'alive',True):hurt(t,tr.dash_dmg,g)
             self._end(tr);g._free_spot(tr,*getattr(self,'at',(None,None)));return
         tgt=getattr(tr,'tgt',None)
         if not tgt:
