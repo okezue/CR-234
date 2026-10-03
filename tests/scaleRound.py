@@ -20,11 +20,13 @@ def stands(g, u):
 
 
 # review t2118 finding 1: a knight left in the river at the side edges was snapped onto the fence tile (0|17, 14|17) and stayed there
-@pytest.mark.parametrize('x,y,tx,ty', [(0.5, 15.5, 3.5, 25.5), (17.5, 16.2, 14.5, 6.5), (0.6, 15.2, 3.5, 25.5)])
-def t_river_snap_beside_a_side_fence_lands_on_walkable_ground(x, y, tx, ty):
+# the bank points (0.5, 14.9) and (17.5, 17.0) are fence tiles; the nearest walkable tile centres are (1.5, 14.5) and (16.5, 17.5)
+@pytest.mark.parametrize('x,y,tx,ty,land', [(0.5, 15.5, 3.5, 25.5, (1.5, 14.5)), (17.5, 16.2, 14.5, 6.5, (16.5, 17.5)), (0.6, 15.2, 3.5, 25.5, (1.5, 14.5))])
+def t_river_snap_beside_a_side_fence_lands_on_walkable_ground(x, y, tx, ty, land):
     g = quiet(Game());k = unit('knight', 'blue', x, y, g)
     g._move(k, k.spd, tx, ty)
     assert stands(g, k), (k.x, k.y)
+    assert (round(k.x, 6), round(k.y, 6)) == land, (k.x, k.y)
     p = (k.x, k.y)
     for _ in range(40):g._move(k, k.spd, tx, ty)
     assert stands(g, k) and (k.x, k.y) != p, (p, k.x, k.y)
