@@ -1,8 +1,0 @@
-[
- {
-  "card": "pekka",
-  "path": "evo.skills.heal.hpThresholds",
-  "value": [{"level11": 990}, {"level11": 1991}],
-  "note": "Evolved P.E.K.K.A heal tiers: a victim with at most the Stage 1 threshold of hitpoints gives the small heal, at most the Stage 2 threshold the medium heal, more the large heal; thresholds 990 and 1991 at level 11 on the level curve, not the engine's fixed 500 and 1500 (no source). Wiki P.E.K.K.A./Evolution level table, columns 'Hitpoint Threshold (Stage 1)' and 'Hitpoint Threshold (Stage 2)' ({{#vardefine: 1_hp_11 | 990 }}, {{#vardefine: 2_hp_11 | 1991 }}, each level x1.1^(L-11) like the heals); page text: 'the magnitude of the heal being determined by the defeated unit's hitpoints'; history 8/1/2025: 'healing per KO would be based on the target's hitpoints instead of healing the same amount from all troops'. The legacy snapshot (data/legacy/pekka.json evolution.stats_by_level hitpoint_threshold_stage_1/2) has the same table (619/1244 at level 6 to 990/1991 at 11). The game data export has no PekkaEV1_Heal action data. https://clashroyale.fandom.com/wiki/P.E.K.K.A./Evolution"
- }
-]
