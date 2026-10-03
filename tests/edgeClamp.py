@@ -144,10 +144,12 @@ def t_tornado_pull_in_the_open_is_unchanged():
     assert (k.x, k.y) == (11.0 - 3.6 * k.spd * g.DT, 10.0)
 
 
-def t_golden_knight_dash_onto_a_tower_ends_beside_it():
-    g = quiet(Game());gk = unit('golden_knight', 'blue', 14.5, 21.5, g);tw = tower(g, 'red', 'right')
-    gk.ability.activate(gk, g);gk.ability.tick(g.DT, gk, g)
-    assert tw.hp < tw.max_hp and stands(g, gk), (gk.x, gk.y)
+@pytest.mark.parametrize('team', ('blue', 'red'))
+def t_golden_knight_dash_onto_a_tower_ends_beside_it_on_his_side(team):
+    # of the four tile centres 2 tiles from the tower's centre he takes the one toward where he came from, for either team
+    g = quiet(Game());y0 = 21.5 if team == 'blue' else 32 - 21.5;gk = unit('golden_knight', team, 14.5, y0, g)
+    tw = tower(g, g._opp(team), 'right');gk.ability.activate(gk, g);gk.ability.tick(g.DT, gk, g)
+    assert tw.hp < tw.max_hp and stands(g, gk) and (gk.x, gk.y) == (14.5, 23.5 if team == 'blue' else 8.5), (gk.x, gk.y)
 
 
 def t_valkyrie_hero_dash_ends_on_standable_ground():

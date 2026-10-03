@@ -378,7 +378,7 @@ class TornadoSpell:
                     # 360% of the troop's own walking speed, not of a charge or wind-up (export attract_percentage 360, push_speed_factor 100,
                     # push_mass_factor 0; wiki and blog: faster troops are pulled further; recorded drill Goblin 7.3 to 7.9 tiles/s), never past the centre
                     mv=min(d,self.pull_str*getattr(e,'base_spd',e.spd)*dt)
-                    e.x+=dx/d*mv;e.y+=dy/d*mv;self.pulled[id(e)]=e
+                    self.pulled.setdefault(id(e),(e,e.x,e.y));e.x+=dx/d*mv;e.y+=dy/d*mv
         if self.ticks_left>0:
             self.tick_cd-=dt
             if self.tick_cd<=0:
@@ -398,8 +398,8 @@ class TornadoSpell:
             # the pull may carry a troop over water or past a tower's corner (recorded: LCQ 09YP9UPGQ2YU, a Goblin pulled from in front of a
             # princess tower to the centre, a path that clips the tower's tile footprint but not its collision circle); when it ends, a troop
             # left on water, a footprint or a fence is settled like a deploy
-            for e in self.pulled.values():
-                if e.alive:game._free_spot(e)
+            for e,x0,y0 in self.pulled.values():
+                if e.alive:game._free_spot(e,x0,y0)
 class VoidSpell:
     # damage per strike drops by target count: tiers[i] applies while count<=max_units[i], the last tier beyond
     def __init__(self,team,x,y,cfg):
@@ -597,7 +597,7 @@ class EvoSnowballSpell:
         self.slow_dur=cfg['slow_duration'];self.slow_val=cfg['status_val']
         self.active=False;self.name=cfg.get('name','')
         self.proj_spd=cfg.get('projSpeed',0)
-        self.captured=[];self.rolling=False;self.roll_t=0
+        self.captured=[];self.came={};self.rolling=False;self.roll_t=0
         self.rx=self.x;self.ry=self.y;self.dir_y=0
     def apply(self,game):
         opp='red' if self.team=='blue' else 'blue'
@@ -608,7 +608,7 @@ class EvoSnowballSpell:
             if d<=self.radius:
                 e.take_damage(self.dmg)
                 if hasattr(e,'statuses'):e.statuses.append(Status('slow',self.slow_dur,self.slow_val))
-                self.captured.append(e)
+                self.captured.append(e);self.came[id(e)]=(e.x,e.y)
         for tw in game.arena.towers:
             if tw.team!=opp or not tw.alive:continue
             d=tw.dist(self.x,self.y)
@@ -629,4 +629,4 @@ class EvoSnowballSpell:
             # water is settled like a deploy
             self.rolling=False;self.active=False
             for e in self.captured:
-                if e.alive:game._free_spot(e)
+                if e.alive:game._free_spot(e,*self.came[id(e)])

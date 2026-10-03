@@ -507,7 +507,7 @@ class BanditDash(Component):
             dx=self.to[0]-tr.x;dy=self.to[1]-tr.y;d=math.hypot(dx,dy);st=self.spd*g.DT
             if d>st and not (t is not None and getattr(t,'alive',True) and g._dist(tr,t)<=tr.rng):tr.x+=dx/d*st;tr.y+=dy/d*st;return
             if t is not None and getattr(t,'alive',True):hurt(t,getattr(tr,'dash_dmg',tr.dmg*2),g)
-            self._end(tr);g._free_spot(tr);return
+            self._end(tr);g._free_spot(tr,*getattr(self,'at',(None,None)));return
         tgt=getattr(tr,'tgt',None)
         if not tgt:
             if self.charging:self._end(tr)
@@ -519,7 +519,7 @@ class BanditDash(Component):
             if hidden(self.dtgt):self._end(tr);return
             self.timer-=g.DT
             if self.timer<=0:
-                self.charging=False;self.dashing=True;self.to=pos(self.dtgt);tr.statuses.append(Status('invincible',2.0))
+                self.charging=False;self.dashing=True;self.to=pos(self.dtgt);self.at=(tr.x,tr.y);tr.statuses.append(Status('invincible',2.0))
 class Hook(Component):
     # the Fisherman's special attack (game data special_min_range 3.5, special_range 7, special_load_time 1.3, damage_special 0; FishermanProjectile
     # speed 800, drag_back_speed 850, drag_self_speed 450, target buff IceWizardSlowDown): a ground target in the band stops him for the load, then
@@ -543,7 +543,7 @@ class Hook(Component):
         self.pull=(t,mine)
     def on_death(self,tr,g):
         # a troop still being dragged when the Fisherman falls is set on standable ground
-        if self.pull is not None and not self.pull[1] and self.pull[0].alive:g._free_spot(self.pull[0])
+        if self.pull is not None and not self.pull[1] and self.pull[0].alive:g._free_spot(self.pull[0],tr.x,tr.y)
         self.pull=None
     def on_tick(self,tr,g):
         if self.pull is not None:
@@ -551,7 +551,7 @@ class Hook(Component):
             if not t.alive or g._dist(tr,t)<=tr.rng:
                 # the drag may cross the river but it ends on standable ground
                 self.pull=None;a=tr if mine else t
-                if a.alive:g._free_spot(a)
+                if a.alive:g._free_spot(a,*(pos(t) if mine else (tr.x,tr.y)))
                 return
             a=tr if mine else t;bx,by=pos(tr if not mine else t);dx=bx-a.x;dy=by-a.y;d=math.hypot(dx,dy)
             if d>0:st=min(d,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
@@ -688,10 +688,11 @@ class DashingDash(Ability):
         self._wait(tr,False)
         best.take_damage(self.dd)
         self.hit.add(best)
+        x0,y0=tr.x,tr.y
         if hasattr(best,'cx'):tr.x=best.cx;tr.y=best.cy
         else:tr.x=best.x;tr.y=best.y
         # he comes down on standable ground next to a tower or a troop he cannot stand on (a tower's footprint, water)
-        g._free_spot(tr)
+        g._free_spot(tr,x0,y0)
         if hasattr(best,'ttype'):
             if not best.alive:g._tower_down(best)
             self.dashing=False;return
@@ -742,9 +743,10 @@ class GetawayGrenade(Ability):
     def activate(self,tr,g):
         self.active=True;self.dur=self.invis_dur;self.uses_left-=1
         tr.statuses.append(Status('invisible',self.invis_dur))
+        y0=tr.y
         if tr.team=='blue':tr.y=max(0,tr.y-self.dist)
         else:tr.y=min(31,tr.y+self.dist)
-        g._free_spot(tr)
+        g._free_spot(tr,tr.x,y0)
     def tick(self,dt,tr,g):
         if not self.active:super().tick(dt,tr,g);return
         self.dur-=dt
@@ -773,7 +775,7 @@ class ExplosiveEscape(Ability):
     def activate(self,tr,g):
         ox,oy,team=tr.x,tr.y,tr.team
         # the mirrored spot is settled like a deploy (a tower still standing on that side covers it when his own side's is down)
-        tr.x=g.arena.W-tr.x;g._free_spot(tr)
+        tr.x=g.arena.W-tr.x;g._free_spot(tr,ox,oy)
         def blast(g):
             for e in near(g,team,ox,oy,self.bomb_r):hurt(e,self.bomb_dmg,g);push(e,ox,oy,self.kb)
         if self.fuse>0:g.spells.append(Timer(self.fuse,blast,ox,oy,team,tr.name))
@@ -1089,9 +1091,10 @@ class HeroicHurl(Ability):
             d=g._dist(tr,e)
             if d<=2.0 and e.max_hp>bhp:bhp=e.max_hp;best=e
         if not best:self.cd=0;return
+        x0=best.x
         if tr.x<9:best.x=min(17,best.x+self.throw_rng)
         else:best.x=max(0,best.x-self.throw_rng)
-        g._free_spot(best)
+        g._free_spot(best,x0,best.y)
         best.take_damage(self.impact_dmg)
         best.statuses.append(Status('stun',self.stun_dur))
         self.active=False;self.cd=self.max_cd
@@ -1327,7 +1330,7 @@ class MKJump(Component):
                         edge=min(best.w*d/(2*abs(jx-ax)) if jx!=ax else math.inf,
                                  best.h*d/(2*abs(jy-ay)) if jy!=ay else math.inf)
                         gap=max(gap,edge+1e-6)
-                    tr.x,tr.y=jx-(jx-ax)/d*min(gap,d),jy-(jy-ay)/d*min(gap,d);g._free_spot(tr)
+                    tr.x,tr.y=jx-(jx-ax)/d*min(gap,d),jy-(jy-ay)/d*min(gap,d);g._free_spot(tr,ax,ay)
                     # the knockback origin sits a hair behind the landing so a troop under him is thrown forward
                     for e in near(g,tr.team,tr.x,tr.y,self.sr,air='Air' in getattr(tr,'targets',['Ground'])):
                         hurt(e,jd,g);push(e,tr.x-(jx-ax)/d*0.01,tr.y-(jy-ay)/d*0.01,self.kb)
@@ -1421,7 +1424,7 @@ class TripleThreat(Ability):
         self.triple_rng=triple_rng;self.max_dur=dur;self.empowered=False
     def activate(self,tr,g):
         dy=-self.dash_dist if tr.team=='blue' else self.dash_dist
-        tr.y=max(0,min(31,tr.y+dy));g._free_spot(tr)
+        y0=tr.y;tr.y=max(0,min(31,tr.y+dy));g._free_spot(tr,tr.x,y0)
         dcfg={'hp':self.decoy_hp,'dmg':0,'hspd':99,'fhspd':99,'spd':0,
               'rng':0,'targets':['Ground'],'transport':'Ground',
               'atk_type':'single_target','splash_r':0,'ct_dmg':0,
@@ -1775,7 +1778,7 @@ class WildWhirlwind(Ability):
         c=[x for x in c if x[0]<=self.dash]
         if c:
             e=min(c)[2];d=min(c)[0]
-            if d>1:tr.x+=(e.x-tr.x)*(d-1)/d;tr.y+=(e.y-tr.y)*(d-1)/d;g._free_spot(tr)
+            if d>1:x0,y0=tr.x,tr.y;tr.x+=(e.x-tr.x)*(d-1)/d;tr.y+=(e.y-tr.y)*(d-1)/d;g._free_spot(tr,x0,y0)
         self.active=True;self.dur=self.max_dur;self.o=(tr.hspd,tr.dmg,tr.ct_dmg,tr.splash_r,tr.spd,getattr(tr,'_dmg_reduction',0))
         tr.hspd=self.hs or tr.hspd;tr.dmg=self.dmg or tr.dmg;tr.ct_dmg=int(tr.dmg*self.ctm);tr.splash_r=self.r;tr.spd=tr.spd*self.sp
         tr._dmg_reduction=self.red;tr.cd=min(tr.cd,tr.hspd)
