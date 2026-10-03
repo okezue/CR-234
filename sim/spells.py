@@ -223,6 +223,10 @@ class LightningSpell:
             if self.stun_dur>0:tgt.statuses.append(Status('stun',self.stun_dur))
         self.active=False
     def tick(self,dt,game=None):pass
+# the copy packs the original's punch (wiki Clone: "Cloned troops are fragile, but pack the same punch as the original!"): its charge, jump,
+# chain, stun, slow and spawn-blast attributes come along; only its hitpoints and shield drop to 1
+PUNCH=('card','charge_dmg','jump_dmg','stun_dur','slow_dur','slow_val','chain_count','chain_range','chain_stun','chain_period',
+       'spawn_zap_dmg','spawn_zap_r','spawn_zap_ct')
 class CloneSpell:
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
@@ -248,6 +252,7 @@ class CloneSpell:
                      'collision_r':t.collision_r,'sight_r':t.sight_r,
                      'death_dmg':getattr(t,'death_dmg',0),
                      'death_splash_r':getattr(t,'death_splash_r',0)}
+                cfg.update({k:getattr(t,k) for k in PUNCH if hasattr(t,k)})
                 # each copy owns its components (Component.own); Ghost clones are unevolved with fresh invisibility, and a Rune Giant's
                 # enchantment, a status of the original, is not copied
                 cfg['components']=[Stealth(c.after) if isinstance(c,Stealth) and t.name=='Royal Ghost' else c.own(cfg)
