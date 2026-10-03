@@ -65,6 +65,12 @@ def rules(m='M70',f='F70',sm='MA',sf='FA',qe=True,ens=('M70x1','M70m1','M70m2','
     return out
 
 
+def explore():
+    # exploratory (hive f5521, after a fit diagnostic): split fits with the 10k volume's epochs
+    r=rules(sm='MAe',sf='FAe',sens=('MAe0','MAe1','MAe2','MAe3'))
+    return {f'{k}_e':r[k] for k in ('split_model','split_fqe','split_mean','split_class_min','split_ensemble_min')}
+
+
 def horizon(e):
     # decisions an evaluator looks ahead: model mark k, FQE round k, 0 for the Q-eval
     t=e.rsplit('.',1)[1];return int(t[1:]) if t[0] in 'HK' else 0
@@ -237,10 +243,10 @@ def report(pack,truth,wmope,cert,out,B=2000,seed=0,split='heldB',rep=False,log=p
     c=Corpus(pack);rows=WO.starts(c,(split,));g=c.a['game'][rows].astype(np.int64);ug,gi=np.unique(g,return_inverse=True)
     gidx={int(x):i for i,x in enumerate(ug)}
     tr=truth_of(truth);names=['bc']+[a for a in tr if a not in ('bc','behaviour','clone_T1')]
-    rs=rules(sm='MB',sf='FB',qe=False,sens=('MB0','MB1','MB2','MB3')) if rep else rules()
+    rs=rules(sm='MB',sf='FB',qe=False,sens=('MB0','MB1','MB2','MB3')) if rep else rules();ex={} if rep else explore()
     per={**tenth(c,rows,wmope),**ours(rows,cert)};ratio=qeval_ratio(Path(cert)/'qeval',gidx) if not rep and Path(cert,'qeval','fixed.npz').exists() else {}
-    W=boot_weights(len(ug),B,seed);pt,bt,dropped=gains(per,gi,names,W,ratio);res,diag,_=assess(pt,bt,tr,names,rs)
-    o={'split':split,'replication':rep,'B':B,'games':int(len(ug)),'starts':int(len(rows)),'policies':names,'dropped':dropped,'rules':rs,'results':res,'evaluators':diag,
+    W=boot_weights(len(ug),B,seed);pt,bt,dropped=gains(per,gi,names,W,ratio);res,diag,_=assess(pt,bt,tr,names,rs);xres=assess(pt,bt,tr,names,ex)[0]
+    o={'split':split,'replication':rep,'B':B,'games':int(len(ug)),'starts':int(len(rows)),'policies':names,'dropped':dropped,'rules':rs,'results':res,'explore':ex,'exploratory':xres,'evaluators':diag,
        'truth':{a:tr[a] for a in names},'gains':{e:{a:float(x) for a,x in zip(names,v)} for e,v in pt.items()}}
     Path(out).parent.mkdir(parents=True,exist_ok=True);Path(out).write_text(json.dumps(o,indent=1)+'\n');Path(out).with_suffix('.md').write_text(markdown(o)+'\n')
     log(markdown(o),flush=True);return o
@@ -251,7 +257,7 @@ def markdown(o):
     out=['| rule | Spearman [boot] | pick (regret, pts) [boot] | P(regret>5) | rho wmgroup [boot] | rho qgroup [boot] | certified | false cert | missed '
          '| meets |',
          '|'+'---|'*10]
-    for k,r in o['results'].items():
+    for k,r in list(o['results'].items())+[(k+' (exploratory)',r) for k,r in o.get('exploratory',{}).items()]:
         if 'missing' in r:out.append(f"| {k} | missing {', '.join(r['missing'][:3])} |"+' |'*8);continue
         rb=lambda a:f"{f(r.get('rho|'+a),2)} [{f(r['rho_boot|'+a][0],2)}, {f(r['rho_boot|'+a][1],2)}]" if 'rho|'+a in r else ''
         out.append('| '+' | '.join([k,f"{r['spearman']:.3f} [{r['spearman_boot'][0]:.3f}, {r['spearman_boot'][1]:.3f}]",
@@ -336,11 +342,12 @@ def main():
     ap=argparse.ArgumentParser();sp=ap.add_subparsers(dest='cmd',required=True)
     a=sp.add_parser('fit');a.add_argument('--pack',required=True);a.add_argument('--aux',required=True);a.add_argument('--out',required=True)
     a.add_argument('--split',required=True);a.add_argument('--seed',type=int,required=True);a.add_argument('--threads',type=int,default=2)
+    a.add_argument('--max_steps',type=int,default=4079)
     a=sp.add_parser('q0');a.add_argument('--pack',required=True);a.add_argument('--split',required=True);a.add_argument('--other',required=True)
-    a.add_argument('--out',required=True);a.add_argument('--threads',type=int,default=1)
+    a.add_argument('--out',required=True);a.add_argument('--threads',type=int,default=1);a.add_argument('--steps',type=int,default=3000)
     a=sp.add_parser('fqe');a.add_argument('--pack',required=True);a.add_argument('--agents',nargs='+',required=True);a.add_argument('--policy',required=True)
     a.add_argument('--split',required=True);a.add_argument('--start',required=True);a.add_argument('--q0',required=True);a.add_argument('--out',required=True)
-    a.add_argument('--label',required=True);a.add_argument('--threads',type=int,default=1)
+    a.add_argument('--label',required=True);a.add_argument('--threads',type=int,default=1);a.add_argument('--steps',type=int,default=200)
     a=sp.add_parser('mb');a.add_argument('--pack',required=True);a.add_argument('--states',required=True);a.add_argument('--wm',nargs='+',required=True)
     a.add_argument('--configs',required=True);a.add_argument('--labels',required=True);a.add_argument('--agents',nargs='+',required=True)
     a.add_argument('--policy',required=True);a.add_argument('--start',required=True);a.add_argument('--out',required=True);a.add_argument('--distil')
@@ -351,9 +358,9 @@ def main():
     a.add_argument('--cert',required=True);a.add_argument('--out',required=True);a.add_argument('--split',default='heldB');a.add_argument('--rep',action='store_true')
     a.add_argument('--B',type=int,default=2000)
     a=ap.parse_args();torch.set_num_threads(getattr(a,'threads',1))
-    if a.cmd=='fit':fit_job(a.pack,a.aux,a.out,a.split,a.seed,threads=a.threads)
-    elif a.cmd=='q0':q0_job(a.pack,a.split,a.other,a.out)
-    elif a.cmd=='fqe':fqe_job(a.pack,WO.registry(a.agents)[a.policy],a.policy,a.split,a.start,a.q0,a.out,a.label)
+    if a.cmd=='fit':fit_job(a.pack,a.aux,a.out,a.split,a.seed,a.max_steps,threads=a.threads)
+    elif a.cmd=='q0':q0_job(a.pack,a.split,a.other,a.out,a.steps)
+    elif a.cmd=='fqe':fqe_job(a.pack,WO.registry(a.agents)[a.policy],a.policy,a.split,a.start,a.q0,a.out,a.label,steps=a.steps)
     elif a.cmd=='mb':
         mb_job(a.pack,a.states,a.wm,json.loads(a.configs),json.loads(a.labels),WO.registry(a.agents)[a.policy],a.policy,a.start,a.out,distil=a.distil,actors=a.actors)
     elif a.cmd=='qeval':qeval_job(a.pack,a.prep,a.agents,a.out,threads=a.threads)
