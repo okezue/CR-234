@@ -350,19 +350,31 @@ def bounce(g,opp,prev,r,skip):
         d=math.hypot(tw.cx-px,tw.cy-py)
         if d<=bd:bd=d;best=tw
     return best
-def chain(tr,tgt,g):
-    cc=getattr(tr,'chain_count',1);cr=getattr(tr,'chain_range',0);cs=getattr(tr,'chain_stun',0)
-    opp=g._opp(tr.team)
-    if cs>0 and hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',cs))
-    hit=[tgt]
-    for _ in range(cc-1):
-        best=bounce(g,opp,hit[-1],cr,hit)
-        if not best:break
-        best.take_damage(tr.dmg)
-        if cs>0 and hasattr(best,'statuses'):best.statuses.append(Status('stun',cs))
+class Chain:
+    # the bounces after the first target land one every period (wiki Electro Spirit 1/12/2025: Shock Chain Period 0.25 s), each from the
+    # last body hit; the chain runs on after the caster is gone
+    def __init__(self,team,hit,n,dmg,r,stun,period,name=''):
+        self.team=team;self.hit=hit;self.n=n;self.dmg=dmg;self.radius=r;self.stun=stun;self.period=period;self.t=period
+        self.active=True;self.name=name;self.x,self.y=pos(hit[-1])
+    def jump(self,g):
+        best=bounce(g,g._opp(self.team),self.hit[-1],self.radius,self.hit)
+        if not best:return False
+        best.take_damage(self.dmg)
+        if self.stun>0 and hasattr(best,'statuses'):best.statuses.append(Status('stun',self.stun))
         if hasattr(best,'ttype') and not best.alive:g._tower_down(best)
-        hit.append(best)
-    tr.chain_hit=hit
+        self.hit.append(best);self.x,self.y=pos(best);return True
+    def tick(self,dt,g):
+        self.t-=dt
+        if self.t>1e-9:return
+        self.t=self.period
+        if not self.jump(g) or len(self.hit)>=self.n:self.active=False
+def chain(tr,tgt,g):
+    cc=getattr(tr,'chain_count',1);cs=getattr(tr,'chain_stun',0);p=getattr(tr,'chain_period',0)
+    if cs>0 and hasattr(tgt,'statuses'):tgt.statuses.append(Status('stun',cs))
+    c=Chain(tr.team,[tgt],cc,tr.dmg,getattr(tr,'chain_range',0),cs,p,tr.name)
+    if p>0 and cc>1:g.spells.append(c)
+    while p<=0 and len(c.hit)<cc and c.jump(g):pass
+    tr.chain_hit=c.hit
 class SuicideChain(Component):
     def on_attack(self,tr,tgt,g):
         chain(tr,tgt,g);tr.is_suicide=True

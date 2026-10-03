@@ -24,7 +24,7 @@ class Troop:
         self.ramp_stages=cfg.get('ramp_stages',[]);self.ramp_durations=cfg.get('ramp_durations',[])
         self.slow_dur=cfg.get('slow_dur',0);self.slow_val=cfg.get('slow_val',1.0)
         self.chain_count=cfg.get('chain_count',0);self.chain_range=cfg.get('chain_range',0)
-        self.chain_stun=cfg.get('chain_stun',0);self.is_suicide=cfg.get('is_suicide',False)
+        self.chain_stun=cfg.get('chain_stun',0);self.chain_period=cfg.get('chain_period',0);self.is_suicide=cfg.get('is_suicide',False)
         self.jump_dmg=cfg.get('jump_dmg',0)
         self.mass=cfg.get('mass',4)
         self.sight_r=cfg.get('sight_r',5.5)
