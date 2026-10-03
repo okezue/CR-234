@@ -541,6 +541,10 @@ class Hook(Component):
         if not mine:
             tx,ty=pos(t);t.statuses.append(Status('knockback',0.05));t.statuses.append(Status('stun',math.hypot(tx-tr.x,ty-tr.y)/self.drag))
         self.pull=(t,mine)
+    def on_death(self,tr,g):
+        # a troop still being dragged when the Fisherman falls is set on standable ground
+        if self.pull is not None and not self.pull[1] and self.pull[0].alive:g._free_spot(self.pull[0])
+        self.pull=None
     def on_tick(self,tr,g):
         if self.pull is not None:
             t,mine=self.pull

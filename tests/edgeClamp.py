@@ -74,7 +74,7 @@ def t_barbarian_barrel_hero_roll_ends_on_standable_ground():
 
 
 def t_evolved_snowball_roll_ends_on_standable_ground():
-    # the evolved Giant Snowball carries what it hits 4 tiles forward over 0.75 s
+    # the evolved Giant Snowball carries what it hits 4 tiles forward over 0.75 s: from y 30 that passes the front edge
     g = quiet(Game());k = unit('knight', 'red', 6.5, 30.0, g)
     sp = create('giant_snowball', 11, 'blue', 6.5, 30.0, evolved=True);sp.apply(g)
     while sp.active:
@@ -132,11 +132,10 @@ def t_evolved_valkyrie_pull_ends_on_standable_ground():
 
 @pytest.mark.parametrize('cx,cy,kx,ky', [(8.5, 15.5, 8.5, 17.4), (14.5, 25.5, 14.5, 22.4)])
 def t_tornado_pull_ends_on_standable_ground(cx, cy, kx, ky):
-    # a Tornado on the river or on a standing princess tower pulls a walking troop against the bank or the footprint, not into it
+    # a Tornado on the river or on a standing princess tower pulls a troop to its centre; when it ends the troop is set beside it
     g = quiet(Game());k = unit('knight', 'red', kx, ky, g);sp = create('tornado', 11, 'blue', cx, cy);sp.apply(g)
-    for _ in range(20):
-        sp.tick(g.DT, g);assert stands(g, k), (k.x, k.y)
-    assert math.hypot(k.x - cx, k.y - cy) < math.hypot(kx - cx, ky - cy)
+    while sp.active:sp.tick(g.DT, g)
+    assert stands(g, k) and math.hypot(k.x - cx, k.y - cy) < math.hypot(kx - cx, ky - cy), (k.x, k.y)
 
 
 def t_tornado_pull_in_the_open_is_unchanged():
@@ -174,6 +173,14 @@ def t_fisherman_drag_ends_on_standable_ground():
         hk.on_tick(f, g)
         if hk.pull is None:break
     assert hk.pull is None and stands(g, t), (t.x, t.y)
+
+
+def t_troop_dragged_when_the_fisherman_falls_stands_on_standable_ground():
+    g = quiet(Game());f = unit('fisherman', 'blue', 8.5, 13.8, g);t = unit('knight', 'red', 8.5, 19.0, g)
+    hk = comp(f, fx.Hook);hk._hit(f, t, g)
+    while t.y >= 17.0:hk.on_tick(f, g)
+    f.take_damage(f.hp);g._proc_deaths()
+    assert not f.alive and stands(g, t), (t.x, t.y)
 
 
 def t_mega_knight_landing_ends_on_standable_ground():

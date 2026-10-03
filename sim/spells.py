@@ -357,7 +357,7 @@ class TornadoSpell:
         self.dur=cfg['dur']
         self.active=True;self.applied=False
         self.ticks_left=self.ticks;self.tick_cd=0
-        self.dur_left=self.dur;self.pull_cd=0
+        self.dur_left=self.dur;self.pull_cd=0;self.pulled={}
         self.name=cfg.get('name','')
     def apply(self,game):
         if self.applied:return
@@ -378,7 +378,7 @@ class TornadoSpell:
                     # 360% of the troop's own walking speed, not of a charge or wind-up (export attract_percentage 360, push_speed_factor 100,
                     # push_mass_factor 0; wiki and blog: faster troops are pulled further; recorded drill Goblin 7.3 to 7.9 tiles/s), never past the centre
                     mv=min(d,self.pull_str*getattr(e,'base_spd',e.spd)*dt)
-                    x0,y0=e.x,e.y;e.x+=dx/d*mv;e.y+=dy/d*mv;game._hold_in(e,x0,y0)
+                    e.x+=dx/d*mv;e.y+=dy/d*mv;self.pulled[id(e)]=e
         if self.ticks_left>0:
             self.tick_cd-=dt
             if self.tick_cd<=0:
@@ -393,7 +393,13 @@ class TornadoSpell:
                     if d<=self.radius:
                         tw.take_damage(self.ct_dmg)
                         if not tw.alive:game._tower_down(tw)
-        if self.dur_left<=0 and self.ticks_left<=0:self.active=False
+        if self.dur_left<=0 and self.ticks_left<=0:
+            self.active=False
+            # the pull may carry a troop over water or past a tower's corner (recorded: LCQ 09YP9UPGQ2YU, a Goblin pulled from in front of a
+            # princess tower to the centre, a path that clips the tower's tile footprint but not its collision circle); when it ends, a troop
+            # left on water, a footprint or a fence is settled like a deploy
+            for e in self.pulled.values():
+                if e.alive:game._free_spot(e)
 class VoidSpell:
     # damage per strike drops by target count: tiers[i] applies while count<=max_units[i], the last tier beyond
     def __init__(self,team,x,y,cfg):
@@ -617,6 +623,10 @@ class EvoSnowballSpell:
         spd=self.roll_dist/self.roll_dur
         self.ry+=self.dir_y*spd*dt
         for e in self.captured:
-            if e.alive:x0,y0=e.x,e.y;e.x=self.rx;e.y=self.ry;game._hold_in(e,x0,y0)
+            if e.alive:e.x=self.rx;e.y=min(max(self.ry,0.3),game.arena.H-0.3)
         if self.roll_t>=self.roll_dur:
+            # the roll holds what it carries 0.3 inside the edge, like a knockback; at the end a troop left on a footprint, a fence or
+            # water is settled like a deploy
             self.rolling=False;self.active=False
+            for e in self.captured:
+                if e.alive:game._free_spot(e)
