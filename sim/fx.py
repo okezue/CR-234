@@ -1209,14 +1209,15 @@ class EvoWitch(Component):
         for d in dead:
             if tr.hp<cap:tr.hp=min(cap,tr.hp+self.heal)
 class EvoPekka(Component):
-    def __init__(self,small,med,large,cap):
-        self.tiers={'s':small,'m':med,'l':large};self.cap=cap
+    # the heal tier is chosen by the victim's hitpoints against the two thresholds of her level (wiki level table: 990 and 1991 at 11)
+    def __init__(self,small,med,large,cap,cuts):
+        self.tiers={'s':small,'m':med,'l':large};self.cap=cap;self.cuts=cuts
     def on_attack(self,tr,tgt,g):
         if getattr(tgt,'alive',True):return
         cap=self.cap
         mhp=getattr(tgt,'max_hp',0)
-        if mhp<=500:h=self.tiers['s']
-        elif mhp<=1500:h=self.tiers['m']
+        if mhp<=self.cuts[0]:h=self.tiers['s']
+        elif mhp<=self.cuts[1]:h=self.tiers['m']
         else:h=self.tiers['l']
         if tr.hp<cap:tr.hp=min(cap,tr.hp+h)
 class EvoGoblinGiant(Component):

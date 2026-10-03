@@ -348,7 +348,7 @@ def evolve(c,k,s,lvl,tr):
        'goblin_cage':lambda:fx.EvoGoblinCage(pu['radius']),
        'baby_dragon':lambda:fx.EvoBabyDragon(b['radius'],mult(b['speedMultiplier'])-1,1-mult(sl['speedMultiplier'])),
        'witch':lambda:fx.EvoWitch(at(hl['onSpawn'],lvl),at(hl['overHeal'],lvl),hl.get('count')),
-       'pekka':lambda:fx.EvoPekka(*[at(t,lvl) for t in hl['perKillTiers']],at(hl['overHeal'],lvl)),
+       'pekka':lambda:fx.EvoPekka(*[at(t,lvl) for t in hl['perKillTiers']],at(hl['overHeal'],lvl),[at(t,lvl) for t in hl['hpThresholds']]),
        'goblin_giant':lambda:fx.EvoGoblinGiant(ps['hpPercent']/100,ps['pauseTime'],unit(c,ps,lvl)),
        'hunter':lambda:fx.EvoHunter(st['duration'],st['delayBetweenStrikes']),
        'electro_dragon':lambda:fx.EvoElectroDragon(pi['bounceDamagePercent']/100,pi['bounceDistance'],pi['bounceDelay']/mult(pi['speedMultiplier'])),

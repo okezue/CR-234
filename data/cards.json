@@ -6753,6 +6753,10 @@
     "skills": {
      "heal": {
       "frequency": null,
+      "hpThresholds": [
+       [null, null, null, null, null, 619, 681, 746, 820, 901, 990, 1087, 1195, 1311, 1439, 1582],
+       [null, null, null, null, null, 1244, 1369, 1501, 1649, 1812, 1991, 2186, 2404, 2637, 2894, 3182]
+      ],
       "onSpawn": null,
       "overHeal": [null, null, null, null, null, 3524, 3877, 4251, 4670, 5132, 5640, 6190, 6807, 7468, 8195, 9010],
       "perAttack": null,
@@ -6791,6 +6795,9 @@
    "speed": 45,
    "src": {
     "*": "cs2.4.0",
+    "evo.skills.heal.hpThresholds": "patch:2026-10-03sc",
+    "evo.skills.heal.hpThresholds[0][]": "derived:levelMult",
+    "evo.skills.heal.hpThresholds[1][]": "derived:levelMult",
     "evo.skills.heal.overHeal[15]": "derived:levelMult (source level16 9083 is off the level curve)",
     "evo.skills.heal.overHeal[]": "derived:levelMult",
     "evo.skills.heal.perKillTiers": "legacy:evolution.stats_by_level.heal_per_kill_stage",
@@ -9714,7 +9721,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-10-02",
+  "built": "2026-10-03",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9903,6 +9910,10 @@
    {
     "name": "data/patches/2026-10-02hm.json",
     "tag": "patch:2026-10-02hm"
+   },
+   {
+    "name": "data/patches/2026-10-03sc.json",
+    "tag": "patch:2026-10-03sc"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
