@@ -1690,18 +1690,18 @@ def t_lightning_3tgt():
     d4=Dummy('red',9,11,hp=500,spd=0)
     g.deploy('red',d1);g.deploy('red',d2);g.deploy('red',d3);g.deploy('red',d4)
     lt=mk_card('lightning',11,'blue',9.5,10.5)
-    lt.apply(g)
+    g._cast('blue',lt,lt.x,lt.y);g.run(1.5)
     hit=[d for d in [d1,d2,d3,d4] if d.hp<d.max_hp]
     assert len(hit)==3,f"Lightning should hit exactly 3 highest HP, got {len(hit)}"
     assert d1.hp<5000 and d2.hp<3000 and d3.hp<2000
     assert d4.hp==500,"Lowest HP should be untouched"
     return "Lightning hits 3 highest HP targets"
 def t_lightning_dmg():
-    g=Game()
+    g=quiet(Game())
     d=Dummy('red',9,10,hp=5000,spd=0)
     g.deploy('red',d)
     lt=mk_card('lightning',11,'blue',9,10)
-    lt.apply(g)
+    g._cast('blue',lt,lt.x,lt.y);g.run(1.5)
     assert d.hp==5000-1057,f"Expected 1057 dmg, got {5000-d.hp}"
     return f"Lightning damage ({5000-d.hp})"
 def t_lightning_ct():
@@ -1709,7 +1709,7 @@ def t_lightning_ct():
     rpt=g.arena.get_tower('red','princess','left')
     ini=rpt.hp
     lt=mk_card('lightning',11,'blue',rpt.cx,rpt.cy)
-    lt.apply(g)
+    g._cast('blue',lt,lt.x,lt.y);g.run(1.5)
     assert rpt.hp==ini-265,f"Expected 265 CT dmg, got {ini-rpt.hp}"
     return f"Lightning CT ({ini}->{rpt.hp})"
 def t_eq_dot():
@@ -3795,7 +3795,7 @@ def t_cross_lightning_3hp():
     d4=Dummy('red',9,11,hp=500,spd=0)
     g.deploy('red',d1);g.deploy('red',d2);g.deploy('red',d3);g.deploy('red',d4)
     lt=mk_card('lightning',11,'blue',9.5,10.5)
-    lt.apply(g)
+    g._cast('blue',lt,lt.x,lt.y);g.run(1.5)
     hit=[d for d in [d1,d2,d3,d4] if d.hp<d.max_hp]
     assert len(hit)==3 and d4.hp==500,"Lightning hits 3 highest HP"
     return "Lightning hits exactly 3 highest HP"
@@ -4119,7 +4119,7 @@ def t_lightning_max_hp_sort():
     d2=Dummy('red',10,10,hp=500,spd=0)
     g.deploy('red',d1);g.deploy('red',d2)
     lt=mk_card('lightning',11,'blue',9.5,10)
-    lt.apply(g)
+    g._cast('blue',lt,lt.x,lt.y);g.run(1.5)
     assert d1.max_hp-d1.hp>0 or not d1.alive,"Lightning should hit d1 (max_hp=5000)"
     d1_hit=d1.hp<100 or not d1.alive
     assert d1_hit,"d1 (max_hp=5000, hp=100) should be targeted by lightning"

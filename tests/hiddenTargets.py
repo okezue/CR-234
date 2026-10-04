@@ -138,7 +138,7 @@ def lightning_or_vines(name):
     under,inv,a,b,c=(Dummy('red',9+dx,20,hp=hp,spd=0,dmg=0) for dx,hp in ((0,9000),(0.5,8000),(-0.5,7000),(1,6000),(-1,5000)))
     for d in (under,inv,a,b,c):g.deploy('red',d)
     under.statuses.append(Status('burrowed',5));inv.statuses.append(Status('invisible',5))
-    sp=create(name,11,'blue',9,20);sp.apply(g);g.spells.append(sp);g.run(1.0)
+    sp=create(name,11,'blue',9,20);sp.apply(g);g.spells.append(sp);g.run(1.5)
     return under,inv,a,b,c
 
 
