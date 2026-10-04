@@ -149,7 +149,8 @@ class Player:
             return
         self.active_champ=self.champ_queue.pop(0) if self.champ_queue else None
     def sample_drag(self):
-        if self.drag_del==0:return 0
+        # a fixed delay draws nothing, so it leaves the seeded stream of spawn offsets and tower timings as it was
+        if self.drag_del==0 or self.drag_std==0:return self.drag_del
         return max(0.01,random.gauss(self.drag_del,self.drag_std))
     def sample_ability_del(self):
         return max(0.05,random.gauss(self.ability_del,self.ability_std))

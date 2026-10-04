@@ -9,6 +9,9 @@ from sim.units import Troop,Building
 
 _FILLER=['knight','archers','fireball','zap','valkyrie','musketeer','baby_dragon','mini_pekka']
 _BASE=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# a recorded play reaches the field 1.00 s after its recorded time, both sides and every card type (52 frame readings in the eight
+# matched recordings against the clock's regulation/overtime switch); the card and its elixir leave the hand at the recorded time
+PLACE_DELAY=1.0
 
 def _has_json(n):
     return key(n) is not None
@@ -428,9 +431,9 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         evo_cards[tm]=set(evos[:MAX_EVOLUTION_SLOTS]);hero_cards[tm]=set(heroes[:room])
         equipped[tm]={'evolutions':evo_cards[tm],'heroes':hero_cards[tm]}
     g=Game(
-        p1={'deck':decks['blue'],'king_lvl':b_klvl,'tt_name':b_tt,'tt_lvl':outcome.get('b_ttlvl'),'drag_del':0,'drag_std':0,
+        p1={'deck':decks['blue'],'king_lvl':b_klvl,'tt_name':b_tt,'tt_lvl':outcome.get('b_ttlvl'),'drag_del':PLACE_DELAY,'drag_std':0,
             'ability_del':0,'ability_std':0,'card_levels':b_lvls,**equipped['blue']},
-        p2={'deck':decks['red'],'king_lvl':r_klvl,'tt_name':r_tt,'tt_lvl':outcome.get('r_ttlvl'),'drag_del':0,'drag_std':0,
+        p2={'deck':decks['red'],'king_lvl':r_klvl,'tt_name':r_tt,'tt_lvl':outcome.get('r_ttlvl'),'drag_del':PLACE_DELAY,'drag_std':0,
             'ability_del':0,'ability_std':0,'card_levels':r_lvls,**equipped['red']}
     )
     bd=g.players['blue'].deck
@@ -446,6 +449,20 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         def rec():
             deaths.extend((g.t,u.x,u.y,u.name) for tm_ in ('blue','red') for u in g.players[tm_].troops if not u.alive);pd_()
         g._proc_deaths=rec
+    held=[]
+    def release(t):
+        # a recorded ability is checked and started, and an aimed spell is scored, when the play reaches the field, PLACE_DELAY later
+        while held and held[0][0]<=t:
+            at,kind,a=held.pop(0)
+            # the oracle reads the tick before the spell lands (before it can kill what it was aimed at), as it read the tick before the play
+            if not g.ended and at<=g.END:g.run_to(at-g.DT if kind=='aim' else at)
+            if kind=='aim':
+                base_,tm_,x_,y_,ts_=a
+                aim[1]+=any(u.alive and math.hypot(u.x-x_,u.y-y_)<=2.5 for u in g.players[g._opp(tm_)].troops)
+                if probe:probes.append({'spell':base_,'team':tm_,'t':ts_,'x':x_,'y':y_,**_probe(g,tm_,x_,y_,at,plays,deaths)})
+            elif not g.ended and at<=g.END:
+                g.players[a[0]].elixir=10
+                submit_recorded_ability(g,*a)
     for p in plays:
         ts=p['time']/20.0
         base,_,_=norm(p['card'])
@@ -453,11 +470,11 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         tx,ty=p['tile_x'],p['tile_y']
         itx,ity=int(tx),int(ty)
         if g.ended:break
+        release(ts)
         g.run_to(ts)
         if g.ended:break
         if p['ability']==1:
-            g.players[tm].elixir=10
-            submit_recorded_ability(g,tm,base)
+            held.append((ts+PLACE_DELAY,'ability',(tm,base)))
             continue
         if base is None:continue
         if not _has_json(base):
@@ -472,9 +489,8 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
             evo=charge==0
             if base in g.players[tm].evolutions:g.players[tm].evolution_charge[base]=charge
         if base in AIMED and not any(t.alive and _near_tower(t,tx,ty) for t in g.arena.towers if t.team!=tm):
-            # a real player aimed this spell at units that were there: a position oracle for the simulated state
-            aim[0]+=1;aim[1]+=any(u.alive and math.hypot(u.x-tx,u.y-ty)<=2.5 for u in g.players[g._opp(tm)].troops)
-            if probe:probes.append({'spell':base,'team':tm,'t':ts,'x':tx,'y':ty,**_probe(g,tm,tx,ty,ts,plays,deaths)})
+            # a real player aimed this spell at units that were there when it came down: a position oracle for the simulated state
+            aim[0]+=1;held.append((ts+PLACE_DELAY,'aim',(base,tm,tx,ty,ts)))
         _force_hand(g,tm,base)
         g.players[tm].elixir=10
         placement['attempted']+=1
@@ -498,6 +514,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         if rejected:placement['relocated' if ok else 'skipped']+=1
         if not ok and verbose:
             errs.append(f"  fail {base}@({itx},{ity}): {msg}")
+    release(math.inf)
     if not g.ended:
         g.run_to(g.END)
     sw=g.winner

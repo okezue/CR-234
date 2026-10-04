@@ -56,7 +56,7 @@ def t_replay_path_submits_only_the_latest_named_troop(monkeypatch,team,case):
         p.elixir=0
         return g
     monkeypatch.setattr(R,'Game',game)
-    monkeypatch.setattr(Game,'END',0.1)
+    monkeypatch.setattr(Game,'END',0.1+R.PLACE_DELAY)
     name={'unknown':'ability-unknown-card','invalid':'_invalid','ordinary':'ability-knight'}.get(case,'ability-archer-queen')
     g,info=R.replay_battle('ability-'+case,[_play(name,team)],_OUTCOME)
     p=g.players[team]
@@ -77,7 +77,7 @@ def t_replay_path_submits_only_the_latest_named_troop(monkeypatch,team,case):
 
 @pytest.mark.parametrize('case',('queued','hero','missing','active'))
 def t_replay_path_real_placements_and_ability(monkeypatch,case):
-    monkeypatch.setattr(Game,'END',4.2)
+    monkeypatch.setattr(Game,'END',4.2+R.PLACE_DELAY)
     plays=[_play('golden_knight',ability=0)]
     if case=='queued':plays.append(_play('archer_queen',time=40,ability=0))
     elif case=='hero':plays.append(_play('bowler-hero',time=40,ability=0))
@@ -186,7 +186,7 @@ def t_replay_path_pending_banner_requires_named_goblins(monkeypatch,team,named,h
         g.players[team].elixir=0
         return g
     monkeypatch.setattr(R,'Game',game)
-    monkeypatch.setattr(Game,'END',0.1)
+    monkeypatch.setattr(Game,'END',0.1+R.PLACE_DELAY)
     g,info=R.replay_battle('banner',[_play('ability-'+named,team)],_OUTCOME)
     accepted=named=='goblins'
     ab=refs['banner'];p=g.players[team]
