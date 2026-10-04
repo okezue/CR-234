@@ -488,7 +488,8 @@ def spell(c,lvl,team,x,y,evolved,is_hero=False):
                                           'goblin_cfg':unit(c,sk['spawnOnKill'],lvl)})
     if stn.get('targets'):
         if ticks:return VinesSpell(team,x,y,{'radius':r,'max_targets':stn['targets'],'dur':dur,'tick_dmg':dmg,'tick_interval':hs,'ticks':ticks,'name':name})
-        return LightningSpell(team,x,y,{**cfg,'max_targets':stn['targets'],'stun_dur':stn['duration']})
+        return LightningSpell(team,x,y,{**cfg,'max_targets':stn['targets'],'stun_dur':stn['duration'],'strikes':stn.get('strikes'),
+                                        'first_delay':stn.get('firstDelay') or 0,'interval':stn.get('delayBetweenStrikes') or 0})
     if 'boost' in sk:
         b=sk['boost'];return RageSpell(team,x,y,{**cfg,'rage_boost':mult(b['speedMultiplier'])-1,'rage_dur':b['duration']})
     tick={'radius':r,'ticks':ticks,'interval':hs,'name':name,'ct_dmg':ct}

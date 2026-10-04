@@ -49,7 +49,7 @@ def t_fire_spirit_flight_has_no_clone_or_spell_target_body():
     g,spirit,t=placed()
     while not g.projs and g.t<2:g.tick()
     create('clone',11,'blue',spirit.x,spirit.y).apply(g)
-    create('lightning',11,'red',spirit.x,spirit.y).apply(g)
+    lt=create('lightning',11,'red',spirit.x,spirit.y);g._cast('red',lt,lt.x,lt.y)
     assert not any(x.name=='Fire Spirit' for x in g.players['blue'].troops)
     assert len(g.projs)==1 and t.hp==5000
     g.run(1);assert t.hp==5000-spirit.dmg

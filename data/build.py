@@ -280,6 +280,11 @@ def gd_area(card, spell, lo, pct, tag):
             # the slow is the area's buff, given for buffTime to the enemies inside at every hitSpeed (cs 3.0 was the spell's life)
             sl["duration"], sl["interval"] = ae["buffTime"] / 1000, ae["hitSpeed"] / 1000
             card["src"]["skills.slow.duration"] = card["src"]["skills.slow.interval"] = f"{tag} areaEffectObjectData buffTime/hitSpeed"
+    st = card["skills"].get("stun")
+    if st is not None and (ae.get("projectileData") or {}).get("targetBuffData") and ae.get("hitSpeed") and ae.get("lifeDuration"):
+        # bolts: the area fires its projectile at one target every hitSpeed through its life (Lightning 460 ms over 1500 ms, three bolts)
+        st["delayBetweenStrikes"], st["strikes"] = ae["hitSpeed"] / 1000, (ae["lifeDuration"] - 1) // ae["hitSpeed"]
+        card["src"]["skills.stun.delayBetweenStrikes"] = card["src"]["skills.stun.strikes"] = f"{tag} areaEffectObjectData hitSpeed/lifeDuration"
     if (ae.get("projectileData") or {}).get("spawnCharacterData") and ae.get("lifeDuration"):
         # a delivery: the box lands with the area's one hit at the end of its life (Royal Delivery lifeDuration = hitSpeed 2000)
         card["duration"], card["src"]["duration"] = ae["lifeDuration"] / 1000, f"{tag} areaEffectObjectData lifeDuration"
@@ -552,7 +557,7 @@ def main():
              "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget",
                         "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius",
                         "summonDeployDelay", "projectile.speed", "skills.dash.speed", "skills.slow.duration/interval (Earthquake)",
-                        "duration (Royal Delivery)"]},
+                        "duration (Royal Delivery)", "skills.stun.delayBetweenStrikes/strikes (Lightning)"]},
             {"tag": "wiki:<page>", "name": "Clash Royale Fandom wiki, MediaWiki API wikitext", "url": wiki.API,
              "fields": ["projectile.speed", "minRange", "towers.king_tower", "towerMult[15]", "skills.areaDamageOnDeath.radius",
                         "tick.count and per-hit damage anchors of ticking spells"]},
@@ -606,7 +611,9 @@ def main():
                       "the spawner's front to the first unit of that circle), spawn.interval/firstDelay/kind, pull.strength/damage/distance, "
                       "pushback.cycle/damage, heal.radius/overHeal/perKillTiers, shield.damage/radius/pushbackDistance (blast when the shield breaks), "
                       "poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, "
-                      "slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, pierce.bounceDelay "
+                      "slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, stun.firstDelay/delayBetweenStrikes/strikes (a "
+                      "targeted spell's bolts: the first after firstDelay, then one every delayBetweenStrikes, each on a body not struck yet), "
+                      "pierce.bounceDamagePercent/returnTime, pierce.bounceDelay "
                       "(seconds between chain bounces; null: they land together), "
                       "jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, "
                       "rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, "

@@ -193,36 +193,45 @@ class RageSpell:
                     if not has:
                         ally.statuses.append(Status('rage',min(1.0,self.dur_left),self.rage_boost))
 class LightningSpell:
+    # one bolt per strike time (first_delay, then every interval) on the highest-hp body in the radius not struck yet, picked when it falls
+    # (wiki Lightning: it strikes once on each target and retargets onto the Barbarians a destroyed Battle Ram leaves)
     def __init__(self,team,x,y,cfg):
         self.team=team;self.x=float(x);self.y=float(y)
         self.dmg=cfg['dmg'];self.ct_dmg=cfg.get('ct_dmg',0)
         self.radius=cfg['radius']
         self.max_tgt=cfg['max_targets']
         self.stun_dur=cfg['stun_dur']
-        self.active=False;self.applied=False
+        self.first=cfg.get('first_delay',0);self.interval=cfg.get('interval',0);self.strikes=min(cfg.get('strikes') or self.max_tgt,self.max_tgt)
+        self.active=False;self.applied=False;self.t0=None;self.n=0;self.hit=set()
         self.name=cfg.get('name','')
     def apply(self,game):
         if self.applied:return
-        self.applied=True
+        self.applied=True;self.t0=game.t;self.active=True
+        self.tick(0,game)
+    def _strike(self,game):
         opp=game._opp(self.team)
         cands=[]
         # spells strike invisible troops (wiki Royal Ghost, Lightning on a cloaked Archer Queen) but not one underground (wiki Tesla)
         for e in game.players[opp].troops:
-            if not e.alive or has(e,'burrowed'):continue
+            if not e.alive or has(e,'burrowed') or id(e) in self.hit:continue
             d=tdist(e,self.x,self.y)
             if d<=self.radius:cands.append((-getattr(e,'max_hp',e.hp),e,'troop'))
         for tw in game.arena.towers:
-            if tw.team!=opp or not tw.alive:continue
+            if tw.team!=opp or not tw.alive or id(tw) in self.hit:continue
             d=tw.dist(self.x,self.y)
             if d<=self.radius:cands.append((-getattr(tw,'max_hp',tw.hp),tw,'tower'))
-        cands.sort(key=lambda x:x[0])
-        for _,tgt,kind in cands[:self.max_tgt]:
-            dm=self.ct_dmg if kind=='tower' and self.ct_dmg else self.dmg
-            tgt.take_damage(dm)
-            if kind=='tower' and not tgt.alive:game._tower_down(tgt)
-            if self.stun_dur>0:tgt.statuses.append(Status('stun',self.stun_dur))
-        self.active=False
-    def tick(self,dt,game=None):pass
+        if not cands:return
+        _,tgt,kind=min(cands,key=lambda x:x[0]);self.hit.add(id(tgt))
+        dm=self.ct_dmg if kind=='tower' and self.ct_dmg else self.dmg
+        tgt.take_damage(dm)
+        if kind=='tower' and not tgt.alive:game._tower_down(tgt)
+        if self.stun_dur>0:tgt.statuses.append(Status('stun',self.stun_dur))
+    def tick(self,dt,game=None):
+        if game is None or self.t0 is None:return
+        # each bolt falls on the tick nearest its time
+        while self.n<self.strikes and game.t-self.t0+game.DT/2>self.first+self.n*self.interval:
+            self.n+=1;self._strike(game)
+        if self.n>=self.strikes:self.active=False
 # the copy packs the original's punch (wiki Clone: "Cloned troops are fragile, but pack the same punch as the original!"): its charge, jump,
 # dash, chain, stun and slow attributes come along and only its hitpoints and shield drop to 1; the spawn-blast stats are copied too, but a copy
 # never blasts (SpawnZap.reset; the same page: cloned Ice Wizards, Electro Wizards and Mega Knights do not inflict spawn damage)

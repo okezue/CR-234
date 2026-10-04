@@ -5318,19 +5318,23 @@
    "sightRange": null,
    "skills": {
     "stun": {
-     "delayBetweenStrikes": null,
+     "delayBetweenStrikes": 0.46,
      "duration": 0.5,
+     "firstDelay": 0.46,
      "hitSpeedMultiplier": -100,
      "radiusGrowth": null,
      "spawnSpeedMultiplier": -100,
      "speedMultiplier": -100,
-     "strikes": null,
+     "strikes": 3,
      "targets": 3
     }
    },
    "speed": null,
    "src": {
     "*": "cs2.4.0",
+    "skills.stun.delayBetweenStrikes": "gd:debfe1e2 areaEffectObjectData hitSpeed/lifeDuration",
+    "skills.stun.firstDelay": "patch:2026-10-03lt",
+    "skills.stun.strikes": "gd:debfe1e2 areaEffectObjectData hitSpeed/lifeDuration",
     "skills.stun.targets": "legacy:spell_attributes.max_targets",
     "stats.damage[]": "derived:levelMult",
     "stats.towerDamage[15]": "derived:levelMult (source level16 423 is off the level curve)",
@@ -9724,7 +9728,7 @@
  },
  "meta": {
   "abilities": "champion abilities live in skills.ability, hero abilities in hero.ability; cooldown null means single use",
-  "built": "2026-10-03",
+  "built": "2026-10-04",
   "hitType": {
    "single": "one target per hit (source: unique)",
    "splash": "area hit"
@@ -9738,7 +9742,7 @@
    "immunity": "knockback: the troop ignores pushback regardless of mass (Prince, Dark Prince); forcedKnockback: it also ignores the pushes that override ordinary immunity, the Monk combo, the Evolved Mega Knight uppercut and the Log's roll (Monk)",
    "line": "spacing: the summons stand on a horizontal line this many tiles apart instead of the summonRadius circle (Royal Recruits, Royal Hogs)",
    "meleeSwitch": "damage and range of a melee attack used instead of the shot while the target is a ground unit within reach (Elite Musketeers)",
-   "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, spawnOnDeath.towerDamage (the evolved Lumberjack ghost's Crown Tower damage), periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it)/spawnRadius (the wave stands evenly on a circle of this radius around the spawner)/angleShift (degrees from the spawner's front to the first unit of that circle), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, shield.damage/radius/pushbackDistance (blast when the shield breaks), poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, pierce.bounceDamagePercent/returnTime, pierce.bounceDelay (seconds between chain bounces; null: they land together), jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent/linger (seconds a unit keeps the boost after leaving its area), invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), areaDamageOnDeath.towerDamage, ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
+   "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, spawnOnDeath.towerDamage (the evolved Lumberjack ghost's Crown Tower damage), periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy unit is within it)/spawnRadius (the wave stands evenly on a circle of this radius around the spawner)/angleShift (degrees from the spawner's front to the first unit of that circle), spawn.interval/firstDelay/kind, pull.strength/damage/distance, pushback.cycle/damage, heal.radius/overHeal/perKillTiers, shield.damage/radius/pushbackDistance (blast when the shield breaks), poison.stackHits, snipe.minRange/maxRange/cooldown/towerDamagePercent, slow.count/radius/strikes/damage/everyHits, stun.targets/radius/damage, stun.firstDelay/delayBetweenStrikes/strikes (a targeted spell's bolts: the first after firstDelay, then one every delayBetweenStrikes, each on a body not struck yet), pierce.bounceDamagePercent/returnTime, pierce.bounceDelay (seconds between chain bounces; null: they land together), jump.damage/radius/landingTime, burrow.speed/resurfacePercent/resurfaceCount, reflect.damageMultiplier/cooldown, rampingDamage.retainTime/finalStageTime, stack.interval/healPercent/firstDelay/maxInterval, boost.flying/count/hitsPerBonus/hitSpeed/towerDamagePercent/linger (seconds a unit keeps the boost after leaving its area), invincible.minHitpoints, areaDamageOnSpawn.towerDamage (0 spares towers), areaDamageOnDeath.towerDamage, ability.uses/castTime, evo.count, projectile.waves, volley.reloadTime/towerDamage; spells tick every hitSpeed for duration",
    "produceElixir": "interval and amount",
    "rampingHitSpeed": "hitSpeedTiers stepped every hitsPerTier hits while standing still",
    "recoil": "self knockback per shot",
@@ -9766,7 +9770,7 @@
     "version": "2.4.0"
    },
    {
-    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed", "skills.slow.duration/interval (Earthquake)", "duration (Royal Delivery)"],
+    "fields": ["meta.levelMult", "meta.towerMult", "units.* spawned characters", "stats.buildingDamage", "skills.multiTarget", "projectile.waves", "skills.areaDamageOnDeath.radius/fuse", "skills.ability.skills.areaDamageOnDeath.fuse", "summonRadius", "summonDeployDelay", "projectile.speed", "skills.dash.speed", "skills.slow.duration/interval (Earthquake)", "duration (Royal Delivery)", "skills.stun.delayBetweenStrikes/strikes (Lightning)"],
     "fingerprint": "debfe1e2c24562a36ef753ebca3a0f239e12b4c0",
     "name": "statsroyale game data dump (ClashStrategic's upstream)",
     "tag": "gd:debfe1e2",
@@ -9925,6 +9929,10 @@
    {
     "name": "data/patches/2026-10-03lr.json",
     "tag": "patch:2026-10-03lr"
+   },
+   {
+    "name": "data/patches/2026-10-03lt.json",
+    "tag": "patch:2026-10-03lt"
    }
   ],
   "src": "src['*'] is the default provenance; 'path[]' covers the levels derived from the anchors; anchors keep the source value verbatim",
