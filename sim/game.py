@@ -594,7 +594,7 @@ class Game:
         best=None;bd=999;mr=getattr(tr,'min_rng',0)
         for tw in self.arena.towers:
             if tw.team!=opp or not tw.alive or (ks and tw.ttype=='king'):continue
-            d=tw.dist(tr.x,tr.y)
+            d=self._dist(tr,tw)
             if mr<=d<bd:bd=d;best=tw
         return best,bd
     def _find_target(self,tr):
@@ -634,7 +634,8 @@ class Game:
             ks=self._king_shielded(opp)
             for tw in self.arena.towers:
                 if tw.team!=opp or not tw.alive:continue
-                d=tw.dist(tr.x,tr.y)
+                # edge to edge like the troops and buildings above, so a tower is not handicapped by the attacker's own radius
+                d=self._dist(tr,tw)
                 if d<mr:continue
                 # princess towers are the default target while they stand; the king is only picked when in sight
                 if d<=sr:near_c.append((d,tw))
