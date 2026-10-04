@@ -82,9 +82,10 @@ def t_walking_to_the_tower_takes_skeletons_in_sight(name):
 
 
 def kite(name, kiter):
+    # the kiter starts at least 0.35 tile nearer than blue's left tower edge to edge (both radii counted for the tower too)
     g = quiet(Game())
-    a, = unit(g, name, 'red', 3.5, 12.5)
-    k, = unit(g, kiter, 'blue', 9.6, 12.5)
+    a, = unit(g, name, 'red', 3.5, 13.5)
+    k, = unit(g, kiter, 'blue', 9.6, 13.5)
     assert until(g, lambda: a.tgt is k, 1.5)
     return g, a, k
 
