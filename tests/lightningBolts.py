@@ -1,3 +1,8 @@
+import builtins
+import gc
+import weakref
+
+from sim import spells
 from sim.cards import card,create
 from sim.game import Game
 from tests.util import Dummy,quiet
@@ -69,3 +74,26 @@ def t_lightning_bolt_stuns_only_when_it_falls():
     assert not any(s.kind=='stun' for s in d.statuses),"No stun before the bolt"
     g.run_to(t0+0.45)
     assert any(s.kind=='stun' for s in d.statuses),"The bolt stuns its target"
+
+
+def t_lightning_strikes_a_new_troop_given_a_dead_struck_troops_id(monkeypatch):
+    # a troop a bolt kills leaves the game and is freed, and CPython may give the next troop its id(); force that reuse for the newcomer
+    g=quiet(Game());v=Dummy('red',9,10,hp=500,spd=0,dmg=0);g.deploy('red',v)
+    lt,t0=cast(g,9.5,10.5)
+    g.run_to(t0+0.6)
+    assert not v.alive and v not in g.players['red'].troops,"The first bolt kills the troop and the game drops it"
+    n=Dummy('red',9.5,11,hp=3000,spd=0,dmg=0);dead=id(v)
+    monkeypatch.setattr(spells,'id',lambda o:dead if o is n else builtins.id(o),raising=False)
+    g.deploy('red',n);g.run_to(t0+1.0)
+    assert n.hp==3000-1057,"The newcomer holding the dead troop's id() takes the second bolt"
+
+
+def t_lightning_holds_the_troops_it_struck_while_it_lasts():
+    # held, a struck troop the game has dropped is not freed while the spell lasts, so no later troop can take its address
+    g=quiet(Game());v=Dummy('red',9,10,hp=500,spd=0,dmg=0);g.deploy('red',v)
+    lt,t0=cast(g,9.5,10.5)
+    g.run_to(t0+0.6)
+    gone=weakref.ref(v);del v;gc.collect()
+    assert gone() is not None and not gone().alive,"The spell should still hold the troop its first bolt killed"
+    n=Dummy('red',9.5,11,hp=3000,spd=0,dmg=0);g.deploy('red',n);g.run_to(t0+1.0)
+    assert n.hp==3000-1057,"A troop placed after the kill takes the second bolt"
