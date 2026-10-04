@@ -122,5 +122,6 @@ def t_walking_inferno_starts_at_low_damage():
 def t_evolution_retention_path_is_not_cleared_by_ordinary_gate():
     g,tr,ramp,target=setup('inferno_dragon',evolved=True);target.y=10+tr.rng;g.run(2.5)
     assert tr.dmg==ramp.stages[1]
+    # out of range the evolution keeps its stage without advancing it (export InfernoDragon_EV1 IncrementAttackCount on attack; t2126)
     target.y=10+tr.rng+2;elapsed=ramp.elapsed;g.tick()
-    assert ramp.cur_tgt is target and ramp.elapsed>elapsed and tr.dmg==ramp.stages[1]
+    assert ramp.cur_tgt is target and ramp.elapsed==elapsed and tr.dmg==ramp.stages[1]

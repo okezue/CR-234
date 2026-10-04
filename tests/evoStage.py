@@ -92,9 +92,10 @@ def t_last_stage_survives_lower_ramp_target_reset():
     evo.total_beam=evo.s4_time;evo.s4_active=True
     components_tick(g,tr);assert tr.dmg==844
     other=Dummy('red',10,12,hp=1000000,spd=0,dmg=0);g.deploy('red',other)
-    target.alive=False;tr.tgt=other
+    target.alive=False;tr.tgt=other;elapsed=ramp.elapsed
     components_tick(g,tr)
-    assert ramp.cur_tgt is other and ramp.elapsed==0 and tr.dmg==844
+    # a new target keeps the stage, as after a kill (wiki Inferno Dragon/Evolution; t2126)
+    assert ramp.cur_tgt is other and ramp.elapsed>elapsed and tr.dmg==844
     hp=other.hp;g._do_attack(tr,other)
     assert hp-other.hp==844
 

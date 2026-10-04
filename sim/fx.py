@@ -287,6 +287,9 @@ def tower_tiers(tiers,dmg,ct):
     # Crown Tower damage follows the ramp at the card's sourced tier-one ratio; the game data carries no crownTowerDamagePercent on the
     # Inferno Dragon, Inferno Tower or Mighty Miner, so their towerDamage equals damage and every tier lands in full
     return [t*ct//dmg for t in tiers] if ct and dmg else None
+def beaming(tr,g):
+    t=getattr(tr,'tgt',None)
+    return t is not None and t.alive and not hidden(t) and getattr(tr,'min_rng',0)<=g._dist(tr,t)<=tr.rng
 class RampUp(Component):
     def __init__(self,stages,durations,ct_stages=None):
         self.stages=stages;self.durations=durations;self.ct_stages=ct_stages
@@ -306,13 +309,18 @@ class RampUp(Component):
         if stn or frz:self._reset(tr);return
         tgt=getattr(tr,'tgt',None)
         self.shielded=getattr(tgt,'shield_hp',0)>0
-        # The evolution has separate retention handling; this guard covers ordinary ramps.
-        if not any(isinstance(c,EvoInfernoDragon) for c in tr.components):
-            if tgt is None or not tgt.alive or hidden(tgt) or not getattr(tr,'min_rng',0)<=g._dist(tr,tgt)<=tr.rng:
-                self._reset(tr);return
-        if tgt is not self.cur_tgt or (self.cur_tgt and not getattr(self.cur_tgt,'alive',True)):
-            self.cur_tgt=tgt;self.elapsed=0;self._stage(tr,0)
-            return
+        if any(isinstance(c,EvoInfernoDragon) for c in tr.components):
+            # the evolution's stage advances only while its beam is on a target and carries over to the next target; EvoInfernoDragon drops it
+            # after the retain time without a beam (export InfernoDragon_EV1: IncrementAttackCount on each attack, ResetDecayCounter on starting
+            # one; wiki Inferno Dragon/Evolution)
+            if not beaming(tr,g):return
+            if self.cur_tgt is None:self.cur_tgt=tgt;self._stage(tr,0);return
+            self.cur_tgt=tgt
+        else:
+            if not beaming(tr,g):self._reset(tr);return
+            if tgt is not self.cur_tgt or (self.cur_tgt and not getattr(self.cur_tgt,'alive',True)):
+                self.cur_tgt=tgt;self.elapsed=0;self._stage(tr,0)
+                return
         self.elapsed+=g.DT
         t=0
         for i,d in enumerate(self.durations):
@@ -326,9 +334,12 @@ class RampUp(Component):
             self.elapsed=0;self._stage(tr,0)
         self.shielded=getattr(tgt,'shield_hp',0)>0
 class RageDrop(Component):
-    def __init__(self,radius,dur,boost):
-        self.radius=radius;self.dur=dur;self.boost=boost
+    # the Lumberjack's Rage hits enemies in its radius once, Crown Towers at ct (export BarbarianRageDamage 70 at level 1, crownTowerDamagePercent
+    # -70; wiki Lumberjack rage_dmg_11 179, rage_crown_11 54)
+    def __init__(self,radius,dur,boost,dmg=0,ct=0):
+        self.radius=radius;self.dur=dur;self.boost=boost;self.dmg=dmg;self.ct=ct
     def on_death(self,tr,g):
+        for e in near(g,tr.team,tr.x,tr.y,self.radius) if self.dmg else ():hurt(e,self.ct if hasattr(e,'ttype') else self.dmg,g)
         for ally in g.players[tr.team].troops:
             if not ally.alive or ally is tr:continue
             d=math.sqrt((ally.x-tr.x)**2+(ally.y-tr.y)**2)
@@ -506,7 +517,7 @@ class BanditDash(Component):
             if t is not None and getattr(t,'alive',True):self.to=pos(t)
             dx=self.to[0]-tr.x;dy=self.to[1]-tr.y;d=math.hypot(dx,dy);st=self.spd*g.DT
             if d>st and not (t is not None and getattr(t,'alive',True) and g._dist(tr,t)<=tr.rng):tr.x+=dx/d*st;tr.y+=dy/d*st;return
-            if t is not None and getattr(t,'alive',True):hurt(t,getattr(tr,'dash_dmg',tr.dmg*2),g)
+            if t is not None and getattr(t,'alive',True):hurt(t,tr.dash_dmg,g)
             self._end(tr);g._free_spot(tr,*getattr(self,'at',(None,None)));return
         tgt=getattr(tr,'tgt',None)
         if not tgt:
@@ -880,11 +891,17 @@ class BannerBrigade(Ability):
             self.banner_timer-=dt
             if self.banner_timer<=0:self.banner_pos=None
 class EvoKnight(Component):
-    def __init__(self,red):self.red=red;self.attacking=False
+    # the reduction holds from his deploy until he deals damage and returns once he stops attacking that target: it dies, he takes another or
+    # it leaves his reach (wiki Knight/Evolution: "staying active until the Evolved Knight deals damage to something", "will lose the damage reduction once
+    # he starts attacking", 16/12/2024 fix of full damage while chasing after attacking; export Knight_EV1 buffWhenNotAttacking 60)
+    def __init__(self,red):self.red=red;self.engaged=None
+    def reset(self,cfg):self.engaged=None
+    def on_deploy(self,tr,g):tr._dmg_reduction=self.red
     def on_tick(self,tr,g):
-        self.attacking=getattr(tr,'tgt',None) is not None and tr.cd<=0.01
-        tr._dmg_reduction=0 if self.attacking else self.red
-    def on_attack(self,tr,tgt,g):tr._dmg_reduction=0
+        e=self.engaged
+        if e is not None and (getattr(tr,'tgt',None) is not e or not e.alive or g._dist(tr,e)>tr.rng):self.engaged=None
+        tr._dmg_reduction=0 if self.engaged is not None else self.red
+    def on_attack(self,tr,tgt,g):self.engaged=tgt;tr._dmg_reduction=0
 class EvoBomber(Component):
     def __init__(self,bounces,br):self.bounces=bounces;self.br=br
     def on_attack(self,tr,tgt,g):
@@ -1367,17 +1384,17 @@ class EvoMegaKnight(Component):
         dy=twy-tgt.y
         if abs(dy)>0.1:y0=tgt.y;tgt.y+=dy/abs(dy)*min(self.kb,abs(dy));g._hold_in(tgt,tgt.x,y0)
 class EvoInfernoDragon(Component):
+    # the fourth stage comes after 20 s of beam and a stage is kept retain seconds without a beam, flying included (wiki Inferno
+    # Dragon/Evolution: "After 20 seconds of damage", the stage kept after a kill while it does not hit; Supercell June 2026 retention 9 -> 7 s)
     def __init__(self,s4_dmg,retain_sec,s4_time,s4_ct=0):
         self.retain=retain_sec;self.s4_time=s4_time;self.s4_dmg=s4_dmg;self.s4_ct=s4_ct
-        self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
-    def reset(self,cfg):self.idle_timer=0;self.total_beam=0;self.last_tgt=None;self.s4_active=False
+        self.idle_timer=0;self.total_beam=0;self.s4_active=False
+    def reset(self,cfg):self.idle_timer=0;self.total_beam=0;self.s4_active=False
     def on_tick(self,tr,g):
         if has(tr,'stun','freeze'):
             self.total_beam=0;self.s4_active=False;return
-        tgt=getattr(tr,'tgt',None)
-        if tgt:
+        if beaming(tr,g):
             self.idle_timer=0
-            if tgt is not self.last_tgt:self.last_tgt=tgt
             self.total_beam+=g.DT
             if self.total_beam>=self.s4_time:self.s4_active=True
             if self.s4_active:
@@ -1408,17 +1425,30 @@ class EvoRoyalGhost(Component):
                 ox=random.uniform(-0.5,0.5);oy=random.uniform(-0.5,0.5);cfg=self.mk()
                 g._place(tr.team,Troop(tr.team,tr.x+ox,tr.y+oy,cfg),cfg.get('deploy',0))
         self.was_invis=is_invis
+class GhostLife(Component):
+    # the ghost is raged inside its own Rage and disappears when that Rage ends or linger seconds after it leaves the radius; other Rages
+    # neither extend nor keep it (wiki Lumberjack/Evolution: "will disappear after a short time outside of the initial Rage", histories 11/2/2025
+    # and 4/3/2025: 1 s after leaving the radius; export BarbarianRage buffTime 1000)
+    def __init__(self,x,y,r,life,linger,boost):self.x=x;self.y=y;self.r=r;self.life=life;self.linger=linger;self.boost=boost;self.out=0
+    def on_tick(self,tr,g):
+        self.life-=g.DT
+        if math.hypot(tr.x-self.x,tr.y-self.y)<=self.r:self.out=0;refresh(tr,'rage',self.linger,self.boost)
+        else:self.out+=g.DT
+        if self.life<=1e-9 or self.out>=self.linger-1e-9:tr.alive=False
 class EvoLumberjack(Component):
-    def __init__(self,ghost_dur):
-        self.ghost_dur=ghost_dur
+    # the ghost hits like the Lumberjack, at ct to Crown Towers, and cannot be targeted or damaged (wiki Lumberjack/Evolution: unlimited health,
+    # "can't be targeted by troops, buildings and towers", ghost_crown_11 128; Supercell June 2026 note: Crown Tower Damage 256 -> 128)
+    def __init__(self,ghost_dur,ct,r,linger,boost):
+        self.ghost_dur=ghost_dur;self.ct=ct;self.r=r;self.linger=linger;self.boost=boost
     def on_death(self,tr,g):
         cfg={'hp':1,'dmg':tr.dmg,'hspd':tr.hspd,'fhspd':tr.fhspd,
              'spd':tr.spd,'rng':tr.rng,'targets':tr.targets,'transport':'Ground',
-             'atk_type':'single_target','splash_r':0,'ct_dmg':0,
-             'components':[],'lvl':tr.lvl,'name':'Lumberjack Ghost','card':tr.card}
+             'atk_type':'single_target','splash_r':0,'ct_dmg':self.ct,
+             'components':[GhostLife(tr.x,tr.y,self.r,self.ghost_dur,self.linger,self.boost)],'lvl':tr.lvl,'name':'Lumberjack Ghost','card':tr.card}
         ghost=Troop(tr.team,tr.x,tr.y,cfg)
-        ghost.max_hp=1;ghost.hp=1
-        ghost.statuses.append(Status('invisible',self.ghost_dur))
+        # it disappears rather than dies, so it leaves no soul
+        ghost.max_hp=1;ghost.hp=1;ghost.no_soul=True
+        ghost.statuses+=[Status('invisible',self.ghost_dur+1),Status('invincible',self.ghost_dur+1),Status('rage',self.linger,self.boost)]
         g.players[tr.team].troops.append(ghost)
 class TripleThreat(Ability):
     def __init__(self,dash_dist,decoy_hp,triple_rng,dur,cost,cd):
