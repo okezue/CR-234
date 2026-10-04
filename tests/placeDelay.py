@@ -81,3 +81,12 @@ def t_recorded_ability_is_checked_and_started_one_second_later(monkeypatch,gap):
     acts=[line for line in g.log if ' activates Archer Queen ability' in line]
     assert len(acts)==1 and acts[0].startswith(f"[{gap/20+_DELAY:.1f}]")
     assert fired==[pytest.approx(gap/20+_DELAY+0.05,abs=1e-6)]
+
+@pytest.mark.parametrize('zap_time',[30,50])
+def t_aim_oracle_reads_the_tick_before_the_spell_lands(monkeypatch,zap_time):
+    # the skeletons recorded at 1.0 s are on the field from 2.0; a Zap recorded at 1.5 lands at 2.5, one at 2.5 lands at 3.5 and kills them
+    monkeypatch.setattr(Game,'END',5.0)
+    monkeypatch.setattr(R,'_detect_true_red',lambda plays:False)
+    plays=[_play('skeletons','red',time=20,y=20.25),_play('zap','blue',time=zap_time,y=20.25)]
+    g,info=R.replay_battle('aim',plays,_OUTCOME,probe=True)
+    assert info['aim']==(1,1) and info['probes'][0]['hit'] and info['probes'][0]['t']==zap_time/20
