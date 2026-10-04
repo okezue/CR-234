@@ -136,8 +136,8 @@ def t_mortar_configured_minimum_range_threshold(kind,delta):
         distance=g._dist(mortar,near);target=near
     else:
         near.alive=False;target=g.arena.get_tower('red','princess','left');target.alive=True
-        mortar.x=target.cx;mortar.y=target.cy-mortar.min_rng-target.collision_r-mortar.collision_r-delta
-        distance=g._dist(mortar,target)
+        mortar.x=target.cx;mortar.y=target.cy-mortar.min_rng-target.collision_r-delta
+        distance=target.dist(mortar.x,mortar.y)
     assert abs(distance-(3.5+delta))<1e-12
     assert g._find_target(mortar)[0] is (None if delta<0 else target)
 
