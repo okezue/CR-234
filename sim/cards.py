@@ -118,7 +118,7 @@ def attach(cfg,c,sk,lvl,chain=None):
     hk=sk.get('hook',{})
     if hk.get('maxRange'):
         hs=hk.get('slow',{});cs.append(fx.Hook(hk['minRange'],hk['maxRange'],hk['loadTime'],hk['speed'],hk['dragSpeed'],hk['selfDragSpeed'],
-                                                hs.get('duration') or 0,mult(hs.get('speedMultiplier') or 0)))
+                                                hs.get('duration') or 0,mult(hs.get('speedMultiplier') or 0),hk.get('dragMargin') or 0.0))
     sd=sk.get('spawnOnDeath',{});ps=sk.get('periodicSpawn',{})
     egg=ps.get('character') and ps.get('pauseTime') and snake(ps['character']).startswith(snake(c['name']))
     if egg:

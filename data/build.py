@@ -594,7 +594,8 @@ def main():
                        "aimed pellet is the base hit and every other pellet hits the first body on its line (Hunter)",
             "spawn.minRadius": "a periodic spell spawn rises between this distance and the spell radius from the centre (Graveyard)",
             "hook": "special attack on a ground target between minRange and maxRange: the unit stands for loadTime, the hook flies at speed and "
-                    "drags a troop to the unit's reach at dragSpeed or the unit to a building at selfDragSpeed, slowing the target (Fisherman)",
+                    "drags a troop to the unit at dragSpeed or the unit to a building at selfDragSpeed until the two are dragMargin tiles apart edge "
+                    "to edge, slowing the target (Fisherman)",
             "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill, which hides hideTime seconds at each and comes back a quarter turn "
                       "around an enemy Crown Tower within relocateRange tiles",

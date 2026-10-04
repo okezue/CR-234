@@ -522,10 +522,11 @@ class BanditDash(Component):
                 self.charging=False;self.dashing=True;self.to=pos(self.dtgt);self.at=(tr.x,tr.y);tr.statuses.append(Status('invincible',2.0))
 class Hook(Component):
     # the Fisherman's special attack (game data special_min_range 3.5, special_range 7, special_load_time 1.3, damage_special 0; FishermanProjectile
-    # speed 800, drag_back_speed 850, drag_self_speed 450, target buff IceWizardSlowDown): a ground target in the band stops him for the load, then
-    # the hook drags a troop into his reach or him to a building; the dragged troop is helpless for the drag and its charge is reset
-    def __init__(self,mn,mx,load,spd,drag,sdrag,sdur,sval):
-        self.mn=mn;self.mx=mx;self.load=load;self.spd=spd;self.drag=drag;self.sdrag=sdrag;self.sdur=sdur;self.sval=sval
+    # speed 800, drag_back_speed 850, drag_self_speed 450, drag_margin 200, target buff IceWizardSlowDown): a ground target in the band stops him for
+    # the load, then the hook drags a troop to him or him to a building until the two are drag_margin apart edge to edge (both recorded Hog pulls
+    # end touching him, not at his reach); the dragged troop is helpless for the drag and its charge is reset
+    def __init__(self,mn,mx,load,spd,drag,sdrag,sdur,sval,margin=0.0):
+        self.mn=mn;self.mx=mx;self.load=load;self.spd=spd;self.drag=drag;self.sdrag=sdrag;self.sdur=sdur;self.sval=sval;self.margin=margin
         self.charging=self.flying=False;self.timer=0;self.osp=None;self.htgt=None;self.pull=None
     def _end(self,tr):
         if self.osp is not None:tr.spd=self.osp;self.osp=None
@@ -538,8 +539,7 @@ class Hook(Component):
         if not t.alive or not tr.alive:return
         if self.sdur>0 and hasattr(t,'statuses'):t.statuses.append(Status('slow',self.sdur,self.sval))
         mine=hasattr(t,'ttype') or getattr(t,'is_building',False)
-        if not mine:
-            tx,ty=pos(t);t.statuses.append(Status('knockback',0.05));t.statuses.append(Status('stun',math.hypot(tx-tr.x,ty-tr.y)/self.drag))
+        if not mine:t.statuses.append(Status('knockback',0.05));t.statuses.append(Status('stun',max(0.0,g._dist(tr,t)-self.margin)/self.drag))
         self.pull=(t,mine)
     def on_death(self,tr,g):
         # a troop still being dragged when the Fisherman falls is set on standable ground
@@ -548,13 +548,14 @@ class Hook(Component):
     def on_tick(self,tr,g):
         if self.pull is not None:
             t,mine=self.pull
-            if not t.alive or g._dist(tr,t)<=tr.rng:
+            gap=g._dist(tr,t)-self.margin if t.alive else 0.0
+            if gap<=1e-9:
                 # the drag may cross the river but it ends on standable ground
                 self.pull=None;a=tr if mine else t
                 if a.alive:g._free_spot(a,*(pos(t) if mine else (tr.x,tr.y)))
                 return
             a=tr if mine else t;bx,by=pos(tr if not mine else t);dx=bx-a.x;dy=by-a.y;d=math.hypot(dx,dy)
-            if d>0:st=min(d,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
+            if d>0:st=min(gap,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
             return
         if self.flying:return
         if self.charging:
