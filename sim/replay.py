@@ -9,6 +9,9 @@ from sim.units import Troop,Building
 
 _FILLER=['knight','archers','fireball','zap','valkyrie','musketeer','baby_dragon','mini_pekka']
 _BASE=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# a recorded play reaches the field 1.00 s after its recorded time, both sides and every card type (52 frame readings in the eight
+# matched recordings against the clock's regulation/overtime switch); the card and its elixir leave the hand at the recorded time
+PLACE_DELAY=1.0
 
 def _has_json(n):
     return key(n) is not None
@@ -428,9 +431,9 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         evo_cards[tm]=set(evos[:MAX_EVOLUTION_SLOTS]);hero_cards[tm]=set(heroes[:room])
         equipped[tm]={'evolutions':evo_cards[tm],'heroes':hero_cards[tm]}
     g=Game(
-        p1={'deck':decks['blue'],'king_lvl':b_klvl,'tt_name':b_tt,'tt_lvl':outcome.get('b_ttlvl'),'drag_del':0,'drag_std':0,
+        p1={'deck':decks['blue'],'king_lvl':b_klvl,'tt_name':b_tt,'tt_lvl':outcome.get('b_ttlvl'),'drag_del':PLACE_DELAY,'drag_std':0,
             'ability_del':0,'ability_std':0,'card_levels':b_lvls,**equipped['blue']},
-        p2={'deck':decks['red'],'king_lvl':r_klvl,'tt_name':r_tt,'tt_lvl':outcome.get('r_ttlvl'),'drag_del':0,'drag_std':0,
+        p2={'deck':decks['red'],'king_lvl':r_klvl,'tt_name':r_tt,'tt_lvl':outcome.get('r_ttlvl'),'drag_del':PLACE_DELAY,'drag_std':0,
             'ability_del':0,'ability_std':0,'card_levels':r_lvls,**equipped['red']}
     )
     bd=g.players['blue'].deck
@@ -446,6 +449,16 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         def rec():
             deaths.extend((g.t,u.x,u.y,u.name) for tm_ in ('blue','red') for u in g.players[tm_].troops if not u.alive);pd_()
         g._proc_deaths=rec
+    held=[]
+    def release(t):
+        # a recorded ability is checked and started when it reaches the field, PLACE_DELAY after its recorded time
+        while held and held[0][0]<=t and not g.ended:
+            at,tm_,base_=held.pop(0)
+            if at>g.END:held.clear();break
+            g.run_to(at)
+            if g.ended:break
+            g.players[tm_].elixir=10
+            submit_recorded_ability(g,tm_,base_)
     for p in plays:
         ts=p['time']/20.0
         base,_,_=norm(p['card'])
@@ -453,11 +466,11 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         tx,ty=p['tile_x'],p['tile_y']
         itx,ity=int(tx),int(ty)
         if g.ended:break
+        release(ts)
         g.run_to(ts)
         if g.ended:break
         if p['ability']==1:
-            g.players[tm].elixir=10
-            submit_recorded_ability(g,tm,base)
+            held.append((ts+PLACE_DELAY,tm,base))
             continue
         if base is None:continue
         if not _has_json(base):
@@ -498,6 +511,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         if rejected:placement['relocated' if ok else 'skipped']+=1
         if not ok and verbose:
             errs.append(f"  fail {base}@({itx},{ity}): {msg}")
+    release(g.END)
     if not g.ended:
         g.run_to(g.END)
     sw=g.winner
