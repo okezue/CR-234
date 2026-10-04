@@ -243,7 +243,8 @@ class DeathNova(Component):
         sv=1.0-self.slow_pct/100.0
         for e in g.players[opp].troops:
             if not e.alive:continue
-            d=math.sqrt((e.x-tr.x)**2+(e.y-tr.y)**2)
+            # the nova reaches a body it touches, like every other area (tdist; wiki Bomb Tower: it hits troops whose hitboxes touch a tower)
+            d=tdist(e,tr.x,tr.y)
             if d<=dr:
                 e.take_damage(dd)
                 if hasattr(e,'statuses'):e.statuses.append(Status('slow',self.slow_dur,sv))
