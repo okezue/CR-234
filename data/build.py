@@ -598,7 +598,8 @@ def main():
                     "to edge, slowing the target (Fisherman)",
             "burrow": "underground travel from the own King Tower at speed (units per tick, /50) for at least the deploy time; "
                       "resurfacePercent/resurfaceCount for the evo drill, which hides hideTime seconds at each and comes back a quarter turn "
-                      "around an enemy Crown Tower within relocateRange tiles",
+                      "around an enemy Crown Tower within relocateRange tiles; delay: seconds into a champion ability's cast at which he goes "
+                      "underground where he stands and leaves his bomb, surfacing at the mirrored spot when the cast ends (Mighty Miner)",
             "params": "charge.range, dash.chargeTime (wind-up of a dash or jump)/radius/speed/count/towerDamage, spawnOnDeath.count/hpPercent, "
                       "spawnOnDeath.towerDamage (the evolved Lumberjack ghost's Crown Tower damage), "
                       "periodicSpawn.firstDelay/hpPercent/lifetime/spawnInterval (seconds between the units of a wave)/range (spawns only while an enemy "
