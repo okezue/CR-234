@@ -129,10 +129,14 @@ def beam_hits(g,tw,n,until=40):
     return hits
 
 
-def t_p3_evo_inferno_first_tower_ticks_after_a_flight_are_35():
+def t_p3_evo_inferno_first_tower_beam_after_a_flight_ramps_from_stage_1():
+    # recorded at level 16 (08PY89989G80, WWJv_aWCnT0 966.7-971.5 s, 10 fps labels read by t2124): a Dragon flying in from the bridge
+    # without a beam before deals 5 ticks of 57, 5 of 192, then 674, one per 0.4 s; the base card the same
     for ev in (False,True):
-        random.seed(42);g=quiet(Game());d=create('inferno_dragon',11,'blue',3.5,14.5,evolved=ev);g._place('blue',d,1.0)
-        assert [x for _,x in beam_hits(g,red_left(g),3)]==[35,35,35],ev
+        random.seed(42);g=quiet(Game());d=create('inferno_dragon',16,'blue',3.5,14.5,evolved=ev);g._place('blue',d,1.0)
+        tw=red_left(g);tw.hp=tw.max_hp=50000;hits=beam_hits(g,tw,13)
+        assert [x for _,x in hits]==[57]*5+[192]*5+[674]*3,(ev,hits)
+        assert {round(b[0]-a[0],2) for a,b in zip(hits,hits[1:])}=={0.4}
 
 
 def kill_then_tower(wait=0.0):
