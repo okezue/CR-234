@@ -539,7 +539,8 @@ class Hook(Component):
         if not t.alive or not tr.alive:return
         if self.sdur>0 and hasattr(t,'statuses'):t.statuses.append(Status('slow',self.sdur,self.sval))
         mine=hasattr(t,'ttype') or getattr(t,'is_building',False)
-        if not mine:t.statuses.append(Status('knockback',0.05));t.statuses.append(Status('stun',max(0.0,g._dist(tr,t)-self.margin)/self.drag))
+        if not mine:
+            tx,ty=pos(t);t.statuses.append(Status('knockback',0.05));t.statuses.append(Status('stun',math.hypot(tx-tr.x,ty-tr.y)/self.drag))
         self.pull=(t,mine)
     def on_death(self,tr,g):
         # a troop still being dragged when the Fisherman falls is set on standable ground
@@ -548,14 +549,14 @@ class Hook(Component):
     def on_tick(self,tr,g):
         if self.pull is not None:
             t,mine=self.pull
-            gap=g._dist(tr,t)-self.margin if t.alive else 0.0
+            gap=g._dist(tr,t)-(self.margin if mine else tr.rng) if t.alive else 0.0
             if gap<=1e-9:
                 # the drag may cross the river but it ends on standable ground
                 self.pull=None;a=tr if mine else t
                 if a.alive:g._free_spot(a,*(pos(t) if mine else (tr.x,tr.y)))
                 return
             a=tr if mine else t;bx,by=pos(tr if not mine else t);dx=bx-a.x;dy=by-a.y;d=math.hypot(dx,dy)
-            if d>0:st=min(gap,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
+            if d>0:st=min(gap if mine else d,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
             return
         if self.flying:return
         if self.charging:
