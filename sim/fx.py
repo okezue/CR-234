@@ -548,14 +548,14 @@ class Hook(Component):
     def on_tick(self,tr,g):
         if self.pull is not None:
             t,mine=self.pull
-            gap=g._dist(tr,t)-self.margin if t.alive else 0.0
+            gap=g._dist(tr,t)-(tr.rng if mine else self.margin) if t.alive else 0.0
             if gap<=1e-9:
                 # the drag may cross the river but it ends on standable ground
                 self.pull=None;a=tr if mine else t
                 if a.alive:g._free_spot(a,*(pos(t) if mine else (tr.x,tr.y)))
                 return
             a=tr if mine else t;bx,by=pos(tr if not mine else t);dx=bx-a.x;dy=by-a.y;d=math.hypot(dx,dy)
-            if d>0:st=min(gap,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
+            if d>0:st=min(d if mine else gap,(self.sdrag if mine else self.drag)*g.DT);a.x+=dx/d*st;a.y+=dy/d*st
             return
         if self.flying:return
         if self.charging:
