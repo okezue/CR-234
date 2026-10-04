@@ -1,5 +1,6 @@
 from sim.cards import card,create
 from sim.game import Game
+from sim.units import has
 from tests.util import Dummy,quiet
 
 
@@ -10,8 +11,8 @@ from tests.util import Dummy,quiet
 
 
 def escape(x=14.5,y=12.0,bodies=(),troops=()):
-    # a still miner in the right lane escapes to x = 18 - x; the towers are quiet, the bodies neither move nor attack and the enemy troops
-    # stand still; returns the game, the miner, the bodies then the troops, and the escape time
+    # a still miner in the right lane escapes towards x = 18 - x; the towers are quiet, the bodies neither move nor attack and the enemy troops
+    # stand still; returns the game, the miner, the bodies then the troops, and the time he goes underground and leaves the bomb
     g=quiet(Game(p1={'ability_std':0}))
     mm=create('mighty_miner',11,'blue',x,y);mm.spd=0;g.deploy('blue',mm)
     out=[]
@@ -24,8 +25,8 @@ def escape(x=14.5,y=12.0,bodies=(),troops=()):
     g.run(0.5)
     g.players['blue'].elixir=10;mm.ability.cd=0
     assert g.activate_ability('blue',mm)[0]
-    while mm.x==x and g.t<5:g.tick()
-    assert abs(mm.x-(18-x))<1e-9,mm.x
+    while not has(mm,'burrowed') and g.t<5:g.tick()
+    assert has(mm,'burrowed') and abs(mm.x-x)<1e-9,mm.x
     return g,mm,out,g.t
 
 

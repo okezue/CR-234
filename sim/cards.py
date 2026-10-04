@@ -258,7 +258,8 @@ def ability(c,a,lvl,tr):
         if ct_tiers:tr.ct_dmg=ct_tiers[0]
         tr.components.append(fx.RampUp(tiers,tr.ramp_durations,ct_tiers))
         dd=s['areaDamageOnDeath']
-        return fx.ExplosiveEscape(at(dd['damage'],lvl),dd['radius'],s.get('pushback',{}).get('distance') or 0,cost,cd,dd.get('fuse') or 0)
+        return fx.ExplosiveEscape(at(dd['damage'],lvl),dd['radius'],s.get('pushback',{}).get('distance') or 0,cost,cd,dd.get('fuse') or 0,
+                                  (s.get('burrow') or {}).get('delay') or 0)
     if n=='Goblinstein_ability':return fx.LightningLink(at(po['damage'],lvl),at(po['towerDamage'],lvl),po['radius'],po['duration'],po['tickInterval'],cost,cd)
     if n=='ChampGuardianAbility':
         # the card's charge is the Guardienne's Royal Rescue dash: damage and range on the card, pushback on the ability

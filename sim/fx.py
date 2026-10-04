@@ -781,19 +781,32 @@ class CloakingCape(Ability):
             if self.orig_hspd is not None:tr.hspd=self.orig_hspd;self.orig_hspd=None
             if self.orig_spd is not None:tr.spd=self.orig_spd;self.orig_spd=None
 class ExplosiveEscape(Ability):
-    # the bomb stays at the miner's old spot and, like the death bombs, blasts air and ground there when its fuse runs out
-    def __init__(self,bomb_dmg,bomb_r,kb,cost,cd,fuse=0):
-        super().__init__(cost,cd);self.bomb_dmg=bomb_dmg;self.bomb_r=bomb_r;self.kb=kb;self.fuse=fuse
-    def activate(self,tr,g):
-        ox,oy,team=tr.x,tr.y,tr.team
-        # the mirrored spot is settled like a deploy (a tower still standing on that side covers it when his own side's is down)
-        tr.x=g.arena.W-tr.x;g._free_spot(tr,ox,oy)
+    # dig seconds into the cast he goes underground where he stands, intangible (wiki), and his bomb appears there (recorded in 09PP9JRPYR9Y:
+    # the bomb shows in the frame he vanishes); he travels underground to the mirrored spot and surfaces when the cast ends. The bomb, like
+    # the death bombs, blasts air and ground there when its fuse runs out
+    def __init__(self,bomb_dmg,bomb_r,kb,cost,cd,fuse=0,dig=0):
+        super().__init__(cost,cd);self.bomb_dmg=bomb_dmg;self.bomb_r=bomb_r;self.kb=kb;self.fuse=fuse;self.dig=dig;self.leg=None
+    def _under(self,tr,g):
+        ox,oy,team=tr.x,tr.y,tr.team;self.leg=(ox,g.arena.W-ox,self.cast_timer)
+        tr.statuses.append(Status('burrowed',self.cast_timer+2*g.DT))
         def blast(g):
             for e in near(g,team,ox,oy,self.bomb_r):hurt(e,self.bomb_dmg,g);push(e,ox,oy,self.kb)
         if self.fuse>0:g.spells.append(Timer(self.fuse,blast,ox,oy,team,tr.name))
         else:blast(g)
         for c in tr.components:
             if hasattr(c,'_reset'):c._reset(tr)
+    def tick(self,dt,tr,g):
+        if not self.casting:super().tick(dt,tr,g);return
+        # the cast's elapsed time counts the tick it begins on, so it equals the time since the recorded play
+        self.cast_timer-=dt;tr=self._cast_tr
+        if self.cast_timer<=0:self.casting=False;self.activate(tr,g);return
+        if self.leg is None and self.CAST_TIME-self.cast_timer>=self.dig-1e-9:self._under(tr,g)
+        if self.leg:x0,x1,T=self.leg;tr.x=x1+(x0-x1)*self.cast_timer/T if T>0 else x1
+    def activate(self,tr,g):
+        if self.leg is None:self.cast_timer=0;self._under(tr,g)
+        x0,x1,_=self.leg;self.leg=None
+        # the mirrored spot is settled like a deploy (a tower still standing on that side covers it when his own side's is down)
+        tr.x=x1;tr.statuses=[s for s in tr.statuses if s.kind!='burrowed'];g._free_spot(tr,x0,tr.y)
         self.cd=self.max_cd
 class LightningLink(Ability):
     # the holder (the Doctor) electrifies the link to the Monster, or to the antenna left where the Monster fell, and every tick hits each
