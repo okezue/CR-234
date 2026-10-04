@@ -451,18 +451,13 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         g._proc_deaths=rec
     held=[]
     def release(t):
-        # a recorded ability is checked and started, and an aimed spell is scored, when the play reaches the field, PLACE_DELAY later
+        # an aimed spell is scored when the play reaches the field, PLACE_DELAY later
         while held and held[0][0]<=t:
-            at,kind,a=held.pop(0)
+            at,base_,tm_,x_,y_,ts_=held.pop(0)
             # the oracle reads the tick before the spell lands (before it can kill what it was aimed at), as it read the tick before the play
-            if not g.ended and at<=g.END:g.run_to(at-g.DT if kind=='aim' else at)
-            if kind=='aim':
-                base_,tm_,x_,y_,ts_=a
-                aim[1]+=any(u.alive and math.hypot(u.x-x_,u.y-y_)<=2.5 for u in g.players[g._opp(tm_)].troops)
-                if probe:probes.append({'spell':base_,'team':tm_,'t':ts_,'x':x_,'y':y_,**_probe(g,tm_,x_,y_,at,plays,deaths)})
-            elif not g.ended and at<=g.END:
-                g.players[a[0]].elixir=10
-                submit_recorded_ability(g,*a)
+            if not g.ended and at<=g.END:g.run_to(at-g.DT)
+            aim[1]+=any(u.alive and math.hypot(u.x-x_,u.y-y_)<=2.5 for u in g.players[g._opp(tm_)].troops)
+            if probe:probes.append({'spell':base_,'team':tm_,'t':ts_,'x':x_,'y':y_,**_probe(g,tm_,x_,y_,at,plays,deaths)})
     for p in plays:
         ts=p['time']/20.0
         base,_,_=norm(p['card'])
@@ -474,7 +469,10 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
         g.run_to(ts)
         if g.ended:break
         if p['ability']==1:
-            held.append((ts+PLACE_DELAY,'ability',(tm,base)))
+            # checked and started at its recorded time, from the champion's landing on; the 1.0 s cast brings its effect PLACE_DELAY
+            # later, where five recorded abilities fire (+0.9 to +1.2 s, t2140)
+            g.players[tm].elixir=10
+            submit_recorded_ability(g,tm,base)
             continue
         if base is None:continue
         if not _has_json(base):
@@ -490,7 +488,7 @@ def replay_battle(bid,plays,outcome,verbose=False,pid=None,probe=False):
             if base in g.players[tm].evolutions:g.players[tm].evolution_charge[base]=charge
         if base in AIMED and not any(t.alive and _near_tower(t,tx,ty) for t in g.arena.towers if t.team!=tm):
             # a real player aimed this spell at units that were there when it came down: a position oracle for the simulated state
-            aim[0]+=1;held.append((ts+PLACE_DELAY,'aim',(base,tm,tx,ty,ts)))
+            aim[0]+=1;held.append((ts+PLACE_DELAY,base,tm,tx,ty,ts))
         _force_hand(g,tm,base)
         g.players[tm].elixir=10
         placement['attempted']+=1

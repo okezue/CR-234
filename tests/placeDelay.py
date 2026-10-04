@@ -66,9 +66,9 @@ def t_play_in_the_last_second_never_reaches_the_field(monkeypatch,phase):
     assert info['placement']['attempted']==2 and not [n for t,tm,n in seen if n=='Knight']
 
 @pytest.mark.parametrize('gap',[50,60,100])
-def t_recorded_ability_is_checked_and_started_one_second_later(monkeypatch,gap):
-    # checked when it reaches the field: 2.5 s after the champion's play its ability is ready (on the field 1.0 to 2.0, then the 1 s
-    # ability delay), which a check at the recorded time would refuse
+def t_recorded_ability_is_checked_and_started_at_its_recorded_time(monkeypatch,gap):
+    # the champion is on the field from 1.0 s and its ability is usable from then; the 1.0 s cast is the ability's delay, so a recorded
+    # ability fires 1.05 s after its recorded time (t2140: five frame readings at +0.9 to +1.2 s; held 1.0 s more it fired at +2.05)
     monkeypatch.setattr(Game,'END',7.0)
     fired=[]
     proc=Game._proc_pending_ab
@@ -79,8 +79,8 @@ def t_recorded_ability_is_checked_and_started_one_second_later(monkeypatch,gap):
     monkeypatch.setattr(R,'_detect_true_red',lambda plays:False)
     g,info=R.replay_battle('ability',[_play('archer_queen',time=0),_play('ability-archer-queen',time=gap,ability=1)],_OUTCOME)
     acts=[line for line in g.log if ' activates Archer Queen ability' in line]
-    assert len(acts)==1 and acts[0].startswith(f"[{gap/20+_DELAY:.1f}]")
-    assert fired==[pytest.approx(gap/20+_DELAY+0.05,abs=1e-6)]
+    assert len(acts)==1 and acts[0].startswith(f"[{gap/20:.1f}]")
+    assert fired==[pytest.approx(gap/20+0.05,abs=1e-6)]
 
 @pytest.mark.parametrize('zap_time',[30,50])
 def t_aim_oracle_reads_the_tick_before_the_spell_lands(monkeypatch,zap_time):

@@ -652,13 +652,18 @@ class Knockback(Component):
         if hasattr(tgt,'x'):push(tgt,tr.x,tr.y,self.dist)
 class Ability:
     CAST_TIME=1.0
-    def __init__(self,cost,cd,delay=1.0):
+    # ready from the landing: no button delay after the deploy since late 2025 (r/ClashRoyale 1pae4dj, 30 Nov 2025), and recorded
+    # abilities start from 0.10 s after their champion lands (t2140)
+    def __init__(self,cost,cd,delay=0.0):
         self.cost=cost;self.max_cd=cd;self.cd=delay;self.active=False;self.dur=0
         self.casting=False;self.cast_timer=0;self.uses=None
     def can_use(self):return self.cd<=0 and not self.active and not self.casting and not getattr(self,'_pend',False) and (self.uses is None or self.uses>0)
     def begin_cast(self,tr,g):
         self.casting=True;self.cast_timer=self.CAST_TIME;self._cast_tr=tr
         if self.uses is not None:self.uses-=1
+    def deploy_tick(self,dt):
+        # a cast begun while the champion deploys runs on; its effect waits for the end of the deploy
+        if self.casting:self.cast_timer=max(0.0,self.cast_timer-dt)
     def activate(self,tr,g):pass
     def tick(self,dt,tr,g):
         if self.casting:

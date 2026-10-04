@@ -771,8 +771,10 @@ class Game:
                     if isinstance(ab,SoulSummoning) and ab.active and not ab.continuing:
                         ab.continue_after_death(tr,self).tick(self.DT,self)
                     continue
-                if has(tr,'deploying'):continue
                 ab=getattr(tr,'ability',None)
+                if has(tr,'deploying'):
+                    if ab:ab.deploy_tick(self.DT)
+                    continue
                 if ab:ab.tick(self.DT,tr,self)
                 for c in getattr(tr,'components',[]):c.on_tick(tr,self)
                 # a component may have just started a deploy (the Goblin Drill surfacing); that tick acts no further
