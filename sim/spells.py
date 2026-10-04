@@ -202,26 +202,28 @@ class LightningSpell:
         self.max_tgt=cfg['max_targets']
         self.stun_dur=cfg['stun_dur']
         self.first=cfg.get('first_delay',0);self.interval=cfg.get('interval',0);self.strikes=min(cfg.get('strikes') or self.max_tgt,self.max_tgt)
-        self.active=False;self.applied=False;self.t0=None;self.n=0;self.hit=set()
+        # the struck bodies themselves, not their id(): a troop a bolt kills is freed and a later troop can be given its id()
+        self.active=False;self.applied=False;self.t0=None;self.n=0;self.hit=[]
         self.name=cfg.get('name','')
     def apply(self,game):
         if self.applied:return
         self.applied=True;self.t0=game.t;self.active=True
         self.tick(0,game)
+    def _struck(self,e):return any(h is e for h in self.hit)
     def _strike(self,game):
         opp=game._opp(self.team)
         cands=[]
         # spells strike invisible troops (wiki Royal Ghost, Lightning on a cloaked Archer Queen) but not one underground (wiki Tesla)
         for e in game.players[opp].troops:
-            if not e.alive or has(e,'burrowed') or id(e) in self.hit:continue
+            if not e.alive or has(e,'burrowed') or self._struck(e):continue
             d=tdist(e,self.x,self.y)
             if d<=self.radius:cands.append((-getattr(e,'max_hp',e.hp),e,'troop'))
         for tw in game.arena.towers:
-            if tw.team!=opp or not tw.alive or id(tw) in self.hit:continue
+            if tw.team!=opp or not tw.alive or self._struck(tw):continue
             d=tw.dist(self.x,self.y)
             if d<=self.radius:cands.append((-getattr(tw,'max_hp',tw.hp),tw,'tower'))
         if not cands:return
-        _,tgt,kind=min(cands,key=lambda x:x[0]);self.hit.add(id(tgt))
+        _,tgt,kind=min(cands,key=lambda x:x[0]);self.hit.append(tgt)
         dm=self.ct_dmg if kind=='tower' and self.ct_dmg else self.dmg
         tgt.take_damage(dm)
         if kind=='tower' and not tgt.alive:game._tower_down(tgt)
